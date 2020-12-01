@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { TestContainer } from "./containers/TestContainer";
 
 const App = () => {
     const [testText, setTestText] = useState("");
@@ -10,7 +11,10 @@ const App = () => {
     }, []);
 
     return (
-        <div>{testText}</div>
+        <div>
+            <div>{testText}</div>
+            <TestContainer/>
+        </div>
     );
 };
 
