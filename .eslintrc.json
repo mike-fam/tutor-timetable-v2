@@ -1,0 +1,33 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "react-app",
+        "prettier",
+        "prettier/@typescript-eslint",
+        "prettier/react",
+        "prettier/standard"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "ignorePatterns": ["config/**", "node_modules"],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+        "prettier"
+    ],
+    "rules": {
+        "semi": ["warn", "always"],
+        "quotes": ["warn", "double"]
+    }
+}

@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Test } from "../components/Test";
 import { useTestHook } from "../hooks/testHook";
 
 type Props = {};
 
-export const TestContainer: React.FunctionComponent<Props> = ({}) => {
+export const TestContainer: React.FunctionComponent<Props> = () => {
     const [testData] = useTestHook();
-    return (
-        <Test test={testData}/>
-    );
+    return <Test test={testData} />;
 };

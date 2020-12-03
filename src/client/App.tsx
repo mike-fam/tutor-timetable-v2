@@ -5,15 +5,18 @@ import { TestContainer } from "./containers/TestContainer";
 const App = () => {
     const [testText, setTestText] = useState("");
     useEffect(() => {
-        axios.get("/hello").then(res => {
-            setTestText(res.data.test)
-        }).catch(err => setTestText(err.message));
+        axios
+            .get("/hello")
+            .then((res) => {
+                setTestText(res.data.test);
+            })
+            .catch((err) => setTestText(err.message));
     }, []);
 
     return (
         <div>
             <div>{testText}</div>
-            <TestContainer/>
+            <TestContainer />
         </div>
     );
 };
