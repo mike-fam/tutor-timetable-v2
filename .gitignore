@@ -115,5 +115,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Build folder
+build/
+
 # jetbrains
 .idea/
