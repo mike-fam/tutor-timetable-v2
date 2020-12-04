@@ -1,0 +1,35 @@
+
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Deploy
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Node
+        uses: actions/setup-node@v2.1.2
+
+      - name: Install Yarn
+        uses: CultureHQ/actions-yarn@v1.0.1
+
+      - name: Deployment
+        run: |
+          SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
+          echo "${{ secrets.PRIVATE_KEY }}" > "$SSH_PATH/deploy_key"
+          chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
+          eval $(ssh-agent)
+          printf '%s\n' 'Host *.zones.eait.uq.edu.au' '  ProxyJump ${{ secrets.USER }}@moss.labs.eait.uq.edu.au' > "$SSH_PATH/config"
+          ssh-add "$SSH_PATH/deploy_key"
+          ssh -i "$SSH_PATH/deploy_key" -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "cd /var/www/nodejs/tutor-timetable-v2 && git pull && yarn && yarn build && echo "${{ secrets.PW }}" | sudo -S systemctl restart nodejs && history -c"
