@@ -1,21 +1,29 @@
-import React, { ChangeEventHandler } from "react";
+import React, { SelectHTMLAttributes } from "react";
+import { Select } from "@chakra-ui/react";
 
-type Props = {
-    onChange: ChangeEventHandler<HTMLSelectElement>;
+type Props = SelectHTMLAttributes<HTMLSelectElement> & {
     children: string[];
+    size?: string;
+    noDefault?: boolean;
 };
 
 export const Dropdown: React.FunctionComponent<Props> = ({
-    onChange,
     children,
+    noDefault = true,
+    ...props
 }) => {
     return (
-        <select onChange={onChange}>
+        <Select {...props}>
+            {noDefault ? (
+                <option disabled defaultChecked>
+                    Select a value
+                </option>
+            ) : null}
             {children.map((option, index) => (
                 <option key={index} value={option}>
                     {option}
                 </option>
             ))}
-        </select>
+        </Select>
     );
 };
