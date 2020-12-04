@@ -1,30 +1,15 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React from "react";
+import { WeekNav } from "../components/WeekNav";
 
 type Props = {};
 
-// Placeholder content
+// Placeholder data
 export const WeekNavContainer: React.FunctionComponent<Props> = () => {
+    const weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+
     return (
         <div>
-            <Tabs defaultIndex={1}>
-                <TabPanels>
-                    <TabPanel>
-                        <p>All Weeks</p>
-                    </TabPanel>
-                    <TabPanel>
-                        <p>Week 1</p>
-                    </TabPanel>
-                    <TabPanel>
-                        <p>Week 2</p>
-                    </TabPanel>
-                </TabPanels>
-                <TabList>
-                    <Tab>All Weeks</Tab>
-                    <Tab>Week 1</Tab>
-                    <Tab>Week 2</Tab>
-                </TabList>
-            </Tabs>
+            <WeekNav numOfWeeks={weeks} />
         </div>
     );
 };
