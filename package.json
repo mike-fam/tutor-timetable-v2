@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "^1.0.2",
+    "@chakra-ui/react": "^1.0.1",
     "@emotion/react": "^11.1.1",
     "@emotion/styled": "^11.0.0",
     "@types/express": "^4.17.9",
@@ -17,6 +17,7 @@
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "express": "^4.17.1",
+    "formik": "^2.2.5",
     "framer-motion": "^2.9.5",
     "fs-extra": "^9.0.1",
     "identity-obj-proxy": "3.0.0",
@@ -66,7 +67,7 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
@@ -79,11 +80,11 @@
       "<rootDir>/src/setupTests.ts"
     ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+      "<rootDir>/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jsdom",
-    "testRunner": "/Users/mike/Stuffs/code/tutor-timetable-v2/node_modules/jest-circus/runner.js",
+    "testRunner": "./node_modules/jest-circus/runner.js",
     "transform": {
       "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
