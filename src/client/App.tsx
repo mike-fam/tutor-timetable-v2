@@ -1,23 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { TestContainer } from "./containers/TestContainer";
+import React from "react";
+import { Dropdown } from "./components/Dropdown";
 
 const App = () => {
-    const [testText, setTestText] = useState("");
-    useEffect(() => {
-        axios
-            .get("/hello")
-            .then((res) => {
-                setTestText(res.data.test);
-            })
-            .catch((err) => setTestText(err.message));
-    }, []);
-
     return (
-        <div>
-            <div>{testText}</div>
-            <TestContainer />
-        </div>
+        <Dropdown onChange={(e) => console.log(e.target.value)}>
+            {["s2 2019", "s1 2020", "s2 2020", "s1 2021"]}
+        </Dropdown>
     );
 };
 
