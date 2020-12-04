@@ -15,7 +15,3 @@ And then run this command on another terminal
 yarn client-dev
 ```
 
-## Developers
-@mike-fam
-
-@JZ4012
