@@ -7,8 +7,6 @@ type Props = {
 
 // Placeholder content
 export const WeekNav: React.FunctionComponent<Props> = (props: Props) => {
-    console.log(props.numOfWeeks);
-
     return (
         <div>
             <Tabs defaultIndex={1}>
