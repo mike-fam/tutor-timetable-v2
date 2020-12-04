@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { TestContainer } from "./containers/TestContainer";
+import { WeekNavContainer } from "./containers/WeekNavContainer";
 
 const App = () => {
     const [testText, setTestText] = useState("");
@@ -17,6 +18,7 @@ const App = () => {
         <div>
             <div>{testText}</div>
             <TestContainer />
+            <WeekNavContainer />
         </div>
     );
 };
