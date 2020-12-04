@@ -1,5 +1,8 @@
 import express, { Express } from "express";
 import { createServer } from "http";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const main = async () => {
     const app: Express = express();
