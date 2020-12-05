@@ -1,4 +1,4 @@
-import { Checkbox } from "@chakra-ui/react";
+import { Button, Checkbox } from "@chakra-ui/react";
 import { Field, Formik, Form } from "formik";
 import React from "react";
 
@@ -21,36 +21,19 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
                 {({ values }) => (
                     <Form>
                         <div>
-                            <label>
-                                <Field
-                                    type="checkbox"
-                                    name="checked"
-                                    value="One"
-                                    as={Checkbox}
-                                />
-                                One
-                            </label>
-                            <label>
-                                <Field
-                                    type="checkbox"
-                                    name="checked"
-                                    value="Two"
-                                    as={Checkbox}
-                                />
-                                Two
-                            </label>
-                            <label>
-                                <Field
-                                    type="checkbox"
-                                    name="checked"
-                                    value="Three"
-                                    as={Checkbox}
-                                />
-                                Three
-                            </label>
+                            {props.courses.map((course, index) => (
+                                <label key={index}>
+                                    <Field
+                                        type="checkbox"
+                                        name="checked"
+                                        value={course}
+                                        as={Checkbox}
+                                    />
+                                    {course}
+                                </label>
+                            ))}
                         </div>
-
-                        <button type="submit">Submit</button>
+                        <Button type="submit">Submit</Button>
                     </Form>
                 )}
             </Formik>
