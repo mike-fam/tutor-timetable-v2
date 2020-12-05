@@ -18,7 +18,7 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
                     alert(JSON.stringify(values));
                 }}
             >
-                {({ values }) => (
+                {() => (
                     <Form>
                         <div>
                             {props.courses.map((course, index) => (
