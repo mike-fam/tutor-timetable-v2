@@ -1,4 +1,3 @@
-import { Divider } from "@chakra-ui/react";
 import React from "react";
 import { Dropdown } from "./components/Dropdown";
 import { CourseSelectContainer } from "./containers/CourseSelectContainer";
