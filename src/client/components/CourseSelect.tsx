@@ -1,4 +1,5 @@
-import { FormLabel, Select } from "@chakra-ui/react";
+import { Checkbox } from "@chakra-ui/react";
+import { Field, Formik, Form } from "formik";
 import React from "react";
 
 type Props = {
@@ -8,12 +9,51 @@ type Props = {
 export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <div>
-            <FormLabel>Courses</FormLabel>
-            <Select>
-                {props.courses.map((course, index) => (
-                    <option key={index}>{course}</option>
-                ))}
-            </Select>
+            <Formik
+                initialValues={{
+                    checked: [],
+                }}
+                // Placeholder
+                onSubmit={async (values) => {
+                    alert(JSON.stringify(values));
+                }}
+            >
+                {({ values }) => (
+                    <Form>
+                        <div>
+                            <label>
+                                <Field
+                                    type="checkbox"
+                                    name="checked"
+                                    value="One"
+                                    as={Checkbox}
+                                />
+                                One
+                            </label>
+                            <label>
+                                <Field
+                                    type="checkbox"
+                                    name="checked"
+                                    value="Two"
+                                    as={Checkbox}
+                                />
+                                Two
+                            </label>
+                            <label>
+                                <Field
+                                    type="checkbox"
+                                    name="checked"
+                                    value="Three"
+                                    as={Checkbox}
+                                />
+                                Three
+                            </label>
+                        </div>
+
+                        <button type="submit">Submit</button>
+                    </Form>
+                )}
+            </Formik>
         </div>
     );
 };
