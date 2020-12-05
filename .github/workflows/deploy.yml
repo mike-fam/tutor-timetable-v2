@@ -30,7 +30,6 @@ jobs:
           echo "${{ secrets.PRIVATE_KEY }}" > "$SSH_PATH/deploy_key"
           chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
           eval $(ssh-agent)
-          printf '%s\n' 'Host *.zones.eait.uq.edu.au' '  ProxyJump s4453333@moss.labs.eait.uq.edu.au' > "$SSH_PATH/config"
+          printf '%s\n' 'Host *.eait.uq.edu.au' '  StrictHostKeyChecking no' 'Host *.zones.eait.uq.edu.au' '  ProxyJump ${{ secrets.USER }}@moss.labs.eait.uq.edu.au' > "$SSH_PATH/config"
           ssh-add "$SSH_PATH/deploy_key"
-          cat "$SSH_PATH/config"
-          ssh -i "$SSH_PATH/deploy_key" -o StrictHostKeyChecking=no s4453333@tutor-timetable.zones.eait.uq.edu.au "cd /var/www/nodejs/tutor-timetable-v2 && git pull && yarn && yarn build && echo "${{ secrets.PW }}" | sudo -S systemctl restart nodejs && history -c"
+          ssh -i "$SSH_PATH/deploy_key" ${{ secrets.USER }}@${{ secrets.HOST }} "cd /var/www/nodejs/tutor-timetable-v2 && git pull && yarn && yarn build && echo "${{ secrets.PW }}" | sudo -S systemctl restart nodejs && history -c"
