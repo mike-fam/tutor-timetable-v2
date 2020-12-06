@@ -40,6 +40,7 @@ export const Timetable: React.FC<Props> = ({
                                 hour - startTime + 3
                             }`}
                             textAlign="right"
+                            fontWeight="bold"
                         >
                             {hour}
                         </Box>

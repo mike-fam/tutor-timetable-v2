@@ -1,4 +1,4 @@
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { Grid, Text } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
 import range from "lodash/range";
 import { IsoDayNumber } from "../../../types/date";
@@ -31,7 +31,7 @@ export const Day: React.FunctionComponent<Props> = ({
             gap={gap}
         >
             <Text fontWeight="bold">{isoNumberToDay(day).toUpperCase()}</Text>
-            {range(startTime, endTime).map((hour) => renderTimeSlot())}
+            {range(startTime, endTime).map(() => renderTimeSlot())}
         </Grid>
     );
 };
