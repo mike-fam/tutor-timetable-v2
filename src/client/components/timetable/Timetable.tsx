@@ -1,13 +1,9 @@
 import { Box, Grid } from "@chakra-ui/react";
-import range from "lodash/range";
 import React, { ReactElement } from "react";
 import { IsoDayNumber } from "../../../types/date";
 import { Props as DayProps } from "./Day";
-import {
-    firstLineHeight,
-    gap,
-    timeSlotHeight,
-} from "../../constants/timetable";
+import { gap } from "../../constants/timetable";
+import { HourColumn } from "./HourColumn";
 
 type Props = {
     displayedDays: IsoDayNumber[];
@@ -25,27 +21,10 @@ export const Timetable: React.FC<Props> = ({
     return (
         <Box>
             <Grid
-                templateColumns={`1em repeat(${displayedDays.length}, 1fr)`}
+                templateColumns={`2ch repeat(${displayedDays.length}, 1fr)`}
                 gap={gap}
             >
-                <Grid
-                    templateRows={`${firstLineHeight}px repeat(${
-                        endTime - startTime + 1
-                    }, ${timeSlotHeight}px)`}
-                    gap={gap}
-                >
-                    {range(startTime, endTime).map((hour) => (
-                        <Box
-                            gridRow={`${hour - startTime + 2} / ${
-                                hour - startTime + 3
-                            }`}
-                            textAlign="right"
-                            fontWeight="bold"
-                        >
-                            {hour}
-                        </Box>
-                    ))}
-                </Grid>
+                <HourColumn startTime={startTime} endTime={endTime} />
                 {displayedDays.map((day) =>
                     renderDay({ startTime, endTime, day })
                 )}
