@@ -3,9 +3,11 @@ import { Dropdown } from "./components/Dropdown";
 import { Wrapper } from "./components/Wrapper";
 import { Timetable } from "./components/timetable/Timetable";
 import { Day } from "./components/timetable/Day";
-import { Box } from "@chakra-ui/react";
+import { Box, Button, useColorMode } from "@chakra-ui/react";
+import { TimeSlot } from "./components/timetable/TimeSlot";
 
 const App = () => {
+    const { toggleColorMode } = useColorMode();
     return (
         <Wrapper>
             <Box>
@@ -15,8 +17,11 @@ const App = () => {
             </Box>
             <Timetable
                 displayedDays={[1, 2, 3, 4, 5, 6, 7]}
-                renderDay={(dayProps) => <Day {...dayProps} />}
+                renderDay={(dayProps) => (
+                    <Day {...dayProps} renderTimeSlot={() => <TimeSlot />} />
+                )}
             />
+            <Button onClick={() => toggleColorMode()}>Change color mode</Button>
         </Wrapper>
     );
 };

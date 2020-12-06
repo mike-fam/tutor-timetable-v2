@@ -1,33 +1,37 @@
 import { Box, Grid, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { ReactElement } from "react";
 import range from "lodash/range";
 import { IsoDayNumber } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-import { timeSlotHeight } from "../../constants/timetable";
+import {
+    firstLineHeight,
+    gap,
+    timeSlotHeight,
+} from "../../constants/timetable";
 
 export type Props = {
     day: IsoDayNumber;
     startTime: number;
     endTime: number;
+    renderTimeSlot: () => ReactElement;
 };
 
 export const Day: React.FunctionComponent<Props> = ({
     day,
     startTime,
     endTime,
+    renderTimeSlot,
 }) => {
     return (
         // + 1 for Day Heading
         <Grid
-            templateRows={`1em repeat(${
+            templateRows={`${firstLineHeight}px repeat(${
                 endTime - startTime + 1
             }, ${timeSlotHeight}px)`}
-            gap={2}
+            gap={gap}
         >
-            <Box>{isoNumberToDay(day).toUpperCase()}</Box>
-            {range(startTime, endTime).map((hour) => (
-                <Box bg="tomato">Test</Box>
-            ))}
+            <Text fontWeight="bold">{isoNumberToDay(day).toUpperCase()}</Text>
+            {range(startTime, endTime).map((hour) => renderTimeSlot())}
         </Grid>
     );
 };

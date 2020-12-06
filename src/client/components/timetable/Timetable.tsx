@@ -3,11 +3,15 @@ import range from "lodash/range";
 import React, { ReactElement } from "react";
 import { IsoDayNumber } from "../../../types/date";
 import { Props as DayProps } from "./Day";
-import { timeSlotHeight } from "../../constants/timetable";
+import {
+    firstLineHeight,
+    gap,
+    timeSlotHeight,
+} from "../../constants/timetable";
 
 type Props = {
     displayedDays: IsoDayNumber[];
-    renderDay: (dayProps: DayProps) => ReactElement;
+    renderDay: (dayProps: Omit<DayProps, "renderTimeSlot">) => ReactElement;
     startTime?: number;
     endTime?: number;
 };
@@ -22,19 +26,20 @@ export const Timetable: React.FC<Props> = ({
         <Box>
             <Grid
                 templateColumns={`1em repeat(${displayedDays.length}, 1fr)`}
-                gap={2}
+                gap={gap}
             >
                 <Grid
-                    templateRows={`1em repeat(${
+                    templateRows={`${firstLineHeight}px repeat(${
                         endTime - startTime + 1
                     }, ${timeSlotHeight}px)`}
-                    gap={2}
+                    gap={gap}
                 >
                     {range(startTime, endTime).map((hour) => (
                         <Box
                             gridRow={`${hour - startTime + 2} / ${
                                 hour - startTime + 3
                             }`}
+                            textAlign="right"
                         >
                             {hour}
                         </Box>
