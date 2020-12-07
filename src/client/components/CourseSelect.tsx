@@ -23,7 +23,6 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
         <div>
             <Checkbox
                 isChecked={allChecked}
-                isIndeterminate={isIndeterminate}
                 onChange={() => {
                     setCheckedItems(checkedItems.map((x) => !allChecked));
                 }}
