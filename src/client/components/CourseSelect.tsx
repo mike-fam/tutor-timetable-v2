@@ -11,7 +11,6 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     const allChecked = checkedItems.every(Boolean);
-    const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
 
     const checkItems = (index: number, value: boolean) => {
         let temp: Array<boolean> = [...checkedItems];
