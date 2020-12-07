@@ -1,5 +1,4 @@
-import { Button, Checkbox } from "@chakra-ui/react";
-import { Field, Formik, Form } from "formik";
+import { Checkbox, Stack } from "@chakra-ui/react";
 import React from "react";
 
 type Props = {
@@ -7,36 +6,43 @@ type Props = {
 };
 
 export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
+    const [checkedItems, setCheckedItems] = React.useState(
+        new Array<boolean>(props.courses.length).fill(false)
+    );
+
+    const allChecked = checkedItems.every(Boolean);
+    const isIndeterminate = checkedItems.some(Boolean) && !allChecked;
+
+    const checkItems = (index: number, value: boolean) => {
+        let temp: Array<boolean> = [...checkedItems];
+        temp[index] = value;
+        setCheckedItems(temp);
+    };
+
     return (
         <div>
-            <Formik
-                initialValues={{
-                    checked: [],
-                }}
-                // Placeholder
-                onSubmit={async (values) => {
-                    alert(JSON.stringify(values));
+            <Checkbox
+                isChecked={allChecked}
+                isIndeterminate={isIndeterminate}
+                onChange={() => {
+                    setCheckedItems(checkedItems.map((x) => !allChecked));
                 }}
             >
-                {() => (
-                    <Form>
-                        <div>
-                            {props.courses.map((course, index) => (
-                                <label key={index}>
-                                    <Field
-                                        type="checkbox"
-                                        name="checked"
-                                        value={course}
-                                        as={Checkbox}
-                                    />
-                                    {course}
-                                </label>
-                            ))}
-                        </div>
-                        <Button type="submit">Submit</Button>
-                    </Form>
-                )}
-            </Formik>
+                All Courses
+            </Checkbox>
+            <Stack pl={6} mt={1} spacing={1}>
+                {props.courses.map((course, index) => (
+                    <Checkbox
+                        isChecked={checkedItems[index]}
+                        onChange={() => {
+                            checkItems(index, !checkedItems[index]);
+                        }}
+                        key={index}
+                    >
+                        {course}
+                    </Checkbox>
+                ))}
+            </Stack>
         </div>
     );
 };
