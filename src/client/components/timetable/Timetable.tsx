@@ -5,11 +5,24 @@ import { Props as DayProps } from "./Day";
 import { gap } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
 
+// TODO: hardcoded type
+export type SessionType = {
+    id: string;
+    name: string;
+    startTime: number;
+    endTime: number;
+    day: IsoDayNumber;
+};
+
 type Props = {
     displayedDays: IsoDayNumber[];
-    renderDay: (dayProps: Omit<DayProps, "renderTimeSlot">) => ReactElement;
+    renderDay: (
+        dayProps: Omit<DayProps, "renderTimeSlot" | "renderSession">,
+        key: number
+    ) => ReactElement;
     startTime?: number;
     endTime?: number;
+    sessions: Array<SessionType>;
 };
 
 export const Timetable: React.FC<Props> = ({
@@ -17,6 +30,7 @@ export const Timetable: React.FC<Props> = ({
     startTime = 7,
     endTime = 20,
     renderDay,
+    sessions,
 }) => {
     return (
         <Box>
@@ -25,8 +39,18 @@ export const Timetable: React.FC<Props> = ({
                 gap={gap}
             >
                 <HourColumn startTime={startTime} endTime={endTime} />
-                {displayedDays.map((day) =>
-                    renderDay({ startTime, endTime, day })
+                {displayedDays.map((day, key) =>
+                    renderDay(
+                        {
+                            startTime,
+                            endTime,
+                            day,
+                            sessions: sessions.filter(
+                                (session) => session.day === day
+                            ),
+                        },
+                        key
+                    )
                 )}
             </Grid>
         </Box>

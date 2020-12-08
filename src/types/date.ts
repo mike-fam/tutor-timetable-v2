@@ -7,3 +7,14 @@ export type IsoDayFormatting =
     | "iiii"
     | "iiiii"
     | "iiiiii";
+
+export type TimeRange = {
+    id: string;
+    start: number;
+    end: number;
+};
+
+export type StackInfo = {
+    stackSize: number;
+    stackIndex: number;
+};
