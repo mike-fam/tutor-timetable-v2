@@ -1,4 +1,8 @@
-import { firstLineHeight, gap, timeSlotHeight } from "../constants/timetable";
+import {
+    firstLineHeight,
+    realGap,
+    timeSlotHeight,
+} from "../constants/timetable";
 import { StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
@@ -33,16 +37,19 @@ export const sessionStyleFromProps = ({
     const relativeEnd = Math.max(Math.min(endTime, endDay) - startDay, 0);
 
     // Top Pixel
-    const top = firstLineHeight + gap + relativeStart * (timeSlotHeight + gap);
+    const top =
+        firstLineHeight + realGap + relativeStart * (timeSlotHeight + realGap);
     const sessionDuration = relativeEnd - relativeStart;
     const height =
         sessionDuration * timeSlotHeight +
-        Math.max(Math.ceil(sessionDuration - 1), 0) * gap;
+        Math.max(Math.ceil(sessionDuration - 1), 0) * realGap;
     const display = sessionDuration ? "block" : "none";
-    const width = `calc((100% - ${(stackSize - 1) * gap}px) / ${stackSize})`;
+    const width = `calc((100% - ${
+        (stackSize - 1) * realGap
+    }px) / ${stackSize})`;
     const left = `calc(((100% - ${
-        (stackSize - 1) * gap
-    }px) / ${stackSize} + ${gap}px) * ${stackIndex})`;
+        (stackSize - 1) * realGap
+    }px) / ${stackSize} + ${realGap}px) * ${stackIndex})`;
     return { top: `${top}px`, height, display, width, left };
 };
 

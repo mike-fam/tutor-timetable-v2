@@ -26,6 +26,34 @@ const App = () => {
                         day: 1,
                         name: "P01",
                     },
+                    {
+                        id: "2",
+                        startTime: 13,
+                        endTime: 14,
+                        day: 2,
+                        name: "T01",
+                    },
+                    {
+                        id: "3",
+                        startTime: 18,
+                        endTime: 22,
+                        day: 3,
+                        name: "Exam after hours",
+                    },
+                    {
+                        id: "4",
+                        startTime: 10,
+                        endTime: 11.5,
+                        day: 3,
+                        name: "Meeting",
+                    },
+                    {
+                        id: "5",
+                        startTime: 10.25,
+                        endTime: 11.8,
+                        day: 3,
+                        name: "Clashed",
+                    },
                 ]}
                 displayedDays={[1, 2, 3, 4, 5, 6, 7]}
                 renderDay={(dayProps, key) => (

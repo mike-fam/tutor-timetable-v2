@@ -26,6 +26,7 @@ export const Session: React.FC<Props> = ({ name, ...props }) => {
             bg={bg}
             p={1}
             color="white"
+            rounded="base"
         >
             {name}
         </Box>
