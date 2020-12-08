@@ -14,7 +14,7 @@ export type SessionType = {
     day: IsoDayNumber;
 };
 
-type Props = {
+export type Props = {
     displayedDays: IsoDayNumber[];
     renderDay: (
         dayProps: Omit<DayProps, "renderTimeSlot" | "renderSession">,
