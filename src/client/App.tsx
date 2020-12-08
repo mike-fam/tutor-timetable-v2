@@ -1,15 +1,23 @@
 import React from "react";
 import { Dropdown } from "./components/Dropdown";
+import { Wrapper } from "./components/Wrapper";
+import { Box, Button, useColorMode } from "@chakra-ui/react";
+import { TimetableContainer } from "./containers/TimetableContainer";
 import { WeekNavContainer } from "./containers/WeekNavContainer";
 
 const App = () => {
+    const { toggleColorMode } = useColorMode();
     return (
-        <div>
-            <Dropdown onChange={(e) => console.log(e.target.value)}>
-                {["s2 2019", "s1 2020", "s2 2020", "s1 2021"]}
-            </Dropdown>
+        <Wrapper>
+            <Box>
+                <Dropdown onChange={(e) => console.log(e.target.value)}>
+                    {["s2 2019", "s1 2020", "s2 2020", "s1 2021"]}
+                </Dropdown>
+            </Box>
+            <TimetableContainer />
             <WeekNavContainer />
-        </div>
+            <Button onClick={() => toggleColorMode()}>Change color mode</Button>
+        </Wrapper>
     );
 };
 
