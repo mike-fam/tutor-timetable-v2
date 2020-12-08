@@ -8,6 +8,7 @@ type Props = {
 };
 
 export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
+    // Maybe use a Map here instead?
     const [checkedItems, setCheckedItems] = React.useState(
         new Array<boolean>(props.courses.length).fill(false)
     );
