@@ -1,8 +1,10 @@
 import { Checkbox, Stack } from "@chakra-ui/react";
 import React from "react";
 
+// PLaceholder name for the function callback.
 type Props = {
     courses: Array<String>;
+    callbackFunc: Function;
 };
 
 export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
@@ -12,14 +14,16 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
 
     const allChecked = checkedItems.every(Boolean);
 
-    const checkItems = (index: number, value: boolean) => {
+    const checkItems = (index: number, value: boolean, course: String) => {
         let temp: Array<boolean> = [...checkedItems];
         temp[index] = value;
+        props.callbackFunc(course, value);
         setCheckedItems(temp);
     };
 
     return (
         <div>
+            {/*Onchange might need to be modified here depending on callback logic*/}
             <Checkbox
                 isChecked={allChecked}
                 onChange={() => {
@@ -33,7 +37,7 @@ export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
                     <Checkbox
                         isChecked={checkedItems[index]}
                         onChange={() => {
-                            checkItems(index, !checkedItems[index]);
+                            checkItems(index, !checkedItems[index], course);
                         }}
                         key={index}
                     >
