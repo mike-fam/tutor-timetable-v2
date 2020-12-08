@@ -3,6 +3,7 @@ import { Dropdown } from "./components/Dropdown";
 import { Wrapper } from "./components/Wrapper";
 import { Box, Button, useColorMode } from "@chakra-ui/react";
 import { TimetableContainer } from "./containers/TimetableContainer";
+import { WeekNavContainer } from "./containers/WeekNavContainer";
 
 const App = () => {
     const { toggleColorMode } = useColorMode();
@@ -14,6 +15,7 @@ const App = () => {
                 </Dropdown>
             </Box>
             <TimetableContainer />
+            <WeekNavContainer />
             <Button onClick={() => toggleColorMode()}>Change color mode</Button>
         </Wrapper>
     );
