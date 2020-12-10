@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.3.4",
     "@chakra-ui/react": "^1.0.1",
     "@emotion/react": "^11.1.1",
     "@emotion/styled": "^11.0.0",
+    "apollo-server-express": "^2.19.0",
     "axios": "^0.21.0",
     "bfj": "^7.0.2",
     "camelcase": "^6.1.0",
+    "class-validator": "^0.12.2",
     "csstype": "^3.0.5",
+    "dataloader": "^2.0.0",
     "date-fns": "^2.16.1",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
@@ -17,8 +21,10 @@
     "formik": "^2.2.5",
     "framer-motion": "^2.9.5",
     "fs-extra": "^9.0.1",
+    "graphql": "^15.4.0",
     "identity-obj-proxy": "3.0.0",
     "lodash": "^4.17.20",
+    "pg": "^8.5.1",
     "postcss-flexbugs-fixes": "4.2.1",
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.7.0",
@@ -28,8 +34,11 @@
     "react-app-polyfill": "^2.0.0",
     "react-dev-utils": "^11.0.1",
     "react-dom": "^17.0.1",
+    "reflect-metadata": "^0.1.13",
     "resolve": "1.18.1",
     "semver": "7.3.2",
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.29",
     "web-vitals": "^0.2.4"
   },
   "proxy": "http://localhost:5000",
@@ -43,7 +52,8 @@
     "prettier": "prettier --write src/",
     "prettier-check": "prettier --check src/",
     "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
-    "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0"
+    "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
+    "generate": "graphql-codegen"
   },
   "eslintConfig": {
     "extends": [
@@ -122,6 +132,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@graphql-codegen/cli": "^1.19.4",
+    "@graphql-codegen/typescript": "^1.19.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.11.6",
