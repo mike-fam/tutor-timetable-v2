@@ -1,5 +1,6 @@
 import React from "react";
 import { Dropdown } from "./components/Dropdown";
+import { CourseSelectContainer } from "./containers/CourseSelectContainer";
 import { Wrapper } from "./components/Wrapper";
 import { Box, Button, useColorMode } from "@chakra-ui/react";
 import { TimetableContainer } from "./containers/TimetableContainer";
@@ -9,6 +10,7 @@ const App = () => {
     const { toggleColorMode } = useColorMode();
     return (
         <Wrapper>
+            <CourseSelectContainer />
             <Box>
                 <Dropdown onChange={(e) => console.log(e.target.value)}>
                     {["s2 2019", "s1 2020", "s2 2020", "s1 2021"]}
