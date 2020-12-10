@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
