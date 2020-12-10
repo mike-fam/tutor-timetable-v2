@@ -9,8 +9,8 @@ const main = async () => {
     const server = createServer(app);
     const port = process.env.PORT || 5000;
 
-    app.set("trust proxy", "loopback");
     // Automatically serve the index.html file from the build folder
+    app.set("trust proxy", "loopback");
     app.use("/", express.static("build"));
 
     app.get("/hello", (req, res) => {
