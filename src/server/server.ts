@@ -1,6 +1,10 @@
+import "reflect-metadata";
 import express, { Express } from "express";
+import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import dotenv from "dotenv";
+import { buildSchema } from "type-graphql";
+import { HelloResolver } from "./resolvers/HelloResolver";
 
 dotenv.config();
 
@@ -17,9 +21,18 @@ const main = async () => {
         res.json({ test: "Hello world" });
     });
 
+    const apolloServer = new ApolloServer({
+        schema: await buildSchema({
+            resolvers: [HelloResolver],
+        }),
+    });
+
+    apolloServer.applyMiddleware({ app });
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });
 };
 
-main();
+main().catch((err) => {
+    console.error(err);
+});
