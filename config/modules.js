@@ -98,15 +98,15 @@ function getModules() {
 
     if (hasTsConfig && hasJsConfig) {
         throw new Error(
-            "You have both a tsconfig.json and a jsconfig.json. If you are using TypeScript please remove your jsconfig.json file."
+            "You have both a tsconfig.client.json and a jsconfig.json. If you are using TypeScript please remove your jsconfig.json file."
         );
     }
 
     let config;
 
-    // If there's a tsconfig.json we assume it's a
+    // If there's a tsconfig.client.json we assume it's a
     // TypeScript project and set up the config
-    // based on tsconfig.json
+    // based on tsconfig.client.json
     if (hasTsConfig) {
         const ts = require(resolve.sync("typescript", {
             basedir: paths.appNodeModules,
