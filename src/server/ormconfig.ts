@@ -2,6 +2,7 @@ import { ConnectionOptions } from "typeorm";
 import dotenv from "dotenv";
 import { __prod__ } from "../constants";
 import { User } from "./entities/User";
+import path from "path";
 
 dotenv.config();
 
@@ -10,9 +11,9 @@ export default {
     url: process.env.DB_URL,
     synchronize: __prod__,
     entities: [User],
-    migrations: ["./migrations/*.[jt]s"],
+    migrations: ["src/server/migrations/*.[jt]s"],
     logging: __prod__,
     cli: {
-        migrationsDir: "migrations",
+        migrationsDir: "src/server/migrations",
     },
 } as ConnectionOptions;
