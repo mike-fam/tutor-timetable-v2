@@ -18,7 +18,7 @@ const main = async () => {
 
     // Automatically serve the index.html file from the build folder
     app.set("trust proxy", "loopback");
-    app.use("/", express.static("build/client"));
+    app.use("/", express.static("build/"));
 
     app.get("/hello", (_, res) => {
         res.json({ test: "Hello world" });
