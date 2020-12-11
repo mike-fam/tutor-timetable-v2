@@ -1,4 +1,5 @@
 const paths = require("./paths");
+const webpack = require("webpack");
 
 process.env.BABEL_ENV = "production";
 
@@ -22,6 +23,7 @@ module.exports = function (webpackEnv) {
         node: {
             __dirname: false,
         },
+        plugins: [new webpack.IgnorePlugin(/^pg-native$/)],
         target: "node",
         module: {
             rules: [
