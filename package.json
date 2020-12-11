@@ -44,7 +44,7 @@
   "proxy": "http://localhost:5000",
   "scripts": {
     "client-dev": "node scripts/start.js",
-    "server-dev": "ts-node-dev src/server/server.ts",
+    "server-dev": "ts-node-dev src/server/server.ts --watch src/server/**/*.ts",
     "client-build": "node scripts/build.js",
     "server-build": "webpack --config ./config/webpackServer.config.js",
     "build": "yarn client-build && yarn server-build",
@@ -53,7 +53,9 @@
     "prettier-check": "prettier --check src/",
     "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
     "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
-    "generate": "graphql-codegen"
+    "generate-graphql": "graphql-codegen",
+    "generate-migration": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration",
+    "run-migration": "ts-node ./node_modules/typeorm/cli.js migration:run"
   },
   "eslintConfig": {
     "extends": [
