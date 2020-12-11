@@ -55,7 +55,7 @@
     "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
     "generate-graphql": "graphql-codegen",
     "generate-migration": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration",
-    "run-migration": "ts-node ./node_modules/typeorm/cli.js migration:run"
+    "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
   },
   "eslintConfig": {
     "extends": [
