@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dropdown } from "./components/Dropdown";
 import { CourseSelectContainer } from "./containers/CourseSelectContainer";
 import { Wrapper } from "./components/Wrapper";
 import { Box, Button, useColorMode } from "@chakra-ui/react";
 import { TimetableContainer } from "./containers/TimetableContainer";
 import { WeekNavContainer } from "./containers/WeekNavContainer";
+import { Loadable } from "./components/Loadable";
 
 const App = () => {
     const { toggleColorMode } = useColorMode();
+    const [loading, setLoading] = useState(false);
     return (
         <Wrapper>
             <CourseSelectContainer />
@@ -18,7 +20,13 @@ const App = () => {
             </Box>
             <TimetableContainer />
             <WeekNavContainer />
+            <Loadable isLoading={loading}>
+                <Box>data 2</Box>
+            </Loadable>
             <Button onClick={() => toggleColorMode()}>Change color mode</Button>
+            <Button onClick={() => setLoading((loading) => !loading)}>
+                Set loading
+            </Button>
         </Wrapper>
     );
 };
