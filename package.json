@@ -46,7 +46,7 @@
     "client-dev": "node scripts/start.js",
     "server-dev": "ts-node-dev src/server/server.ts --watch src/server/**/*.ts",
     "client-build": "node scripts/build.js",
-    "server-build": "webpack --config ./config/webpackServer.config.js",
+    "server-build": "tsc -p tsconfig.server.json",
     "build": "yarn client-build && yarn server-build",
     "test": "node scripts/test.js",
     "prettier": "prettier --write src/",
@@ -54,8 +54,9 @@
     "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
     "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
     "generate-graphql": "graphql-codegen",
-    "generate-migration": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration",
-    "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
+    "migration-generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f src/server/ormconfig.ts",
+    "migration-run": "ts-node ./node_modules/typeorm/cli.js migration:run -f src/server/ormconfig.ts",
+    "migration-revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -f src/server/ormconfig.ts"
   },
   "eslintConfig": {
     "extends": [

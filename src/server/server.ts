@@ -6,12 +6,13 @@ import dotenv from "dotenv";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 
+import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 
 dotenv.config();
 
 const main = async () => {
-    await createConnection();
+    await createConnection(ormconfig);
     const app: Express = express();
     const server = createServer(app);
     const port = process.env.PORT || 5000;
