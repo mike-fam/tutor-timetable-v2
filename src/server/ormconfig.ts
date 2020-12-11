@@ -2,7 +2,6 @@ import { ConnectionOptions } from "typeorm";
 import dotenv from "dotenv";
 import { __prod__ } from "../constants";
 import { User } from "./entities/User";
-import path from "path";
 
 dotenv.config();
 
