@@ -1,4 +1,14 @@
-export type IsoDayNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export enum IsoDay {
+    MON = 1,
+    TUE = 2,
+    WED = 3,
+    THU = 4,
+    FRI = 5,
+    SAT = 6,
+    SUN = 7,
+}
+
 export type IsoDayFormatting =
     | "i"
     | "io"

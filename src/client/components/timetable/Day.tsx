@@ -1,7 +1,7 @@
 import { Grid, Text } from "@chakra-ui/react";
 import React, { ReactElement, useMemo } from "react";
 import range from "lodash/range";
-import { IsoDayNumber } from "../../../types/date";
+import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
 import {
     firstLineHeight,
@@ -13,7 +13,7 @@ import { getClashedRanges } from "../../utils/timetable";
 import { SessionType } from "./Timetable";
 
 export type Props = {
-    day: IsoDayNumber;
+    day: IsoDay;
     startTime: number;
     endTime: number;
     renderTimeSlot: (key: number) => ReactElement;
