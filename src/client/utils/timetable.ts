@@ -6,6 +6,8 @@ import {
 import { StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
+import React from "react";
+import { TimetableState } from "../types/timetable";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -100,3 +102,14 @@ export const getClashedRanges = (
     });
     return result;
 };
+
+export const TimetableContext = React.createContext<TimetableState>({
+    week: 1,
+    courses: [],
+    term: "",
+    displayedDays: [1, 2, 3, 4, 5, 6, 7],
+    changeWeek: () => {},
+    changeCourses: () => {},
+    changeTerm: () => {},
+    changeDisplayedDays: () => {},
+});
