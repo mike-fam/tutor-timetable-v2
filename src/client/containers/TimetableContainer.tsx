@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
-import { IsoDay } from "../../types/date";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
 import {
     Props as SessionProps,
     Session,
 } from "../components/timetable/Session";
+import { TimetableContext } from "../utils/timetable";
+import { TimetableState } from "../types/timetable";
 
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
+    const { displayedDays } = useContext<TimetableState>(TimetableContext);
     const sessions: Array<SessionType> = [
         // TODO: hardcoded sessions
         {
@@ -48,15 +50,6 @@ export const TimetableContainer: React.FC<Props> = () => {
             day: 3,
             name: "Clashed",
         },
-    ];
-    const displayedDays: Array<IsoDay> = [
-        IsoDay.MON,
-        IsoDay.TUE,
-        IsoDay.WED,
-        IsoDay.THU,
-        IsoDay.FRI,
-        IsoDay.SAT,
-        IsoDay.SUN,
     ];
     return (
         <Timetable

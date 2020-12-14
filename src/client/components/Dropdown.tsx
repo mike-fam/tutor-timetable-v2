@@ -13,7 +13,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
     ...props
 }) => {
     return (
-        <Select {...props}>
+        <Select {...props} isFullWidth={false}>
             {noDefault ? (
                 <option disabled defaultChecked>
                     Select a value

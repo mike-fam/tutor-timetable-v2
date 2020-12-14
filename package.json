@@ -18,6 +18,7 @@
     "framer-motion": "^2.9.5",
     "fs-extra": "^9.0.1",
     "identity-obj-proxy": "3.0.0",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.20",
     "postcss-flexbugs-fixes": "4.2.1",
     "postcss-loader": "3.0.0",

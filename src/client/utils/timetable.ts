@@ -3,10 +3,11 @@ import {
     realGap,
     timeSlotHeight,
 } from "../constants/timetable";
-import { StackInfo, TimeRange } from "../../types/date";
+import { IsoDay, StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
 import React from "react";
+import {Map} from "immutable";
 import { TimetableState } from "../types/timetable";
 
 /**
@@ -106,10 +107,19 @@ export const getClashedRanges = (
 export const TimetableContext = React.createContext<TimetableState>({
     week: 1,
     courses: [],
-    term: "",
-    displayedDays: [1, 2, 3, 4, 5, 6, 7],
-    changeWeek: () => {},
-    changeCourses: () => {},
-    changeTerm: () => {},
-    changeDisplayedDays: () => {},
+    chosenTerm: "",
+    terms: Map(),
+    displayedDays: [
+        IsoDay.MON,
+        IsoDay.TUE,
+        IsoDay.WED,
+        IsoDay.THU,
+        IsoDay.FRI,
+        IsoDay.SAT,
+        IsoDay.SUN,
+    ],
+    setWeek: () => {},
+    setCourses: () => {},
+    setTerm: () => {},
+    setDisplayedDays: () => {},
 });
