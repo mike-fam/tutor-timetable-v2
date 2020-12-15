@@ -1,6 +1,6 @@
 import React from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
-import { IsoDayNumber } from "../../types/date";
+import { IsoDay } from "../../types/date";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
 import {
@@ -12,7 +12,7 @@ type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
     const sessions: Array<SessionType> = [
-        // TODO: hardcoded sessions
+        // TODO: hardcoded query.ts
         {
             id: "1",
             startTime: 8,
@@ -49,7 +49,7 @@ export const TimetableContainer: React.FC<Props> = () => {
             name: "Clashed",
         },
     ];
-    const displayedDays: Array<IsoDayNumber> = [1, 2, 3, 4, 5, 6, 7];
+    const displayedDays: Array<IsoDay> = [1, 2, 3, 4, 5, 6, 7];
     return (
         <Timetable
             sessions={sessions}

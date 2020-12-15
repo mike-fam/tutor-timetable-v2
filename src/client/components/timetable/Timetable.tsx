@@ -1,6 +1,6 @@
 import { Box, Grid } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import { IsoDayNumber } from "../../../types/date";
+import { IsoDay } from "../../../types/date";
 import { Props as DayProps } from "./Day";
 import { gap } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
@@ -11,11 +11,11 @@ export type SessionType = {
     name: string;
     startTime: number;
     endTime: number;
-    day: IsoDayNumber;
+    day: IsoDay;
 };
 
 export type Props = {
-    displayedDays: IsoDayNumber[];
+    displayedDays: IsoDay[];
     renderDay: (
         dayProps: Omit<DayProps, "renderTimeSlot" | "renderSession">,
         key: number
