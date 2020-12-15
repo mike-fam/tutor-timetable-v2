@@ -35,10 +35,9 @@ export class User extends BaseEntity {
     )
     sessionAllocations: SessionAllocation[];
 
-    @OneToMany(() => StaffRequest, staffRequest => staffRequest.requester)
+    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester)
     requests: StaffRequest[];
 
-    @OneToMany(() => StaffRequest, staffRequest => staffRequest.acceptor)
+    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor)
     acceptedRequests: StaffRequest[];
-
 }

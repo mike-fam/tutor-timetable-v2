@@ -30,6 +30,6 @@ export class Session extends BaseEntity {
     )
     sessionAllocations: SessionAllocation[];
 
-    @OneToMany(() => StaffRequest, request => request.session)
+    @OneToMany(() => StaffRequest, (request) => request.session)
     requests: StaffRequest[];
 }

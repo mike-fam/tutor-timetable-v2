@@ -1,10 +1,4 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
 
@@ -22,6 +16,6 @@ export class StaffRequest extends BaseEntity {
     @ManyToOne(() => User)
     finaliser: User;
 
-    @ManyToOne(() => Session, session => session.requests)
+    @ManyToOne(() => Session, (session) => session.requests)
     session: Session;
 }
