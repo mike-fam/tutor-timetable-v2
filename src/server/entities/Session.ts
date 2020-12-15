@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
-import { StaffRequest } from "./Request";
+import { StaffRequest } from "./StaffRequest";
 
 @Entity()
 export class Session extends BaseEntity {

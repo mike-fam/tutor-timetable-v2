@@ -3,7 +3,7 @@ import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
 import { SessionAllocation } from "./SessionAllocation";
-import { StaffRequest } from "./Request";
+import { StaffRequest } from "./StaffRequest";
 
 @ObjectType()
 @Entity()
