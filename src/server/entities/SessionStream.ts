@@ -14,11 +14,11 @@ import { IsoDay } from "../../types/date";
 import { Session } from "./Session";
 import { StreamAllocation } from "./StreamAllocation";
 
+@Entity()
 // Session type is one of the types specified.
 @Check(checkFieldValueInEnum(SessionType, "type"))
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
-@Entity()
 export class SessionStream extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

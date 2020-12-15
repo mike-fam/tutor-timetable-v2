@@ -1,8 +1,15 @@
-import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    Unique,
+} from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
 
 @Entity()
+@Unique(["session", "user"])
 export class SessionAllocation extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

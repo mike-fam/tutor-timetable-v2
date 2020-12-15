@@ -12,7 +12,7 @@ export class Course extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("varchar", { length: 9 })
+    @Column("varchar", { length: 9, unique: true })
     code: string;
 
     @Column("varchar", { length: 9 })
