@@ -18,7 +18,6 @@ dotenv.config();
 export default {
     type: "postgres",
     url: process.env.DB_URL,
-    synchronize: !__prod__,
     entities: [
         Course,
         CourseStaff,
