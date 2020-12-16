@@ -5,11 +5,11 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
+    JoinColumn,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
-import { JoinColumn } from "typeorm/browser";
 
 @Entity()
 @Unique(["timetable", "user"])
