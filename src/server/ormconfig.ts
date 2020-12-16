@@ -31,7 +31,7 @@ export default {
         Timetable,
         User,
     ],
-    migrations: ["src/server/migrations/*.[jt]s"],
+    migrations: ["build/server/migrations/*.js"],
     logging: !__prod__,
     cli: {
         migrationsDir: "src/server/migrations",
