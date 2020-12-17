@@ -8,6 +8,7 @@ import { createConnection } from "typeorm";
 
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
+import * as path from "path";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ const main = async () => {
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [HelloResolver],
+            emitSchemaFile: path.resolve(__dirname, "../schema.graphql"),
         }),
     });
 

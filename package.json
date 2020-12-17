@@ -53,7 +53,7 @@
     "prettier-check": "prettier --check src/",
     "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
     "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
-    "generate-graphql": "graphql-codegen",
+    "generate-graphql": "graphql-codegen --config codegen.yml",
     "migration-generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f src/server/ormconfig.ts",
     "migration-run": "ts-node ./node_modules/typeorm/cli.js migration:run -f src/server/ormconfig.ts",
     "migration-revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -f src/server/ormconfig.ts"
@@ -135,8 +135,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@graphql-codegen/cli": "^1.19.4",
-    "@graphql-codegen/typescript": "^1.19.0",
+    "@graphql-codegen/cli": "1.19.4",
+    "@graphql-codegen/typescript": "1.19.0",
+    "@graphql-codegen/typescript-react-apollo": "2.2.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.11.6",
@@ -194,6 +195,8 @@
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "^6.0.0"
+    "workbox-webpack-plugin": "^6.0.0",
+    "@graphql-codegen/typescript-operations": "1.17.12",
+    "@graphql-codegen/introspection": "1.18.1"
   }
 }
