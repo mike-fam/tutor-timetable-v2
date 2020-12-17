@@ -42,10 +42,6 @@ const main = async () => {
     });
 
     app.use(asyncHandler(uqAuthMiddleware));
-    app.use((req, _, next) => {
-        console.log(req.user);
-        return next();
-    });
     apolloServer.applyMiddleware({ app });
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
