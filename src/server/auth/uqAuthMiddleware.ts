@@ -11,7 +11,6 @@ export const uqAuthMiddleware = async (
     res: Response,
     next: NextFunction
 ): Promise<void> => {
-    console.log("running auth middleware");
     const username = req.get("X-Uq-User");
     // No username specified.
     if (!username) {
