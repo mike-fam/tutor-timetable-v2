@@ -8,7 +8,7 @@ type KVD = {
 
 export const uqAuthMiddleware = async (
     req: Request,
-    res: Response,
+    _: Response,
     next: NextFunction
 ): Promise<void> => {
     const username = req.get("X-Uq-User");
