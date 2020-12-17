@@ -11,6 +11,8 @@ import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
 import { User } from "./entities/User";
+import { MyContext } from "../types/context";
+import { UserResolver } from "./resolvers/UserResolver";
 
 dotenv.config();
 
@@ -35,13 +37,15 @@ const main = async () => {
         res.json({ test: "Hello world" });
     });
 
+    app.use(asyncHandler(uqAuthMiddleware));
+
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver],
+            resolvers: [HelloResolver, UserResolver],
         }),
+        context: ({ req, res }): MyContext => ({ req, res }),
     });
 
-    app.use(asyncHandler(uqAuthMiddleware));
     apolloServer.applyMiddleware({ app });
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
