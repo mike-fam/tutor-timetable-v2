@@ -8,9 +8,21 @@ import { createConnection } from "typeorm";
 
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
+import asyncHandler from "express-async-handler";
+import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
+import { User } from "./entities/User";
+import { MyContext } from "../types/context";
+import { UserResolver } from "./resolvers/UserResolver";
 
 dotenv.config();
 
+declare global {
+    namespace Express {
+        export interface Request {
+            user?: User;
+        }
+    }
+}
 const main = async () => {
     await createConnection(ormconfig);
     const app: Express = express();
@@ -25,10 +37,13 @@ const main = async () => {
         res.json({ test: "Hello world" });
     });
 
+    app.use(asyncHandler(uqAuthMiddleware));
+
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver],
+            resolvers: [HelloResolver, UserResolver],
         }),
+        context: ({ req, res }): MyContext => ({ req, res }),
     });
 
     apolloServer.applyMiddleware({ app });
