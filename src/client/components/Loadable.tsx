@@ -1,4 +1,4 @@
-import { Box, Spinner, useToast } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import React, { ReactElement, useEffect } from "react";
 
 type Props = {
@@ -31,11 +31,5 @@ export const Loadable: React.FC<Props> = ({
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [error]);
-    return isLoading ? (
-        <Box w="100%" h="100%" bg="red" p={2}>
-            {renderLoading()}
-        </Box>
-    ) : (
-        children
-    );
+    return isLoading ? renderLoading() : children;
 };
