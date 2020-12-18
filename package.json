@@ -56,7 +56,7 @@
     "prettier-check": "prettier --check src/",
     "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
     "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0",
-    "generate-graphql": "graphql-codegen --config codegen.yml",
+    "generate-graphql": "graphql-codegen",
     "migration-generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f src/server/ormconfig.ts",
     "migration-run": "ts-node ./node_modules/typeorm/cli.js migration:run -f src/server/ormconfig.ts",
     "migration-revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -f src/server/ormconfig.ts"
