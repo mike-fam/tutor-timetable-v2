@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-
-export enum IsoDay {
-    MON = 1,
-    TUE = 2,
-    WED = 3,
-    THU = 4,
-    FRI = 5,
-    SAT = 6,
-    SUN = 7,
-=======
 export enum IsoDay {
     Mon = 1,
     Tue = 2,
@@ -17,7 +6,6 @@ export enum IsoDay {
     Fri = 5,
     Sat = 6,
     Sun = 7,
->>>>>>> main
 }
 
 export type IsoDayFormatting =
