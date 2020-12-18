@@ -1,45 +1,44 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+    [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+    { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+    { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+    ID: string;
+    String: string;
+    Boolean: boolean;
+    Int: number;
+    Float: number;
 };
 
 export type Query = {
-  __typename?: 'Query';
-  hello: Scalars['String'];
-  me?: Maybe<User>;
+    __typename?: "Query";
+    hello: Scalars["String"];
+    me?: Maybe<User>;
 };
 
 export type User = {
-  __typename?: 'User';
-  email: Scalars['String'];
-  name: Scalars['String'];
-  username: Scalars['String'];
+    __typename?: "User";
+    email: Scalars["String"];
+    name: Scalars["String"];
+    username: Scalars["String"];
 };
 
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
-
-export type MeQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
-);
-
+export type MeQuery = { __typename?: "Query" } & Pick<Query, "hello">;
 
 export const MeDocument = gql`
     query Me {
-  hello
-}
-    `;
+        hello
+    }
+`;
 
 /**
  * __useMeQuery__
@@ -56,12 +55,19 @@ export const MeDocument = gql`
  *   },
  * });
  */
-export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-      }
-export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-        }
+export function useMeQuery(
+    baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>
+) {
+    return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+}
+export function useMeLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
+) {
+    return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(
+        MeDocument,
+        baseOptions
+    );
+}
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
