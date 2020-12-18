@@ -1,5 +1,9 @@
 import React, { useContext } from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
+<<<<<<< HEAD
+=======
+import { IsoDay } from "../../types/date";
+>>>>>>> main
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
 import {
@@ -14,7 +18,7 @@ type Props = {};
 export const TimetableContainer: React.FC<Props> = () => {
     const { displayedDays } = useContext<TimetableState>(TimetableContext);
     const sessions: Array<SessionType> = [
-        // TODO: hardcoded sessions
+        // TODO: hardcoded query.ts
         {
             id: "1",
             startTime: 8,
@@ -51,6 +55,10 @@ export const TimetableContainer: React.FC<Props> = () => {
             name: "Clashed",
         },
     ];
+<<<<<<< HEAD
+=======
+    const displayedDays: Array<IsoDay> = [1, 2, 3, 4, 5, 6, 7];
+>>>>>>> main
     return (
         <Timetable
             sessions={sessions}
