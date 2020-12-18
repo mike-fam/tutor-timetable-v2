@@ -123,4 +123,3 @@ build/
 
 # Webstorm extension
 .graphqlconfig
-schema.graphql
