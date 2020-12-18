@@ -8,7 +8,6 @@ import { createConnection } from "typeorm";
 
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
-import * as path from "path";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
 import { User } from "./entities/User";
