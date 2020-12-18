@@ -31,7 +31,7 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                 <Link as={RouterLink} to="/">
                     <Button>Home</Button>
                 </Link>
-                <Link as={RouterLink} to="/test">
+                <Link as={RouterLink} to="/requests">
                     <Button>Requests</Button>
                 </Link>
                 {/*Dropdown menu. Update with proper items when ready.*/}
