@@ -42,7 +42,6 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            emitSchemaFile: path.join(__dirname, "../../schema.graphql"),
             resolvers: [HelloResolver, UserResolver],
         }),
         context: ({ req, res }): MyContext => ({ req, res }),
