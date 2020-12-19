@@ -120,3 +120,6 @@ build/
 
 # jetbrains
 .idea/
+
+# Webstorm extension
+.graphqlconfig
