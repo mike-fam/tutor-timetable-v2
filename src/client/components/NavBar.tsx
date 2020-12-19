@@ -44,7 +44,14 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                         <MenuItem>option 3</MenuItem>
                     </MenuList>
                 </Menu>
-                <Center>Logged in as: {props.user}</Center>
+                <Menu>
+                    <MenuButton rightIcon={<ChevronDownIcon />}>
+                        Logged in as: {props.user}
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem>Logout</MenuItem>
+                    </MenuList>
+                </Menu>
             </ButtonGroup>
         </Flex>
     );
