@@ -6,7 +6,7 @@ import { TimetableState } from "../types/timetable";
 type Props = {};
 
 export const TermSelectContainer: React.FC<Props> = ({}) => {
-    const { term, setTerm } = useContext<TimetableState>(TimetableContext);
+    const { terms, setTerm } = useContext<TimetableState>(TimetableContext);
     return (
         <Dropdown onChange={(e) => setTerm(e.target.value)}>
             {["test", "test"]}

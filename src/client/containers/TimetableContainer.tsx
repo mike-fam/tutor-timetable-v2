@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
-import { IsoDay } from "../../types/date";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
 import {
