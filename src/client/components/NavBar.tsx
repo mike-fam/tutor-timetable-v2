@@ -22,21 +22,21 @@ type Props = {
 
 export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <Flex>
+        <Flex backgroundColor="grey">
             <Box>
-                <Heading size="lg">Tutor TimeTable</Heading>
+                <Heading size="md">Tutor TimeTable</Heading>
             </Box>
             <Spacer />
             <ButtonGroup spacing="6">
                 <Link as={RouterLink} to="/">
-                    <Button>Home</Button>
+                    Home
                 </Link>
                 <Link as={RouterLink} to="/requests">
-                    <Button>Requests</Button>
+                    Requests
                 </Link>
                 {/*Dropdown menu. Update with proper items when ready.*/}
                 <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    <MenuButton rightIcon={<ChevronDownIcon />}>
                         Dropdown
                     </MenuButton>
                     <MenuList>
