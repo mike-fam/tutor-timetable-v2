@@ -13,6 +13,7 @@ import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
 import { User } from "./entities/User";
 import { MyContext } from "../types/context";
 import { UserResolver } from "./resolvers/UserResolver";
+import { TermResolver } from "./resolvers/TermResolver";
 
 dotenv.config();
 
@@ -41,7 +42,8 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, UserResolver],
+            resolvers: [HelloResolver, UserResolver, TermResolver],
+            dateScalarMode: "isoDate",
         }),
         context: ({ req, res }): MyContext => ({ req, res }),
     });
@@ -53,5 +55,6 @@ const main = async () => {
 };
 
 main().catch((err) => {
-    console.error(err);
+    // console.error(err);
+    // console.error(err.details);
 });
