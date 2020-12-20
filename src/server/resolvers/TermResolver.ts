@@ -10,10 +10,16 @@ import {
     Resolver,
 } from "type-graphql";
 import { Term } from "../entities/Term";
-import { SingleItemResponseWithErrors } from "./ResponseWithError";
+import {
+    SingleItemResponseWithError,
+    MultipleItemResponseWithErrors,
+} from "./ResponseWithError";
 
 @ObjectType()
-class SingleTermResponse extends SingleItemResponseWithErrors(Term) {}
+class SingleTermResponse extends SingleItemResponseWithError(Term) {}
+
+@ObjectType()
+class MultipleTermResponse extends MultipleItemResponseWithErrors(Term) {}
 
 @ArgsType()
 class TermArgs {
@@ -56,11 +62,29 @@ export class TermResolver {
                 item: term,
             };
         } catch (err) {
-            console.log(Object.keys(err));
             return {
                 error: {
                     name: err.name,
-                    message: err.detail,
+                    message: err.detail || err.message,
+                },
+            };
+        }
+    }
+
+    @Mutation(() => MultipleTermResponse)
+    async deleteTerms(
+        @Arg("id", () => [Int]) termIds: Array<number>
+    ): Promise<MultipleTermResponse> {
+        try {
+            const terms = await Term.findByIds(termIds);
+            return {
+                items: terms,
+            };
+        } catch (err) {
+            return {
+                error: {
+                    name: err.name,
+                    message: err.detail || err.message,
                 },
             };
         }

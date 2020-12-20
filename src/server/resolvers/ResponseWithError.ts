@@ -14,7 +14,7 @@ abstract class ResponseWithErrorClass {
     error?: ErrorType;
 }
 
-export const SingleItemResponseWithErrors = <ItemType>(
+export const SingleItemResponseWithError = <ItemType>(
     itemType: ClassType<ItemType>
 ) => {
     @ObjectType({ isAbstract: true })
