@@ -1,3 +1,5 @@
+import { registerEnumType } from "type-graphql";
+
 export enum SessionType {
     Practical = "Practical",
     Tutorial = "Tutorial",
@@ -5,3 +7,8 @@ export enum SessionType {
     Lecture = "Lecture",
     Studio = "Studio",
 }
+
+registerEnumType(SessionType, {
+    name: "SessionType",
+    description: "Type of a session",
+});
