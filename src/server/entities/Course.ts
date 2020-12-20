@@ -6,8 +6,9 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Timetable } from "./Timetable";
-import { Field, Int } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 
+@ObjectType()
 @Entity()
 export class Course extends BaseEntity {
     @Field(() => Int)
