@@ -45,7 +45,7 @@ export class Term extends BaseEntity {
     @Column("int", { array: true })
     breakWeeks: Array<number>;
 
-    // TODO
+    @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.term)
     timetables: Timetable[];
 }

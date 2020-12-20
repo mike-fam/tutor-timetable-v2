@@ -20,24 +20,29 @@ export class User extends BaseEntity {
     @Column({ length: 256 })
     email: string;
 
+    @Field(() => [CourseStaff])
     @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.user)
     courseStaffs: CourseStaff[];
 
+    @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
         (streamAllocation) => streamAllocation.user
     )
     streamAllocations: StreamAllocation[];
 
+    @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
         (sessionAllocation) => sessionAllocation.user
     )
     sessionAllocations: SessionAllocation[];
 
+    @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester)
     requests: StaffRequest[];
 
+    @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor)
     acceptedRequests: StaffRequest[];
 }
