@@ -8,14 +8,18 @@ export const TimetablePageContainer: React.FC<Props> = ({}) => {
     const [week, setWeek] = useState<number>(1);
     const [courses, setCourses] = useState<Array<string>>([]);
     const [term, setTerm] = useState<string>("");
-    const [displayedDays, setDisplayedDays] = useState<Array<IsoDay>>([
-        IsoDay.MON,
-        IsoDay.TUE,
-        IsoDay.WED,
-        IsoDay.THU,
-        IsoDay.FRI,
-        IsoDay.SAT,
-        IsoDay.SUN,
+    let displayedDays: Array<IsoDay>,
+        setDisplayedDays: (
+            value: ((prevState: Array<IsoDay>) => Array<IsoDay>) | Array<IsoDay>
+        ) => void;
+    [displayedDays, setDisplayedDays] = useState<Array<IsoDay>>([
+        IsoDay.Mon,
+        IsoDay.Tue,
+        IsoDay.Wed,
+        IsoDay.Thu,
+        IsoDay.Fri,
+        IsoDay.Sat,
+        IsoDay.Sun,
     ]);
     return (
         <TimetableContext.Provider
