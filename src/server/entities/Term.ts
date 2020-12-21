@@ -41,9 +41,10 @@ export class Term extends BaseEntity {
     @Column("date")
     endDate: Date;
 
-    @Field(() => [Int])
-    @Column("int", { array: true })
-    breakWeeks: Array<number>;
+    // TODO: Validate length of this array
+    @Field(() => [String])
+    @Column("varchar", { array: true, default: () => "array[]:varchar[]" })
+    weekNames: Array<string>;
 
     @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.term)
