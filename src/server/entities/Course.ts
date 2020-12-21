@@ -16,7 +16,7 @@ export class Course extends BaseEntity {
     id: number;
 
     @Field()
-    @Column("varchar", { length: 9, unique: true })
+    @Column("varchar", { length: 20, unique: true })
     code: string;
 
     @Field()
