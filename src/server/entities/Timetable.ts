@@ -1,10 +1,11 @@
 import {
     BaseEntity,
+    Column,
     Entity,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
-	Unique
+    Unique,
 } from "typeorm";
 import { Course } from "./Course";
 import { Term } from "./Term";
@@ -24,9 +25,17 @@ export class Timetable extends BaseEntity {
     @ManyToOne(() => Course, (course) => course.timetables)
     course: Course;
 
+    @Field(() => Int)
+    @Column({ nullable: true })
+    courseId: number;
+
     @Field(() => Term)
     @ManyToOne(() => Term, (term) => term.timetables)
     term: Term;
+
+    @Field(() => Int)
+    @Column({ nullable: true })
+    termId: number;
 
     @Field(() => [CourseStaff])
     @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.timetable)
