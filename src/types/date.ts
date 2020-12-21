@@ -1,5 +1,3 @@
-import { registerEnumType } from "type-graphql";
-
 export enum IsoDay {
     Mon = 1,
     Tue = 2,
@@ -9,10 +7,6 @@ export enum IsoDay {
     Sat = 6,
     Sun = 7,
 }
-
-registerEnumType(IsoDay, {
-    name: "IsoDay",
-});
 
 export type IsoDayFormatting =
     | "i"

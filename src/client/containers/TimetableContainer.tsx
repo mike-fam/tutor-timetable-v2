@@ -6,8 +6,6 @@ import {
     Props as SessionProps,
     Session,
 } from "../components/timetable/Session";
-import { TimetableContext } from "../utils/timetable";
-import { TimetableState } from "../types/timetable";
 import { useTermsQuery } from "../generated/graphql";
 import { IsoDay } from "../../types/date";
 
@@ -65,17 +63,13 @@ export const TimetableContainer: React.FC<Props> = () => {
             renderDay={(dayProps, key) => (
                 <Day
                     {...dayProps}
-                    // renderTimeSlot={(key) => <TimeSlot key={key} />}
-                    renderTimeSlot={(key) => <div>hello</div>}
+                    renderTimeSlot={(key) => <TimeSlot key={key} />}
                     renderSession={(sessionProps: SessionProps, key) => (
-                        // <Session {...sessionProps} key={key} />
-                        <div>Hello</div>
+                        <Session {...sessionProps} key={key} />
                     )}
                     key={key}
                 />
-                // <div>Hello</div>
             )}
         />
-        // <div>Hello</div>
     );
 };

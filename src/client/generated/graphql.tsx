@@ -95,7 +95,6 @@ export type SessionStream = {
   streamAllocations: Array<StreamAllocation>;
 };
 
-/** Type of a session */
 export enum SessionType {
   Practical = 'Practical',
   Tutorial = 'Tutorial',
