@@ -1,0 +1,10 @@
+query Terms {
+    terms {
+        id
+        type
+        index
+        startDate
+        endDate
+        weekNames
+    }
+}

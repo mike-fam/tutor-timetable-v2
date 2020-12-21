@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { IsoDay } from "../../types/date";
 import { TimetableContext } from "../utils/timetable";
+import { Map } from "immutable";
 
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = ({}) => {
     const [week, setWeek] = useState<number>(1);
     const [courses, setCourses] = useState<Array<string>>([]);
-    const [term, setTerm] = useState<string>("");
+    const [terms, setTerm] = useState<Map<string, string>>(Map());
+    const chosenTerm = "test";
     let displayedDays: Array<IsoDay>,
         setDisplayedDays: (
             value: ((prevState: Array<IsoDay>) => Array<IsoDay>) | Array<IsoDay>
@@ -24,15 +26,18 @@ export const TimetablePageContainer: React.FC<Props> = ({}) => {
     return (
         <TimetableContext.Provider
             value={{
+                chosenTerm,
                 week,
                 courses,
-                term,
+                terms,
                 displayedDays,
                 setWeek,
                 setCourses,
                 setTerm,
                 setDisplayedDays,
             }}
-        ></TimetableContext.Provider>
+        >
+            test
+        </TimetableContext.Provider>
     );
 };

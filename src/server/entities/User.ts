@@ -21,7 +21,9 @@ export class User extends BaseEntity {
     email: string;
 
     @Field(() => [CourseStaff])
-    @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.user)
+    @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.user, {
+        eager: true,
+    })
     courseStaffs: CourseStaff[];
 
     @Field(() => [StreamAllocation])

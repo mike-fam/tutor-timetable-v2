@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
@@ -8,11 +8,17 @@ import {
 } from "../components/timetable/Session";
 import { TimetableContext } from "../utils/timetable";
 import { TimetableState } from "../types/timetable";
+import { useTermsQuery } from "../generated/graphql";
+import { IsoDay } from "../../types/date";
 
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
-    const { displayedDays } = useContext<TimetableState>(TimetableContext);
+    const { data } = useTermsQuery();
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
+    // const { displayedDays } = useContext<TimetableState>(TimetableContext);
     const sessions: Array<SessionType> = [
         // TODO: hardcoded query.ts
         {
@@ -51,6 +57,7 @@ export const TimetableContainer: React.FC<Props> = () => {
             name: "Clashed",
         },
     ];
+    const displayedDays: IsoDay[] = [1, 2, 3, 4, 5, 6, 7];
     return (
         <Timetable
             sessions={sessions}
@@ -58,13 +65,17 @@ export const TimetableContainer: React.FC<Props> = () => {
             renderDay={(dayProps, key) => (
                 <Day
                     {...dayProps}
-                    renderTimeSlot={(key) => <TimeSlot key={key} />}
+                    // renderTimeSlot={(key) => <TimeSlot key={key} />}
+                    renderTimeSlot={(key) => <div>hello</div>}
                     renderSession={(sessionProps: SessionProps, key) => (
-                        <Session {...sessionProps} key={key} />
+                        // <Session {...sessionProps} key={key} />
+                        <div>Hello</div>
                     )}
                     key={key}
                 />
+                // <div>Hello</div>
             )}
         />
+        // <div>Hello</div>
     );
 };

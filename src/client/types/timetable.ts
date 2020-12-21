@@ -10,6 +10,6 @@ export type TimetableState = {
     displayedDays: Array<IsoDay>;
     setWeek: React.Dispatch<React.SetStateAction<number>>;
     setCourses: React.Dispatch<React.SetStateAction<Array<string>>>;
-    setTerm: React.Dispatch<React.SetStateAction<string>>;
+    setTerm: React.Dispatch<React.SetStateAction<Map<string, string>>>;
     setDisplayedDays: React.Dispatch<React.SetStateAction<Array<IsoDay>>>;
 };

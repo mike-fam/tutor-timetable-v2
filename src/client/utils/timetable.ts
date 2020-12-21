@@ -7,7 +7,7 @@ import { IsoDay, StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
 import React from "react";
-import {Map} from "immutable";
+import { Map } from "immutable";
 import { TimetableState } from "../types/timetable";
 
 /**
@@ -110,13 +110,13 @@ export const TimetableContext = React.createContext<TimetableState>({
     chosenTerm: "",
     terms: Map(),
     displayedDays: [
-        IsoDay.MON,
-        IsoDay.TUE,
-        IsoDay.WED,
-        IsoDay.THU,
-        IsoDay.FRI,
-        IsoDay.SAT,
-        IsoDay.SUN,
+        IsoDay.Mon,
+        IsoDay.Tue,
+        IsoDay.Wed,
+        IsoDay.Thu,
+        IsoDay.Fri,
+        IsoDay.Sat,
+        IsoDay.Sun,
     ],
     setWeek: () => {},
     setCourses: () => {},
