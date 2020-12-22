@@ -5,29 +5,19 @@ import {
     Field,
     Int,
     Mutation,
-    ObjectType,
     Query,
     Resolver,
 } from "type-graphql";
 import { Term } from "../entities";
-import {
-    SingleItemResponseWithError,
-    MultipleItemResponseWithErrors,
-} from "./ResponseWithError";
-
-@ObjectType()
-class SingleTermResponse extends SingleItemResponseWithError(Term) {}
-
-@ObjectType()
-class MultipleTermResponse extends MultipleItemResponseWithErrors(Term) {}
+import { TermType } from "../../types/term";
 
 @ArgsType()
 class TermArgs {
     @Field()
     index: number;
 
-    @Field()
-    type: string;
+    @Field(() => TermType)
+    type: TermType;
 
     @Field()
     year: number;
@@ -46,8 +36,6 @@ class TermArgs {
 export class TermResolver {
     @Query(() => [Term])
     async terms(): Promise<Term[]> {
-        const terms = await Term.find({});
-        console.log(terms);
         return await Term.find({});
     }
 
@@ -56,39 +44,17 @@ export class TermResolver {
         return await Term.findOne(id);
     }
 
-    @Mutation(() => SingleTermResponse)
-    async addTerm(@Args() termArgs: TermArgs): Promise<SingleTermResponse> {
-        try {
-            const term = await Term.create(termArgs).save();
-            return {
-                item: term,
-            };
-        } catch (err) {
-            return {
-                error: {
-                    name: err.name,
-                    message: err.detail || err.message,
-                },
-            };
-        }
+    @Mutation(() => Term)
+    async addTerm(@Args() termArgs: TermArgs): Promise<Term> {
+        return await Term.create(termArgs).save();
     }
 
-    @Mutation(() => MultipleTermResponse)
+    @Mutation(() => [Term])
     async deleteTerms(
         @Arg("id", () => [Int]) termIds: Array<number>
-    ): Promise<MultipleTermResponse> {
-        try {
-            const terms = await Term.findByIds(termIds);
-            return {
-                items: terms,
-            };
-        } catch (err) {
-            return {
-                error: {
-                    name: err.name,
-                    message: err.detail || err.message,
-                },
-            };
-        }
+    ): Promise<Term[]> {
+        const terms = await Term.findByIds(termIds);
+        terms.forEach((term) => term.remove());
+        return terms;
     }
 }
