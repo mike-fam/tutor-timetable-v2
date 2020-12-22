@@ -20,7 +20,7 @@ export class Course extends BaseEntity {
     code: string;
 
     @Field()
-    @Column("varchar", { length: 9 })
+    @Column("varchar", { length: 100 })
     title: string;
 
     @Field(() => [Timetable])
