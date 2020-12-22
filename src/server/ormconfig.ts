@@ -38,7 +38,8 @@ export default {
             ? "build/server/migrations/*.js"
             : "src/server/migrations/*.ts",
     ],
-    logging: !__prod__,
+    logging: !__prod__ && ["error", "schema", "warn"],
+    validate: false, // TODO: validate classes
     cli: {
         migrationsDir: "src/server/migrations",
     },

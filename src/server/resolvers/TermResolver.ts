@@ -9,7 +9,7 @@ import {
     Query,
     Resolver,
 } from "type-graphql";
-import { Term } from "../entities/Term";
+import { Term } from "../entities";
 import {
     SingleItemResponseWithError,
     MultipleItemResponseWithErrors,
@@ -38,14 +38,16 @@ class TermArgs {
     @Field()
     endDate: Date;
 
-    @Field(() => [Int])
-    breakWeeks: Array<number>;
+    @Field(() => [String])
+    weekNames: Array<string>;
 }
 
 @Resolver()
 export class TermResolver {
     @Query(() => [Term])
     async terms(): Promise<Term[]> {
+        const terms = await Term.find({});
+        console.log(terms);
         return await Term.find({});
     }
 

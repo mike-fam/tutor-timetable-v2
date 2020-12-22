@@ -1,5 +1,5 @@
 import { Arg, Query, Resolver } from "type-graphql";
-import { Timetable } from "../entities/Timetable";
+import { Timetable } from "../entities";
 
 @Resolver()
 export class TimetableResolver {

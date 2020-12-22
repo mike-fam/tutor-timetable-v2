@@ -34,16 +34,16 @@ export class Term extends BaseEntity {
     year: number;
 
     @Field()
-    @Column("date")
+    @Column({ type: "timestamp without time zone" })
     startDate: Date;
 
     @Field()
-    @Column("date")
+    @Column({ type: "timestamp without time zone" })
     endDate: Date;
 
     // TODO: Validate length of this array
     @Field(() => [String])
-    @Column("varchar", { array: true, default: () => "array[]:varchar[]" })
+    @Column("varchar", { array: true, default: () => "array[]::varchar[]" })
     weekNames: Array<string>;
 
     @Field(() => [Timetable])
