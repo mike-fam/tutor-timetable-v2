@@ -25,9 +25,9 @@ export class Term extends BaseEntity {
     @Column()
     index: number;
 
-    @Field()
+    @Field(() => TermType)
     @Column("varchar", { length: 20 })
-    type: string;
+    type: TermType;
 
     @Field(() => Int)
     @Column()
