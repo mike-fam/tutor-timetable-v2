@@ -6,17 +6,11 @@ import {
     Props as SessionProps,
     Session,
 } from "../components/timetable/Session";
-import { useTermsQuery } from "../generated/graphql";
 import { IsoDay } from "../../types/date";
 
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
-    const { data } = useTermsQuery();
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
-    // const { displayedDays } = useContext<TimetableState>(TimetableContext);
     const sessions: Array<SessionType> = [
         // TODO: hardcoded query.ts
         {

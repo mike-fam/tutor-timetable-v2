@@ -18,6 +18,7 @@ export type Scalars = {
 export type Query = {
   __typename?: "Query";
   hello: Scalars["String"];
+  errorTest: Scalars["String"];
   me?: Maybe<User>;
   terms: Array<Term>;
   term?: Maybe<Term>;
@@ -43,10 +44,16 @@ export type User = {
 export type CourseStaff = {
   __typename?: "CourseStaff";
   id: Scalars["Int"];
+  role: Role;
   timetable: Timetable;
   user: User;
-  preference: Preference;
+  preference?: Maybe<Preference>;
 };
+
+export enum Role {
+  CourseCoordinator = "CourseCoordinator",
+  Staff = "Staff"
+}
 
 export type Timetable = {
   __typename?: "Timetable";
@@ -71,13 +78,18 @@ export type Term = {
   __typename?: "Term";
   id: Scalars["Int"];
   index: Scalars["Int"];
-  type: Scalars["String"];
+  type: TermType;
   year: Scalars["Int"];
   startDate: Scalars["DateTime"];
   endDate: Scalars["DateTime"];
   weekNames: Array<Scalars["String"]>;
   timetables: Array<Timetable>;
 };
+
+export enum TermType {
+  Semester = "Semester",
+  Trimester = "Trimester"
+}
 
 
 export type SessionStream = {
@@ -157,41 +169,23 @@ export type Preference = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  addTerm: SingleTermResponse;
-  deleteTerms: MultipleTermResponse;
+  addTerm: Term;
+  deleteTerms: Array<Term>;
 };
 
 
 export type MutationAddTermArgs = {
   index: Scalars["Float"];
-  type: Scalars["String"];
+  type: TermType;
   year: Scalars["Float"];
   startDate: Scalars["DateTime"];
   endDate: Scalars["DateTime"];
-  breakWeeks: Array<Scalars["Int"]>;
+  weekNames: Array<Scalars["String"]>;
 };
 
 
 export type MutationDeleteTermsArgs = {
   id: Array<Scalars["Int"]>;
-};
-
-export type SingleTermResponse = {
-  __typename?: "SingleTermResponse";
-  error?: Maybe<ErrorType>;
-  item?: Maybe<Term>;
-};
-
-export type ErrorType = {
-  __typename?: "ErrorType";
-  name: Scalars["String"];
-  message: Scalars["String"];
-};
-
-export type MultipleTermResponse = {
-  __typename?: "MultipleTermResponse";
-  error?: Maybe<ErrorType>;
-  items?: Maybe<Array<Term>>;
 };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;

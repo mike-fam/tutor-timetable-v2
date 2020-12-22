@@ -7,7 +7,7 @@ import { IsoDay, StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
 import React from "react";
-import { Map } from "immutable";
+import { Set } from "immutable";
 import { TimetableState } from "../types/timetable";
 
 /**
@@ -105,11 +105,11 @@ export const getClashedRanges = (
 };
 
 export const TimetableContext = React.createContext<TimetableState>({
-    week: 1,
-    courses: [],
-    chosenTerm: "",
-    terms: Map(),
-    displayedDays: [
+    chosenWeek: 1,
+    courseIds: Set<number>(),
+    chosenTerm: 1,
+    terms: Set<number>(),
+    displayedDays: Set([
         IsoDay.Mon,
         IsoDay.Tue,
         IsoDay.Wed,
@@ -117,9 +117,9 @@ export const TimetableContext = React.createContext<TimetableState>({
         IsoDay.Fri,
         IsoDay.Sat,
         IsoDay.Sun,
-    ],
-    setWeek: () => {},
+    ]),
+    chooseWeek: () => {},
     setCourses: () => {},
-    setTerm: () => {},
+    chooseTerm: () => {},
     setDisplayedDays: () => {},
 });

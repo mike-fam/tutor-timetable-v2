@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Dropdown } from "../components/Dropdown";
-import { TimetableContext } from "../utils/timetable";
-import { TimetableState } from "../types/timetable";
 
 type Props = {};
 
-export const TermSelectContainer: React.FC<Props> = ({}) => {
-    const { terms, setTerm } = useContext<TimetableState>(TimetableContext);
-    return <Dropdown>{["test", "test"]}</Dropdown>;
+export const TermSelectContainer: React.FC<Props> = () => {
+    return (
+        <Dropdown onChange={(e) => console.log(e.target)}>
+            {["test", "test"]}
+        </Dropdown>
+    );
 };

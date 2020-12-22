@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { AppRouter } from "./AppRouter";
 import {
-    ApolloCache,
     ApolloClient,
+    ApolloError,
     ApolloProvider,
     InMemoryCache,
 } from "@apollo/client";
+import { ErrorContext } from "./utils/errors";
+import { useToast } from "@chakra-ui/react";
 
 const client = new ApolloClient({
     uri: `http://localhost:${process.env.PORT || 5000}/graphql`,
@@ -13,10 +15,25 @@ const client = new ApolloClient({
 });
 
 export const App: React.FunctionComponent<{}> = () => {
-    return (
-        <ApolloProvider client={client}>
-            <AppRouter />
-        </ApolloProvider>
+    const toast = useToast({});
+    const addError = useCallback(
+        (error: ApolloError) => {
+            toast({
+                title: error.name,
+                description: error.message,
+                position: "bottom",
+                status: "error",
+                isClosable: true,
+                duration: 9000,
+            });
+        },
+        [toast]
     );
-    // return <div>hello</div>;
+    return (
+        <ErrorContext.Provider value={{ addError }}>
+            <ApolloProvider client={client}>
+                <AppRouter />
+            </ApolloProvider>
+        </ErrorContext.Provider>
+    );
 };
