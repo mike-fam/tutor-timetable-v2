@@ -105,10 +105,9 @@ export const getClashedRanges = (
 };
 
 export const TimetableContext = React.createContext<TimetableState>({
-    chosenWeek: 1,
-    courseIds: Set<number>(),
+    chosenWeek: 0,
+    chosenCourses: Set<number>(),
     chosenTerm: 1,
-    terms: Set<number>(),
     displayedDays: Set([
         IsoDay.Mon,
         IsoDay.Tue,
@@ -119,7 +118,7 @@ export const TimetableContext = React.createContext<TimetableState>({
         IsoDay.Sun,
     ]),
     chooseWeek: () => {},
-    setCourses: () => {},
+    setChosenCourses: () => {},
     chooseTerm: () => {},
     setDisplayedDays: () => {},
 });

@@ -2,13 +2,6 @@ query Me {
     me {
         username
         name
-        courseStaffs {
-            timetable {
-                course {
-                    id
-                    code
-                }
-            }
-        }
+        email
     }
 }

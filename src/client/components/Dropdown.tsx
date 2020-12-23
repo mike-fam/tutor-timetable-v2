@@ -1,14 +1,16 @@
 import React, { SelectHTMLAttributes } from "react";
 import { Select } from "@chakra-ui/react";
+import { Map } from "immutable";
+import entries from "lodash/entries";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> & {
-    children: string[];
+    options: Map<number, string>;
     size?: string;
     noDefault?: boolean;
 };
 
 export const Dropdown: React.FunctionComponent<Props> = ({
-    children,
+    options,
     noDefault = true,
     ...props
 }) => {
@@ -19,9 +21,9 @@ export const Dropdown: React.FunctionComponent<Props> = ({
                     Select a value
                 </option>
             ) : null}
-            {children.map((option, index) => (
-                <option key={index} value={option}>
-                    {option}
+            {options.toArray().map(([id, optionString]) => (
+                <option key={id} value={id}>
+                    {optionString}
                 </option>
             ))}
         </Select>

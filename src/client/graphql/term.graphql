@@ -3,6 +3,7 @@ query Terms {
         id
         type
         index
+        year
         startDate
         endDate
         weekNames
