@@ -1,9 +1,11 @@
+import { Box, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 
 export const RequestItem: React.FunctionComponent = () => {
     return (
-        <div>
-            <h2>This is a request item</h2>
-        </div>
+        <Box>
+            <Heading size="md">Request Title</Heading>
+            <Text>Requestor name, status, session</Text>
+        </Box>
     );
 };
