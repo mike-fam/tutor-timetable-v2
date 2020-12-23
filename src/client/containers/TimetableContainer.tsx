@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import { SessionType, Timetable } from "../components/timetable/Timetable";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";

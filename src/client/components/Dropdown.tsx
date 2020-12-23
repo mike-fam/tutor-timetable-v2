@@ -1,7 +1,6 @@
 import React, { SelectHTMLAttributes } from "react";
 import { Select } from "@chakra-ui/react";
 import { Map } from "immutable";
-import entries from "lodash/entries";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> & {
     options: Map<number, string>;

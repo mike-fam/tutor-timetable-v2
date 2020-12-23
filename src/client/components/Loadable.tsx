@@ -1,4 +1,4 @@
-import { Spinner, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import React, { ReactElement, useEffect } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
 

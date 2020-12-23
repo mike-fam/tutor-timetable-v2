@@ -1,4 +1,4 @@
-import { ApolloError, QueryHookOptions, QueryResult } from "@apollo/client";
+import { QueryHookOptions, QueryResult } from "@apollo/client";
 import { Exact } from "../generated/graphql";
 import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";

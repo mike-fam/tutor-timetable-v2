@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Term, useMyCoursesQuery, useTermsQuery } from "../generated/graphql";
-import { ErrorContext } from "../utils/errors";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
 import startOfISOWeek from "date-fns/startOfISOWeek";
@@ -22,7 +21,6 @@ import { parseISO } from "date-fns";
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
-    const { addError } = useContext(ErrorContext);
     const [chosenTerm, setChosenTerm] = useState(-1);
     const [chosenWeek, setChosenWeek] = useState(0);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
