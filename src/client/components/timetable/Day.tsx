@@ -41,10 +41,9 @@ export const Day: React.FunctionComponent<Props> = ({
         [sessions]
     );
     return (
-        // + 1 for Day Heading
         <Grid
             templateRows={`${firstLineHeight}px repeat(${
-                endTime - startTime + 1
+                endTime - startTime
             }, ${timeSlotHeight}px)`}
             gap={gap}
             pos="relative"
