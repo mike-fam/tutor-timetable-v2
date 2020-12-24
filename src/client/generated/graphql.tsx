@@ -1,6 +1,5 @@
-import * as Apollo from "@apollo/client";
 import { gql } from "@apollo/client";
-
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
     [K in keyof T]: T[K];
@@ -80,7 +79,6 @@ export type Course = {
 export type Term = {
     __typename?: "Term";
     id: Scalars["Int"];
-    index: Scalars["Int"];
     type: TermType;
     year: Scalars["Int"];
     startDate: Scalars["DateTime"];
@@ -90,8 +88,12 @@ export type Term = {
 };
 
 export enum TermType {
-    Semester = "Semester",
-    Trimester = "Trimester",
+    Semester1 = "Semester1",
+    Semester2 = "Semester2",
+    SummerSemester = "SummerSemester",
+    Trimester1 = "Trimester1",
+    Trimester2 = "Trimester2",
+    Trimester3 = "Trimester3",
 }
 
 export type SessionStream = {
@@ -176,7 +178,6 @@ export type Mutation = {
 };
 
 export type MutationAddTermArgs = {
-    index: Scalars["Float"];
     type: TermType;
     year: Scalars["Float"];
     startDate: Scalars["DateTime"];
@@ -225,13 +226,7 @@ export type TermsQuery = { __typename?: "Query" } & {
     terms: Array<
         { __typename?: "Term" } & Pick<
             Term,
-            | "id"
-            | "type"
-            | "index"
-            | "year"
-            | "startDate"
-            | "endDate"
-            | "weekNames"
+            "id" | "type" | "year" | "startDate" | "endDate" | "weekNames"
         >
     >;
 };
@@ -265,7 +260,6 @@ export function useHelloQuery(
         baseOptions
     );
 }
-
 export function useHelloLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>
 ) {
@@ -274,7 +268,6 @@ export function useHelloLazyQuery(
         baseOptions
     );
 }
-
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<
@@ -311,7 +304,6 @@ export function useMeQuery(
 ) {
     return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
 }
-
 export function useMeLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
 ) {
@@ -320,7 +312,6 @@ export function useMeLazyQuery(
         baseOptions
     );
 }
-
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
@@ -366,7 +357,6 @@ export function useMyCoursesQuery(
         baseOptions
     );
 }
-
 export function useMyCoursesLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyCoursesQuery,
@@ -378,7 +368,6 @@ export function useMyCoursesLazyQuery(
         baseOptions
     );
 }
-
 export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
 export type MyCoursesLazyQueryHookResult = ReturnType<
     typeof useMyCoursesLazyQuery
@@ -392,7 +381,6 @@ export const TermsDocument = gql`
         terms {
             id
             type
-            index
             year
             startDate
             endDate
@@ -424,7 +412,6 @@ export function useTermsQuery(
         baseOptions
     );
 }
-
 export function useTermsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<TermsQuery, TermsQueryVariables>
 ) {
@@ -433,7 +420,6 @@ export function useTermsLazyQuery(
         baseOptions
     );
 }
-
 export type TermsQueryHookResult = ReturnType<typeof useTermsQuery>;
 export type TermsLazyQueryHookResult = ReturnType<typeof useTermsLazyQuery>;
 export type TermsQueryResult = Apollo.QueryResult<

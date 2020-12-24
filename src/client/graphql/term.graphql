@@ -2,7 +2,6 @@ query Terms {
     terms {
         id
         type
-        index
         year
         startDate
         endDate

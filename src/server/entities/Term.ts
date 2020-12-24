@@ -15,15 +15,11 @@ import { TermType } from "../../types/term";
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(TermType, "type"))
-@Unique(["index", "type", "year"])
+@Unique(["type", "year"])
 export class Term extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Field(() => Int)
-    @Column()
-    index: number;
 
     @Field(() => TermType)
     @Column("varchar", { length: 20 })

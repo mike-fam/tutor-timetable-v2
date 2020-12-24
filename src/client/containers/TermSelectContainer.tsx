@@ -4,6 +4,7 @@ import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/Loadable";
 import { Map } from "immutable";
 import { TimetableContext } from "../utils/timetable";
+import { sentenceCase } from "change-case";
 
 type Props = {};
 
@@ -19,7 +20,7 @@ export const TermSelectContainer: React.FC<Props> = () => {
             setTermsMap((termsMap) =>
                 termsMap.set(
                     term.id,
-                    `${term.type} ${term.index}, ${term.year}`
+                    `${sentenceCase(term.type)}, ${term.year}`
                 )
             );
         }

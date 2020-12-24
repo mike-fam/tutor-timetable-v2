@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Term, useMyCoursesQuery, useTermsQuery } from "../generated/graphql";
+import { useMyCoursesQuery, useTermsQuery } from "../generated/graphql";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
 import startOfISOWeek from "date-fns/startOfISOWeek";
-import differenceInWeeks from "date-fns/differenceInWeeks";
 import maxBy from "lodash/maxBy";
 import { Wrapper } from "../components/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
@@ -12,17 +11,17 @@ import { CourseSelectContainer } from "./CourseSelectContainer";
 import { TermSelectContainer } from "./TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
 import { WeekNavContainer } from "./WeekNavContainer";
-import { useErrorQuery } from "../hooks/useErrorQuery";
+import { useQueryWithError } from "../hooks/useQueryWithError";
 import { TimetableContext } from "../utils/timetable";
 import { Set } from "immutable";
 import { IsoDay } from "../../types/date";
-import { parseISO } from "date-fns";
+import { differenceInWeeks, parseISO } from "date-fns";
 
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
     const [chosenTerm, setChosenTerm] = useState(-1);
-    const [chosenWeek, setChosenWeek] = useState(0);
+    const [chosenWeek, setChosenWeek] = useState(-1);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
     const [displayedDays, setDisplayedDays] = useState(
         Set([
@@ -35,20 +34,19 @@ export const TimetablePageContainer: React.FC<Props> = () => {
             IsoDay.Sun,
         ])
     );
-    const { data: termsData, loading: termsLoading } = useErrorQuery(
+    const { data: termsData, loading: termsLoading } = useQueryWithError(
         useTermsQuery
     );
-    const { data: myCoursesData, loading: myCoursesLoading } = useErrorQuery(
-        useMyCoursesQuery
-    );
+    const {
+        data: myCoursesData,
+        loading: myCoursesLoading,
+    } = useQueryWithError(useMyCoursesQuery);
     useEffect(() => {
         // Loading
         if (myCoursesLoading || termsLoading) {
             return;
         }
         const today = new Date();
-        let foundTerm = false;
-        let chosenTerm: Omit<Term, "timetables"> | null = null;
         // possibly an error happened
         if (!termsData) {
             return;
@@ -60,11 +58,8 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         if (termsData.terms.length === 0) {
             return;
         }
-        // No courses data
-        if (!myCoursesData.me || myCoursesData.me.courseStaffs.length === 0) {
-            return;
-        }
-        console.log(termsData.terms);
+        let foundTerm = false;
+        let chosenTermId = -1;
         // Choose current term by default
         for (const term of termsData.terms) {
             if (
@@ -72,22 +67,33 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                 isAfter(today, parseISO(term.startDate))
             ) {
                 setChosenTerm(term.id);
-                chosenTerm = term;
+                console.log("found good term");
                 foundTerm = true;
+                chosenTermId = term.id;
                 break;
             }
         }
         // no suitable term, set chosen term to the latest.
         if (!foundTerm) {
+            console.log(
+                "not found term",
+                maxBy(termsData.terms, (term) => term.startDate)!.id
+            );
             setChosenTerm(maxBy(termsData.terms, (term) => term.startDate)!.id);
         } else {
             // choose current week if current term found
+            const startDate = parseISO(termsData.terms[chosenTermId].startDate);
+            const endDate = parseISO(termsData.terms[chosenTermId].endDate);
+            // Choose current week if possible, otherwise choose "All weeks"
             setChosenWeek(
-                differenceInWeeks(
-                    startOfISOWeek(today),
-                    parseISO(chosenTerm!.startDate)
-                )
+                startDate < today && today < endDate
+                    ? differenceInWeeks(startOfISOWeek(today), startDate)
+                    : -1
             );
+        }
+        // No courses data
+        if (!myCoursesData.me || myCoursesData.me.courseStaffs.length === 0) {
+            return;
         }
         for (const courseStaff of myCoursesData.me.courseStaffs) {
             setChosenCourses((prev) =>
@@ -105,7 +111,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
             ) : (
                 <TimetableContext.Provider
                     value={{
-                        chosenTerm,
+                        chosenTermId: chosenTerm,
                         chooseTerm: setChosenTerm,
                         chosenWeek,
                         chooseWeek: setChosenWeek,

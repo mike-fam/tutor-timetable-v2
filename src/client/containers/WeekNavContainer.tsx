@@ -1,15 +1,47 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { WeekNav } from "../components/WeekNav";
+import { Term, useTermsQuery } from "../generated/graphql";
+import { useQueryWithError } from "../hooks/useQueryWithError";
+import { TimetableContext } from "../utils/timetable";
+import differenceInWeeks from "date-fns/differenceInWeeks";
+import parseISO from "date-fns/parseISO";
+import { Map } from "immutable";
 
 type Props = {};
 
 // Placeholder data
 export const WeekNavContainer: React.FunctionComponent<Props> = () => {
-    const weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-
+    const { chosenTermId, chosenWeek, chooseWeek } = useContext(
+        TimetableContext
+    );
+    const { data, loading } = useQueryWithError(useTermsQuery);
+    const [weeksNum, setWeeksNum] = useState(0);
+    const [termMap, setTermMap] = useState(
+        Map<number, Omit<Term, "timetables">>()
+    );
+    useEffect(() => {
+        if (loading || !data) {
+            console.log("failed");
+            return;
+        }
+        data.terms.forEach((term) => {
+            setTermMap((prev) => prev.set(term.id, term));
+        });
+        const chosenTerm = termMap.get(chosenTermId);
+        if (!chosenTerm) {
+            return;
+        }
+        const { startDate, endDate } = chosenTerm;
+        setWeeksNum(
+            differenceInWeeks(parseISO(endDate), parseISO(startDate)) + 1
+        );
+    }, [loading, data, chosenTermId, termMap]);
     return (
-        <div>
-            <WeekNav numOfWeeks={weeks} />
-        </div>
+        <WeekNav
+            weeksNum={weeksNum}
+            chooseWeek={chooseWeek}
+            chosenWeek={chosenWeek}
+            weekNames={termMap.get(chosenTermId)?.weekNames || []}
+        />
     );
 };

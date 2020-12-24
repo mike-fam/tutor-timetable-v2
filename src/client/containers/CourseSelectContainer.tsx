@@ -2,14 +2,14 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { CourseSelect } from "../components/CourseSelect";
 import { Map } from "immutable";
 import { useMyCoursesQuery } from "../generated/graphql";
-import { useErrorQuery } from "../hooks/useErrorQuery";
+import { useQueryWithError } from "../hooks/useQueryWithError";
 import { TimetableContext } from "../utils/timetable";
 import { Loadable } from "../components/Loadable";
 
 type Props = {};
 
 export const CourseSelectContainer: React.FunctionComponent<Props> = () => {
-    const { data, loading } = useErrorQuery(useMyCoursesQuery);
+    const { data, loading } = useQueryWithError(useMyCoursesQuery);
     const [courses, setCourses] = useState(Map<number, string>());
     useEffect(() => {
         if (loading) {

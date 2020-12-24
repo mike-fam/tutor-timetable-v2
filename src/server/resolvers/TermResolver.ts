@@ -13,9 +13,6 @@ import { TermType } from "../../types/term";
 
 @ArgsType()
 class TermArgs {
-    @Field()
-    index: number;
-
     @Field(() => TermType)
     type: TermType;
 

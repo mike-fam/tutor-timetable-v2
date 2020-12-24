@@ -3,7 +3,7 @@ import { Exact } from "../generated/graphql";
 import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";
 
-export const useErrorQuery = <T>(
+export const useQueryWithError = <T>(
     useApolloQuery: (
         baseOptions?:
             | QueryHookOptions<T, Exact<{ [p: string]: never }>>
