@@ -1,11 +1,23 @@
-import { Box, Center, Heading, HStack } from "@chakra-ui/react";
+import {
+    Box,
+    Center,
+    Checkbox,
+    Divider,
+    Heading,
+    HStack,
+    Stack,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Tooltip,
+} from "@chakra-ui/react";
 import React from "react";
-import { RequestItem } from "./RequestItem";
+import { RequestList } from "./RequestList";
 import { RequestOptions } from "./RequestOptions";
 
 export const Requests: React.FunctionComponent = () => {
-    const listTest = [1, 2, 3, 4, 5, 6, 7];
-
     return (
         <Box>
             <Center>
@@ -14,19 +26,59 @@ export const Requests: React.FunctionComponent = () => {
             {/* Each request item opens a modal */}
             <HStack spacing={8} style={{ marginLeft: "10%" }}>
                 <Box w="75%" h="100%" bg="tomato">
-                    {listTest.map((item, index) => (
-                        <>
-                            <RequestItem key={index} />
-                            <br></br>
-                        </>
-                    ))}
+                    <Tabs>
+                        <TabList>
+                            <Tab>Open Requests</Tab>
+                            <Tab>Your Requests</Tab>
+                        </TabList>
+
+                        <TabPanels>
+                            <TabPanel>
+                                <RequestList type={"open"} />
+                            </TabPanel>
+                            <TabPanel>
+                                <RequestList type={"personal"} />
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
                 </Box>
-                <Box w="15%">
+
+                <Stack w="15%">
                     <Center>
                         <h1>options</h1>
                     </Center>
-                    <RequestOptions />
-                </Box>
+                    <Box>
+                        <RequestOptions />
+                    </Box>
+                    <Divider></Divider>
+                    <Box>
+                        <Center>filters</Center>
+                        <Center>
+                            <Stack>
+                                <Checkbox>
+                                    <Tooltip label="Display swapping requests">
+                                        Swap
+                                    </Tooltip>
+                                </Checkbox>
+                                <Checkbox>
+                                    <Tooltip label="Display covering requests">
+                                        Cover
+                                    </Tooltip>
+                                </Checkbox>
+                                <Checkbox>
+                                    <Tooltip label="Display permanent requests">
+                                        Permanent
+                                    </Tooltip>
+                                </Checkbox>
+                                <Checkbox>
+                                    <Tooltip label="Display temporary requests">
+                                        Temporary
+                                    </Tooltip>
+                                </Checkbox>
+                            </Stack>
+                        </Center>
+                    </Box>
+                </Stack>
             </HStack>
         </Box>
     );
