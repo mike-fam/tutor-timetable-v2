@@ -14,6 +14,7 @@ import { User } from "./entities/User";
 import { MyContext } from "../types/context";
 import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";
+import { CourseStaffResolver } from "./resolvers/CourseStaffResolver";
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, UserResolver, TermResolver],
+            resolvers: [HelloResolver, UserResolver, TermResolver, CourseStaffResolver],
             dateScalarMode: "isoDate",
         }),
         context: ({ req, res }): MyContext => ({ req, res }),

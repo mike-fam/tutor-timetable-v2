@@ -39,6 +39,10 @@ export class CourseStaff extends BaseEntity {
     @ManyToOne(() => User, (user) => user.courseStaffs)
     user: User;
 
+    @Field()
+    @Column()
+    userUsername: string;
+
     @Field(() => Preference, { nullable: true })
     @OneToOne(() => Preference, (preference) => preference.courseStaff, {
         nullable: true,
