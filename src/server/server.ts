@@ -10,11 +10,12 @@ import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
-import { User } from "./entities/User";
+import { User } from "./entities";
 import { MyContext } from "../types/context";
 import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";
 import { CourseStaffResolver } from "./resolvers/CourseStaffResolver";
+import cors from "cors";
 
 dotenv.config();
 
@@ -33,6 +34,10 @@ const main = async () => {
 
     // Automatically serve the index.html file from the build folder
     app.set("trust proxy", "loopback");
+    app.use(cors({
+        credentials: true,
+        origin: process.env.CORS_ORIGIN
+    }));
     app.use("/", express.static("build/client"));
 
     app.get("/hello", (_, res) => {

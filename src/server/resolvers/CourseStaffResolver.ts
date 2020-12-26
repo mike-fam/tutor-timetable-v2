@@ -9,7 +9,7 @@ export class CourseStaffResolver {
         @Arg("courseId") courseId: number,
         @Arg("username") username: string,
         @Arg("termId") termId: number,
-        @Arg("role", () => Role) role: Role,
+        @Arg("role", () => Role) role: Role
     ): Promise<CourseStaff> {
         const timetable = await Timetable.findOneOrFail({ courseId, termId });
         const newCourseStaff = await CourseStaff.create({
