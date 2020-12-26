@@ -24,6 +24,7 @@ export { Course } from "./Course";
 export { CourseStaff } from "./CourseStaff";
 export { Preference } from "./Preference";
 export { Session } from "./Session";
+export {SessionStream} from "./SessionStream";
 export { SessionAllocation } from "./SessionAllocation";
 export { StaffRequest } from "./StaffRequest";
 export { StreamAllocation } from "./StreamAllocation";

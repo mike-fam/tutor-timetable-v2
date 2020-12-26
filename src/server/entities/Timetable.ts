@@ -30,7 +30,7 @@ export class Timetable extends BaseEntity {
     courseId: number;
 
     @Field(() => Term)
-    @ManyToOne(() => Term, (term) => term.timetables)
+    @ManyToOne(() => Term, (term) => term.timetables, {eager: true})
     term: Term;
 
     @Field(() => Int)

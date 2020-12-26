@@ -16,6 +16,9 @@ import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";
 import { CourseStaffResolver } from "./resolvers/CourseStaffResolver";
 import cors from "cors";
+import { SessionStreamResolver } from "./resolvers/SessionStreamResolver";
+import { TimetableResolver } from "./resolvers/TimetableResolver";
+import { SessionResolver } from "./resolvers/SessionResolver";
 
 dotenv.config();
 
@@ -48,7 +51,7 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, UserResolver, TermResolver, CourseStaffResolver],
+            resolvers: [HelloResolver, UserResolver, TermResolver, CourseStaffResolver, SessionStreamResolver, TimetableResolver, SessionResolver],
             dateScalarMode: "isoDate",
         }),
         context: ({ req, res }): MyContext => ({ req, res }),

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../entities/User";
+import { User } from "../entities";
 
 type KVD = {
     email?: string;

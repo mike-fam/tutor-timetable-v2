@@ -30,6 +30,10 @@ export class SessionStream extends BaseEntity {
     @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams)
     timetable: Timetable;
 
+    @Field(() => Int)
+    @Column()
+    timetableId: number
+
     @Field()
     @Column("varchar", { length: 32 })
     name: string;
@@ -50,7 +54,7 @@ export class SessionStream extends BaseEntity {
     @Column("float")
     endTime: number;
 
-    @Field(() => Int)
+    @Field(() => [Int])
     @Column("int", { array: true })
     weeks: Array<number>;
 

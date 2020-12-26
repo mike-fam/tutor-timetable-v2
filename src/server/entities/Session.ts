@@ -19,7 +19,7 @@ export class Session extends BaseEntity {
     id: number;
 
     @Field(() => SessionStream)
-    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions)
+    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {eager: true})
     sessionStream: SessionStream;
 
     @Field()
