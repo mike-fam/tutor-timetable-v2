@@ -31,17 +31,26 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                     )}
                 </ModalHeader>
                 <ModalCloseButton />
-                <ModalBody pb={6}>test</ModalBody>
+                <ModalBody pb={6}>
+                    {props.type === "open" ? (
+                        <div>open request body</div>
+                    ) : (
+                        <div>create new request body</div>
+                    )}
+                </ModalBody>
 
                 <ModalFooter>
-                    {props.userType === "student" ? (
-                        <Button>apply</Button>
-                    ) : (
+                    {props.userType === "staff" && props.type === "open" ? (
                         <>
                             <Button>Approve</Button>
                             <Button>Revoke</Button>
                         </>
-                    )}
+                    ) : null}
+                    {props.userType === "student" && props.type === "open" ? (
+                        <>
+                            <Button>Apply</Button>
+                        </>
+                    ) : null}
                     <Button onClick={() => props.toggle(false)}>Cancel</Button>
                 </ModalFooter>
             </ModalContent>

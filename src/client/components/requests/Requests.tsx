@@ -77,7 +77,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                         <h1>options</h1>
                     </Center>
                     <Box>
-                        <RequestOptions />
+                        <RequestOptions toggle={openRequestModal} />
                     </Box>
                     <Divider></Divider>
                     <Box>
