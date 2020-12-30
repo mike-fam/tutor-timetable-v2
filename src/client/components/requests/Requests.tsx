@@ -15,11 +15,31 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { RequestList } from "./RequestList";
+import { RequestModal } from "./RequestModal";
 import { RequestOptions } from "./RequestOptions";
 
-export const Requests: React.FunctionComponent = () => {
+// Enforce typing later.
+type Props = {
+    userType: string;
+};
+
+export const Requests: React.FunctionComponent<Props> = (props: Props) => {
+    const [modalToggle, setModalToggle] = React.useState<boolean>(false);
+    const [modalType, setModalType] = React.useState<string>("");
+
+    const openRequestModal = (type: string) => {
+        setModalType(type);
+        setModalToggle(true);
+    };
+
     return (
         <Box>
+            <RequestModal
+                isOpen={modalToggle}
+                toggle={setModalToggle}
+                userType={props.userType}
+                type={modalType}
+            />
             <Center>
                 <Heading>Request a swap</Heading>
             </Center>
@@ -33,11 +53,20 @@ export const Requests: React.FunctionComponent = () => {
                         </TabList>
 
                         <TabPanels>
+                            {/* will likely use state management for these tabs later. */}
                             <TabPanel>
-                                <RequestList type={"open"} />
+                                <RequestList
+                                    type={"open"}
+                                    toggle={openRequestModal}
+                                    userType={props.userType}
+                                />
                             </TabPanel>
                             <TabPanel>
-                                <RequestList type={"personal"} />
+                                <RequestList
+                                    type={"personal"}
+                                    toggle={openRequestModal}
+                                    userType={props.userType}
+                                />
                             </TabPanel>
                         </TabPanels>
                     </Tabs>
@@ -52,6 +81,7 @@ export const Requests: React.FunctionComponent = () => {
                     </Box>
                     <Divider></Divider>
                     <Box>
+                        {/* maybe put this into its own component */}
                         <Center>filters</Center>
                         <Center>
                             <Stack>
