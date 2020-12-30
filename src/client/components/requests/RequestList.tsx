@@ -7,24 +7,19 @@ type Props = {
     type: string;
     // modal stuff.
     toggle: Function;
-    // Proper types will come later.
-    userType: string;
 };
 
+// Will likely rewrite this component later when filters are implemented.
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
     const openList = [0, 1, 2, 3, 4, 5];
     const personalList = [0, 1, 2];
 
-    const viewRequest = () => {
-        props.toggle("open");
-    };
-
     return (
         <div>
-            {props.type === "open" ? (
+            {props.type === "all" ? (
                 <div>
                     {openList.map((item, index) => (
-                        <div onClick={() => viewRequest()}>
+                        <div onClick={() => props.toggle("open")}>
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
                         </div>
@@ -33,7 +28,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
             ) : (
                 <div>
                     {personalList.map((item, index) => (
-                        <div onClick={() => viewRequest()}>
+                        <div onClick={() => props.toggle("open")}>
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
                         </div>

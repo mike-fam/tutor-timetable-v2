@@ -15,31 +15,16 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { RequestList } from "./RequestList";
-import { RequestModal } from "./RequestModal";
 import { RequestOptions } from "./RequestOptions";
 
 // Enforce typing later.
 type Props = {
-    userType: string;
+    toggleModal: Function;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
-    const [modalToggle, setModalToggle] = React.useState<boolean>(false);
-    const [modalType, setModalType] = React.useState<string>("");
-
-    const openRequestModal = (type: string) => {
-        setModalType(type);
-        setModalToggle(true);
-    };
-
     return (
         <Box>
-            <RequestModal
-                isOpen={modalToggle}
-                toggle={setModalToggle}
-                userType={props.userType}
-                type={modalType}
-            />
             <Center>
                 <Heading>Request a swap</Heading>
             </Center>
@@ -56,16 +41,14 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                             {/* will likely use state management for these tabs later. */}
                             <TabPanel>
                                 <RequestList
-                                    type={"open"}
-                                    toggle={openRequestModal}
-                                    userType={props.userType}
+                                    type={"all"}
+                                    toggle={props.toggleModal}
                                 />
                             </TabPanel>
                             <TabPanel>
                                 <RequestList
                                     type={"personal"}
-                                    toggle={openRequestModal}
-                                    userType={props.userType}
+                                    toggle={props.toggleModal}
                                 />
                             </TabPanel>
                         </TabPanels>
@@ -77,7 +60,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                         <h1>options</h1>
                     </Center>
                     <Box>
-                        <RequestOptions toggle={openRequestModal} />
+                        <RequestOptions toggle={props.toggleModal} />
                     </Box>
                     <Divider></Divider>
                     <Box>
