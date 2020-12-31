@@ -18,7 +18,6 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     const openRequestModal = (type: string) => {
         setModalType(type);
-        console.log(modalType);
         setModalToggle(true);
     };
 
