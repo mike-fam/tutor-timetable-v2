@@ -17,7 +17,6 @@ import React from "react";
 import { RequestList } from "./RequestList";
 import { RequestOptions } from "./RequestOptions";
 
-// Enforce typing later.
 type Props = {
     toggleModal: Function;
 };
@@ -64,7 +63,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                     </Box>
                     <Divider></Divider>
                     <Box>
-                        {/* maybe put this into its own component */}
+                        {/* maybe put filters into its own component */}
                         <Center>filters</Center>
                         <Center>
                             <Stack>

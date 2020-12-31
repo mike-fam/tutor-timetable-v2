@@ -19,7 +19,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
             {props.type === "all" ? (
                 <div>
                     {openList.map((item, index) => (
-                        <div onClick={() => props.toggle("open")}>
+                        <div onClick={() => props.toggle("open")} key={index}>
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
                         </div>
@@ -28,7 +28,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
             ) : (
                 <div>
                     {personalList.map((item, index) => (
-                        <div onClick={() => props.toggle("open")}>
+                        <div onClick={() => props.toggle("open")} key={index}>
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
                         </div>
