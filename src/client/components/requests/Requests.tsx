@@ -1,7 +1,6 @@
 import {
     Box,
     Center,
-    Checkbox,
     Divider,
     Heading,
     HStack,
@@ -11,14 +10,15 @@ import {
     TabPanel,
     TabPanels,
     Tabs,
-    Tooltip,
 } from "@chakra-ui/react";
 import React from "react";
+import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
 import { RequestOptions } from "./RequestOptions";
 
 type Props = {
     toggleModal: Function;
+    toggleFilters: Function;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
@@ -63,32 +63,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                     </Box>
                     <Divider></Divider>
                     <Box>
-                        {/* maybe put filters into its own component */}
-                        <Center>filters</Center>
-                        <Center>
-                            <Stack>
-                                <Checkbox>
-                                    <Tooltip label="Display swapping requests">
-                                        Swap
-                                    </Tooltip>
-                                </Checkbox>
-                                <Checkbox>
-                                    <Tooltip label="Display covering requests">
-                                        Cover
-                                    </Tooltip>
-                                </Checkbox>
-                                <Checkbox>
-                                    <Tooltip label="Display permanent requests">
-                                        Permanent
-                                    </Tooltip>
-                                </Checkbox>
-                                <Checkbox>
-                                    <Tooltip label="Display temporary requests">
-                                        Temporary
-                                    </Tooltip>
-                                </Checkbox>
-                            </Stack>
-                        </Center>
+                        <RequestFilter setFilters={props.toggleFilters} />
                     </Box>
                 </Stack>
             </HStack>
