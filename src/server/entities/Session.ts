@@ -19,7 +19,9 @@ export class Session extends BaseEntity {
     id: number;
 
     @Field(() => SessionStream)
-    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {eager: true})
+    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
+        eager: true,
+    })
     sessionStream: SessionStream;
 
     @Field()
@@ -33,7 +35,8 @@ export class Session extends BaseEntity {
     @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
-        (sessionAllocation) => sessionAllocation.session
+        (sessionAllocation) => sessionAllocation.session,
+        { cascade: ["insert"] }
     )
     sessionAllocations: SessionAllocation[];
 

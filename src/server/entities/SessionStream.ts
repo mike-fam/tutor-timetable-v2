@@ -32,7 +32,7 @@ export class SessionStream extends BaseEntity {
 
     @Field(() => Int)
     @Column()
-    timetableId: number
+    timetableId: number;
 
     @Field()
     @Column("varchar", { length: 32 })
@@ -69,7 +69,8 @@ export class SessionStream extends BaseEntity {
     @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
-        (streamAllocation) => streamAllocation.sessionStream
+        (streamAllocation) => streamAllocation.sessionStream,
+        { eager: true, cascade: ["insert"] }
     )
     streamAllocations: StreamAllocation[];
 }

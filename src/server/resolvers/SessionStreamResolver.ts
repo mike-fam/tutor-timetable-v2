@@ -1,5 +1,10 @@
 import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
-import { SessionStream } from "../entities";
+import {
+    Session,
+    SessionAllocation,
+    SessionStream,
+    StreamAllocation,
+} from "../entities";
 import { getConnection } from "typeorm";
 import { SessionType } from "../../types/session";
 import { IsoDay } from "../../types/date";
@@ -11,12 +16,13 @@ export class SessionStreamResolver {
         @Arg("termId") termId: number,
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<SessionStream[]> {
-        const streams =  await getConnection()
+        const streams = await getConnection()
             .getRepository(SessionStream)
             .createQueryBuilder("sessionStream")
             .innerJoinAndSelect("sessionStream.timetable", "timetable")
             .where("timetable.termId = :termId", { termId })
-            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds }).getMany();
+            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
+            .getMany();
         console.log(streams);
         return streams;
     }
@@ -32,6 +38,82 @@ export class SessionStreamResolver {
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("location") location: string
     ): Promise<SessionStream> {
-        return await SessionStream.create({timetableId, name, type, day, startTime, endTime, weeks, location}).save();
+        return await SessionStream.create({
+            timetableId,
+            name,
+            type,
+            day,
+            startTime,
+            endTime,
+            weeks,
+            location,
+        }).save();
+    }
+
+    @Mutation(() => SessionStream)
+    async addStreamStaff(
+        @Arg("streamId") streamId: number,
+        @Arg("newStaffs", () => [String]) newStaffs: string[]
+    ): Promise<SessionStream> {
+        const stream = await SessionStream.findOneOrFail({ id: streamId });
+        console.log(newStaffs);
+        for (const username of newStaffs) {
+            if (
+                stream.streamAllocations.some(
+                    (allocation) => allocation.userUsername === username
+                )
+            ) {
+                continue;
+            }
+            stream.streamAllocations = [
+                ...stream.streamAllocations,
+                StreamAllocation.create({ userUsername: username }),
+            ];
+        }
+        console.log(stream);
+        await stream.save();
+        return stream;
+    }
+
+    @Mutation(() => Boolean)
+    async generateSessions(
+        @Arg("sessionStreamId") sessionStreamId: number
+    ): Promise<boolean> {
+        const stream = await SessionStream.findOne({
+            id: sessionStreamId,
+        });
+        if (!stream) {
+            return false;
+        }
+        console.log(stream);
+        const sessions = Session.create(
+            stream.weeks.map((week) => ({
+                week,
+                location: stream.location,
+                sessionStream: stream,
+                sessionAllocations: SessionAllocation.create(
+                    stream.streamAllocations.map((allocation) => ({
+                        user: allocation.user,
+                    }))
+                ),
+            }))
+        );
+        console.log(sessions);
+        return true;
+        // const sessions = await getConnection()
+        //     .getRepository(Session)
+        //     .createQueryBuilder()
+        //     .insert()
+        //     .values(
+        //         stream.weeks.map((week) => {
+        //             return {
+        //                 week,
+        //                 location: stream.location,
+        //                 sessionStream: stream,
+        //             };
+        //         })
+        //     )
+        //     .returning("*")
+        //     .execute();
     }
 }

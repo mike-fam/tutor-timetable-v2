@@ -39,7 +39,6 @@ export default {
             : "src/server/migrations/*.ts",
     ],
     logging: !__prod__ && ["error", "schema", "warn", "query"],
-    validate: false, // TODO: validate classes
     cli: {
         migrationsDir: "src/server/migrations",
     },

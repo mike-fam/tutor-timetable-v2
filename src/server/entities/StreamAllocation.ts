@@ -1,5 +1,6 @@
 import {
     BaseEntity,
+    Column,
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
@@ -27,4 +28,7 @@ export class StreamAllocation extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.streamAllocations)
     user: User;
+
+    @Column()
+    userUsername: string;
 }
