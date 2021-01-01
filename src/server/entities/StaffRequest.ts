@@ -2,6 +2,8 @@ import {
     BaseEntity,
     Column,
     Entity,
+    JoinTable,
+    ManyToMany,
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
@@ -43,4 +45,11 @@ export class StaffRequest extends BaseEntity {
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.requests, { lazy: true })
     session: Lazy<Session>;
+
+    @Field(() => [Session])
+    @ManyToMany(() => Session, (session) => session.preferredSwaps, {
+        lazy: true,
+    })
+    @JoinTable()
+    swapPreference: Lazy<Session[]>;
 }
