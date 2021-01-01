@@ -9,50 +9,68 @@ import {
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { SessionType } from "../../types/session";
-import { checkFieldValueInEnum } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { IsoDay } from "../../types/date";
 import { Session } from "./Session";
 import { StreamAllocation } from "./StreamAllocation";
+import { Field, Int, ObjectType } from "type-graphql";
 
+@ObjectType()
 @Entity()
 // Session type is one of the types specified.
 @Check(checkFieldValueInEnum(SessionType, "type"))
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
 export class SessionStream extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams)
+    @Field(() => Timetable)
+    @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {
+        lazy: true,
+    })
     timetable: Timetable;
 
+    @Field()
     @Column("varchar", { length: 32 })
     name: string;
 
+    @Field(() => SessionType)
     @Column("varchar", { length: 15 })
     type: SessionType;
 
+    @Field(() => IsoDay)
     @Column("int")
     day: IsoDay;
 
+    @Field()
     @Column("float")
     startTime: number;
 
+    @Field()
     @Column("float")
     endTime: number;
 
+    @Field(() => [Int])
     @Column("int", { array: true })
     weeks: Array<number>;
 
+    @Field()
     @Column("varchar", { length: 15 })
     location: string;
 
-    @OneToMany(() => Session, (session) => session.sessionStream)
-    sessions: Session[];
+    @Field(() => Session)
+    @OneToMany(() => Session, (session) => session.sessionStream, {
+        lazy: true,
+    })
+    sessions: Lazy<Session[]>;
 
+    @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
-        (streamAllocation) => streamAllocation.sessionStream
+        (streamAllocation) => streamAllocation.sessionStream,
+        { lazy: true }
     )
-    streamAllocations: StreamAllocation[];
+    streamAllocations: Lazy<StreamAllocation[]>;
 }
