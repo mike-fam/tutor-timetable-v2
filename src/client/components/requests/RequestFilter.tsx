@@ -1,4 +1,4 @@
-import { Center, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
+import { Box, Center, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import React from "react";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 
 export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <div>
+        <Box>
             <Center>filters</Center>
             <Center>
                 <Stack>
@@ -23,6 +23,6 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                     </Checkbox>
                 </Stack>
             </Center>
-        </div>
+        </Box>
     );
 };

@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
 import { DisplayRequestType } from "../../containers/RequestContainer";
 import { RequestModalType } from "./RequestModal";
@@ -17,32 +17,32 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
     const personalList = [0, 1, 2];
 
     return (
-        <div>
+        <Box>
             {props.type === DisplayRequestType.All ? (
-                <div>
+                <Box>
                     {openList.map((item, index) => (
-                        <div
+                        <Box
                             onClick={() => props.toggle(RequestModalType.View)}
                             key={index}
                         >
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
-                        </div>
+                        </Box>
                     ))}
-                </div>
+                </Box>
             ) : (
-                <div>
+                <Box>
                     {personalList.map((item, index) => (
-                        <div
+                        <Box
                             onClick={() => props.toggle(RequestModalType.View)}
                             key={index}
                         >
                             <Heading size="md">Request Title</Heading>
                             <p>Requestor name, status, session</p>
-                        </div>
+                        </Box>
                     ))}
-                </div>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 };
