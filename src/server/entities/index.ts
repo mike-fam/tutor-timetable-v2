@@ -2,6 +2,7 @@ import { registerEnumType } from "type-graphql";
 import { IsoDay } from "../../types/date";
 import { SessionType } from "../../types/session";
 import { Role } from "../../types/user";
+import { RequestStatus, RequestType } from "../../types/request";
 
 registerEnumType(IsoDay, {
     name: "IsoDay",
@@ -13,6 +14,14 @@ registerEnumType(SessionType, {
 
 registerEnumType(Role, {
     name: "Role",
+});
+
+registerEnumType(RequestType, {
+    name: "RequestType",
+});
+
+registerEnumType(RequestStatus, {
+    name: "RequestStatus",
 });
 
 export { Course } from "./Course";
