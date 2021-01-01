@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Role } from "../../../types/user";
+import { CreateRequestForm } from "./CreateRequestForm";
 
 export enum RequestModalType {
     View = "View",
@@ -26,7 +27,11 @@ type Props = {
 
 export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <Modal isOpen={props.isOpen} onClose={() => props.toggle(false)}>
+        <Modal
+            size={"xl"}
+            isOpen={props.isOpen}
+            onClose={() => props.toggle(false)}
+        >
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
@@ -41,11 +46,12 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                     {props.type === RequestModalType.View ? (
                         <div>open request body</div>
                     ) : (
-                        <div>create new request body</div>
+                        <CreateRequestForm />
                     )}
                 </ModalBody>
 
                 <ModalFooter>
+                    <Button onClick={() => props.toggle(false)}>Cancel</Button>
                     {props.userType === Role.CourseCoordinator &&
                     props.type === RequestModalType.View ? (
                         <>
@@ -59,7 +65,11 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                             <Button>Apply</Button>
                         </>
                     ) : null}
-                    <Button onClick={() => props.toggle(false)}>Cancel</Button>
+                    {props.type === RequestModalType.Create && (
+                        <Button onClick={() => props.toggle(false)}>
+                            Create
+                        </Button>
+                    )}
                 </ModalFooter>
             </ModalContent>
         </Modal>
