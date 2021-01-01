@@ -11,6 +11,12 @@ export enum DisplayRequestType {
     Personal = "Personal",
 }
 
+// If no new filters are added, replace this with RequestType in types/requests.ts
+export enum FilterType {
+    Temporary = "Temporary",
+    Permanent = "Permanent",
+}
+
 // Enforce typing later. Also not currently used as login backend is needed.
 type Props = {
     userType: Role;
@@ -33,7 +39,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
     };
 
     // Update list of filters.
-    const updateFilters = (item: string) => {
+    const updateFilters = (item: FilterType) => {
         let tempArray: Array<string> = [...filters];
 
         if (filters.indexOf(item) > -1) {
@@ -54,7 +60,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
             <RequestModal
                 isOpen={modalToggle}
                 toggle={setModalToggle}
-                userType={Role.Staff}
+                userType={props.userType}
                 type={modalType}
             />
         </>

@@ -4,7 +4,7 @@ import { RequestModalType } from "./RequestModal";
 
 type Props = {
     // modal stuff.
-    toggle: Function;
+    toggle: (type: RequestModalType) => void;
 };
 
 export const RequestOptions: React.FunctionComponent<Props> = (

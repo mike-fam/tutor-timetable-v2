@@ -12,14 +12,18 @@ import {
     Tabs,
 } from "@chakra-ui/react";
 import React from "react";
-import { DisplayRequestType } from "../../containers/RequestContainer";
+import {
+    DisplayRequestType,
+    FilterType,
+} from "../../containers/RequestContainer";
 import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
+import { RequestModalType } from "./RequestModal";
 import { RequestOptions } from "./RequestOptions";
 
 type Props = {
-    toggleModal: Function;
-    toggleFilters: Function;
+    toggleModal: (type: RequestModalType) => void;
+    toggleFilters: (item: FilterType) => void;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
