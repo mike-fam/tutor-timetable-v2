@@ -9,27 +9,39 @@ import {
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
+import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
+@ObjectType()
 @Entity()
 export class Session extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions)
+    @Field(() => SessionStream)
+    @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
+        lazy: true,
+    })
     sessionStream: SessionStream;
 
+    @Field()
     @Column("varchar", { length: 15 })
     location: string;
 
+    @Field(() => Int)
     @Column()
     week: number;
 
+    @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
-        (sessionAllocation) => sessionAllocation.session
+        (sessionAllocation) => sessionAllocation.session,
+        { lazy: true }
     )
-    sessionAllocations: SessionAllocation[];
+    sessionAllocations: Lazy<SessionAllocation[]>;
 
-    @OneToMany(() => StaffRequest, (request) => request.session)
-    requests: StaffRequest[];
+    @Field(() => [StaffRequest])
+    @OneToMany(() => StaffRequest, (request) => request.session, { lazy: true })
+    requests: Lazy<StaffRequest[]>;
 }

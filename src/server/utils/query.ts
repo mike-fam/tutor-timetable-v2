@@ -12,3 +12,5 @@ export const checkFieldValueInEnum = <T extends any>(
         )
         .join(" OR ");
 };
+
+export type Lazy<T> = Promise<T> | T;

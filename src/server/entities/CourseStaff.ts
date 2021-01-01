@@ -1,29 +1,46 @@
 import {
     BaseEntity,
+    Column,
     Entity,
+    JoinColumn,
     ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
-    JoinColumn,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
+import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
+import { Role } from "../../types/user";
 
+@ObjectType()
 @Entity()
 @Unique(["timetable", "user"])
 export class CourseStaff extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs)
-    timetable: Timetable;
+    @Field(() => Timetable)
+    @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
+        lazy: true,
+    })
+    timetable: Lazy<Timetable>;
 
-    @ManyToOne(() => User, (user) => user.courseStaffs)
-    user: User;
+    @Field(() => Role)
+    @Column()
+    role: Role;
 
-    @OneToOne(() => Preference, (preference) => preference.courseStaff)
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.courseStaffs, { lazy: true })
+    user: Lazy<User>;
+
+    @Field(() => Preference)
+    @OneToOne(() => Preference, (preference) => preference.courseStaff, {
+        lazy: true,
+    })
     @JoinColumn()
-    preference: Preference;
+    preference: Lazy<Preference>;
 }
