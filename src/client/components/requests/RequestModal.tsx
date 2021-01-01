@@ -9,13 +9,19 @@ import {
     ModalOverlay,
 } from "@chakra-ui/react";
 import React from "react";
+import { Role } from "../../../types/user";
+
+export enum RequestModalType {
+    View = "View",
+    Create = "Create",
+}
 
 type Props = {
     isOpen: boolean;
     toggle: Function;
     // Proper types will come later.
-    type: string;
-    userType: string;
+    type: RequestModalType;
+    userType: Role;
 };
 
 export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
@@ -24,7 +30,7 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
-                    {props.type === "open" ? (
+                    {props.type === RequestModalType.View ? (
                         <p>Request title here</p>
                     ) : (
                         <p>Create a new Request</p>
@@ -32,7 +38,7 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    {props.type === "open" ? (
+                    {props.type === RequestModalType.View ? (
                         <div>open request body</div>
                     ) : (
                         <div>create new request body</div>
@@ -40,13 +46,15 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                 </ModalBody>
 
                 <ModalFooter>
-                    {props.userType === "staff" && props.type === "open" ? (
+                    {props.userType === Role.CourseCoordinator &&
+                    props.type === RequestModalType.View ? (
                         <>
                             <Button>Approve</Button>
                             <Button>Revoke</Button>
                         </>
                     ) : null}
-                    {props.userType === "student" && props.type === "open" ? (
+                    {props.userType === Role.Staff &&
+                    props.type === RequestModalType.View ? (
                         <>
                             <Button>Apply</Button>
                         </>

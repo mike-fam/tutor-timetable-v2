@@ -12,6 +12,7 @@ import {
     Tabs,
 } from "@chakra-ui/react";
 import React from "react";
+import { DisplayRequestType } from "../../containers/RequestContainer";
 import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
 import { RequestOptions } from "./RequestOptions";
@@ -40,13 +41,13 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                             {/* will likely use state management for these tabs later. */}
                             <TabPanel>
                                 <RequestList
-                                    type={"all"}
+                                    type={DisplayRequestType.All}
                                     toggle={props.toggleModal}
                                 />
                             </TabPanel>
                             <TabPanel>
                                 <RequestList
-                                    type={"personal"}
+                                    type={DisplayRequestType.Personal}
                                     toggle={props.toggleModal}
                                 />
                             </TabPanel>

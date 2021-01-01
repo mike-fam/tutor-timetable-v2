@@ -1,5 +1,6 @@
 import { Button, Center, VStack } from "@chakra-ui/react";
 import React from "react";
+import { RequestModalType } from "./RequestModal";
 
 type Props = {
     // modal stuff.
@@ -13,15 +14,12 @@ export const RequestOptions: React.FunctionComponent<Props> = (
         <>
             <VStack spacing={1} align="stretch">
                 <Center>
-                    <Button w="50%" onClick={() => props.toggle("create")}>
+                    <Button
+                        w="50%"
+                        onClick={() => props.toggle(RequestModalType.Create)}
+                    >
                         New Request
                     </Button>
-                </Center>
-                <Center>
-                    <Button w="50%">button2</Button>
-                </Center>
-                <Center>
-                    <Button w="50%">button 3</Button>
                 </Center>
             </VStack>
         </>

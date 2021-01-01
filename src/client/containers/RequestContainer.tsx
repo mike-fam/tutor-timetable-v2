@@ -1,10 +1,19 @@
 import React from "react";
-import { RequestModal } from "../components/requests/RequestModal";
+import { Role } from "../../types/user";
+import {
+    RequestModal,
+    RequestModalType,
+} from "../components/requests/RequestModal";
 import { Requests } from "../components/requests/Requests";
+
+export enum DisplayRequestType {
+    All = "All",
+    Personal = "Personal",
+}
 
 // Enforce typing later. Also not currently used as login backend is needed.
 type Props = {
-    userType: string;
+    userType: Role;
 };
 
 export const RequestContainer: React.FunctionComponent<Props> = (
@@ -12,11 +21,13 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 ) => {
     //Modal stuff
     const [modalToggle, setModalToggle] = React.useState<boolean>(false);
-    const [modalType, setModalType] = React.useState<string>("");
+    const [modalType, setModalType] = React.useState<RequestModalType>(
+        RequestModalType.Create
+    );
     //Filter management. Will use proper types later.
     const [filters, setFilters] = React.useState<Array<string>>([]);
 
-    const openRequestModal = (type: string) => {
+    const openRequestModal = (type: RequestModalType) => {
         setModalType(type);
         setModalToggle(true);
     };
@@ -43,7 +54,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
             <RequestModal
                 isOpen={modalToggle}
                 toggle={setModalToggle}
-                userType={"student"}
+                userType={Role.Staff}
                 type={modalType}
             />
         </>
