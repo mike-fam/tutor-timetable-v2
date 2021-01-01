@@ -115,6 +115,7 @@ export type Session = {
     week: Scalars["Int"];
     sessionAllocations: Array<SessionAllocation>;
     requests: Array<StaffRequest>;
+    preferredSwaps: Array<StaffRequest>;
 };
 
 export type SessionAllocation = {
@@ -133,6 +134,7 @@ export type StaffRequest = {
     acceptor: User;
     finaliser: User;
     session: Session;
+    swapPreference: Array<Session>;
 };
 
 export enum RequestType {
