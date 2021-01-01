@@ -15,9 +15,6 @@ registerEnumType(Role, {
     name: "Role",
 });
 
-registerEnumType(IsoDay, {
-    name: "IsoDay",
-});
 export { Course } from "./Course";
 export { CourseStaff } from "./CourseStaff";
 export { Preference } from "./Preference";
