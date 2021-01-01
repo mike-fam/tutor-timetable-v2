@@ -1,5 +1,8 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
+    Box,
+    Center,
+    Divider,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -41,13 +44,29 @@ export const CreateRequestForm: React.FunctionComponent = () => {
                 </Select>
             </HStack>
             <br></br>
-            <FormLabel>Request Type:</FormLabel>
-            <RadioGroup defaultValue="2">
-                <Stack spacing={5} direction="row">
-                    <Radio value="1">Temporary</Radio>
-                    <Radio value="2">Permanent</Radio>
-                </Stack>
-            </RadioGroup>
+            <HStack>
+                <Box>
+                    <FormLabel>Request Duration:</FormLabel>
+                    <RadioGroup defaultValue="1">
+                        <Stack spacing={5} direction="row">
+                            <Radio value="1">Temporary</Radio>
+                            <Radio value="2">Permanent</Radio>
+                        </Stack>
+                    </RadioGroup>
+                </Box>
+                <Center height="50px">
+                    <Divider orientation="vertical" color={"red"} />
+                </Center>
+                <Box>
+                    <FormLabel>Request Type:</FormLabel>
+                    <RadioGroup defaultValue="1">
+                        <Stack spacing={5} direction="row">
+                            <Radio value="1">Cover</Radio>
+                            <Radio value="2">Swap</Radio>
+                        </Stack>
+                    </RadioGroup>
+                </Box>
+            </HStack>
         </FormControl>
     );
 };

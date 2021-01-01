@@ -11,13 +11,13 @@ export enum DisplayRequestType {
     Personal = "Personal",
 }
 
-// If no new filters are added, replace this with RequestType in types/requests.ts
 export enum FilterType {
     Temporary = "Temporary",
     Permanent = "Permanent",
+    Cover = "Cover",
+    Swap = "Swap",
 }
 
-// Enforce typing later. Also not currently used as login backend is needed.
 type Props = {
     userType: Role;
 };
@@ -30,8 +30,8 @@ export const RequestContainer: React.FunctionComponent<Props> = (
     const [modalType, setModalType] = React.useState<RequestModalType>(
         RequestModalType.Create
     );
-    //Filter management. Will use proper types later.
-    const [filters, setFilters] = React.useState<Array<string>>([]);
+    //Filter management.
+    const [filters, setFilters] = React.useState<Array<FilterType>>([]);
 
     const openRequestModal = (type: RequestModalType) => {
         setModalType(type);
@@ -40,14 +40,14 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     // Update list of filters.
     const updateFilters = (item: FilterType) => {
-        let tempArray: Array<string> = [...filters];
+        let tempArr: Array<FilterType> = [...filters];
 
         if (filters.indexOf(item) > -1) {
-            tempArray.splice(filters.indexOf(item), 1);
-            setFilters(tempArray);
+            tempArr.splice(filters.indexOf(item), 1);
+            setFilters(tempArr);
         } else {
-            tempArray.push(item);
-            setFilters(tempArray);
+            tempArr.push(item);
+            setFilters(tempArr);
         }
     };
 

@@ -26,6 +26,16 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                             Temporary
                         </Tooltip>
                     </Checkbox>
+                    <Checkbox
+                        onChange={() => props.setFilters(FilterType.Cover)}
+                    >
+                        <Tooltip label="Display cover requests">Cover</Tooltip>
+                    </Checkbox>
+                    <Checkbox
+                        onChange={() => props.setFilters(FilterType.Swap)}
+                    >
+                        <Tooltip label="Display swap requests">Swap</Tooltip>
+                    </Checkbox>
                 </Stack>
             </Center>
         </Box>

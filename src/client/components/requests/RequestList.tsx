@@ -3,7 +3,6 @@ import React from "react";
 import { DisplayRequestType } from "../../containers/RequestContainer";
 import { RequestModalType } from "./RequestModal";
 
-// Placeholder, proper types will be introduced.
 type Props = {
     // Determines personal or open requests.
     type: DisplayRequestType;
@@ -11,7 +10,6 @@ type Props = {
     toggle: Function;
 };
 
-// Will likely rewrite this component later when filters are implemented.
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
     const openList = [0, 1, 2, 3, 4, 5];
     const personalList = [0, 1, 2];

@@ -20,7 +20,6 @@ export enum RequestModalType {
 type Props = {
     isOpen: boolean;
     toggle: (toggle: boolean) => void;
-    // Proper types will come later.
     type: RequestModalType;
     userType: Role;
 };
