@@ -7,19 +7,26 @@ import {
 } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { User } from "./User";
+import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
+@ObjectType()
 @Entity()
 @Unique(["sessionStream", "user"])
 export class StreamAllocation extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Field(() => SessionStream)
     @ManyToOne(
         () => SessionStream,
-        (sessionStream) => sessionStream.streamAllocations
+        (sessionStream) => sessionStream.streamAllocations,
+        { lazy: true }
     )
-    sessionStream: SessionStream;
+    sessionStream: Lazy<SessionStream>;
 
-    @ManyToOne(() => User, (user) => user.streamAllocations)
-    user: User;
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.streamAllocations, { lazy: true })
+    user: Lazy<User>;
 }

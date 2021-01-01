@@ -7,22 +7,30 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
+import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
+@ObjectType()
 @Entity()
 @Unique(["requester", "session"])
 export class StaffRequest extends BaseEntity {
+    @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.requests)
-    requester: User;
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.requests, { lazy: true })
+    requester: Lazy<User>;
 
-    @ManyToOne(() => User, (user) => user.acceptedRequests)
-    acceptor: User;
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.acceptedRequests, { lazy: true })
+    acceptor: Lazy<User>;
 
-    @ManyToOne(() => User)
-    finaliser: User;
+    @Field(() => User)
+    @ManyToOne(() => User, { lazy: true })
+    finaliser: Lazy<User>;
 
-    @ManyToOne(() => Session, (session) => session.requests)
-    session: Session;
+    @Field(() => Session)
+    @ManyToOne(() => Session, (session) => session.requests, { lazy: true })
+    session: Lazy<Session>;
 }
