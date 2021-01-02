@@ -32,46 +32,58 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
             <Center>
                 <Heading>Request a swap</Heading>
             </Center>
+            <br></br>
             {/* Each request item opens a modal */}
-            <HStack spacing={8} style={{ marginLeft: "10%" }}>
-                <Box w="75%" h="100%" bg="tomato">
-                    <Tabs>
-                        <TabList>
-                            <Tab>Open Requests</Tab>
-                            <Tab>Your Requests</Tab>
-                        </TabList>
+            <Box>
+                <Center>
+                    <HStack spacing={8} w="75%">
+                        <Box
+                            w="85%"
+                            h="100%"
+                            bg="tomato"
+                            style={{ minHeight: "500px" }}
+                        >
+                            <Tabs isFitted>
+                                <TabList>
+                                    <Tab>Open Requests</Tab>
+                                    <Tab>Your Requests</Tab>
+                                </TabList>
 
-                        <TabPanels>
-                            {/* will likely use state management for these tabs later. */}
-                            <TabPanel>
-                                <RequestList
-                                    type={DisplayRequestType.All}
-                                    toggle={props.toggleModal}
-                                />
-                            </TabPanel>
-                            <TabPanel>
-                                <RequestList
-                                    type={DisplayRequestType.Personal}
-                                    toggle={props.toggleModal}
-                                />
-                            </TabPanel>
-                        </TabPanels>
-                    </Tabs>
-                </Box>
+                                <TabPanels>
+                                    {/* will likely use state management for these tabs later. */}
+                                    <TabPanel>
+                                        <RequestList
+                                            type={DisplayRequestType.All}
+                                            toggle={props.toggleModal}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <RequestList
+                                            type={DisplayRequestType.Personal}
+                                            toggle={props.toggleModal}
+                                        />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        </Box>
 
-                <Stack w="15%">
-                    <Center>
-                        <h1>options</h1>
-                    </Center>
-                    <Box>
-                        <RequestOptions toggle={props.toggleModal} />
-                    </Box>
-                    <Divider></Divider>
-                    <Box>
-                        <RequestFilter setFilters={props.toggleFilters} />
-                    </Box>
-                </Stack>
-            </HStack>
+                        <Stack w="15%">
+                            <Center>
+                                <h1>options</h1>
+                            </Center>
+                            <Box>
+                                <RequestOptions toggle={props.toggleModal} />
+                            </Box>
+                            <Divider></Divider>
+                            <Box>
+                                <RequestFilter
+                                    setFilters={props.toggleFilters}
+                                />
+                            </Box>
+                        </Stack>
+                    </HStack>
+                </Center>
+            </Box>
         </Box>
     );
 };

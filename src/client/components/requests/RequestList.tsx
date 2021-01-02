@@ -7,7 +7,7 @@ type Props = {
     // Determines personal or open requests.
     type: DisplayRequestType;
     // modal stuff.
-    toggle: Function;
+    toggle: (type: RequestModalType) => void;
 };
 
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
