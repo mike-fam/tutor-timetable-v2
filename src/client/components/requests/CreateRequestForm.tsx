@@ -55,7 +55,7 @@ export const CreateRequestForm: React.FunctionComponent = () => {
                     </RadioGroup>
                 </Box>
                 <Center height="50px">
-                    <Divider orientation="vertical" color={"red"} />
+                    <Divider orientation="vertical" />
                 </Center>
                 <Box>
                     <FormLabel>Request Type:</FormLabel>
@@ -67,6 +67,9 @@ export const CreateRequestForm: React.FunctionComponent = () => {
                     </RadioGroup>
                 </Box>
             </HStack>
+            <FormHelperText>
+                Note: Please make sure you understand what these terms mean.
+            </FormHelperText>
         </FormControl>
     );
 };

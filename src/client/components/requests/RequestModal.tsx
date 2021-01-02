@@ -1,5 +1,6 @@
 import {
     Button,
+    ButtonGroup,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -50,25 +51,29 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button onClick={() => props.toggle(false)}>Cancel</Button>
-                    {props.userType === Role.CourseCoordinator &&
-                    props.type === RequestModalType.View ? (
-                        <>
-                            <Button>Approve</Button>
-                            <Button>Revoke</Button>
-                        </>
-                    ) : null}
-                    {props.userType === Role.Staff &&
-                    props.type === RequestModalType.View ? (
-                        <>
-                            <Button>Apply</Button>
-                        </>
-                    ) : null}
-                    {props.type === RequestModalType.Create && (
+                    <ButtonGroup>
                         <Button onClick={() => props.toggle(false)}>
-                            Create
+                            Cancel
                         </Button>
-                    )}
+                        {props.userType === Role.CourseCoordinator &&
+                        props.type === RequestModalType.View ? (
+                            <>
+                                <Button>Approve</Button>
+                                <Button>Revoke</Button>
+                            </>
+                        ) : null}
+                        {props.userType === Role.Staff &&
+                        props.type === RequestModalType.View ? (
+                            <>
+                                <Button>Apply</Button>
+                            </>
+                        ) : null}
+                        {props.type === RequestModalType.Create && (
+                            <Button onClick={() => props.toggle(false)}>
+                                Create
+                            </Button>
+                        )}
+                    </ButtonGroup>
                 </ModalFooter>
             </ModalContent>
         </Modal>
