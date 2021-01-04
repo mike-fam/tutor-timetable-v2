@@ -1,6 +1,9 @@
 import {
     BaseEntity,
+    Column,
     Entity,
+    JoinTable,
+    ManyToMany,
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
@@ -8,6 +11,8 @@ import {
 import { User } from "./User";
 import { Session } from "./Session";
 import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
+import { RequestStatus, RequestType } from "../../types/request";
 
 @ObjectType()
 @Entity()
@@ -17,19 +22,34 @@ export class StaffRequest extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(() => User)
-    @ManyToOne(() => User, (user) => user.requests)
-    requester: User;
+    @Field(() => RequestType)
+    @Column("varchar")
+    type: RequestType;
+
+    @Field(() => RequestStatus)
+    @Column("varchar")
+    status: RequestStatus;
 
     @Field(() => User)
-    @ManyToOne(() => User, (user) => user.acceptedRequests)
-    acceptor: User;
+    @ManyToOne(() => User, (user) => user.requests, { lazy: true })
+    requester: Lazy<User>;
 
     @Field(() => User)
-    @ManyToOne(() => User)
-    finaliser: User;
+    @ManyToOne(() => User, (user) => user.acceptedRequests, { lazy: true })
+    acceptor: Lazy<User>;
+
+    @Field(() => User)
+    @ManyToOne(() => User, { lazy: true, nullable: true })
+    finaliser: Lazy<User>;
 
     @Field(() => Session)
-    @ManyToOne(() => Session, (session) => session.requests)
-    session: Session;
+    @ManyToOne(() => Session, (session) => session.requests, { lazy: true })
+    session: Lazy<Session>;
+
+    @Field(() => [Session])
+    @ManyToMany(() => Session, (session) => session.preferredSwaps, {
+        lazy: true,
+    })
+    @JoinTable()
+    swapPreference: Lazy<Session[]>;
 }

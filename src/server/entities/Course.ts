@@ -6,6 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Timetable } from "./Timetable";
+import { Lazy } from "../utils/query";
 import { Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -16,7 +17,7 @@ export class Course extends BaseEntity {
     id: number;
 
     @Field()
-    @Column("varchar", { length: 20, unique: true })
+    @Column("varchar", { length: 9, unique: true })
     code: string;
 
     @Field()
@@ -24,6 +25,6 @@ export class Course extends BaseEntity {
     title: string;
 
     @Field(() => [Timetable])
-    @OneToMany(() => Timetable, (timetable) => timetable.course)
-    timetables: Timetable[];
+    @OneToMany(() => Timetable, (timetable) => timetable.course, { lazy: true })
+    timetables: Lazy<Timetable[]>;
 }

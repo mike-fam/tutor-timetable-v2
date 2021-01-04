@@ -1,12 +1,12 @@
 import {
     BaseEntity,
+    Column,
     Entity,
+    JoinColumn,
     ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
-    JoinColumn,
-    Column,
     Check,
 } from "typeorm";
 import { Timetable } from "./Timetable";
@@ -15,6 +15,7 @@ import { Preference } from "./Preference";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Role } from "../../types/user";
 import { checkFieldValueInEnum } from "../utils/query";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -25,28 +26,29 @@ export class CourseStaff extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(() => Role)
-    @Column("varchar")
-    role: Role;
-
-    @Field(() => Timetable)
-    @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
-        eager: true,
-    })
-    timetable: Timetable;
-
-    @Field(() => User)
-    @ManyToOne(() => User, (user) => user.courseStaffs)
-    user: User;
-
     @Field()
     @Column()
     userUsername: string;
 
-    @Field(() => Preference, { nullable: true })
+    @Field(() => Timetable)
+    @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
+        lazy: true,
+    })
+    timetable: Lazy<Timetable>;
+
+    @Field(() => Role)
+    @Column()
+    role: Role;
+
+    @Field(() => User)
+    @ManyToOne(() => User, (user) => user.courseStaffs, { lazy: true })
+    user: Lazy<User>;
+
+    @Field(() => Preference)
     @OneToOne(() => Preference, (preference) => preference.courseStaff, {
+        lazy: true,
         nullable: true,
     })
     @JoinColumn()
-    preference: Preference;
+    preference: Lazy<Preference>;
 }

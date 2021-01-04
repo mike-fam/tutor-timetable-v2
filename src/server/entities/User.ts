@@ -4,6 +4,7 @@ import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -22,29 +23,35 @@ export class User extends BaseEntity {
 
     @Field(() => [CourseStaff])
     @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.user, {
-        eager: true,
+        lazy: true,
     })
-    courseStaffs: CourseStaff[];
+    courseStaffs: Lazy<CourseStaff[]>;
 
     @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
-        (streamAllocation) => streamAllocation.user
+        (streamAllocation) => streamAllocation.user,
+        { lazy: true }
     )
-    streamAllocations: StreamAllocation[];
+    streamAllocations: Lazy<StreamAllocation[]>;
 
     @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
-        (sessionAllocation) => sessionAllocation.user
+        (sessionAllocation) => sessionAllocation.user,
+        { lazy: true }
     )
-    sessionAllocations: SessionAllocation[];
+    sessionAllocations: Lazy<SessionAllocation[]>;
 
     @Field(() => [StaffRequest])
-    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester)
-    requests: StaffRequest[];
+    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester, {
+        lazy: true,
+    })
+    requests: Lazy<StaffRequest[]>;
 
     @Field(() => [StaffRequest])
-    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor)
-    acceptedRequests: StaffRequest[];
+    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor, {
+        lazy: true,
+    })
+    acceptedRequests: Lazy<StaffRequest[]>;
 }

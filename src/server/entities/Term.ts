@@ -11,6 +11,7 @@ import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
 import { checkFieldValueInEnum } from "../utils/query";
 import { TermType } from "../../types/term";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -29,11 +30,11 @@ export class Term extends BaseEntity {
     @Column()
     year: number;
 
-    @Field()
+    @Field(() => Date)
     @Column({ type: "timestamp without time zone" })
     startDate: Date;
 
-    @Field()
+    @Field(() => Date)
     @Column({ type: "timestamp without time zone" })
     endDate: Date;
 
@@ -43,6 +44,6 @@ export class Term extends BaseEntity {
     weekNames: Array<string>;
 
     @Field(() => [Timetable])
-    @OneToMany(() => Timetable, (timetable) => timetable.term)
-    timetables: Timetable[];
+    @OneToMany(() => Timetable, (timetable) => timetable.term, { lazy: true })
+    timetables: Lazy<Timetable[]>;
 }

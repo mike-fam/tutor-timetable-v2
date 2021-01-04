@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { SessionType } from "../../types/session";
-import { checkFieldValueInEnum } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { IsoDay } from "../../types/date";
 import { Session } from "./Session";
 import { StreamAllocation } from "./StreamAllocation";
@@ -26,13 +26,15 @@ export class SessionStream extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(() => Timetable)
-    @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams)
-    timetable: Timetable;
-
     @Field(() => Int)
     @Column()
     timetableId: number;
+
+    @Field(() => Timetable)
+    @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {
+        lazy: true,
+    })
+    timetable: Lazy<Timetable>;
 
     @Field()
     @Column("varchar", { length: 32 })
@@ -40,7 +42,7 @@ export class SessionStream extends BaseEntity {
 
     @Field(() => SessionType)
     @Column("varchar", { length: 15 })
-    type: SessionType;
+    type: Lazy<SessionType>;
 
     @Field(() => IsoDay)
     @Column("int")
@@ -63,14 +65,16 @@ export class SessionStream extends BaseEntity {
     location: string;
 
     @Field(() => [Session])
-    @OneToMany(() => Session, (session) => session.sessionStream)
-    sessions: Session[];
+    @OneToMany(() => Session, (session) => session.sessionStream, {
+        lazy: true,
+    })
+    sessions: Lazy<Session[]>;
 
     @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
         (streamAllocation) => streamAllocation.sessionStream,
-        { eager: true, cascade: ["insert"] }
+        { lazy: true, cascade: ["insert"] }
     )
-    streamAllocations: StreamAllocation[];
+    streamAllocations: Lazy<StreamAllocation[]>;
 }

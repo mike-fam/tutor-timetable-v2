@@ -2,6 +2,7 @@ import {
     BaseEntity,
     Column,
     Entity,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -20,7 +22,7 @@ export class Session extends BaseEntity {
 
     @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
-        eager: true,
+        lazy: true,
     })
     sessionStream: SessionStream;
 
@@ -36,11 +38,17 @@ export class Session extends BaseEntity {
     @OneToMany(
         () => SessionAllocation,
         (sessionAllocation) => sessionAllocation.session,
-        { cascade: ["insert"] }
+        { lazy: true, cascade: ["insert"] }
     )
-    sessionAllocations: SessionAllocation[];
+    sessionAllocations: Lazy<SessionAllocation[]>;
 
     @Field(() => [StaffRequest])
-    @OneToMany(() => StaffRequest, (request) => request.session)
-    requests: StaffRequest[];
+    @OneToMany(() => StaffRequest, (request) => request.session, { lazy: true })
+    requests: Lazy<StaffRequest[]>;
+
+    @Field(() => [StaffRequest])
+    @ManyToMany(() => StaffRequest, (request) => request.swapPreference, {
+        lazy: true,
+    })
+    preferredSwaps: Lazy<StaffRequest[]>;
 }

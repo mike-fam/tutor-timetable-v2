@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { SessionType } from "../../types/session";
-import { checkFieldValueInEnum } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseStaff } from "./CourseStaff";
 import { Field, Int, ObjectType } from "type-graphql";
 
@@ -33,6 +33,8 @@ export class Preference extends BaseEntity {
     maxWeeklyHours: number;
 
     @Field(() => CourseStaff)
-    @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference)
-    courseStaff: CourseStaff;
+    @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference, {
+        lazy: true,
+    })
+    courseStaff: Lazy<CourseStaff>;
 }

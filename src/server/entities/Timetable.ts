@@ -12,6 +12,7 @@ import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
 import { SessionStream } from "./SessionStream";
 import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -21,27 +22,33 @@ export class Timetable extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(() => Course)
-    @ManyToOne(() => Course, (course) => course.timetables, { eager: true })
-    course: Course;
-
     @Field(() => Int)
     @Column({ nullable: true })
     courseId: number;
-
-    @Field(() => Term)
-    @ManyToOne(() => Term, (term) => term.timetables, { eager: true })
-    term: Term;
 
     @Field(() => Int)
     @Column({ nullable: true })
     termId: number;
 
+    @Field(() => Course)
+    @ManyToOne(() => Course, (course) => course.timetables, { lazy: true })
+    course: Lazy<Course>;
+
+    @Field(() => Term)
+    @ManyToOne(() => Term, (term) => term.timetables, { lazy: true })
+    term: Lazy<Term>;
+
     @Field(() => [CourseStaff])
-    @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.timetable)
-    courseStaffs: CourseStaff[];
+    @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.timetable, {
+        lazy: true,
+    })
+    courseStaffs: Lazy<CourseStaff[]>;
 
     @Field(() => [SessionStream])
-    @OneToMany(() => SessionStream, (sessionStream) => sessionStream.timetable)
-    sessionStreams: SessionStream[];
+    @OneToMany(
+        () => SessionStream,
+        (sessionStream) => sessionStream.timetable,
+        { lazy: true }
+    )
+    sessionStreams: Lazy<SessionStream[]>;
 }

@@ -56,21 +56,20 @@ export class SessionStreamResolver {
         @Arg("newStaffs", () => [String]) newStaffs: string[]
     ): Promise<SessionStream> {
         const stream = await SessionStream.findOneOrFail({ id: streamId });
-        console.log(newStaffs);
+        const allocations = [...(await stream.streamAllocations)];
         for (const username of newStaffs) {
             if (
-                stream.streamAllocations.some(
+                allocations.some(
                     (allocation) => allocation.userUsername === username
                 )
             ) {
                 continue;
             }
-            stream.streamAllocations = [
-                ...stream.streamAllocations,
-                StreamAllocation.create({ userUsername: username }),
-            ];
+            allocations.push(
+                StreamAllocation.create({ userUsername: username })
+            );
         }
-        console.log(stream);
+        stream.streamAllocations = Promise.resolve(allocations);
         await stream.save();
         return stream;
     }
@@ -86,13 +85,14 @@ export class SessionStreamResolver {
             return false;
         }
         console.log(stream);
+        const allocations = await stream.streamAllocations;
         const sessions = Session.create(
             stream.weeks.map((week) => ({
                 week,
                 location: stream.location,
                 sessionStream: stream,
                 sessionAllocations: SessionAllocation.create(
-                    stream.streamAllocations.map((allocation) => ({
+                    allocations.map((allocation) => ({
                         user: allocation.user,
                     }))
                 ),
