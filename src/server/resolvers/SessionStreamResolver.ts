@@ -74,46 +74,28 @@ export class SessionStreamResolver {
         return stream;
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => [Session])
     async generateSessions(
         @Arg("sessionStreamId") sessionStreamId: number
-    ): Promise<boolean> {
-        const stream = await SessionStream.findOne({
+    ): Promise<Session[]> {
+        const stream = await SessionStream.findOneOrFail({
             id: sessionStreamId,
         });
-        if (!stream) {
-            return false;
-        }
-        console.log(stream);
         const allocations = await stream.streamAllocations;
         const sessions = Session.create(
             stream.weeks.map((week) => ({
                 week,
                 location: stream.location,
                 sessionStream: stream,
-                sessionAllocations: SessionAllocation.create(
-                    allocations.map((allocation) => ({
-                        user: allocation.user,
-                    }))
+                sessionAllocations: Promise.resolve(
+                    SessionAllocation.create(
+                        allocations.map((allocation) => ({
+                            user: allocation.user,
+                        }))
+                    )
                 ),
             }))
         );
-        console.log(sessions);
-        return true;
-        // const sessions = await getConnection()
-        //     .getRepository(Session)
-        //     .createQueryBuilder()
-        //     .insert()
-        //     .values(
-        //         stream.weeks.map((week) => {
-        //             return {
-        //                 week,
-        //                 location: stream.location,
-        //                 sessionStream: stream,
-        //             };
-        //         })
-        //     )
-        //     .returning("*")
-        //     .execute();
+        return await Session.save(sessions);
     }
 }
