@@ -1,4 +1,4 @@
-import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Int, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Session } from "../entities";
 
@@ -7,9 +7,13 @@ export class SessionResolver {
     @Query(() => [Session])
     async sessions(
         @Arg("termId", () => Int) termId: number,
-        @Arg("courseIds", () => [Int]) courseIds: number,
+        @Arg("courseIds", () => [Int]) courseIds: number[],
         @Arg("week", () => Int) week: number
     ): Promise<Session[]> {
+        if (courseIds.length === 0) {
+            return [];
+        }
+        console.log("params:", courseIds, termId, week);
         return await getConnection()
             .getRepository(Session)
             .createQueryBuilder("session")

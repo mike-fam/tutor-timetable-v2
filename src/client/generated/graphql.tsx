@@ -37,7 +37,7 @@ export type QueryTermArgs = {
 
 export type QuerySessionStreamsArgs = {
   courseIds: Array<Scalars['Int']>;
-  termId: Scalars['Float'];
+  termId: Scalars['Int'];
 };
 
 
@@ -260,6 +260,31 @@ export type MutationGenerateSessionsArgs = {
   sessionStreamId: Scalars['Float'];
 };
 
+export type GetSessionsQueryVariables = Exact<{
+  termId: Scalars['Int'];
+  week: Scalars['Int'];
+  courseIds: Array<Scalars['Int']>;
+}>;
+
+
+export type GetSessionsQuery = (
+  { __typename?: 'Query' }
+  & { sessions: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'name' | 'startTime' | 'endTime' | 'day'>
+    ), sessionAllocations: Array<(
+      { __typename?: 'SessionAllocation' }
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'name'>
+      ) }
+    )> }
+  )> }
+);
+
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -299,23 +324,19 @@ export type MyCoursesQuery = (
   )> }
 );
 
-export type GetSessionsQueryVariables = Exact<{
+export type GetSessionStreamsQueryVariables = Exact<{
   termId: Scalars['Int'];
-  week: Scalars['Int'];
   courseIds: Array<Scalars['Int']>;
 }>;
 
 
-export type GetSessionsQuery = (
+export type GetSessionStreamsQuery = (
   { __typename?: 'Query' }
-  & { sessions: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'name' | 'startTime' | 'endTime' | 'day'>
-    ), sessionAllocations: Array<(
-      { __typename?: 'SessionAllocation' }
+  & { sessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day'>
+    & { streamAllocations: Array<(
+      { __typename?: 'StreamAllocation' }
       & { user: (
         { __typename?: 'User' }
         & Pick<User, 'name'>
@@ -336,6 +357,53 @@ export type TermsQuery = (
 );
 
 
+export const GetSessionsDocument = gql`
+    query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
+  sessions(termId: $termId, courseIds: $courseIds, week: $week) {
+    id
+    sessionStream {
+      name
+      startTime
+      endTime
+      day
+    }
+    location
+    sessionAllocations {
+      user {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSessionsQuery__
+ *
+ * To run a query within a React component, call `useGetSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      week: // value for 'week'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
+        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+      }
+export function useGetSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+        }
+export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
+export type GetSessionsLazyQueryHookResult = ReturnType<typeof useGetSessionsLazyQuery>;
+export type GetSessionsQueryResult = Apollo.QueryResult<GetSessionsQuery, GetSessionsQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello
@@ -440,18 +508,16 @@ export function useMyCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
 export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQuery>;
 export type MyCoursesQueryResult = Apollo.QueryResult<MyCoursesQuery, MyCoursesQueryVariables>;
-export const GetSessionsDocument = gql`
-    query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
-  sessions(termId: $termId, courseIds: $courseIds, week: $week) {
+export const GetSessionStreamsDocument = gql`
+    query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
+  sessionStreams(courseIds: $courseIds, termId: $termId) {
     id
-    sessionStream {
-      name
-      startTime
-      endTime
-      day
-    }
-    location
-    sessionAllocations {
+    type
+    name
+    startTime
+    endTime
+    day
+    streamAllocations {
       user {
         name
       }
@@ -461,32 +527,31 @@ export const GetSessionsDocument = gql`
     `;
 
 /**
- * __useGetSessionsQuery__
+ * __useGetSessionStreamsQuery__
  *
- * To run a query within a React component, call `useGetSessionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSessionStreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetSessionsQuery({
+ * const { data, loading, error } = useGetSessionStreamsQuery({
  *   variables: {
  *      termId: // value for 'termId'
- *      week: // value for 'week'
  *      courseIds: // value for 'courseIds'
  *   },
  * });
  */
-export function useGetSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
       }
-export function useGetSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
         }
-export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
-export type GetSessionsLazyQueryHookResult = ReturnType<typeof useGetSessionsLazyQuery>;
-export type GetSessionsQueryResult = Apollo.QueryResult<GetSessionsQuery, GetSessionsQueryVariables>;
+export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
+export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
+export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
 export const TermsDocument = gql`
     query Terms {
   terms {

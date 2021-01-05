@@ -8,7 +8,10 @@ import {
 } from "../components/timetable/Session";
 import { TimetableContext } from "../utils/timetable";
 import { useQueryWithError } from "../hooks/useQueryWithError";
-import { useGetSessionsQuery } from "../generated/graphql";
+import {
+    useGetSessionsQuery,
+    useGetSessionStreamsQuery,
+} from "../generated/graphql";
 import { Loadable } from "../components/Loadable";
 import { IsoDay } from "../../types/date";
 
@@ -29,18 +32,44 @@ export const TimetableContainer: React.FC<Props> = () => {
             week: chosenWeek,
         }
     );
+    const {
+        data: sessionStreamsData,
+        loading: sessionStreamsLoading,
+    } = useQueryWithError(useGetSessionStreamsQuery, {
+        termId: chosenTermId,
+        courseIds: chosenCourses.toArray(),
+    });
     const sessions = useMemo(() => {
-        if (sessionsLoading || !sessionsData) {
-            return [];
+        if (chosenWeek === -1) {
+            if (sessionStreamsLoading || !sessionStreamsData) {
+                return [];
+            }
+            return sessionStreamsData.sessionStreams.map((sessionStream) => ({
+                id: sessionStream.id,
+                name: sessionStream.name,
+                startTime: sessionStream.startTime,
+                endTime: sessionStream.endTime,
+                day: sessionStream.day,
+            }));
+        } else {
+            if (sessionsLoading || !sessionsData) {
+                return [];
+            }
+            return sessionsData.sessions.map((session) => ({
+                id: session.id,
+                name: session.sessionStream.name,
+                startTime: session.sessionStream.startTime,
+                endTime: session.sessionStream.endTime,
+                day: session.sessionStream.day as IsoDay,
+            }));
         }
-        return sessionsData.sessions.map((session) => ({
-            id: session.id,
-            name: session.sessionStream.name,
-            startTime: session.sessionStream.startTime,
-            endTime: session.sessionStream.endTime,
-            day: session.sessionStream.day as IsoDay,
-        }));
-    }, [sessionsLoading, sessionsData]);
+    }, [
+        chosenWeek,
+        sessionsLoading,
+        sessionsData,
+        sessionStreamsData,
+        sessionStreamsLoading,
+    ]);
     return (
         <Loadable isLoading={sessionsLoading}>
             <Timetable

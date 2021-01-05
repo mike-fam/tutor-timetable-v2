@@ -1,0 +1,15 @@
+query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
+    sessionStreams(courseIds: $courseIds, termId: $termId) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        streamAllocations {
+            user {
+                name
+            }
+        }
+    }
+}

@@ -13,9 +13,12 @@ import { IsoDay } from "../../types/date";
 export class SessionStreamResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
-        @Arg("termId") termId: number,
+        @Arg("termId", () => Int) termId: number,
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<SessionStream[]> {
+        if (courseIds.length === 0) {
+            return [];
+        }
         return await getConnection()
             .getRepository(SessionStream)
             .createQueryBuilder("sessionStream")
