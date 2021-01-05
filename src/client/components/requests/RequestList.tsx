@@ -1,6 +1,6 @@
 import { Box, Heading } from "@chakra-ui/react";
 import React from "react";
-import { DisplayRequestType } from "../../containers/RequestContainer";
+import { DisplayRequestType } from "../../containers/requests/RequestContainer";
 import { RequestModalType } from "./RequestModal";
 
 type Props = {

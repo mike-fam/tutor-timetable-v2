@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Role } from "../../../types/user";
+import { CreateRequestFormContainer } from "../../containers/requests/CreateRequestFormContainer";
 import { CreateRequestForm } from "./CreateRequestForm";
 
 export enum RequestModalType {
@@ -46,7 +47,7 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                     {props.type === RequestModalType.View ? (
                         <div>open request body</div>
                     ) : (
-                        <CreateRequestForm />
+                        <CreateRequestFormContainer />
                     )}
                 </ModalBody>
 

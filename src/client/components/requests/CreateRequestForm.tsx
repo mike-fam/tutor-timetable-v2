@@ -1,13 +1,16 @@
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import {
     Box,
-    Center,
-    Divider,
+    Button,
     FormControl,
     FormHelperText,
     FormLabel,
-    HStack,
     Input,
+    Menu,
+    MenuButton,
+    MenuItemOption,
+    MenuList,
+    MenuOptionGroup,
     Radio,
     RadioGroup,
     Select,
@@ -16,7 +19,14 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export const CreateRequestForm: React.FunctionComponent = () => {
+type Props = {
+    updateSessions: (item: any) => void;
+    sessions: Array<string>;
+};
+
+export const CreateRequestForm: React.FunctionComponent<Props> = (
+    props: Props
+) => {
     return (
         <FormControl>
             <FormLabel>Request Title:</FormLabel>
@@ -29,47 +39,62 @@ export const CreateRequestForm: React.FunctionComponent = () => {
             <Textarea placeholder="Describe your request in more detail here" />
             <br></br>
             <br></br>
-            <FormLabel>Select Sessions:</FormLabel>
-            <HStack>
-                <Select size="sm" placeholder="Session to switch out of">
-                    <option>session 01</option>
-                    <option>session 02</option>
-                    <option>session 03</option>
-                </Select>
-                <ArrowForwardIcon />
-                <Select size="sm" placeholder="Session to switch into">
-                    <option>session 01</option>
-                    <option>session 02</option>
-                    <option>session 03</option>
-                </Select>
-            </HStack>
+            <Select size="sm" placeholder="Select session to switch out of">
+                <option>session 01</option>
+                <option>session 02</option>
+                <option>session 03</option>
+            </Select>
             <br></br>
-            <HStack>
-                <Box>
-                    <FormLabel>Request Duration:</FormLabel>
-                    <RadioGroup defaultValue="1">
-                        <Stack spacing={5} direction="row">
-                            <Radio value="1">Temporary</Radio>
-                            <Radio value="2">Permanent</Radio>
-                        </Stack>
-                    </RadioGroup>
-                </Box>
-                <Center height="50px">
-                    <Divider orientation="vertical" />
-                </Center>
-                <Box>
-                    <FormLabel>Request Type:</FormLabel>
-                    <RadioGroup defaultValue="1">
-                        <Stack spacing={5} direction="row">
-                            <Radio value="1">Cover</Radio>
-                            <Radio value="2">Swap</Radio>
-                        </Stack>
-                    </RadioGroup>
-                </Box>
-            </HStack>
+            <Box>
+                <FormLabel>Request Duration:</FormLabel>
+                <RadioGroup defaultValue="1">
+                    <Stack spacing={5} direction="row">
+                        <Radio value="1">Temporary</Radio>
+                        <Radio value="2">Permanent</Radio>
+                    </Stack>
+                </RadioGroup>
+            </Box>
             <FormHelperText>
-                Note: Please make sure you understand what these terms mean.
+                Note: Temporary requests last for one week.
             </FormHelperText>
+            <br></br>
+            <Box>
+                <FormLabel>Swap Preferences:</FormLabel>
+
+                <Menu closeOnSelect={false}>
+                    <MenuButton
+                        as={Button}
+                        rightIcon={<AddIcon />}
+                    ></MenuButton>
+                    {"   "}
+                    {props.sessions.map((item, index) => (
+                        <Box key={index} as={Button}>
+                            {item}
+                        </Box>
+                    ))}
+                    <MenuList minWidth="240px">
+                        <MenuOptionGroup
+                            type="checkbox"
+                            onChange={(e) => {
+                                props.updateSessions(e);
+                            }}
+                        >
+                            <MenuItemOption value="session 1">
+                                session 1
+                            </MenuItemOption>
+                            <MenuItemOption value="session 2">
+                                session 2
+                            </MenuItemOption>
+                            <MenuItemOption value="session 3">
+                                session 3
+                            </MenuItemOption>
+                        </MenuOptionGroup>
+                    </MenuList>
+                </Menu>
+                <FormHelperText>
+                    You can select 0, 1 or many preferences.
+                </FormHelperText>
+            </Box>
         </FormControl>
     );
 };
