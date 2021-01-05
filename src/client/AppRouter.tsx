@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { RequestContainer } from "./containers/RequestContainer";
 import { TimetableContainer } from "./containers/TimetableContainer";
+import { AvailabilityContainer } from "./containers/AvailabilityContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -11,6 +12,10 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
             <Switch>
                 <Route path="/" component={TimetableContainer} exact />
                 <Route path="/requests" component={RequestContainer} />
+                <Route
+                    path="/availabilities"
+                    component={AvailabilityContainer}
+                />
             </Switch>
         </BrowserRouter>
     );
