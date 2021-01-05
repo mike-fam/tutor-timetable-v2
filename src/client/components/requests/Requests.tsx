@@ -15,7 +15,7 @@ import React from "react";
 import {
     DisplayRequestType,
     FilterType,
-} from "../../containers/RequestContainer";
+} from "../../containers/requests/RequestContainer";
 import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
 import { RequestModalType } from "./RequestModal";
@@ -45,7 +45,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                         >
                             <Tabs isFitted>
                                 <TabList>
-                                    <Tab>Open Requests</Tab>
+                                    <Tab>All Requests</Tab>
                                     <Tab>Your Requests</Tab>
                                 </TabList>
 

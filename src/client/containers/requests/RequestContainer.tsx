@@ -1,10 +1,10 @@
 import React from "react";
-import { Role } from "../../types/user";
+import { Role } from "../../../types/user";
 import {
     RequestModal,
     RequestModalType,
-} from "../components/requests/RequestModal";
-import { Requests } from "../components/requests/Requests";
+} from "../../components/requests/RequestModal";
+import { Requests } from "../../components/requests/Requests";
 
 export enum DisplayRequestType {
     All = "All",
