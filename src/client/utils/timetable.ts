@@ -74,7 +74,7 @@ export const getClashedRanges = (
         start1 - start2 !== 0 ? start1 - start2 : end1 - end2
     );
     let lastEnd = 0;
-    const clashedIds: Array<string> = [];
+    const clashedIds: Array<TimeRange["id"]> = [];
     const result: { [key: string]: StackInfo } = {};
     for (const { id, start, end } of ranges) {
         // no crashing at this entry

@@ -44,7 +44,7 @@ export class SessionStream extends BaseEntity {
     @Column("varchar", { length: 15 })
     type: Lazy<SessionType>;
 
-    @Field(() => IsoDay)
+    @Field(() => Int)
     @Column("int")
     day: IsoDay;
 

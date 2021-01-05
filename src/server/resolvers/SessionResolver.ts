@@ -6,7 +6,7 @@ import { Session } from "../entities";
 export class SessionResolver {
     @Query(() => [Session])
     async sessions(
-        @Arg("termId") termId: number,
+        @Arg("termId", () => Int) termId: number,
         @Arg("courseIds", () => [Int]) courseIds: number,
         @Arg("week", () => Int) week: number
     ): Promise<Session[]> {
@@ -17,6 +17,7 @@ export class SessionResolver {
             .innerJoinAndSelect("sessionStream.timetable", "timetable")
             .where("timetable.termId = :termId", { termId })
             .andWhere("session.week = :week", { week })
-            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds }).getMany();
+            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
+            .getMany();
     }
 }

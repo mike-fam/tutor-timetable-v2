@@ -10,14 +10,14 @@ import {
 } from "../../constants/timetable";
 import { Props as SessionProps } from "./Session";
 import { getClashedRanges } from "../../utils/timetable";
-import { SessionType } from "./Timetable";
+import { Props as TimetableProps } from "./Timetable";
 
 export type Props = {
     day: IsoDay;
     startTime: number;
     endTime: number;
     renderTimeSlot: (key: number) => ReactElement;
-    sessions: SessionType[];
+    sessions: TimetableProps["sessions"];
     renderSession: (sessionProps: SessionProps, key: number) => ReactElement;
 };
 

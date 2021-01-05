@@ -35,12 +35,13 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         ])
     );
     const { data: termsData, loading: termsLoading } = useQueryWithError(
-        useTermsQuery
+        useTermsQuery,
+        {}
     );
     const {
         data: myCoursesData,
         loading: myCoursesLoading,
-    } = useQueryWithError(useMyCoursesQuery);
+    } = useQueryWithError(useMyCoursesQuery, {});
     useEffect(() => {
         // Loading
         if (myCoursesLoading || termsLoading) {

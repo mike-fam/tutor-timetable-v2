@@ -16,15 +16,13 @@ export class SessionStreamResolver {
         @Arg("termId") termId: number,
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<SessionStream[]> {
-        const streams = await getConnection()
+        return await getConnection()
             .getRepository(SessionStream)
             .createQueryBuilder("sessionStream")
             .innerJoinAndSelect("sessionStream.timetable", "timetable")
             .where("timetable.termId = :termId", { termId })
             .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
             .getMany();
-        console.log(streams);
-        return streams;
     }
 
     @Mutation(() => SessionStream)
@@ -32,7 +30,7 @@ export class SessionStreamResolver {
         @Arg("timetableId", () => Int) timetableId: number,
         @Arg("name") name: string,
         @Arg("type", () => SessionType) type: SessionType,
-        @Arg("day", () => IsoDay) day: IsoDay,
+        @Arg("day", () => Int) day: IsoDay,
         @Arg("startTime") startTime: number,
         @Arg("endTime") endTime: number,
         @Arg("weeks", () => [Int]) weeks: number[],

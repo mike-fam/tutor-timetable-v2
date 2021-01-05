@@ -9,7 +9,7 @@ import { Loadable } from "../components/Loadable";
 type Props = {};
 
 export const CourseSelectContainer: React.FunctionComponent<Props> = () => {
-    const { data, loading } = useQueryWithError(useMyCoursesQuery);
+    const { data, loading } = useQueryWithError(useMyCoursesQuery, {});
     const [courses, setCourses] = useState(Map<number, string>());
     useEffect(() => {
         if (loading) {

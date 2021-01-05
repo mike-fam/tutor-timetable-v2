@@ -1,13 +1,8 @@
 import { registerEnumType } from "type-graphql";
-import { IsoDay } from "../../types/date";
 import { SessionType } from "../../types/session";
 import { TermType } from "../../types/term";
 import { Role } from "../../types/user";
 import { RequestStatus, RequestType } from "../../types/request";
-
-registerEnumType(IsoDay, {
-    name: "IsoDay",
-});
 
 registerEnumType(SessionType, {
     name: "SessionType",
