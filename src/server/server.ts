@@ -37,10 +37,12 @@ const main = async () => {
 
     // Automatically serve the index.html file from the build folder
     app.set("trust proxy", "loopback");
-    app.use(cors({
-        credentials: true,
-        origin: process.env.CORS_ORIGIN
-    }));
+    app.use(
+        cors({
+            credentials: true,
+            origin: process.env.CORS_ORIGIN,
+        })
+    );
     app.use("/", express.static("build/client"));
 
     app.get("/hello", (_, res) => {
@@ -51,7 +53,15 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver, UserResolver, TermResolver, CourseStaffResolver, SessionStreamResolver, TimetableResolver, SessionResolver],
+            resolvers: [
+                HelloResolver,
+                UserResolver,
+                TermResolver,
+                CourseStaffResolver,
+                SessionStreamResolver,
+                TimetableResolver,
+                SessionResolver,
+            ],
             dateScalarMode: "isoDate",
         }),
         context: ({ req, res }): MyContext => ({ req, res }),
