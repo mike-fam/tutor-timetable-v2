@@ -12,7 +12,6 @@ import {
 import React from "react";
 import { Role } from "../../../types/user";
 import { CreateRequestFormContainer } from "../../containers/requests/CreateRequestFormContainer";
-import { CreateRequestForm } from "./CreateRequestForm";
 
 export enum RequestModalType {
     View = "View",
