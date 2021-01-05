@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Checkbox, Stack } from "@chakra-ui/react";
+import { Box, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import { Map, Set } from "immutable";
 
 type Props = {
     selectAllLabel?: string;
     elements: Map<number, string>;
+    helpTexts?: Map<number, string>;
     selectedElements: Set<number>;
     selectElement: (elementId: number, selected: boolean) => void;
 };
@@ -14,6 +15,7 @@ export const CheckboxList: React.FunctionComponent<Props> = ({
     elements,
     selectElement,
     selectedElements,
+    helpTexts,
 }) => {
     return (
         <Box>
@@ -32,7 +34,7 @@ export const CheckboxList: React.FunctionComponent<Props> = ({
                 {selectAllLabel}
             </Checkbox>
             <Stack pl={6} mt={1} spacing={1}>
-                {elements.map((course, id) => (
+                {elements.map((element, id) => (
                     <Checkbox
                         // https://github.com/chakra-ui/chakra-ui/issues/2428#issuecomment-724002563
                         isChecked={selectedElements.contains(id)}
@@ -41,7 +43,15 @@ export const CheckboxList: React.FunctionComponent<Props> = ({
                         }}
                         key={id}
                     >
-                        {course}
+                        <Tooltip
+                            label={
+                                helpTexts?.get(id)
+                                    ? helpTexts.get(id)
+                                    : `Select ${element}`
+                            }
+                        >
+                            {element}
+                        </Tooltip>
                     </Checkbox>
                 ))}
             </Stack>
