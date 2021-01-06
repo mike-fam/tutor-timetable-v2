@@ -10,7 +10,7 @@ import { ErrorContext } from "./utils/errors";
 import { useToast } from "@chakra-ui/react";
 
 const client = new ApolloClient({
-    uri: `http://localhost:${process.env.PORT || 5000}/graphql`,
+    uri: "/graphql",
     cache: new InMemoryCache(),
 });
 
