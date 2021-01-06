@@ -26,6 +26,7 @@
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
     "identity-obj-proxy": "3.0.0",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.20",
     "pg": "^8.5.1",
     "postcss-flexbugs-fixes": "4.2.1",

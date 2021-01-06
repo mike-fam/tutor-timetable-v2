@@ -23,7 +23,7 @@ import { RequestOptions } from "./RequestOptions";
 
 type Props = {
     toggleModal: (type: RequestModalType) => void;
-    toggleFilters: (item: FilterType) => void;
+    toggleFilters: (item: FilterType, selected: boolean) => void;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
