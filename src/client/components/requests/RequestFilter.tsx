@@ -1,6 +1,7 @@
 import { Box, Center, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import { FilterType } from "../../containers/requests/RequestContainer";
+import { SimpleCheckboxList } from "../SimpleCheckboxList";
 
 type Props = {
     setFilters: (item: FilterType) => void;

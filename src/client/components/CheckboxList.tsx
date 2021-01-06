@@ -2,21 +2,21 @@ import React from "react";
 import { Box, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import { Map, Set } from "immutable";
 
-type Props = {
+type Props<T extends string> = {
     selectAllLabel?: string;
-    elements: Map<number, string>;
-    helpTexts?: Map<number, string | undefined>;
+    elements: Map<number, T>;
+    helpTexts?: Map<number, T | undefined>;
     selectedElements: Set<number>;
     selectElement: (elementId: number, selected: boolean) => void;
 };
 
-export const CheckboxList: React.FunctionComponent<Props> = ({
-    selectAllLabel = "All Elements",
+export const CheckboxList = <T extends string>({
+    selectAllLabel,
     elements,
     selectElement,
     selectedElements,
     helpTexts,
-}) => {
+}: Props<T>) => {
     return (
         <Box>
             <Checkbox
@@ -31,7 +31,7 @@ export const CheckboxList: React.FunctionComponent<Props> = ({
                     selectedElements.size !== 0
                 }
             >
-                {selectAllLabel}
+                {selectAllLabel ? selectAllLabel : "Select All"}
             </Checkbox>
             <Stack pl={6} mt={1} spacing={1}>
                 {elements.map((element, id) => (

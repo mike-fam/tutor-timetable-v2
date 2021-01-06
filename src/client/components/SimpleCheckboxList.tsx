@@ -2,17 +2,20 @@ import React, { useCallback, useEffect, useState } from "react";
 import { CheckboxList } from "./CheckboxList";
 import { Map, Set } from "immutable";
 
-type Props = {
-    elements: string[];
+type Props<T extends string> = {
+    elements: T[];
     helpTexts?: string[];
-    selectElem: (elem: string, selected: boolean) => void;
+    selectFunc: (elem: T, selected: boolean) => void;
+    selectAllLabel?: string;
 };
 
-export const SimpleCheckboxList: React.FC<Props> = ({
+export const SimpleCheckboxList = <T extends string>({
     elements,
     helpTexts,
-}) => {
-    const [elementMap, setElementMap] = useState(Map<number, string>());
+    selectFunc,
+    selectAllLabel,
+}: Props<T>) => {
+    const [elementMap, setElementMap] = useState(Map<number, T>());
     const [helpTextMap, setHelpTextMap] = useState(
         Map<number, string | undefined>()
     );
@@ -24,8 +27,9 @@ export const SimpleCheckboxList: React.FC<Props> = ({
             setSelectedElements((prev) =>
                 selected ? prev.add(elementId) : prev.remove(elementId)
             );
+            selectFunc(elementMap.get(elementId)!, selected);
         },
-        []
+        [elementMap, selectFunc]
     );
 
     // setup props to pass to checkbox list
@@ -42,6 +46,7 @@ export const SimpleCheckboxList: React.FC<Props> = ({
             selectedElements={selectedElements}
             selectElement={selectElement}
             helpTexts={helpTextMap}
+            selectAllLabel={selectAllLabel}
         />
     );
 };
