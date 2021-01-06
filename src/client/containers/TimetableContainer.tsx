@@ -7,8 +7,6 @@ import {
     Props as SessionProps,
     Session,
 } from "../components/timetable/Session";
-import { Box } from "@chakra-ui/react";
-import { CourseSelectContainer } from "./CourseSelectContainer";
 
 type Props = {};
 
@@ -53,22 +51,19 @@ export const TimetableContainer: React.FC<Props> = () => {
     ];
     const displayedDays: Array<IsoDay> = [1, 2, 3, 4, 5, 6, 7];
     return (
-        <Box>
-            <Timetable
-                sessions={sessions}
-                displayedDays={displayedDays}
-                renderDay={(dayProps, key) => (
-                    <Day
-                        {...dayProps}
-                        renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(sessionProps: SessionProps, key) => (
-                            <Session {...sessionProps} key={key} />
-                        )}
-                        key={key}
-                    />
-                )}
-            />
-            <CourseSelectContainer />
-        </Box>
+        <Timetable
+            sessions={sessions}
+            displayedDays={displayedDays}
+            renderDay={(dayProps, key) => (
+                <Day
+                    {...dayProps}
+                    renderTimeSlot={(key) => <TimeSlot key={key} />}
+                    renderSession={(sessionProps: SessionProps, key) => (
+                        <Session {...sessionProps} key={key} />
+                    )}
+                    key={key}
+                />
+            )}
+        />
     );
 };
