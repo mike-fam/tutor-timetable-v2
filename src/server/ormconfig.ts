@@ -33,8 +33,12 @@ export default {
         Timetable,
         User,
     ],
-    migrations: ["build/server/migrations/*.js"],
-    logging: !__prod__,
+    migrations: [
+        __prod__
+            ? "build/server/migrations/*.js"
+            : "src/server/migrations/*.ts",
+    ],
+    logging: !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
         migrationsDir: "src/server/migrations",
     },

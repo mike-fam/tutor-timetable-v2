@@ -1,5 +1,6 @@
-import { Spinner, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import React, { ReactElement, useEffect } from "react";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 type Props = {
     isLoading: boolean;
@@ -13,7 +14,7 @@ type Props = {
 
 export const Loadable: React.FC<Props> = ({
     isLoading,
-    renderLoading = () => <Spinner size="xl" m="auto" display="block" />,
+    renderLoading = () => <LoadingSpinner />,
     error,
     children,
 }) => {

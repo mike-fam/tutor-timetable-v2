@@ -6,6 +6,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
@@ -15,6 +16,7 @@ import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
+@Unique(["sessionStreamId", "week"])
 export class Session extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -25,6 +27,9 @@ export class Session extends BaseEntity {
         lazy: true,
     })
     sessionStream: SessionStream;
+
+    @Column()
+    sessionStreamId: string;
 
     @Field()
     @Column("varchar", { length: 15 })
@@ -38,7 +43,7 @@ export class Session extends BaseEntity {
     @OneToMany(
         () => SessionAllocation,
         (sessionAllocation) => sessionAllocation.session,
-        { lazy: true }
+        { lazy: true, cascade: ["insert"] }
     )
     sessionAllocations: Lazy<SessionAllocation[]>;
 

@@ -1,9 +1,11 @@
 import {
     BaseEntity,
+    Column,
     Entity,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from "typeorm";
 import { Course } from "./Course";
 import { Term } from "./Term";
@@ -14,10 +16,19 @@ import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
+@Unique(["course", "term"])
 export class Timetable extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Field(() => Int)
+    @Column({ nullable: true })
+    courseId: number;
+
+    @Field(() => Int)
+    @Column({ nullable: true })
+    termId: number;
 
     @Field(() => Course)
     @ManyToOne(() => Course, (course) => course.timetables, { lazy: true })

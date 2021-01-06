@@ -26,11 +26,15 @@ export class SessionStream extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Field(() => Int)
+    @Column()
+    timetableId: number;
+
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {
         lazy: true,
     })
-    timetable: Timetable;
+    timetable: Lazy<Timetable>;
 
     @Field()
     @Column("varchar", { length: 32 })
@@ -38,9 +42,9 @@ export class SessionStream extends BaseEntity {
 
     @Field(() => SessionType)
     @Column("varchar", { length: 15 })
-    type: SessionType;
+    type: Lazy<SessionType>;
 
-    @Field(() => IsoDay)
+    @Field(() => Int)
     @Column("int")
     day: IsoDay;
 
@@ -60,7 +64,7 @@ export class SessionStream extends BaseEntity {
     @Column("varchar", { length: 15 })
     location: string;
 
-    @Field(() => Session)
+    @Field(() => [Session])
     @OneToMany(() => Session, (session) => session.sessionStream, {
         lazy: true,
     })
@@ -70,7 +74,7 @@ export class SessionStream extends BaseEntity {
     @OneToMany(
         () => StreamAllocation,
         (streamAllocation) => streamAllocation.sessionStream,
-        { lazy: true }
+        { lazy: true, cascade: ["insert"] }
     )
     streamAllocations: Lazy<StreamAllocation[]>;
 }

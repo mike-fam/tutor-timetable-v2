@@ -1,7 +1,7 @@
-import startOfIsoWeek from "date-fns/startOfISOWeek";
+import startOfISOWeek from "date-fns/startOfISOWeek";
 import addDays from "date-fns/addDays";
 import format from "date-fns/format";
-import { IsoDayFormatting, IsoDay } from "../types/date";
+import { IsoDay, IsoDayFormatting } from "../types/date";
 
 /**
  * Converts an iso week day number to the name of that week day
@@ -12,7 +12,7 @@ export const isoNumberToDay = (
     isoDay: IsoDay,
     isoDayFormat: IsoDayFormatting = "iii"
 ): string => {
-    const monday = startOfIsoWeek(new Date());
+    const monday = startOfISOWeek(new Date());
     const weekDay = addDays(monday, isoDay - 1);
     return format(weekDay, isoDayFormat);
 };

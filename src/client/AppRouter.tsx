@@ -9,7 +9,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
         <BrowserRouter>
             <NavBar user={"s123456789"} />
             <Switch>
-                <Route path="/" component={TimetableContainer} exact />
+                <Route path="/" component={TimetablePageContainer} exact />
                 <Route path="/requests" component={RequestContainer} />
             </Switch>
         </BrowserRouter>

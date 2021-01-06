@@ -1,22 +1,35 @@
 import { Tab, TabList, Tabs } from "@chakra-ui/react";
 import React from "react";
+import range from "lodash/range";
 
 type Props = {
-    numOfWeeks: Array<number>;
+    weekNames: Array<string>;
+    weeksNum: number;
+    chosenWeek: number;
+    chooseWeek: React.Dispatch<React.SetStateAction<number>>;
 };
 
-// Placeholder content
-export const WeekNav: React.FunctionComponent<Props> = (props: Props) => {
+export const WeekNav: React.FunctionComponent<Props> = ({
+    weekNames,
+    weeksNum,
+    chooseWeek,
+    chosenWeek,
+}) => {
     return (
-        <div>
-            <Tabs defaultIndex={1}>
-                <TabList>
-                    <Tab>All Weeks</Tab>
-                    {props.numOfWeeks.map((week, index) => (
-                        <Tab key={index}>Week {week}</Tab>
-                    ))}
-                </TabList>
-            </Tabs>
-        </div>
+        <Tabs
+            index={chosenWeek + 1}
+            onChange={(index) => {
+                chooseWeek(index - 1);
+            }}
+        >
+            <TabList flexWrap="wrap" justifyContent="center">
+                <Tab h="60px">All Weeks</Tab>
+                {range(weeksNum).map((index) => (
+                    <Tab h="60px" key={index}>
+                        {weekNames[index] || `Week [${index}]`}
+                    </Tab>
+                ))}
+            </TabList>
+        </Tabs>
     );
 };

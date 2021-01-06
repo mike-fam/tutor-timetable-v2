@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { SessionType } from "../../types/session";
-import { checkFieldValueInEnum } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseStaff } from "./CourseStaff";
 import { Field, Int, ObjectType } from "type-graphql";
 
@@ -24,11 +24,11 @@ export class Preference extends BaseEntity {
     @Column("varchar", { length: 15 })
     sessionType: SessionType;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     maxContigHours: number;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     maxWeeklyHours: number;
 
@@ -36,5 +36,5 @@ export class Preference extends BaseEntity {
     @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference, {
         lazy: true,
     })
-    courseStaff: CourseStaff;
+    courseStaff: Lazy<CourseStaff>;
 }

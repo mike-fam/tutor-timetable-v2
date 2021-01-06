@@ -8,6 +8,7 @@ import {
 import { User } from "./User";
 import { Session } from "./Session";
 import { Field, Int, ObjectType } from "type-graphql";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
@@ -21,9 +22,9 @@ export class SessionAllocation extends BaseEntity {
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
         lazy: true,
     })
-    session: Session;
+    session: Lazy<Session>;
 
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.sessionAllocations, { lazy: true })
-    user: User;
+    user: Lazy<User>;
 }
