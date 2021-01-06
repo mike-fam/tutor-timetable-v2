@@ -14,7 +14,6 @@ import {
     User,
 } from "./entities";
 
-
 export default {
     type: "postgres",
     url: process.env.DB_URL,
@@ -38,6 +37,8 @@ export default {
     ],
     logging: !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
-        migrationsDir: __prod__ ? "build/server/migrations/*.js" : "src/server/migrations",
+        migrationsDir: __prod__
+            ? "build/server/migrations/*.js"
+            : "src/server/migrations",
     },
 } as ConnectionOptions;

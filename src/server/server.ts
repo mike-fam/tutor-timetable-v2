@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import "./config"
+import "./config";
 import express, { Express } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
