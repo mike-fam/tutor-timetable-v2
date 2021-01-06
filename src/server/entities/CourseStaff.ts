@@ -7,21 +7,28 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
+    Check,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
 import { Field, Int, ObjectType } from "type-graphql";
-import { Lazy } from "../utils/query";
 import { Role } from "../../types/user";
+import { checkFieldValueInEnum } from "../utils/query";
+import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
+@Check(checkFieldValueInEnum(Role, "role"))
 @Unique(["timetable", "user"])
 export class CourseStaff extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Field()
+    @Column()
+    userUsername: string;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
@@ -40,6 +47,7 @@ export class CourseStaff extends BaseEntity {
     @Field(() => Preference)
     @OneToOne(() => Preference, (preference) => preference.courseStaff, {
         lazy: true,
+        nullable: true,
     })
     @JoinColumn()
     preference: Lazy<Preference>;

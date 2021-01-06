@@ -1,40 +1,47 @@
 import {
     BaseEntity,
+    Check,
     Column,
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
+import { checkFieldValueInEnum } from "../utils/query";
+import { TermType } from "../../types/term";
 import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
+@Check(checkFieldValueInEnum(TermType, "type"))
+@Unique(["type", "year"])
 export class Term extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field()
+    @Field(() => TermType)
     @Column("varchar", { length: 20 })
-    type: string;
+    type: TermType;
 
     @Field(() => Int)
-    @Column("varchar", { length: 100 })
+    @Column()
     year: number;
 
     @Field(() => Date)
-    @Column("date")
+    @Column({ type: "timestamp without time zone" })
     startDate: Date;
 
     @Field(() => Date)
-    @Column("date")
+    @Column({ type: "timestamp without time zone" })
     endDate: Date;
 
-    @Field(() => [Int])
-    @Column("int", { array: true })
-    breakWeeks: Array<number>;
+    // TODO: Validate length of this array
+    @Field(() => [String])
+    @Column("varchar", { array: true, default: () => "array[]::varchar[]" })
+    weekNames: Array<string>;
 
     @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.term, { lazy: true })

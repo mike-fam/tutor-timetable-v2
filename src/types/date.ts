@@ -18,7 +18,7 @@ export type IsoDayFormatting =
     | "iiiiii";
 
 export type TimeRange = {
-    id: string;
+    id: number;
     start: number;
     end: number;
 };

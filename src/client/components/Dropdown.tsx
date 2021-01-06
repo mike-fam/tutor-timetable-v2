@@ -1,27 +1,28 @@
 import React, { SelectHTMLAttributes } from "react";
 import { Select } from "@chakra-ui/react";
+import { Map } from "immutable";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> & {
-    children: string[];
+    options: Map<number, string>;
     size?: string;
     noDefault?: boolean;
 };
 
 export const Dropdown: React.FunctionComponent<Props> = ({
-    children,
+    options,
     noDefault = true,
     ...props
 }) => {
     return (
-        <Select {...props}>
+        <Select {...props} isFullWidth={false}>
             {noDefault ? (
                 <option disabled defaultChecked>
                     Select a value
                 </option>
             ) : null}
-            {children.map((option, index) => (
-                <option key={index} value={option}>
-                    {option}
+            {options.toArray().map(([id, optionString]) => (
+                <option key={id} value={id}>
+                    {optionString}
                 </option>
             ))}
         </Select>

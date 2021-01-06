@@ -1,51 +1,48 @@
-import { Checkbox, Stack } from "@chakra-ui/react";
 import React from "react";
+import { Box, Checkbox, Stack } from "@chakra-ui/react";
+import { Map, Set } from "immutable";
 
-// PLaceholder name for the function callback.
 type Props = {
-    courses: Array<String>;
-    callbackFunc: Function;
+    courses: Map<number, string>;
+    selectedCourses: Set<number>;
+    selectCourse: (courseId: number, selected: boolean) => void;
 };
 
-export const CourseSelect: React.FunctionComponent<Props> = (props: Props) => {
-    // Maybe use a Map here instead?
-    const [checkedItems, setCheckedItems] = React.useState(
-        new Array<boolean>(props.courses.length).fill(false)
-    );
-
-    const allChecked = checkedItems.every(Boolean);
-
-    const checkItems = (index: number, value: boolean, course: String) => {
-        let temp: Array<boolean> = [...checkedItems];
-        temp[index] = value;
-        props.callbackFunc(course, value);
-        setCheckedItems(temp);
-    };
-
+export const CourseSelect: React.FunctionComponent<Props> = ({
+    courses,
+    selectCourse,
+    selectedCourses,
+}) => {
     return (
-        <div>
-            {/*Onchange might need to be modified here depending on callback logic*/}
+        <Box>
             <Checkbox
-                isChecked={allChecked}
-                onChange={() => {
-                    setCheckedItems(checkedItems.map((x) => !allChecked));
+                isChecked={selectedCourses.size === courses.size}
+                onChange={(e) => {
+                    courses.forEach((_, id) => {
+                        selectCourse(id, e.target.checked);
+                    });
                 }}
+                isIndeterminate={
+                    selectedCourses.size !== courses.size &&
+                    selectedCourses.size !== 0
+                }
             >
                 All Courses
             </Checkbox>
             <Stack pl={6} mt={1} spacing={1}>
-                {props.courses.map((course, index) => (
+                {courses.map((course, id) => (
                     <Checkbox
-                        isChecked={checkedItems[index]}
-                        onChange={() => {
-                            checkItems(index, !checkedItems[index], course);
+                        // https://github.com/chakra-ui/chakra-ui/issues/2428#issuecomment-724002563
+                        isChecked={selectedCourses.contains(id)}
+                        onChange={(e) => {
+                            selectCourse(id, e.target.checked);
                         }}
-                        key={index}
+                        key={id}
                     >
                         {course}
                     </Checkbox>
                 ))}
             </Stack>
-        </div>
+        </Box>
     );
 };

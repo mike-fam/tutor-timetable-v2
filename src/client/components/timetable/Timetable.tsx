@@ -1,28 +1,26 @@
 import { Box, Grid } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import { IsoDay } from "../../../types/date";
 import { Props as DayProps } from "./Day";
 import { gap } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
-
-// TODO: hardcoded type
-export type SessionType = {
-    id: string;
-    name: string;
-    startTime: number;
-    endTime: number;
-    day: IsoDay;
-};
+import { Set } from "immutable";
+import { IsoDay } from "../../../types/date";
 
 export type Props = {
-    displayedDays: IsoDay[];
+    displayedDays: Set<IsoDay>;
     renderDay: (
         dayProps: Omit<DayProps, "renderTimeSlot" | "renderSession">,
         key: number
     ) => ReactElement;
     startTime?: number;
     endTime?: number;
-    sessions: Array<SessionType>;
+    sessions: Array<{
+        id: number;
+        name: string;
+        startTime: number;
+        endTime: number;
+        day: IsoDay;
+    }>;
 };
 
 export const Timetable: React.FC<Props> = ({
@@ -35,7 +33,7 @@ export const Timetable: React.FC<Props> = ({
     return (
         <Box>
             <Grid
-                templateColumns={`2ch repeat(${displayedDays.length}, 1fr)`}
+                templateColumns={`2ch repeat(${displayedDays.size}, 1fr)`}
                 gap={gap}
             >
                 <HourColumn startTime={startTime} endTime={endTime} />

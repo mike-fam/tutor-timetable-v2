@@ -1,0 +1,13 @@
+query MyCourses {
+    me {
+        courseStaffs {
+            timetable {
+                course {
+                    id
+                    code
+                    title
+                }
+            }
+        }
+    }
+}

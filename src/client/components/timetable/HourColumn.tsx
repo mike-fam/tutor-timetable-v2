@@ -16,7 +16,7 @@ export const HourColumn: React.FC<Props> = ({ startTime, endTime }) => {
     return (
         <Grid
             templateRows={`${firstLineHeight}px repeat(${
-                endTime - startTime + 1
+                endTime - startTime
             }, ${timeSlotHeight}px)`}
             gap={gap}
         >
