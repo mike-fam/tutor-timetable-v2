@@ -1,5 +1,4 @@
 import { ConnectionOptions } from "typeorm";
-import dotenv from "dotenv";
 import { __prod__ } from "../constants";
 import {
     Course,
@@ -15,7 +14,6 @@ import {
     User,
 } from "./entities";
 
-dotenv.config();
 
 export default {
     type: "postgres",
@@ -40,6 +38,6 @@ export default {
     ],
     logging: !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
-        migrationsDir: "src/server/migrations",
+        migrationsDir: __prod__ ? "build/server/migrations/*.js" : "src/server/migrations",
     },
 } as ConnectionOptions;

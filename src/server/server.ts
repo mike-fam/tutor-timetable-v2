@@ -1,8 +1,8 @@
 import "reflect-metadata";
+import "./config"
 import express, { Express } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
-import dotenv from "dotenv";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 
@@ -19,8 +19,6 @@ import cors from "cors";
 import { SessionStreamResolver } from "./resolvers/SessionStreamResolver";
 import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
-
-dotenv.config();
 
 declare global {
     namespace Express {
