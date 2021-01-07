@@ -1,14 +1,19 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
 import { TimeSlot } from "../timetable/TimeSlot";
+import { TempTimeslot } from "../../types/availability";
 
 type Props = {
-    onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+    addTempTimeslot: (timeslot: TempTimeslot) => void;
     time: number;
     day: number;
 };
 
-export const AvailabilityTimeSlot: React.FC<Props> = ({ onClick }) => {
+export const AvailabilityTimeSlot: React.FC<Props> = ({
+    addTempTimeslot,
+    time,
+    day,
+}) => {
     return (
         <TimeSlot>
             <Box
@@ -19,7 +24,14 @@ export const AvailabilityTimeSlot: React.FC<Props> = ({ onClick }) => {
                     opacity: 0.2,
                     cursor: "copy",
                 }}
-                onClick={onClick}
+                onClick={() =>
+                    addTempTimeslot({
+                        name: `${time}:00-${time + 1}:00`,
+                        startTime: time,
+                        endTime: time + 1,
+                        day,
+                    })
+                }
             />
         </TimeSlot>
     );

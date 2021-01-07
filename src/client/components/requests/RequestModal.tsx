@@ -55,14 +55,14 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                         <Button onClick={() => props.toggle(false)}>
                             Cancel
                         </Button>
-                        {props.userType === Role.CourseCoordinator &&
+                        {props.userType === Role.COURSE_COORDINATOR &&
                         props.type === RequestModalType.View ? (
                             <>
                                 <Button>Approve</Button>
                                 <Button>Revoke</Button>
                             </>
                         ) : null}
-                        {props.userType === Role.Staff &&
+                        {props.userType === Role.STAFF &&
                         props.type === RequestModalType.View ? (
                             <>
                                 <Button>Apply</Button>
