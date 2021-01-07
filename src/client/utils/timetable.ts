@@ -119,16 +119,24 @@ export const TimetableContext = React.createContext<TimetableState>({
     chosenCourses: Set<number>(),
     chosenTermId: 1,
     displayedDays: Set([
-        IsoDay.Mon,
-        IsoDay.Tue,
-        IsoDay.Wed,
-        IsoDay.Thu,
-        IsoDay.Fri,
-        IsoDay.Sat,
-        IsoDay.Sun,
+        IsoDay.MON,
+        IsoDay.TUE,
+        IsoDay.WED,
+        IsoDay.THU,
+        IsoDay.FRI,
+        IsoDay.SAT,
+        IsoDay.SUN,
     ]),
     chooseWeek: () => {},
     setChosenCourses: () => {},
     chooseTerm: () => {},
     setDisplayedDays: () => {},
 });
+
+export type TimetableSettings = {
+    displayedDays: Set<IsoDay>;
+    dayStartTime: number;
+    dayEndTime: number;
+};
+
+export const SettingsContext = React.createContext({});

@@ -25,13 +25,13 @@ export const TimetablePageContainer: React.FC<Props> = () => {
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
     const [displayedDays, setDisplayedDays] = useState(
         Set([
-            IsoDay.Mon,
-            IsoDay.Tue,
-            IsoDay.Wed,
-            IsoDay.Thu,
-            IsoDay.Fri,
-            IsoDay.Sat,
-            IsoDay.Sun,
+            IsoDay.MON,
+            IsoDay.TUE,
+            IsoDay.WED,
+            IsoDay.THU,
+            IsoDay.FRI,
+            IsoDay.SAT,
+            IsoDay.SUN,
         ])
     );
     const { data: termsData, loading: termsLoading } = useQueryWithError(

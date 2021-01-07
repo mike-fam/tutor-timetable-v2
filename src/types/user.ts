@@ -1,4 +1,4 @@
 export enum Role {
-    CourseCoordinator = "Course Coordinator",
-    Staff = "Staff",
+    COURSE_COORDINATOR = "Course Coordinator",
+    STAFF = "Staff",
 }

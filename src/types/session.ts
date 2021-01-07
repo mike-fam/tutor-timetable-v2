@@ -1,7 +1,7 @@
 export enum SessionType {
-    Practical = "Practical",
-    Tutorial = "Tutorial",
-    Seminar = "Seminar",
-    Lecture = "Lecture",
-    Studio = "Studio",
+    PRACTICAL = "Practical",
+    TUTORIAL = "Tutorial",
+    SEMINAR = "Seminar",
+    LECTURE = "Lecture",
+    STUDIO = "Studio",
 }
