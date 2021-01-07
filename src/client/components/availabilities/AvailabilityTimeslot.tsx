@@ -9,7 +9,7 @@ type Props = {
     day: number;
 };
 
-export const AvailabilityTimeSlot: React.FC<Props> = ({
+export const AvailabilityTimeslot: React.FC<Props> = ({
     addTempTimeslot,
     time,
     day,

@@ -12,7 +12,7 @@ import {
     useGetSessionsQuery,
     useGetSessionStreamsQuery,
 } from "../generated/graphql";
-import { Loadable } from "../components/Loadable";
+import { Loadable } from "../components/helpers/Loadable";
 import { IsoDay } from "../../types/date";
 
 type Props = {};
