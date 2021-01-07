@@ -8,6 +8,7 @@ import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
 import React from "react";
 import { Set } from "immutable";
+import { TimetableSettings, TimetableState } from "../types/timetable";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -103,15 +104,6 @@ export const getClashedRanges = (
     return result;
 };
 
-export type TimetableState = {
-    chosenWeek: number;
-    chosenCourses: Set<number>;
-    chosenTermId: number;
-    chooseWeek: React.Dispatch<React.SetStateAction<number>>;
-    setChosenCourses: React.Dispatch<React.SetStateAction<Set<number>>>;
-    chooseTerm: React.Dispatch<React.SetStateAction<number>>;
-};
-
 export const TimetableContext = React.createContext<TimetableState>({
     chosenWeek: -1,
     chosenCourses: Set<number>(),
@@ -120,15 +112,6 @@ export const TimetableContext = React.createContext<TimetableState>({
     setChosenCourses: () => {},
     chooseTerm: () => {},
 });
-
-export type TimetableSettings = {
-    displayedDays: Set<IsoDay>;
-    setDisplayedDays: React.Dispatch<React.SetStateAction<Set<IsoDay>>>;
-    dayStartTime: number;
-    setDayStartTime: React.Dispatch<React.SetStateAction<number>>;
-    dayEndTime: number;
-    setDayEndTime: React.Dispatch<React.SetStateAction<number>>;
-};
 
 export const TimetableSettingsContext = React.createContext<TimetableSettings>({
     displayedDays: Set([
