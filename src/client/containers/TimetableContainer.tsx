@@ -6,7 +6,7 @@ import {
     Props as SessionProps,
     Session,
 } from "../components/timetable/Session";
-import { TimetableContext } from "../utils/timetable";
+import { TimetableContext, TimetableSettingsContext } from "../utils/timetable";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import {
     useGetSessionsQuery,
@@ -18,12 +18,12 @@ import { IsoDay } from "../../types/date";
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
-    const {
-        displayedDays,
-        chosenTermId,
-        chosenWeek,
-        chosenCourses,
-    } = useContext(TimetableContext);
+    const { displayedDays, dayStartTime, dayEndTime } = useContext(
+        TimetableSettingsContext
+    );
+    const { chosenTermId, chosenWeek, chosenCourses } = useContext(
+        TimetableContext
+    );
     const { data: sessionsData, loading: sessionsLoading } = useQueryWithError(
         useGetSessionsQuery,
         {
@@ -75,6 +75,8 @@ export const TimetableContainer: React.FC<Props> = () => {
             <Timetable
                 sessions={sessions}
                 displayedDays={displayedDays}
+                startTime={dayStartTime}
+                endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
                     <Day
                         {...dayProps}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Timetable } from "../components/timetable/Timetable";
 import { IsoDay } from "../../types/date";
 import { Set } from "immutable";
@@ -9,23 +9,20 @@ import {
     Session,
 } from "../components/timetable/Session";
 import { AvailabilityTimeSlot } from "../components/availabilities/AvailabilityTimeSlot";
+import { TimetableSettingsContext } from "../utils/timetable";
 
 type Props = {};
 
 export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
-    const displayedDays = Set([
-        IsoDay.MON,
-        IsoDay.TUE,
-        IsoDay.WED,
-        IsoDay.THU,
-        IsoDay.FRI,
-        IsoDay.SAT,
-        IsoDay.SUN,
-    ]);
+    const { displayedDays, dayStartTime, dayEndTime } = useContext(
+        TimetableSettingsContext
+    );
     const sessions: TimetableSession[] = [];
     return (
         <Timetable
             displayedDays={displayedDays}
+            startTime={dayStartTime}
+            endTime={dayEndTime}
             renderDay={(dayProps, key) => (
                 <Day
                     {...dayProps}

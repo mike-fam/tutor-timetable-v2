@@ -107,17 +107,30 @@ export type TimetableState = {
     chosenWeek: number;
     chosenCourses: Set<number>;
     chosenTermId: number;
-    displayedDays: Set<IsoDay>;
     chooseWeek: React.Dispatch<React.SetStateAction<number>>;
     setChosenCourses: React.Dispatch<React.SetStateAction<Set<number>>>;
     chooseTerm: React.Dispatch<React.SetStateAction<number>>;
-    setDisplayedDays: React.Dispatch<React.SetStateAction<Set<IsoDay>>>;
 };
 
 export const TimetableContext = React.createContext<TimetableState>({
     chosenWeek: -1,
     chosenCourses: Set<number>(),
     chosenTermId: 1,
+    chooseWeek: () => {},
+    setChosenCourses: () => {},
+    chooseTerm: () => {},
+});
+
+export type TimetableSettings = {
+    displayedDays: Set<IsoDay>;
+    setDisplayedDays: React.Dispatch<React.SetStateAction<Set<IsoDay>>>;
+    dayStartTime: number;
+    setDayStartTime: React.Dispatch<React.SetStateAction<number>>;
+    dayEndTime: number;
+    setDayEndTime: React.Dispatch<React.SetStateAction<number>>;
+};
+
+export const TimetableSettingsContext = React.createContext<TimetableSettings>({
     displayedDays: Set([
         IsoDay.MON,
         IsoDay.TUE,
@@ -127,16 +140,9 @@ export const TimetableContext = React.createContext<TimetableState>({
         IsoDay.SAT,
         IsoDay.SUN,
     ]),
-    chooseWeek: () => {},
-    setChosenCourses: () => {},
-    chooseTerm: () => {},
     setDisplayedDays: () => {},
+    dayStartTime: 7,
+    dayEndTime: 20,
+    setDayStartTime: () => {},
+    setDayEndTime: () => {},
 });
-
-export type TimetableSettings = {
-    displayedDays: Set<IsoDay>;
-    dayStartTime: number;
-    dayEndTime: number;
-};
-
-export const SettingsContext = React.createContext({});
