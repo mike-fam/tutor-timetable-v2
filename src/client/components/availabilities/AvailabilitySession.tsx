@@ -9,7 +9,7 @@ type Props = SessionProps & {
 };
 
 export const AvailabilitySession: React.FC<Props> = (props) => {
-    const { name } = props;
+    const { startTime, endTime } = props;
     return (
         <Session {...props}>
             <VStack
@@ -29,16 +29,18 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                     </Center>
                 </Draggable>
                 <Box p={1} h="100%">
-                    {name}
+                    {`${startTime}:00-${endTime}:00`}
                 </Box>
-                <Center
-                    h={2}
-                    _hover={{
-                        cursor: "ns-resize",
-                    }}
-                >
-                    <Icon as={MdDragHandle} />
-                </Center>
+                <Draggable axis="y">
+                    <Center
+                        h={2}
+                        _hover={{
+                            cursor: "ns-resize",
+                        }}
+                    >
+                        <Icon as={MdDragHandle} />
+                    </Center>
+                </Draggable>
             </VStack>
         </Session>
     );

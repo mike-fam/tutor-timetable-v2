@@ -16,3 +16,10 @@ export type AvailabilityState = {
         React.SetStateAction<Map<number, TempTimeslot>>
     >;
 };
+
+export enum ModificationTypes {
+    UNCHANGED,
+    ADDED,
+    REMOVED,
+    MODIFIED,
+}
