@@ -12,7 +12,7 @@ export type Props = {
     stackIndex: number;
 };
 
-export const Session: React.FC<Props> = ({ name, ...props }) => {
+export const Session: React.FC<Props> = ({ children, ...props }) => {
     const { width, height, display, left, top } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
@@ -27,11 +27,10 @@ export const Session: React.FC<Props> = ({ name, ...props }) => {
             left={left}
             top={top}
             bg={bg}
-            p={1}
             color="white"
             rounded="base"
         >
-            {name}
+            {children}
         </Box>
     );
 };

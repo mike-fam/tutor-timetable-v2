@@ -14,6 +14,7 @@ import {
 } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { IsoDay } from "../../types/date";
+import { Box } from "@chakra-ui/react";
 
 type Props = {};
 
@@ -82,7 +83,12 @@ export const TimetableContainer: React.FC<Props> = () => {
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
                         renderSession={(sessionProps: SessionProps, key) => (
-                            <Session {...sessionProps} key={key} />
+                            // TODO: Make new TimetableSession component
+                            <Session {...sessionProps} key={key}>
+                                <Box w="100%" h="100%" p={1}>
+                                    {sessionProps.name}
+                                </Box>
+                            </Session>
                         )}
                         key={key}
                     />

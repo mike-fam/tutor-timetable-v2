@@ -9,6 +9,7 @@ import { AvailabilityTimeslot } from "../components/availabilities/AvailabilityT
 import { TimetableSettingsContext } from "../utils/timetable";
 import { AvailabilityContext } from "../utils/availability";
 import { TempTimeslot } from "../types/availability";
+import { AvailabilitySession } from "../components/availabilities/AvailabilitySession";
 
 type Props = {};
 
@@ -61,7 +62,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
                         />
                     )}
                     renderSession={(sessionProps: SessionProps, key) => (
-                        <Session {...sessionProps} key={key} />
+                        <AvailabilitySession {...sessionProps} key={key} />
                     )}
                     key={key}
                 />
