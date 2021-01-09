@@ -34,17 +34,17 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                 </Link>
                 {/*Dropdown menu. Update with proper items when ready.*/}
                 <Menu>
-                    <MenuButton rightIcon={<ChevronDownIcon />}>
+                    <MenuButton righticon={<ChevronDownIcon />}>
                         Dropdown
                     </MenuButton>
-                    <MenuList>
+                    <MenuList style={{ margin: 0 }}>
                         <MenuItem>option 1</MenuItem>
                         <MenuItem>option 2</MenuItem>
                         <MenuItem>option 3</MenuItem>
                     </MenuList>
                 </Menu>
                 <Menu>
-                    <MenuButton rightIcon={<ChevronDownIcon />}>
+                    <MenuButton righticon={<ChevronDownIcon />}>
                         Logged in as: {props.user}
                     </MenuButton>
                     <MenuList>

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
-import { RequestContainer } from "./containers/RequestContainer";
+import { RequestContainer } from "./containers/requests/RequestContainer";
 import { TimetablePageContainer } from "./containers/TimetablePageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
