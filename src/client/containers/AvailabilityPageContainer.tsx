@@ -7,7 +7,7 @@ import { AvailabilityTimeslotType, TempTimeslot } from "../types/availability";
 type Props = {};
 
 export const AvailabilityPageContainer: React.FC<Props> = ({}) => {
-    const [modifiedTimeslots, setModifiedTimeslots] = useState(
+    const [existingTimeslots, setExistingTimeslots] = useState(
         Map<number, AvailabilityTimeslotType>()
     );
     const [tempRemovedTimeslots, setTempRemovedTimeslots] = useState(
@@ -16,9 +16,9 @@ export const AvailabilityPageContainer: React.FC<Props> = ({}) => {
     return (
         <AvailabilityContext.Provider
             value={{
-                modifiedTimeslots,
+                existingTimeslots,
                 tempRemovedTimeslots,
-                setModifiedTimeslots,
+                setExistingTimeslots,
                 setTempRemovedTimeslots,
             }}
         >

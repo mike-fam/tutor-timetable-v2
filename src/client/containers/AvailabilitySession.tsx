@@ -12,7 +12,7 @@ import {
     realGap,
     timeSlotHeight,
 } from "../constants/timetable";
-import { leftFillNum } from "../utils/availability";
+import { leftFillNum, modificationTypeToTheme } from "../utils/availability";
 import {
     sessionStyleFromProps,
     TimetableSettingsContext,
@@ -38,8 +38,11 @@ export const AvailabilitySession: React.FC<Props> = ({
     const nodeRef = useRef(null);
     const [staticEndTime, setStaticEndTime] = useState(endTime);
     const { dayEndTime, dayStartTime } = useContext(TimetableSettingsContext);
+    const theme = useMemo(() => {
+        return modificationTypeToTheme(modificationType);
+    }, [modificationType]);
     return (
-        <Session {...props}>
+        <Session {...props} theme={theme}>
             <VStack
                 spacing={0}
                 h="100%"
@@ -74,7 +77,10 @@ export const AvailabilitySession: React.FC<Props> = ({
                         }
                         updateSession(props.id, modificationType, {
                             // Limit free time to less than 15 mins
-                            startTime: Math.min(newStartTime, endTime - 0.25),
+                            startTime: Math.min(
+                                Math.max(newStartTime, dayStartTime),
+                                endTime - 0.25
+                            ),
                         });
                     }}
                     nodeRef={nodeRef}
@@ -123,6 +129,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                         if (newEndTimeMins < 5 || newEndTimeMins > 55) {
                             newEndTime = Math.round(newEndTime);
                         }
+                        console.log(newEndTime, startTime + 0.25);
                         updateSession(props.id, modificationType, {
                             endTime: Math.min(
                                 Math.max(newEndTime, startTime + 0.25),

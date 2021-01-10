@@ -9,9 +9,9 @@ export type AvailabilityTimeslotType = TempTimeslot & {
 };
 
 export type AvailabilityState = {
-    modifiedTimeslots: Map<number, AvailabilityTimeslotType>;
+    existingTimeslots: Map<number, AvailabilityTimeslotType>;
     tempRemovedTimeslots: Set<number>;
-    setModifiedTimeslots: React.Dispatch<
+    setExistingTimeslots: React.Dispatch<
         React.SetStateAction<Map<number, AvailabilityTimeslotType>>
     >;
     setTempRemovedTimeslots: React.Dispatch<React.SetStateAction<Set<number>>>;
