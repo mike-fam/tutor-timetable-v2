@@ -1,6 +1,8 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
+import { SessionTheme } from "../../types/timetable";
+import { useSessionColour } from "../../hooks/useSessionColour";
 
 export type Props = {
     id: number;
@@ -11,14 +13,19 @@ export type Props = {
     endDay: number;
     stackSize: number;
     stackIndex: number;
+    theme?: SessionTheme;
 };
 
-export const Session: React.FC<Props> = ({ children, ...props }) => {
+export const Session: React.FC<Props> = ({
+    theme = SessionTheme.PRIMARY,
+    children,
+    ...props
+}) => {
     const { width, heightPx, display, left, topPx } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
     );
-    const bg = useColorModeValue("gray.800", "blue.500");
+    const bg = useSessionColour(theme);
     return (
         <Box
             position="absolute"

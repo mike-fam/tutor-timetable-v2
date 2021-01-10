@@ -27,3 +27,10 @@ export type TimetableSettings = {
     dayEndTime: number;
     setDayEndTime: React.Dispatch<React.SetStateAction<number>>;
 };
+
+export enum SessionTheme {
+    SUCCESS,
+    ERROR,
+    WARNING,
+    PRIMARY,
+}
