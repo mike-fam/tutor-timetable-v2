@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
 
 export type Props = {
+    id: number;
     name: string;
     startTime: number;
     endTime: number;
@@ -13,7 +14,7 @@ export type Props = {
 };
 
 export const Session: React.FC<Props> = ({ children, ...props }) => {
-    const { width, height, display, left, top } = useMemo(
+    const { width, heightPx, display, left, topPx } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
     );
@@ -22,13 +23,14 @@ export const Session: React.FC<Props> = ({ children, ...props }) => {
         <Box
             position="absolute"
             w={width}
-            h={height}
+            h={heightPx}
             display={display}
             left={left}
-            top={top}
+            top={topPx}
             bg={bg}
             color="white"
             rounded="base"
+            overflow="hidden"
         >
             {children}
         </Box>

@@ -55,6 +55,7 @@ export const Day: React.FunctionComponent<Props> = ({
             {sessions.map((session, key) =>
                 renderSession(
                     {
+                        id: session.id,
                         startTime: session.startTime,
                         endTime: session.endTime,
                         startDay: startTime,

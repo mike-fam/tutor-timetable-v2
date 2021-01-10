@@ -1,15 +1,19 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Timetable } from "../components/timetable/Timetable";
 import { Day } from "../components/timetable/Day";
-import {
-    Props as SessionProps,
-    Session,
-} from "../components/timetable/Session";
+import { Props as SessionProps } from "../components/timetable/Session";
 import { AvailabilityTimeslot } from "../components/availabilities/AvailabilityTimeslot";
-import { TimetableSettingsContext } from "../utils/timetable";
+import {
+    sessionStyleFromProps,
+    TimetableSettingsContext,
+} from "../utils/timetable";
 import { AvailabilityContext } from "../utils/availability";
-import { TempTimeslot } from "../types/availability";
-import { AvailabilitySession } from "../components/availabilities/AvailabilitySession";
+import {
+    ModificationType,
+    ModifyTimeslotParams,
+    TempTimeslot,
+} from "../types/availability";
+import { AvailabilitySession } from "./AvailabilitySession";
 
 type Props = {};
 
@@ -17,32 +21,68 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
     const { displayedDays, dayStartTime, dayEndTime } = useContext(
         TimetableSettingsContext
     );
-    const [tempAddIndex, setTempAddIndex] = useState(-1);
-    const {
-        tempAddedTimeslots,
-        tempUpdatedTimeslots,
-        setTempAddedTimeslots,
-    } = useContext(AvailabilityContext);
+    const [tempAddIndex, setModifiedIndex] = useState(-1);
+    const { modifiedTimeslots, setModifiedTimeslots } = useContext(
+        AvailabilityContext
+    );
     // TODO: get sessions from server
     const sessions = useMemo(() => {
-        const modifiedTimeslotsMap = tempUpdatedTimeslots.merge(
-            tempAddedTimeslots
-        );
-        const modifiedTimeslots = modifiedTimeslotsMap
+        const modifiedTimeslotsArray = modifiedTimeslots
             .toArray()
             .map(([id, timeslot]) => ({
                 ...timeslot,
                 id,
+                name: "", // Just to be typesafe
             }));
-        return [...modifiedTimeslots];
-    }, [tempAddedTimeslots, tempUpdatedTimeslots]);
+        return [...modifiedTimeslotsArray];
+    }, [modifiedTimeslots]);
 
     const addTempTimeslot = useCallback(
-        (timeslot: TempTimeslot) => {
-            setTempAddedTimeslots((prev) => prev.set(tempAddIndex, timeslot));
-            setTempAddIndex((prev) => prev - 1);
+        (timeslot: TempTimeslot, type: ModificationType) => {
+            setModifiedTimeslots((prev) =>
+                prev.set(tempAddIndex, {
+                    ...timeslot,
+                    type,
+                })
+            );
+            setModifiedIndex((prev) => prev - 1);
         },
-        [tempAddIndex, setTempAddedTimeslots]
+        [tempAddIndex, setModifiedTimeslots]
+    );
+
+    const addNewTimeslot = useCallback(
+        (timeslot: TempTimeslot) => {
+            addTempTimeslot(timeslot, ModificationType.ADDED);
+        },
+        [addTempTimeslot]
+    );
+
+    const modifyTimeslot = useCallback(
+        (
+            timeslotId: number,
+            modificationType: ModificationType,
+            newTimeslotProps: ModifyTimeslotParams
+        ) => {
+            if (modificationType === ModificationType.UNCHANGED) {
+                // TODO: if unchanged
+                //      Remove specified timeslots from server
+                //      Add to add list, with new props
+                return;
+            } else {
+                const session = modifiedTimeslots.get(timeslotId);
+                if (!session) {
+                    return;
+                }
+                const newSession = {
+                    ...session,
+                    ...newTimeslotProps,
+                };
+                setModifiedTimeslots((prev) =>
+                    prev.set(timeslotId, newSession)
+                );
+            }
+        },
+        [modifiedTimeslots, setModifiedTimeslots]
     );
 
     return (
@@ -58,11 +98,21 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
                             key={key}
                             time={time}
                             day={day}
-                            addTempTimeslot={addTempTimeslot}
+                            addNewTimeslot={addNewTimeslot}
                         />
                     )}
                     renderSession={(sessionProps: SessionProps, key) => (
-                        <AvailabilitySession {...sessionProps} key={key} />
+                        <AvailabilitySession
+                            {...sessionProps}
+                            key={key}
+                            modificationType={
+                                sessionProps.id > 0
+                                    ? ModificationType.UNCHANGED
+                                    : modifiedTimeslots.get(sessionProps.id)
+                                          ?.type || ModificationType.UNCHANGED
+                            }
+                            updateSession={modifyTimeslot}
+                        />
                     )}
                     key={key}
                 />

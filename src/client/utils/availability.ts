@@ -3,10 +3,12 @@ import { AvailabilityState } from "../types/availability";
 import { Map, Set } from "immutable";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
-    tempAddedTimeslots: Map(),
+    modifiedTimeslots: Map(),
     tempRemovedTimeslots: Set(),
-    tempUpdatedTimeslots: Map(),
-    setTempAddedTimeslots: (prev) => prev,
+    setModifiedTimeslots: (prev) => prev,
     setTempRemovedTimeslots: (prev) => prev,
-    setTempUpdatedTimeslots: (prev) => prev,
 });
+
+export const leftFillNum = (num: number, targetLength: number) => {
+    return num.toString().padStart(targetLength, "0");
+};

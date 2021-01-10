@@ -27,8 +27,10 @@ export const sessionStyleFromProps = ({
     stackSize,
     stackIndex,
 }: Omit<SessionProps, "name">): {
-    top: CSS.Property.Top<number>;
-    height: CSS.Property.Height<number>;
+    topPx: CSS.Property.Top<number>;
+    heightPx: CSS.Property.Height<number>;
+    top: number;
+    height: number;
     display: CSS.Property.Display;
     width: CSS.Property.Width;
     left: CSS.Property.Left;
@@ -41,7 +43,10 @@ export const sessionStyleFromProps = ({
 
     // Top Pixel
     const top =
-        firstLineHeight + realGap + relativeStart * (timeSlotHeight + realGap);
+        firstLineHeight +
+        realGap +
+        relativeStart * timeSlotHeight +
+        Math.floor(relativeStart) * realGap;
     const sessionDuration = relativeEnd - relativeStart;
     const height =
         sessionDuration * timeSlotHeight +
@@ -53,7 +58,15 @@ export const sessionStyleFromProps = ({
     const left = `calc(((100% - ${
         (stackSize - 1) * realGap
     }px) / ${stackSize} + ${realGap}px) * ${stackIndex})`;
-    return { top: `${top}px`, height, display, width, left };
+    return {
+        topPx: `${top}px`,
+        heightPx: height,
+        display,
+        width,
+        left,
+        top,
+        height,
+    };
 };
 
 /**

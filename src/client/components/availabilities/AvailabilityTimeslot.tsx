@@ -4,13 +4,13 @@ import { TimeSlot } from "../timetable/TimeSlot";
 import { TempTimeslot } from "../../types/availability";
 
 type Props = {
-    addTempTimeslot: (timeslot: TempTimeslot) => void;
+    addNewTimeslot: (timeslot: TempTimeslot) => void;
     time: number;
     day: number;
 };
 
 export const AvailabilityTimeslot: React.FC<Props> = ({
-    addTempTimeslot,
+    addNewTimeslot,
     time,
     day,
 }) => {
@@ -25,8 +25,7 @@ export const AvailabilityTimeslot: React.FC<Props> = ({
                     cursor: "copy",
                 }}
                 onClick={() =>
-                    addTempTimeslot({
-                        name: `${time}:00-${time + 1}:00`,
+                    addNewTimeslot({
                         startTime: time,
                         endTime: time + 1,
                         day,
