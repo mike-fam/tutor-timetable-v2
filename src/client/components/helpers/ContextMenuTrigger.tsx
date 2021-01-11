@@ -1,23 +1,20 @@
-import React, {
-    Children,
-    cloneElement,
-    isValidElement,
-    useContext,
-} from "react";
+import { Box } from "@chakra-ui/react";
+import React, { useContext, MouseEvent } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 
 type Props = {};
 
 export const ContextMenuTrigger: React.FC<Props> = ({ children }) => {
     const { openMenu, setPosition } = useContext(ContextMenuContext);
-    const child = Children.only(children);
-    return isValidElement(child)
-        ? cloneElement(child, {
-              onContextMenu: (e: MouseEvent) => {
-                  e.preventDefault();
-                  setPosition({ x: e.clientX, y: e.clientY });
-                  openMenu();
-              },
-          })
-        : null;
+    return (
+        <Box
+            onContextMenu={(event: MouseEvent) => {
+                event.preventDefault();
+                setPosition({ x: event.clientX, y: event.clientY });
+                openMenu();
+            }}
+        >
+            {children}
+        </Box>
+    );
 };

@@ -100,6 +100,7 @@ export const ContextMenuList: React.FC<Props> = ({ children }) => {
             borderRadius={5}
             display="flex"
             flexDirection="column"
+            zIndex={1000}
             {...position}
         >
             {children}
