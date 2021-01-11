@@ -20,10 +20,9 @@ export type AvailabilityState = {
 export enum ModificationType {
     UNCHANGED,
     ADDED,
-    REMOVED,
     MODIFIED,
+    REMOVED,
+    REMOVED_MODIFIED,
 }
 
-export type ModifyTimeslotParams = Partial<
-    Pick<TimetableSession, "startTime" | "endTime">
->;
+export type ModifyTimeslotParams = Partial<AvailabilityTimeslotType>;

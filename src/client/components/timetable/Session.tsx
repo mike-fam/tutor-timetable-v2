@@ -1,8 +1,9 @@
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
 import { SessionTheme } from "../../types/timetable";
 import { useSessionColour } from "../../hooks/useSessionColour";
+import omit from "lodash/omit";
 
 export type Props = {
     id: number;
@@ -16,7 +17,9 @@ export type Props = {
     theme?: SessionTheme;
 };
 
-export const Session: React.FC<Props> = ({
+type PropsWithStyle = Props & Partial<Omit<BoxProps, "id">>;
+
+export const Session: React.FC<PropsWithStyle> = ({
     theme = SessionTheme.PRIMARY,
     children,
     ...props
@@ -26,6 +29,22 @@ export const Session: React.FC<Props> = ({
         [props]
     );
     const bg = useSessionColour(theme);
+    const styleProps = useMemo(
+        () =>
+            omit<PropsWithStyle, keyof Props>(props, [
+                "id",
+                "name",
+                "startTime",
+                "endTime",
+                "startDay",
+                "endDay",
+                "stackSize",
+                "stackIndex",
+                "theme",
+            ]),
+        [props]
+    );
+
     return (
         <Box
             position="absolute"
@@ -38,6 +57,7 @@ export const Session: React.FC<Props> = ({
             color="white"
             rounded="base"
             overflow="hidden"
+            {...styleProps}
         >
             {children}
         </Box>

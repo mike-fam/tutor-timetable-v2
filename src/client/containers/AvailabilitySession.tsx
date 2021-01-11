@@ -24,16 +24,16 @@ import { ContextMenuItem } from "../components/helpers/ContextMenuItem";
 
 type Props = SessionProps & {
     key?: number;
-    updateSession: (
-        sessionId: number,
-        modificationType: ModificationType,
-        newProps: ModifyTimeslotParams
-    ) => void;
+    updateSession: (sessionId: number, newProps: ModifyTimeslotParams) => void;
+    removeSession: (sessionId: number) => void;
+    restoreSession: (sessionId: number) => void;
     modificationType: ModificationType;
 };
 
 export const AvailabilitySession: React.FC<Props> = ({
     updateSession,
+    removeSession,
+    restoreSession,
     modificationType,
     ...props
 }) => {
@@ -45,10 +45,16 @@ export const AvailabilitySession: React.FC<Props> = ({
     const theme = useMemo(() => {
         return modificationTypeToTheme(modificationType);
     }, [modificationType]);
+    const removed = useMemo(() => {
+        return (
+            modificationType === ModificationType.REMOVED_MODIFIED ||
+            modificationType === ModificationType.REMOVED
+        );
+    }, [modificationType]);
     return (
         <ContextMenu>
             <ContextMenuTrigger>
-                <Session {...props} theme={theme}>
+                <Session {...props} theme={theme} opacity={removed ? 0.5 : 1}>
                     <VStack
                         spacing={0}
                         h="100%"
@@ -68,14 +74,14 @@ export const AvailabilitySession: React.FC<Props> = ({
                                     realGap + timeSlotHeight;
                                 const pxToWholeHour =
                                     realTop % extendedTimeslotHeight;
-                                const fiveMinPx = timeSlotHeight / 12;
+                                const tenMinPx = timeSlotHeight / 6;
                                 let newStartTime: number;
                                 // Snap to 5 mins to whole hour
                                 if (
-                                    (pxToWholeHour - fiveMinPx < 0 ||
-                                        pxToWholeHour + fiveMinPx + realGap >
+                                    (pxToWholeHour - tenMinPx < 0 ||
+                                        pxToWholeHour + tenMinPx + realGap >
                                             extendedTimeslotHeight) &&
-                                    Math.abs(dragData.y) <= fiveMinPx
+                                    Math.abs(dragData.y) <= tenMinPx
                                 ) {
                                     newStartTime = Math.round(startTime);
                                 } else {
@@ -83,7 +89,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                     newStartTime =
                                         startTime + dragData.y / timeSlotHeight;
                                 }
-                                updateSession(props.id, modificationType, {
+                                updateSession(props.id, {
                                     // Limit free time to less than 15 mins
                                     startTime: Math.min(
                                         Math.max(newStartTime, dayStartTime),
@@ -97,6 +103,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 x: 0,
                                 y: 0,
                             }}
+                            disabled={removed}
                         >
                             <Box
                                 position="absolute"
@@ -140,11 +147,13 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 let newEndTime =
                                     staticEndTime + dragData.y / timeSlotHeight;
                                 const newEndTimeMins = (newEndTime % 1) * 60;
-                                if (newEndTimeMins < 5 || newEndTimeMins > 55) {
+                                if (
+                                    newEndTimeMins < 10 ||
+                                    newEndTimeMins > 50
+                                ) {
                                     newEndTime = Math.round(newEndTime);
                                 }
-                                console.log(newEndTime, startTime + 0.25);
-                                updateSession(props.id, modificationType, {
+                                updateSession(props.id, {
                                     endTime: Math.min(
                                         Math.max(newEndTime, startTime + 0.25),
                                         dayEndTime
@@ -160,6 +169,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 x: 0,
                                 y: 0,
                             }}
+                            disabled={removed}
                         >
                             <Box
                                 position="absolute"
@@ -176,14 +186,18 @@ export const AvailabilitySession: React.FC<Props> = ({
                 </Session>
             </ContextMenuTrigger>
             <ContextMenuList>
-                <ContextMenuItem onClick={() => console.log("Updating")}>
+                <ContextMenuItem onClick={() => console.log("updating")}>
                     Update
                 </ContextMenuItem>
                 <ContextMenuItem
-                    onClick={() => console.log("Removing")}
-                    colorScheme="red"
+                    onClick={() => {
+                        removed
+                            ? restoreSession(props.id)
+                            : removeSession(props.id);
+                    }}
+                    colorScheme={removed ? "green" : "red"}
                 >
-                    Delete
+                    {removed ? "Restore" : "Delete"}
                 </ContextMenuItem>
             </ContextMenuList>
         </ContextMenu>

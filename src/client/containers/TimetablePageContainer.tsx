@@ -14,7 +14,6 @@ import { WeekNavContainer } from "./WeekNavContainer";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import { TimetableContext } from "../utils/timetable";
 import { Set } from "immutable";
-import { IsoDay } from "../../types/date";
 import { differenceInWeeks, parseISO } from "date-fns";
 
 type Props = {};

@@ -23,6 +23,7 @@ export const modificationTypeToTheme = (
         case ModificationType.MODIFIED:
             return SessionTheme.WARNING;
         case ModificationType.REMOVED:
+        case ModificationType.REMOVED_MODIFIED:
             return SessionTheme.ERROR;
         case ModificationType.UNCHANGED:
             return SessionTheme.PRIMARY;

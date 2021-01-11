@@ -116,19 +116,12 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
     );
 
     const modifyTimeslot = useCallback(
-        (
-            timeslotId: number,
-            modificationType: ModificationType,
-            newTimeslotProps: ModifyTimeslotParams
-        ) => {
+        (timeslotId: number, newTimeslotProps: ModifyTimeslotParams) => {
             const session = existingTimeslots.get(timeslotId);
             if (!session) {
                 return;
             }
-            if (
-                timeslotId > 0 &&
-                modificationType === ModificationType.UNCHANGED
-            ) {
+            if (timeslotId > 0 && session.type === ModificationType.UNCHANGED) {
                 setExistingTimeslots((prev) =>
                     prev.set(timeslotId, {
                         ...session,
@@ -146,6 +139,54 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
             }
         },
         [existingTimeslots, setExistingTimeslots]
+    );
+
+    const removeTimeslot = useCallback(
+        (timeslotId) => {
+            // Added timeslot
+            if (timeslotId < 0) {
+                setExistingTimeslots((prev) => prev.remove(timeslotId));
+            } else {
+                const timeslot = existingTimeslots.get(timeslotId);
+                if (!timeslot) {
+                    return;
+                }
+                setExistingTimeslots((prev) =>
+                    prev.set(timeslotId, {
+                        ...timeslot,
+                        type:
+                            timeslot.type === ModificationType.UNCHANGED
+                                ? ModificationType.REMOVED
+                                : ModificationType.REMOVED_MODIFIED,
+                    })
+                );
+                setTempRemovedTimeslots((prev) => prev.add(timeslotId));
+            }
+        },
+        [existingTimeslots, setExistingTimeslots, setTempRemovedTimeslots]
+    );
+
+    const restoreTimeslot = useCallback(
+        (timeslotId) => {
+            if (!tempRemovedTimeslots.contains(timeslotId)) {
+                return;
+            }
+            const timeslot = existingTimeslots.get(timeslotId);
+            if (!timeslot) {
+                return;
+            }
+            tempRemovedTimeslots.remove(timeslotId);
+            setExistingTimeslots((prev) =>
+                prev.set(timeslotId, {
+                    ...timeslot,
+                    type:
+                        timeslot.type === ModificationType.REMOVED
+                            ? ModificationType.UNCHANGED
+                            : ModificationType.MODIFIED,
+                })
+            );
+        },
+        [existingTimeslots, setExistingTimeslots, tempRemovedTimeslots]
     );
 
     return (
@@ -175,6 +216,8 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
                                           ?.type || ModificationType.UNCHANGED
                             }
                             updateSession={modifyTimeslot}
+                            removeSession={removeTimeslot}
+                            restoreSession={restoreTimeslot}
                         />
                     )}
                     key={key}
