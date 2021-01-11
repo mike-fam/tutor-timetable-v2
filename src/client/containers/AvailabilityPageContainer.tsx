@@ -45,7 +45,7 @@ export const AvailabilityPageContainer: React.FC<Props> = () => {
                         Option 2
                     </ContextMenuItem>
                     <ContextMenuItem
-                        onClick={(e) => console.log("Option 3")}
+                        onClick={() => console.log("Option 3")}
                         colorScheme="blue"
                     >
                         Option 3
