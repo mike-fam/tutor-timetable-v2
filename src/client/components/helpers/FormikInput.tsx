@@ -6,7 +6,7 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import { sentenceCase } from "change-case";
+import { camelCase, sentenceCase } from "change-case";
 
 type Props = {
     name: string;
@@ -25,7 +25,7 @@ export const FormikInput: React.FC<Props> = ({
         <Field name={name}>
             {({ field, form, meta }: FieldProps) => (
                 <FormControl
-                    id={id || name}
+                    id={id || camelCase(name)}
                     isInvalid={!!form.errors[name] && !!form.touched[name]}
                 >
                     <FormLabel>{label || sentenceCase(name)}</FormLabel>
