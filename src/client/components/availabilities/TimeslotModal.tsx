@@ -3,6 +3,7 @@ import {
     Button,
     Divider,
     FormControl,
+    FormErrorMessage,
     FormLabel,
     Input,
     Modal,
@@ -18,11 +19,13 @@ import {
     AvailabilityTimeslotType,
     ModifyTimeslotParams,
 } from "../../types/availability";
-import { Field, FieldProps, Form, Formik } from "formik";
+import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
+import { start } from "repl";
+import { FormikInput } from "../helpers/FormikInput";
 
 type Props = {
     isOpen: boolean;
@@ -78,7 +81,6 @@ export const TimeslotModal: React.FC<Props> = ({
                     onSubmit={(values) => {
                         const startTime = stringToTime(values.startTime);
                         const endTime = stringToTime(values.endTime);
-                        console.log(typeof values.day);
                         updateTimeslot(values.id, {
                             startTime,
                             endTime,
@@ -86,29 +88,40 @@ export const TimeslotModal: React.FC<Props> = ({
                         });
                         close();
                     }}
+                    validate={(values) => {
+                        const errors: FormikErrors<typeof values> = {};
+                        const startTime = stringToTime(values.startTime);
+                        const endTime = stringToTime(values.endTime);
+                        if (endTime <= startTime) {
+                            const message =
+                                "Start time must be before end time";
+                            errors.startTime = message;
+                            errors.endTime = message;
+                        } else if (endTime - startTime < 0.25) {
+                            const message =
+                                "Start time and end time must be at least 15 minutes apart";
+                            errors.startTime = message;
+                            errors.endTime = message;
+                        }
+                        return errors;
+                    }}
                 >
                     <Form>
                         <ModalHeader>Update Availability</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <Field name="startTime">
-                                {({ field }: FieldProps) => (
-                                    <FormControl id="startTimeAvailModal">
-                                        <FormLabel>Start time</FormLabel>
-                                        <Input {...field} type="time" />
-                                    </FormControl>
-                                )}
-                            </Field>
-                            <Field name="endTime">
-                                {({ field }: FieldProps) => (
-                                    <FormControl id="endTimeAvailModal" pt={3}>
-                                        <FormLabel>End time</FormLabel>
-                                        <Input {...field} type="time" />
-                                    </FormControl>
-                                )}
-                            </Field>
+                            <FormikInput
+                                name="startTime"
+                                id="startTimeAvailModal"
+                                type="time"
+                            />
+                            <FormikInput
+                                name="endTime"
+                                id="endTimeAvailModal"
+                                type="time"
+                            />
                             <Field name="day">
-                                {({ field }: FieldProps) => (
+                                {({ field, meta }: FieldProps) => (
                                     <FormControl id="dayAvailModal" pt={3}>
                                         <FormLabel>Day</FormLabel>
                                         <Select {...field} type="number">
@@ -126,6 +139,9 @@ export const TimeslotModal: React.FC<Props> = ({
                                                 </option>
                                             ))}
                                         </Select>
+                                        <FormErrorMessage>
+                                            {meta.error}
+                                        </FormErrorMessage>
                                     </FormControl>
                                 )}
                             </Field>
