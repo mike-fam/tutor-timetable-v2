@@ -4,7 +4,7 @@ import { TimeSlot } from "../timetable/TimeSlot";
 import { TempTimeslot } from "../../types/availability";
 
 type Props = {
-    addNewTimeslot: (timeslot: TempTimeslot) => void;
+    addNewTimeslot: (timeslot: Omit<TempTimeslot, "id">) => void;
     time: number;
     day: number;
 };

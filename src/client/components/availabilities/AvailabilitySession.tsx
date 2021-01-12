@@ -1,32 +1,30 @@
 import React, { useContext, useMemo, useRef, useState } from "react";
 import { Box, Center, Icon, VStack } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
-import {
-    Props as SessionProps,
-    Session,
-} from "../components/timetable/Session";
+import { Props as SessionProps, Session } from "../timetable/Session";
 import Draggable from "react-draggable";
-import { ModificationType, ModifyTimeslotParams } from "../types/availability";
+import {
+    ModificationType,
+    ModifyTimeslotParams,
+} from "../../types/availability";
 import {
     firstLineHeight,
     realGap,
     timeSlotHeight,
-} from "../constants/timetable";
-import { leftFillNum, modificationTypeToTheme } from "../utils/availability";
-import {
-    sessionStyleFromProps,
-    TimetableSettingsContext,
-} from "../utils/timetable";
-import { ContextMenu } from "../components/helpers/ContextMenu";
-import { ContextMenuTrigger } from "../components/helpers/ContextMenuTrigger";
-import { ContextMenuList } from "../components/helpers/ContextMenuList";
-import { ContextMenuItem } from "../components/helpers/ContextMenuItem";
+} from "../../constants/timetable";
+import { leftFillNum, modificationTypeToTheme } from "../../utils/availability";
+import { sessionStyleFromProps } from "../../utils/timetable";
+import { ContextMenu } from "../helpers/ContextMenu";
+import { ContextMenuTrigger } from "../helpers/ContextMenuTrigger";
+import { ContextMenuList } from "../helpers/ContextMenuList";
+import { ContextMenuItem } from "../helpers/ContextMenuItem";
 
 type Props = SessionProps & {
     key?: number;
     updateSession: (sessionId: number, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: number) => void;
     restoreSession: (sessionId: number) => void;
+    editSession: (sessionId: number) => void;
     modificationType: ModificationType;
 };
 
@@ -35,13 +33,13 @@ export const AvailabilitySession: React.FC<Props> = ({
     removeSession,
     restoreSession,
     modificationType,
+    editSession,
     ...props
 }) => {
     const { top } = useMemo(() => sessionStyleFromProps(props), [props]);
     const { startTime, endTime } = props;
     const nodeRef = useRef(null);
     const [staticEndTime, setStaticEndTime] = useState(endTime);
-    const { dayEndTime, dayStartTime } = useContext(TimetableSettingsContext);
     const theme = useMemo(() => {
         return modificationTypeToTheme(modificationType);
     }, [modificationType]);
@@ -92,7 +90,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 updateSession(props.id, {
                                     // Limit free time to less than 15 mins
                                     startTime: Math.min(
-                                        Math.max(newStartTime, dayStartTime),
+                                        Math.max(newStartTime, props.startDay),
                                         endTime - 0.25
                                     ),
                                 });
@@ -156,7 +154,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 updateSession(props.id, {
                                     endTime: Math.min(
                                         Math.max(newEndTime, startTime + 0.25),
-                                        dayEndTime
+                                        props.endDay
                                     ),
                                 });
                             }}
@@ -186,7 +184,10 @@ export const AvailabilitySession: React.FC<Props> = ({
                 </Session>
             </ContextMenuTrigger>
             <ContextMenuList>
-                <ContextMenuItem onClick={() => console.log("updating")}>
+                <ContextMenuItem
+                    onClick={() => editSession(props.id)}
+                    disabled={removed}
+                >
                     Update
                 </ContextMenuItem>
                 <ContextMenuItem

@@ -2,7 +2,7 @@ import React from "react";
 import { TimetableSession } from "./timetable";
 import { Map, Set } from "immutable";
 
-export type TempTimeslot = Omit<TimetableSession, "id" | "name">;
+export type TempTimeslot = Omit<TimetableSession, "name">;
 
 export type AvailabilityTimeslotType = TempTimeslot & {
     type: ModificationType;

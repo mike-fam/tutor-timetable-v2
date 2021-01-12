@@ -18,9 +18,11 @@ import {
     ModifyTimeslotParams,
     TempTimeslot,
 } from "../types/availability";
-import { AvailabilitySession } from "./AvailabilitySession";
+import { AvailabilitySession } from "../components/availabilities/AvailabilitySession";
 import { TimetableSession } from "../types/timetable";
 import { IsoDay } from "../../types/date";
+import { TimeslotModal } from "../components/availabilities/TimeslotModal";
+import { useDisclosure } from "@chakra-ui/react";
 
 type Props = {};
 // Hardcoded Sessions
@@ -62,17 +64,30 @@ const hardcodedSessions: TimetableSession[] = [
     },
 ];
 
-export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
+export const AvailabilityTimetableContainer: React.FC<Props> = () => {
+    // Timetable settings stuff
     const { displayedDays, dayStartTime, dayEndTime } = useContext(
         TimetableSettingsContext
     );
+    // Generate ids for added timeslots
     const [tempAddIndex, setTempAddIndex] = useState(-1);
+
+    // Availability state and handlers
     const {
         existingTimeslots,
         setExistingTimeslots,
         tempRemovedTimeslots,
         setTempRemovedTimeslots,
     } = useContext(AvailabilityContext);
+
+    // Modal stuff
+    const {
+        isOpen: isModalOpen,
+        onClose: closeModal,
+        onOpen: openModal,
+    } = useDisclosure();
+    const [editedSessionId, setEditedSessionId] = useState(0);
+
     // TODO: get sessions from server
     const [initialTimeslots, setInitialTimeslots] = useState(
         Map<number, AvailabilityTimeslotType>()
@@ -103,10 +118,11 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
     }, [existingTimeslots]);
 
     const addTempTimeslot = useCallback(
-        (timeslot: TempTimeslot) => {
+        (timeslot: Omit<TempTimeslot, "id">) => {
             setExistingTimeslots((prev) =>
                 prev.set(tempAddIndex, {
                     ...timeslot,
+                    id: tempAddIndex,
                     type: ModificationType.ADDED,
                 })
             );
@@ -189,41 +205,59 @@ export const AvailabilityTimetableContainer: React.FC<Props> = ({}) => {
         [existingTimeslots, setExistingTimeslots, tempRemovedTimeslots]
     );
 
+    const editSession = useCallback(
+        (timeslotId) => {
+            setEditedSessionId(timeslotId);
+            openModal();
+        },
+        [openModal]
+    );
+
     return (
-        <Timetable
-            displayedDays={displayedDays}
-            startTime={dayStartTime}
-            endTime={dayEndTime}
-            renderDay={(dayProps, key) => (
-                <Day
-                    {...dayProps}
-                    renderTimeSlot={(key, time, day) => (
-                        <AvailabilityTimeslot
-                            key={key}
-                            time={time}
-                            day={day}
-                            addNewTimeslot={addTempTimeslot}
-                        />
-                    )}
-                    renderSession={(sessionProps: SessionProps, key) => (
-                        <AvailabilitySession
-                            {...sessionProps}
-                            key={key}
-                            modificationType={
-                                sessionProps.id < 0
-                                    ? ModificationType.ADDED
-                                    : existingTimeslots.get(sessionProps.id)
-                                          ?.type || ModificationType.UNCHANGED
-                            }
-                            updateSession={modifyTimeslot}
-                            removeSession={removeTimeslot}
-                            restoreSession={restoreTimeslot}
-                        />
-                    )}
-                    key={key}
-                />
-            )}
-            sessions={sessions}
-        />
+        <>
+            <Timetable
+                displayedDays={displayedDays}
+                startTime={dayStartTime}
+                endTime={dayEndTime}
+                renderDay={(dayProps, key) => (
+                    <Day
+                        {...dayProps}
+                        renderTimeSlot={(key, time, day) => (
+                            <AvailabilityTimeslot
+                                key={key}
+                                time={time}
+                                day={day}
+                                addNewTimeslot={addTempTimeslot}
+                            />
+                        )}
+                        renderSession={(sessionProps: SessionProps, key) => (
+                            <AvailabilitySession
+                                {...sessionProps}
+                                key={key}
+                                modificationType={
+                                    sessionProps.id < 0
+                                        ? ModificationType.ADDED
+                                        : existingTimeslots.get(sessionProps.id)
+                                              ?.type ||
+                                          ModificationType.UNCHANGED
+                                }
+                                updateSession={modifyTimeslot}
+                                removeSession={removeTimeslot}
+                                restoreSession={restoreTimeslot}
+                                editSession={editSession}
+                            />
+                        )}
+                        key={key}
+                    />
+                )}
+                sessions={sessions}
+            />
+            <TimeslotModal
+                isOpen={isModalOpen}
+                close={closeModal}
+                timeslot={existingTimeslots.get(editedSessionId)}
+                updateTimeslot={modifyTimeslot}
+            />
+        </>
     );
 };
