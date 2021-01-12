@@ -1,9 +1,10 @@
-import { Box, Center, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
+import { Box, Center, Stack } from "@chakra-ui/react";
 import React from "react";
-import { FilterType } from "../../containers/RequestContainer";
+import { FilterType } from "../../containers/requests/RequestContainer";
+import { SimpleCheckboxList } from "../SimpleCheckboxList";
 
 type Props = {
-    setFilters: (item: FilterType) => void;
+    setFilters: (item: FilterType, selected: boolean) => void;
 };
 
 export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
@@ -12,30 +13,22 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
             <Center>filters</Center>
             <Center>
                 <Stack>
-                    <Checkbox
-                        onChange={() => props.setFilters(FilterType.Permanent)}
-                    >
-                        <Tooltip label="Display permanent requests">
-                            Permanent
-                        </Tooltip>
-                    </Checkbox>
-                    <Checkbox
-                        onChange={() => props.setFilters(FilterType.Temporary)}
-                    >
-                        <Tooltip label="Display temporary requests">
-                            Temporary
-                        </Tooltip>
-                    </Checkbox>
-                    <Checkbox
-                        onChange={() => props.setFilters(FilterType.Cover)}
-                    >
-                        <Tooltip label="Display cover requests">Cover</Tooltip>
-                    </Checkbox>
-                    <Checkbox
-                        onChange={() => props.setFilters(FilterType.Swap)}
-                    >
-                        <Tooltip label="Display swap requests">Swap</Tooltip>
-                    </Checkbox>
+                    <SimpleCheckboxList
+                        elements={[FilterType.Permanent, FilterType.Temporary]}
+                        selectFunc={props.setFilters}
+                        helpTexts={[
+                            "Display permanent requests",
+                            "Display temporary requests",
+                        ]}
+                    />
+                    <SimpleCheckboxList
+                        elements={[FilterType.Cover, FilterType.Swap]}
+                        selectFunc={props.setFilters}
+                        helpTexts={[
+                            "Display cover requests",
+                            "Display swap requests",
+                        ]}
+                    />
                 </Stack>
             </Center>
         </Box>
