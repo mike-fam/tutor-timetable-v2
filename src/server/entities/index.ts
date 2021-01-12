@@ -34,4 +34,5 @@ export { StaffRequest } from "./StaffRequest";
 export { StreamAllocation } from "./StreamAllocation";
 export { Term } from "./Term";
 export { Timetable } from "./Timetable";
+export { Timeslot } from "./Timeslot";
 export { User } from "./User";
