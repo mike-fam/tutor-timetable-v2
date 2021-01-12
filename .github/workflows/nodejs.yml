@@ -7,7 +7,7 @@ env:
 
 on:
   push:
-    branches: [main]
+    branches: [main, availabilities]
   pull_request:
     branches: [main]
 
@@ -25,8 +25,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm run prettier-check
-      - run: npm run eslint-check
-      - run: npm run build --if-present
-      - run: npm test
+      - run: yarn
+      - run: yarn prettier-check
+      - run: yarn eslint-check
+      - run: yarn build
+      - run: yarn test
