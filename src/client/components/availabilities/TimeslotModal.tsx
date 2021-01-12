@@ -5,7 +5,6 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
-    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -24,7 +23,6 @@ import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-import { start } from "repl";
 import { FormikInput } from "../helpers/FormikInput";
 
 type Props = {

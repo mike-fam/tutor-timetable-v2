@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Box, Center, Icon, VStack } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 import { Props as SessionProps, Session } from "../timetable/Session";

@@ -2,9 +2,7 @@ import React, { useContext, useMemo } from "react";
 import { Timetable } from "../components/timetable/Timetable";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
-import {
-    Props as SessionProps,
-} from "../components/timetable/Session";
+import { Props as SessionProps } from "../components/timetable/Session";
 import { TimetableContext, TimetableSettingsContext } from "../utils/timetable";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import {
@@ -81,14 +79,8 @@ export const TimetableContainer: React.FC<Props> = () => {
                     <Day
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(
-                            sessionProps: SessionProps,
-                            key,
-                        ) => (
-                            <TimetableSession
-                                {...sessionProps}
-                                key={key}
-                            />
+                        renderSession={(sessionProps: SessionProps, key) => (
+                            <TimetableSession {...sessionProps} key={key} />
                         )}
                         key={key}
                     />

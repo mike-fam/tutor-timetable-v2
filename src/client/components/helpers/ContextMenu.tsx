@@ -1,9 +1,5 @@
 import { useDisclosure } from "@chakra-ui/react";
-import React, {
-    RefObject,
-    useRef,
-    useState,
-} from "react";
+import React, { RefObject, useRef, useState } from "react";
 
 type Props = {};
 
