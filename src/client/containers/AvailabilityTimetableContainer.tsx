@@ -23,46 +23,10 @@ import { TimetableSession } from "../types/timetable";
 import { IsoDay } from "../../types/date";
 import { TimeslotModal } from "../components/availabilities/TimeslotModal";
 import { useDisclosure } from "@chakra-ui/react";
+import { useQueryWithError } from "../hooks/useQueryWithError";
+import { useMyAvailabilityQuery } from "../generated/graphql";
 
 type Props = {};
-// Hardcoded Sessions
-const hardcodedSessions: TimetableSession[] = [
-    {
-        id: 1,
-        name: "",
-        startTime: 7.4,
-        endTime: 8.5,
-        day: IsoDay.TUE,
-    },
-    {
-        id: 2,
-        name: "",
-        startTime: 15,
-        endTime: 16,
-        day: IsoDay.WED,
-    },
-    {
-        id: 3,
-        name: "",
-        startTime: 8,
-        endTime: 23,
-        day: IsoDay.THU,
-    },
-    {
-        id: 4,
-        name: "",
-        startTime: 10,
-        endTime: 13,
-        day: IsoDay.FRI,
-    },
-    {
-        id: 5,
-        name: "",
-        startTime: 12,
-        endTime: 15,
-        day: IsoDay.FRI,
-    },
-];
 
 export const AvailabilityTimetableContainer: React.FC<Props> = () => {
     // Timetable settings stuff
@@ -88,26 +52,24 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
     } = useDisclosure();
     const [editedSessionId, setEditedSessionId] = useState(0);
 
-    // TODO: get sessions from server
-    const [initialTimeslots, setInitialTimeslots] = useState(
-        Map<number, AvailabilityTimeslotType>()
+    const { data: myTimeslots, loading } = useQueryWithError(
+        useMyAvailabilityQuery,
+        {}
     );
-    // TODO: This is just for dummy data, remove this and replace it
-    //  with actual data from the server
+
     useEffect(() => {
-        hardcodedSessions.forEach((session) => {
-            setInitialTimeslots((prev) =>
-                prev.set(session.id, {
-                    ...session,
+        if (loading || !myTimeslots) {
+            return;
+        }
+        myTimeslots.myAvailability.forEach((timeslot) => {
+            setExistingTimeslots((prev) =>
+                prev.set(timeslot.id, {
+                    ...timeslot,
                     type: ModificationType.UNCHANGED,
                 })
             );
         });
-    }, []);
-
-    useEffect(() => {
-        setExistingTimeslots(initialTimeslots);
-    }, [initialTimeslots, setExistingTimeslots]);
+    }, [setExistingTimeslots, loading, myTimeslots]);
 
     const sessions = useMemo(() => {
         return existingTimeslots.toArray().map(([id, timeslot]) => ({

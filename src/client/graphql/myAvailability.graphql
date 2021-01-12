@@ -1,0 +1,8 @@
+query MyAvailability {
+    myAvailability {
+        id
+        startTime
+        endTime
+        day
+    }
+}
