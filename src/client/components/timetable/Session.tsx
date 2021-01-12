@@ -1,8 +1,12 @@
-import { Box, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
+import { Box, BoxProps } from "@chakra-ui/react";
+import React, { useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
+import { SessionTheme } from "../../types/timetable";
+import { useSessionColour } from "../../hooks/useSessionColour";
+import omit from "lodash/omit";
 
 export type Props = {
+    id: number;
     name: string;
     startTime: number;
     endTime: number;
@@ -10,25 +14,52 @@ export type Props = {
     endDay: number;
     stackSize: number;
     stackIndex: number;
+    theme?: SessionTheme;
 };
 
-export const Session: React.FC<Props> = ({ name, ...props }) => {
-    const { width, height, display, left, top } = sessionStyleFromProps(props);
-    const bg = useColorModeValue("gray.800", "blue.500");
+type PropsWithStyle = Props & Partial<Omit<BoxProps, "id">>;
+
+export const Session: React.FC<PropsWithStyle> = ({
+    theme = SessionTheme.PRIMARY,
+    children,
+    ...props
+}) => {
+    const { width, heightPx, display, left, topPx } = useMemo(
+        () => sessionStyleFromProps(props),
+        [props]
+    );
+    const bg = useSessionColour(theme);
+    const styleProps = useMemo(
+        () =>
+            omit<PropsWithStyle, keyof Props>(props, [
+                "id",
+                "name",
+                "startTime",
+                "endTime",
+                "startDay",
+                "endDay",
+                "stackSize",
+                "stackIndex",
+                "theme",
+            ]),
+        [props]
+    );
+
     return (
         <Box
             position="absolute"
             w={width}
-            h={height}
+            h={heightPx}
             display={display}
             left={left}
-            top={top}
+            top={topPx}
             bg={bg}
-            p={1}
             color="white"
             rounded="base"
+            overflow="hidden"
+            {...styleProps}
         >
-            {name}
+            {children}
         </Box>
     );
 };

@@ -4,7 +4,7 @@ import { Map } from "immutable";
 import { useMyCoursesQuery } from "../generated/graphql";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import { TimetableContext } from "../utils/timetable";
-import { Loadable } from "../components/Loadable";
+import { Loadable } from "../components/helpers/Loadable";
 
 type Props = {};
 

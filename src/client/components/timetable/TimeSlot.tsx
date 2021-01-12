@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {};
 
-export const TimeSlot: React.FC<Props> = () => {
+export const TimeSlot: React.FC<Props> = ({ children }) => {
     const evenStripes = useColorModeValue("lightgrey", "#1A365D");
     const oddStripes = useColorModeValue("darkgrey", "#2A4365");
     return (
@@ -16,6 +16,8 @@ export const TimeSlot: React.FC<Props> = () => {
             _odd={{
                 bgImage: `repeating-linear-gradient(-45deg, ${oddStripes}, ${oddStripes} 1px, transparent 1px, transparent 4px)`,
             }}
-        />
+        >
+            {children}
+        </Box>
     );
 };

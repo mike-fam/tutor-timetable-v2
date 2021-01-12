@@ -110,12 +110,12 @@ export type Term = {
 };
 
 export enum TermType {
-    Semester1 = "Semester1",
-    Semester2 = "Semester2",
-    SummerSemester = "SummerSemester",
-    Trimester1 = "Trimester1",
-    Trimester2 = "Trimester2",
-    Trimester3 = "Trimester3",
+    Semester_1 = "SEMESTER_1",
+    Semester_2 = "SEMESTER_2",
+    SummerSemester = "SUMMER_SEMESTER",
+    Trimester_1 = "TRIMESTER_1",
+    Trimester_2 = "TRIMESTER_2",
+    Trimester_3 = "TRIMESTER_3",
 }
 
 export type SessionStream = {
@@ -135,11 +135,11 @@ export type SessionStream = {
 };
 
 export enum SessionType {
-    Practical = "Practical",
-    Tutorial = "Tutorial",
-    Seminar = "Seminar",
-    Lecture = "Lecture",
-    Studio = "Studio",
+    Practical = "PRACTICAL",
+    Tutorial = "TUTORIAL",
+    Seminar = "SEMINAR",
+    Lecture = "LECTURE",
+    Studio = "STUDIO",
 }
 
 export type Session = {
@@ -173,13 +173,13 @@ export type StaffRequest = {
 };
 
 export enum RequestType {
-    Permanent = "Permanent",
-    Temporary = "Temporary",
+    Permanent = "PERMANENT",
+    Temporary = "TEMPORARY",
 }
 
 export enum RequestStatus {
-    Open = "Open",
-    Closed = "Closed",
+    Open = "OPEN",
+    Closed = "CLOSED",
 }
 
 export type StreamAllocation = {
@@ -190,8 +190,8 @@ export type StreamAllocation = {
 };
 
 export enum Role {
-    CourseCoordinator = "CourseCoordinator",
-    Staff = "Staff",
+    CourseCoordinator = "COURSE_COORDINATOR",
+    Staff = "STAFF",
 }
 
 export type Preference = {

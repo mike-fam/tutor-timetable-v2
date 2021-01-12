@@ -1,8 +1,8 @@
 export enum TermType {
-    Semester1 = "Semester 1",
-    Semester2 = "Semester 2",
-    SummerSemester = "Summer Semester",
-    Trimester1 = "Trimester 1",
-    Trimester2 = "Trimester 2",
-    Trimester3 = "Trimester 3",
+    SEMESTER_1 = "Semester 1",
+    SEMESTER_2 = "Semester 2",
+    SUMMER_SEMESTER = "Summer Semester",
+    TRIMESTER_1 = "Trimester 1",
+    TRIMESTER_2 = "Trimester 2",
+    TRIMESTER_3 = "Trimester 3",
 }

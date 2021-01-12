@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Dropdown } from "../components/Dropdown";
+import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
-import { Loadable } from "../components/Loadable";
+import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
 import { TimetableContext } from "../utils/timetable";
 import { sentenceCase } from "change-case";

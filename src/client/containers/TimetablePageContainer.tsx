@@ -4,9 +4,9 @@ import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import maxBy from "lodash/maxBy";
-import { Wrapper } from "../components/Wrapper";
+import { Wrapper } from "../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
-import { LoadingSpinner } from "../components/LoadingSpinner";
+import { LoadingSpinner } from "../components/helpers/LoadingSpinner";
 import { CourseSelectContainer } from "./CourseSelectContainer";
 import { TermSelectContainer } from "./TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
@@ -14,7 +14,6 @@ import { WeekNavContainer } from "./WeekNavContainer";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import { TimetableContext } from "../utils/timetable";
 import { Set } from "immutable";
-import { IsoDay } from "../../types/date";
 import { differenceInWeeks, parseISO } from "date-fns";
 
 type Props = {};
@@ -23,17 +22,6 @@ export const TimetablePageContainer: React.FC<Props> = () => {
     const [chosenTerm, setChosenTerm] = useState(-1);
     const [chosenWeek, setChosenWeek] = useState(-1);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
-    const [displayedDays, setDisplayedDays] = useState(
-        Set([
-            IsoDay.Mon,
-            IsoDay.Tue,
-            IsoDay.Wed,
-            IsoDay.Thu,
-            IsoDay.Fri,
-            IsoDay.Sat,
-            IsoDay.Sun,
-        ])
-    );
     const { data: termsData, loading: termsLoading } = useQueryWithError(
         useTermsQuery,
         {}
@@ -116,8 +104,6 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                         chooseTerm: setChosenTerm,
                         chosenWeek,
                         chooseWeek: setChosenWeek,
-                        displayedDays,
-                        setDisplayedDays,
                         chosenCourses,
                         setChosenCourses,
                     }}

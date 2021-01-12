@@ -8,6 +8,7 @@ import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
 import React from "react";
 import { Set } from "immutable";
+import { TimetableSettings, TimetableState } from "../types/timetable";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -26,8 +27,10 @@ export const sessionStyleFromProps = ({
     stackSize,
     stackIndex,
 }: Omit<SessionProps, "name">): {
-    top: CSS.Property.Top<number>;
-    height: CSS.Property.Height<number>;
+    topPx: CSS.Property.Top<number>;
+    heightPx: CSS.Property.Height<number>;
+    top: number;
+    height: number;
     display: CSS.Property.Display;
     width: CSS.Property.Width;
     left: CSS.Property.Left;
@@ -40,7 +43,10 @@ export const sessionStyleFromProps = ({
 
     // Top Pixel
     const top =
-        firstLineHeight + realGap + relativeStart * (timeSlotHeight + realGap);
+        firstLineHeight +
+        realGap +
+        relativeStart * timeSlotHeight +
+        Math.floor(relativeStart) * realGap;
     const sessionDuration = relativeEnd - relativeStart;
     const height =
         sessionDuration * timeSlotHeight +
@@ -52,7 +58,15 @@ export const sessionStyleFromProps = ({
     const left = `calc(((100% - ${
         (stackSize - 1) * realGap
     }px) / ${stackSize} + ${realGap}px) * ${stackIndex})`;
-    return { top: `${top}px`, height, display, width, left };
+    return {
+        topPx: `${top}px`,
+        heightPx: height,
+        display,
+        width,
+        left,
+        top,
+        height,
+    };
 };
 
 /**
@@ -103,32 +117,28 @@ export const getClashedRanges = (
     return result;
 };
 
-export type TimetableState = {
-    chosenWeek: number;
-    chosenCourses: Set<number>;
-    chosenTermId: number;
-    displayedDays: Set<IsoDay>;
-    chooseWeek: React.Dispatch<React.SetStateAction<number>>;
-    setChosenCourses: React.Dispatch<React.SetStateAction<Set<number>>>;
-    chooseTerm: React.Dispatch<React.SetStateAction<number>>;
-    setDisplayedDays: React.Dispatch<React.SetStateAction<Set<IsoDay>>>;
-};
-
 export const TimetableContext = React.createContext<TimetableState>({
     chosenWeek: -1,
     chosenCourses: Set<number>(),
     chosenTermId: 1,
-    displayedDays: Set([
-        IsoDay.Mon,
-        IsoDay.Tue,
-        IsoDay.Wed,
-        IsoDay.Thu,
-        IsoDay.Fri,
-        IsoDay.Sat,
-        IsoDay.Sun,
-    ]),
     chooseWeek: () => {},
     setChosenCourses: () => {},
     chooseTerm: () => {},
+});
+
+export const TimetableSettingsContext = React.createContext<TimetableSettings>({
+    displayedDays: Set([
+        IsoDay.MON,
+        IsoDay.TUE,
+        IsoDay.WED,
+        IsoDay.THU,
+        IsoDay.FRI,
+        IsoDay.SAT,
+        IsoDay.SUN,
+    ]),
     setDisplayedDays: () => {},
+    dayStartTime: 7,
+    dayEndTime: 20,
+    setDayStartTime: () => {},
+    setDayEndTime: () => {},
 });

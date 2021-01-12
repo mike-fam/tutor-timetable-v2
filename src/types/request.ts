@@ -1,9 +1,9 @@
 export enum RequestType {
-    Permanent = "Permanent",
-    Temporary = "Temporary",
+    PERMANENT = "Permanent",
+    TEMPORARY = "Temporary",
 }
 
 export enum RequestStatus {
-    Open = "Open",
-    Closed = "Closed",
+    OPEN = "Open",
+    CLOSED = "Closed",
 }

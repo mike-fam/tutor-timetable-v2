@@ -10,6 +10,8 @@ import {
     MenuItem,
     MenuList,
     Spacer,
+    Button,
+    useColorMode,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
+    const { colorMode, toggleColorMode } = useColorMode();
     return (
         <Flex backgroundColor="grey">
             <Box>
@@ -31,6 +34,9 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                 </Link>
                 <Link as={RouterLink} to="/requests">
                     Requests
+                </Link>
+                <Link as={RouterLink} to="/availabilities">
+                    Availability
                 </Link>
                 {/*Dropdown menu. Update with proper items when ready.*/}
                 <Menu>
@@ -51,6 +57,9 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                         <MenuItem>Logout</MenuItem>
                     </MenuList>
                 </Menu>
+                <Button onClick={toggleColorMode}>
+                    Toggle {colorMode === "light" ? "Dark" : "Light"}
+                </Button>
             </ButtonGroup>
         </Flex>
     );

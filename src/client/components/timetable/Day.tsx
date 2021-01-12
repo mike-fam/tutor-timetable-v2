@@ -16,7 +16,7 @@ export type Props = {
     day: IsoDay;
     startTime: number;
     endTime: number;
-    renderTimeSlot: (key: number) => ReactElement;
+    renderTimeSlot: (key: number, time: number, day: number) => ReactElement;
     sessions: TimetableProps["sessions"];
     renderSession: (sessionProps: SessionProps, key: number) => ReactElement;
 };
@@ -49,10 +49,13 @@ export const Day: React.FunctionComponent<Props> = ({
             pos="relative"
         >
             <Text fontWeight="bold">{isoNumberToDay(day).toUpperCase()}</Text>
-            {range(startTime, endTime).map((_, index) => renderTimeSlot(index))}
+            {range(startTime, endTime).map((time, index) =>
+                renderTimeSlot(index, time, day)
+            )}
             {sessions.map((session, key) =>
                 renderSession(
                     {
+                        id: session.id,
                         startTime: session.startTime,
                         endTime: session.endTime,
                         startDay: startTime,

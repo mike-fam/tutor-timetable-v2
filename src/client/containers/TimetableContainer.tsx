@@ -2,28 +2,26 @@ import React, { useContext, useMemo } from "react";
 import { Timetable } from "../components/timetable/Timetable";
 import { Day } from "../components/timetable/Day";
 import { TimeSlot } from "../components/timetable/TimeSlot";
-import {
-    Props as SessionProps,
-    Session,
-} from "../components/timetable/Session";
-import { TimetableContext } from "../utils/timetable";
+import { Props as SessionProps } from "../components/timetable/Session";
+import { TimetableContext, TimetableSettingsContext } from "../utils/timetable";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import {
     useGetSessionsQuery,
     useGetSessionStreamsQuery,
 } from "../generated/graphql";
-import { Loadable } from "../components/Loadable";
+import { Loadable } from "../components/helpers/Loadable";
 import { IsoDay } from "../../types/date";
+import { TimetableSession } from "../components/TimetableSession";
 
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
-    const {
-        displayedDays,
-        chosenTermId,
-        chosenWeek,
-        chosenCourses,
-    } = useContext(TimetableContext);
+    const { displayedDays, dayStartTime, dayEndTime } = useContext(
+        TimetableSettingsContext
+    );
+    const { chosenTermId, chosenWeek, chosenCourses } = useContext(
+        TimetableContext
+    );
     const { data: sessionsData, loading: sessionsLoading } = useQueryWithError(
         useGetSessionsQuery,
         {
@@ -75,12 +73,14 @@ export const TimetableContainer: React.FC<Props> = () => {
             <Timetable
                 sessions={sessions}
                 displayedDays={displayedDays}
+                startTime={dayStartTime}
+                endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
                     <Day
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
                         renderSession={(sessionProps: SessionProps, key) => (
-                            <Session {...sessionProps} key={key} />
+                            <TimetableSession {...sessionProps} key={key} />
                         )}
                         key={key}
                     />
