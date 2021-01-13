@@ -224,7 +224,6 @@ export type Mutation = {
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
   generateSessions: Array<Session>;
-  addAvailabilities: Array<Timeslot>;
   updateAvailabilities: Array<Timeslot>;
 };
 
@@ -274,34 +273,32 @@ export type MutationGenerateSessionsArgs = {
 };
 
 
-export type MutationAddAvailabilitiesArgs = {
+export type MutationUpdateAvailabilitiesArgs = {
   timeslots: Array<TimeslotInput>;
 };
 
-
-export type MutationUpdateAvailabilitiesArgs = {
-  timeslots: Array<TimeslotInputWithId>;
-};
-
 export type TimeslotInput = {
+  id: Scalars['Int'];
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   day: Scalars['Int'];
+  modificationType: AvailabilityModificationType;
 };
 
-export type TimeslotInputWithId = {
-  id: Scalars['Int'];
-  startTime?: Maybe<Scalars['Float']>;
-  endTime?: Maybe<Scalars['Float']>;
-  day?: Maybe<Scalars['Int']>;
-};
+export enum AvailabilityModificationType {
+  Unchanged = 'UNCHANGED',
+  Added = 'ADDED',
+  Modified = 'MODIFIED',
+  Removed = 'REMOVED',
+  RemovedModified = 'REMOVED_MODIFIED'
+}
 
-export type UpdateAvailabilitiesMutationVariables = Exact<{
-  timeslots: Array<TimeslotInputWithId>;
+export type AddAvailabilitiesMutationVariables = Exact<{
+  timeslots: Array<TimeslotInput>;
 }>;
 
 
-export type UpdateAvailabilitiesMutation = (
+export type AddAvailabilitiesMutation = (
   { __typename?: 'Mutation' }
   & { updateAvailabilities: Array<(
     { __typename?: 'Timeslot' }
@@ -416,12 +413,12 @@ export type TermsQuery = (
   )> }
 );
 
-export type UpdateAvailabilityMutationVariables = Exact<{
-  timeslots: Array<TimeslotInputWithId>;
+export type UpdateAvailabilitiesMutationVariables = Exact<{
+  timeslots: Array<TimeslotInput>;
 }>;
 
 
-export type UpdateAvailabilityMutation = (
+export type UpdateAvailabilitiesMutation = (
   { __typename?: 'Mutation' }
   & { updateAvailabilities: Array<(
     { __typename?: 'Timeslot' }
@@ -430,8 +427,8 @@ export type UpdateAvailabilityMutation = (
 );
 
 
-export const UpdateAvailabilitiesDocument = gql`
-    mutation UpdateAvailabilities($timeslots: [TimeslotInputWithId!]!) {
+export const AddAvailabilitiesDocument = gql`
+    mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
     id
     day
@@ -440,31 +437,31 @@ export const UpdateAvailabilitiesDocument = gql`
   }
 }
     `;
-export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
+export type AddAvailabilitiesMutationFn = Apollo.MutationFunction<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 
 /**
- * __useUpdateAvailabilitiesMutation__
+ * __useAddAvailabilitiesMutation__
  *
- * To run a mutation, you first call `useUpdateAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateAvailabilitiesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddAvailabilitiesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateAvailabilitiesMutation, { data, loading, error }] = useUpdateAvailabilitiesMutation({
+ * const [addAvailabilitiesMutation, { data, loading, error }] = useAddAvailabilitiesMutation({
  *   variables: {
  *      timeslots: // value for 'timeslots'
  *   },
  * });
  */
-export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>) {
-        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, baseOptions);
+export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>) {
+        return Apollo.useMutation<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>(AddAvailabilitiesDocument, baseOptions);
       }
-export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
-export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
-export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
+export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
+export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
+export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 export const GetSessionsDocument = gql`
     query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
   sessions(termId: $termId, courseIds: $courseIds, week: $week) {
@@ -732,8 +729,8 @@ export function useTermsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Term
 export type TermsQueryHookResult = ReturnType<typeof useTermsQuery>;
 export type TermsLazyQueryHookResult = ReturnType<typeof useTermsLazyQuery>;
 export type TermsQueryResult = Apollo.QueryResult<TermsQuery, TermsQueryVariables>;
-export const UpdateAvailabilityDocument = gql`
-    mutation UpdateAvailability($timeslots: [TimeslotInputWithId!]!) {
+export const UpdateAvailabilitiesDocument = gql`
+    mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
     id
     day
@@ -742,28 +739,28 @@ export const UpdateAvailabilityDocument = gql`
   }
 }
     `;
-export type UpdateAvailabilityMutationFn = Apollo.MutationFunction<UpdateAvailabilityMutation, UpdateAvailabilityMutationVariables>;
+export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
 
 /**
- * __useUpdateAvailabilityMutation__
+ * __useUpdateAvailabilitiesMutation__
  *
- * To run a mutation, you first call `useUpdateAvailabilityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateAvailabilityMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAvailabilitiesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateAvailabilityMutation, { data, loading, error }] = useUpdateAvailabilityMutation({
+ * const [updateAvailabilitiesMutation, { data, loading, error }] = useUpdateAvailabilitiesMutation({
  *   variables: {
  *      timeslots: // value for 'timeslots'
  *   },
  * });
  */
-export function useUpdateAvailabilityMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilityMutation, UpdateAvailabilityMutationVariables>) {
-        return Apollo.useMutation<UpdateAvailabilityMutation, UpdateAvailabilityMutationVariables>(UpdateAvailabilityDocument, baseOptions);
+export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>) {
+        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, baseOptions);
       }
-export type UpdateAvailabilityMutationHookResult = ReturnType<typeof useUpdateAvailabilityMutation>;
-export type UpdateAvailabilityMutationResult = Apollo.MutationResult<UpdateAvailabilityMutation>;
-export type UpdateAvailabilityMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilityMutation, UpdateAvailabilityMutationVariables>;
+export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
+export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
+export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;

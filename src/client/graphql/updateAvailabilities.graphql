@@ -1,4 +1,4 @@
-mutation UpdateAvailability($timeslots: [TimeslotInputWithId!]!) {
+mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
     updateAvailabilities(timeslots: $timeslots) {
         id
         day

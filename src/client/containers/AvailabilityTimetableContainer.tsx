@@ -11,20 +11,15 @@ import { Props as SessionProps } from "../components/timetable/Session";
 import { AvailabilityTimeslot } from "../components/availabilities/AvailabilityTimeslot";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { AvailabilityContext } from "../utils/availability";
-import { Map } from "immutable";
-import {
-    AvailabilityTimeslotType,
-    ModificationType,
-    ModifyTimeslotParams,
-    TempTimeslot,
-} from "../types/availability";
+import { ModifyTimeslotParams, TempTimeslot } from "../types/availability";
 import { AvailabilitySession } from "../components/availabilities/AvailabilitySession";
-import { TimetableSession } from "../types/timetable";
-import { IsoDay } from "../../types/date";
-import { TimeslotModal } from "../components/availabilities/TimeslotModal";
 import { useDisclosure } from "@chakra-ui/react";
 import { useQueryWithError } from "../hooks/useQueryWithError";
-import { useMyAvailabilityQuery } from "../generated/graphql";
+import {
+    AvailabilityModificationType,
+    useMyAvailabilityQuery,
+} from "../generated/graphql";
+import { TimeslotModal } from "../components/availabilities/TimeslotModal";
 
 type Props = {};
 
@@ -37,12 +32,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
     const [tempAddIndex, setTempAddIndex] = useState(-1);
 
     // Availability state and handlers
-    const {
-        existingTimeslots,
-        setExistingTimeslots,
-        tempRemovedTimeslots,
-        setTempRemovedTimeslots,
-    } = useContext(AvailabilityContext);
+    const { timeslots, setTimeslots } = useContext(AvailabilityContext);
 
     // Modal stuff
     const {
@@ -62,53 +52,57 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
             return;
         }
         myTimeslots.myAvailability.forEach((timeslot) => {
-            setExistingTimeslots((prev) =>
+            setTimeslots((prev) =>
                 prev.set(timeslot.id, {
                     ...timeslot,
-                    type: ModificationType.UNCHANGED,
+                    modificationType: AvailabilityModificationType.Unchanged,
                 })
             );
         });
-    }, [setExistingTimeslots, loading, myTimeslots]);
+    }, [setTimeslots, loading, myTimeslots]);
 
     const sessions = useMemo(() => {
-        return existingTimeslots.toArray().map(([id, timeslot]) => ({
+        return timeslots.toArray().map(([id, timeslot]) => ({
             ...timeslot,
             id,
             name: "", // Just to be typesafe
         }));
-    }, [existingTimeslots]);
+    }, [timeslots]);
 
     const addTempTimeslot = useCallback(
         (timeslot: Omit<TempTimeslot, "id">) => {
-            setExistingTimeslots((prev) =>
+            setTimeslots((prev) =>
                 prev.set(tempAddIndex, {
                     ...timeslot,
                     id: tempAddIndex,
-                    type: ModificationType.ADDED,
+                    modificationType: AvailabilityModificationType.Added,
                 })
             );
             setTempAddIndex((prev) => prev - 1);
         },
-        [tempAddIndex, setExistingTimeslots]
+        [tempAddIndex, setTimeslots]
     );
 
     const modifyTimeslot = useCallback(
         (timeslotId: number, newTimeslotProps: ModifyTimeslotParams) => {
-            const session = existingTimeslots.get(timeslotId);
+            const session = timeslots.get(timeslotId);
             if (!session) {
                 return;
             }
-            if (timeslotId > 0 && session.type === ModificationType.UNCHANGED) {
-                setExistingTimeslots((prev) =>
+            if (
+                timeslotId > 0 &&
+                session.modificationType ===
+                    AvailabilityModificationType.Unchanged
+            ) {
+                setTimeslots((prev) =>
                     prev.set(timeslotId, {
                         ...session,
                         ...newTimeslotProps,
-                        type: ModificationType.MODIFIED,
+                        modificationType: AvailabilityModificationType.Modified,
                     })
                 );
             } else {
-                setExistingTimeslots((prev) =>
+                setTimeslots((prev) =>
                     prev.set(timeslotId, {
                         ...session,
                         ...newTimeslotProps,
@@ -116,55 +110,52 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 );
             }
         },
-        [existingTimeslots, setExistingTimeslots]
+        [timeslots, setTimeslots]
     );
 
     const removeTimeslot = useCallback(
         (timeslotId) => {
             // Added timeslot
             if (timeslotId < 0) {
-                setExistingTimeslots((prev) => prev.remove(timeslotId));
+                setTimeslots((prev) => prev.remove(timeslotId));
             } else {
-                const timeslot = existingTimeslots.get(timeslotId);
+                const timeslot = timeslots.get(timeslotId);
                 if (!timeslot) {
                     return;
                 }
-                setExistingTimeslots((prev) =>
+                setTimeslots((prev) =>
                     prev.set(timeslotId, {
                         ...timeslot,
-                        type:
-                            timeslot.type === ModificationType.UNCHANGED
-                                ? ModificationType.REMOVED
-                                : ModificationType.REMOVED_MODIFIED,
+                        modificationType:
+                            timeslot.modificationType ===
+                            AvailabilityModificationType.Unchanged
+                                ? AvailabilityModificationType.Removed
+                                : AvailabilityModificationType.RemovedModified,
                     })
                 );
-                setTempRemovedTimeslots((prev) => prev.add(timeslotId));
             }
         },
-        [existingTimeslots, setExistingTimeslots, setTempRemovedTimeslots]
+        [timeslots, setTimeslots]
     );
 
     const restoreTimeslot = useCallback(
         (timeslotId) => {
-            if (!tempRemovedTimeslots.contains(timeslotId)) {
-                return;
-            }
-            const timeslot = existingTimeslots.get(timeslotId);
+            const timeslot = timeslots.get(timeslotId);
             if (!timeslot) {
                 return;
             }
-            tempRemovedTimeslots.remove(timeslotId);
-            setExistingTimeslots((prev) =>
+            setTimeslots((prev) =>
                 prev.set(timeslotId, {
                     ...timeslot,
-                    type:
-                        timeslot.type === ModificationType.REMOVED
-                            ? ModificationType.UNCHANGED
-                            : ModificationType.MODIFIED,
+                    modificationType:
+                        timeslot.modificationType ===
+                        AvailabilityModificationType.Removed
+                            ? AvailabilityModificationType.Unchanged
+                            : AvailabilityModificationType.Modified,
                 })
             );
         },
-        [existingTimeslots, setExistingTimeslots, tempRemovedTimeslots]
+        [timeslots, setTimeslots]
     );
 
     const editSession = useCallback(
@@ -198,10 +189,10 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                                 key={key}
                                 modificationType={
                                     sessionProps.id < 0
-                                        ? ModificationType.ADDED
-                                        : existingTimeslots.get(sessionProps.id)
-                                              ?.type ||
-                                          ModificationType.UNCHANGED
+                                        ? AvailabilityModificationType.Added
+                                        : timeslots.get(sessionProps.id)
+                                              ?.modificationType ||
+                                          AvailabilityModificationType.Unchanged
                                 }
                                 updateSession={modifyTimeslot}
                                 removeSession={removeTimeslot}
@@ -217,7 +208,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
             <TimeslotModal
                 isOpen={isModalOpen}
                 close={closeModal}
-                timeslot={existingTimeslots.get(editedSessionId)}
+                timeslot={timeslots.get(editedSessionId)}
                 updateTimeslot={modifyTimeslot}
             />
         </>

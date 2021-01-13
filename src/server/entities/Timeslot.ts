@@ -21,11 +21,11 @@ export class Timeslot extends BaseEntity {
     id: number;
 
     @Field()
-    @Column()
+    @Column("float")
     startTime: number;
 
     @Field()
-    @Column()
+    @Column("float")
     endTime: number;
 
     @Field()

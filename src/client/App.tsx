@@ -14,7 +14,9 @@ import { TimetableSettingsContext } from "./utils/timetable";
 
 const client = new ApolloClient({
     uri: "/graphql",
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        addTypename: false,
+    }),
 });
 
 export const App: React.FunctionComponent<{}> = () => {
