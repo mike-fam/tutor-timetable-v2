@@ -9,6 +9,13 @@ import * as CSS from "csstype";
 import React from "react";
 import { Set } from "immutable";
 import { TimetableSettings, TimetableState } from "../types/timetable";
+import {
+    populateTreeDepth,
+    populateTreeHeight,
+    preOrderTraversal,
+    Tree,
+    TreeNode,
+} from "../../utils/tree";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -25,7 +32,10 @@ export const sessionStyleFromProps = ({
     startDay,
     endDay,
     stackSize,
-    stackIndex,
+    elemStackIndex,
+    elemStackStart,
+    elemStackWidth,
+    longestBranchSize,
 }: Omit<SessionProps, "name">): {
     topPx: CSS.Property.Top<number>;
     heightPx: CSS.Property.Height<number>;
@@ -52,12 +62,15 @@ export const sessionStyleFromProps = ({
         sessionDuration * timeSlotHeight +
         Math.max(Math.ceil(sessionDuration - 1), 0) * realGap;
     const display = sessionDuration ? "block" : "none";
-    const width = `calc((100% - ${
-        (stackSize - 1) * realGap
-    }px) / ${stackSize})`;
-    const left = `calc(((100% - ${
-        (stackSize - 1) * realGap
-    }px) / ${stackSize} + ${realGap}px) * ${stackIndex})`;
+    const width = `calc((100% - ${(longestBranchSize - 1) * realGap}px) * ${
+        elemStackWidth / stackSize
+    })`;
+    // const left = `calc(((100% - ${
+    //     (longestBranchSize - 1) * realGap
+    // }px) / ${stackSize} + ${realGap}px) * ${elemStackIndex})`;
+    const left = `calc(${elemStackIndex * realGap}px + (100% - ${
+        (longestBranchSize - 1) * realGap
+    }px) * ${elemStackStart / stackSize})`;
     return {
         topPx: `${top}px`,
         heightPx: height,
@@ -76,7 +89,8 @@ export const sessionStyleFromProps = ({
  * @returns array of objects holding clashed info. Each object has the following structure
  *      {
  *          stacked: int,
- *          stackIndex: int
+ *          stackStart: int
+ *          stackEnd: int
  *      }
  *      where stacked represents the number of ranges this range clashes with
  *            stackIndex represents the index of this range relative to its clashing range.
@@ -85,35 +99,65 @@ export const getClashedRanges = (
     ranges: Array<TimeRange>
 ): { [key: string]: StackInfo } => {
     ranges.sort(({ start: start1, end: end1 }, { start: start2, end: end2 }) =>
-        start1 - start2 !== 0 ? start1 - start2 : end1 - end2
+        start1 - start2 !== 0 ? start1 - start2 : end2 - end1
     );
-    let lastEnd = 0;
-    const clashedIds: Array<TimeRange["id"]> = [];
+    const clashedTrees: Tree<TimeRange["id"]>[] = [];
     const result: { [key: string]: StackInfo } = {};
-    for (const { id, start, end } of ranges) {
-        // no crashing at this entry
-        if (start >= lastEnd) {
-            // Save all found classing ranges to result
-            clashedIds.forEach((clashedId, i) => {
-                result[clashedId] = {
-                    stackSize: clashedIds.length,
-                    stackIndex: i,
-                };
-            });
-            // Clear current clashing ranges
-            clashedIds.length = 0;
+    const timeRangeIdToTreeNode: Map<
+        TimeRange["id"],
+        TreeNode<TimeRange["id"]>
+    > = new Map();
+    ranges.forEach(({ id, start }, index) => {
+        const timeslotsBefore = ranges.slice(0, index).reverse();
+        let clashedFound = false;
+        const thisNode = new TreeNode(id);
+        timeRangeIdToTreeNode.set(id, thisNode);
+        for (const { id: otherId, end: otherEnd } of timeslotsBefore) {
+            if (start < otherEnd) {
+                // Found clash
+                clashedFound = true;
+                timeRangeIdToTreeNode.get(otherId)!.addChild(thisNode);
+                break;
+            }
         }
-        // Push current id to be checked at next iteration, regardless if this range clashes or not
-        clashedIds.push(id);
-        lastEnd = end;
-    }
-    // Last iteration, save last clashing ranges to result
-    clashedIds.forEach((clashedId, i) => {
-        result[clashedId] = {
-            stackSize: clashedIds.length,
-            stackIndex: i,
-        };
+        if (!clashedFound) {
+            clashedTrees.push(new Tree(thisNode));
+        }
     });
+    for (const tree of clashedTrees) {
+        populateTreeHeight(tree);
+        populateTreeDepth(tree);
+        const treeHeight = tree.getRoot().getHeight()!;
+        const stackSize = treeHeight + 1;
+        for (const node of preOrderTraversal(tree)) {
+            const longestBranchSize = node.getHeight()! + node.getDepth()! + 1;
+            if (node.isRoot()) {
+                result[node.getElement()] = {
+                    stackSize,
+                    elemStackIndex: 0,
+                    elemStackStart: 0,
+                    elemStackWidth: 1,
+                    longestBranchSize,
+                };
+            } else {
+                const parentStackInfo = result[node.getParent()!.getElement()];
+                const parentStackEnd =
+                    parentStackInfo.elemStackStart +
+                    parentStackInfo.elemStackWidth;
+                result[node.getElement()] = {
+                    stackSize,
+                    elemStackIndex: node.getDepth()!,
+                    elemStackStart: parentStackEnd,
+                    elemStackWidth:
+                        node.getParent()!.getHeight()! === node.getHeight()! + 1
+                            ? parentStackInfo.elemStackWidth
+                            : (stackSize - parentStackEnd) /
+                              (node.getHeight()! + 1),
+                    longestBranchSize,
+                };
+            }
+        }
+    }
     return result;
 };
 

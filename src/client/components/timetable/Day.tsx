@@ -61,8 +61,7 @@ export const Day: React.FunctionComponent<Props> = ({
                         startDay: startTime,
                         endDay: endTime,
                         name: session.name,
-                        stackSize: stackInfo[session.id].stackSize,
-                        stackIndex: stackInfo[session.id].stackIndex,
+                        ...stackInfo[session.id],
                     },
                     key
                 )

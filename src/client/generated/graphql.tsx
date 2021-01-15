@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -16,8 +16,8 @@ export type Scalars = {
 };
 
 export type Query = {
-  __typename?: 'Query';
-  hello: Scalars['String'];
+  __typename?: "Query";
+  hello: Scalars["String"];
   me?: Maybe<User>;
   terms: Array<Term>;
   term?: Maybe<Term>;
@@ -32,38 +32,38 @@ export type Query = {
 
 
 export type QueryTermArgs = {
-  id: Scalars['String'];
+  id: Scalars["String"];
 };
 
 
 export type QuerySessionStreamsArgs = {
-  courseIds: Array<Scalars['Int']>;
-  termId: Scalars['Int'];
+  courseIds: Array<Scalars["Int"]>;
+  termId: Scalars["Int"];
 };
 
 
 export type QueryTimetableArgs = {
-  termId: Scalars['Float'];
-  courseId: Scalars['Float'];
+  termId: Scalars["Float"];
+  courseId: Scalars["Float"];
 };
 
 
 export type QueryTimetableByIdArgs = {
-  id: Scalars['Float'];
+  id: Scalars["Float"];
 };
 
 
 export type QuerySessionsArgs = {
-  week: Scalars['Int'];
-  courseIds: Array<Scalars['Int']>;
-  termId: Scalars['Int'];
+  week: Scalars["Int"];
+  courseIds: Array<Scalars["Int"]>;
+  termId: Scalars["Int"];
 };
 
 export type User = {
-  __typename?: 'User';
-  username: Scalars['String'];
-  name: Scalars['String'];
-  email: Scalars['String'];
+  __typename?: "User";
+  username: Scalars["String"];
+  name: Scalars["String"];
+  email: Scalars["String"];
   courseStaffs: Array<CourseStaff>;
   streamAllocations: Array<StreamAllocation>;
   sessionAllocations: Array<SessionAllocation>;
@@ -73,9 +73,9 @@ export type User = {
 };
 
 export type CourseStaff = {
-  __typename?: 'CourseStaff';
-  id: Scalars['Int'];
-  userUsername: Scalars['String'];
+  __typename?: "CourseStaff";
+  id: Scalars["Int"];
+  userUsername: Scalars["String"];
   timetable: Timetable;
   role: Role;
   user: User;
@@ -83,10 +83,10 @@ export type CourseStaff = {
 };
 
 export type Timetable = {
-  __typename?: 'Timetable';
-  id: Scalars['Int'];
-  courseId: Scalars['Int'];
-  termId: Scalars['Int'];
+  __typename?: "Timetable";
+  id: Scalars["Int"];
+  courseId: Scalars["Int"];
+  termId: Scalars["Int"];
   course: Course;
   term: Term;
   courseStaffs: Array<CourseStaff>;
@@ -94,79 +94,79 @@ export type Timetable = {
 };
 
 export type Course = {
-  __typename?: 'Course';
-  id: Scalars['Int'];
-  code: Scalars['String'];
-  title: Scalars['String'];
+  __typename?: "Course";
+  id: Scalars["Int"];
+  code: Scalars["String"];
+  title: Scalars["String"];
   timetables: Array<Timetable>;
 };
 
 export type Term = {
-  __typename?: 'Term';
-  id: Scalars['Int'];
+  __typename?: "Term";
+  id: Scalars["Int"];
   type: TermType;
-  year: Scalars['Int'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
+  year: Scalars["Int"];
+  startDate: Scalars["DateTime"];
+  endDate: Scalars["DateTime"];
+  weekNames: Array<Scalars["String"]>;
   timetables: Array<Timetable>;
 };
 
 export enum TermType {
-  Semester_1 = 'SEMESTER_1',
-  Semester_2 = 'SEMESTER_2',
-  SummerSemester = 'SUMMER_SEMESTER',
-  Trimester_1 = 'TRIMESTER_1',
-  Trimester_2 = 'TRIMESTER_2',
-  Trimester_3 = 'TRIMESTER_3'
+  Semester_1 = "SEMESTER_1",
+  Semester_2 = "SEMESTER_2",
+  SummerSemester = "SUMMER_SEMESTER",
+  Trimester_1 = "TRIMESTER_1",
+  Trimester_2 = "TRIMESTER_2",
+  Trimester_3 = "TRIMESTER_3"
 }
 
 
 export type SessionStream = {
-  __typename?: 'SessionStream';
-  id: Scalars['Int'];
-  timetableId: Scalars['Int'];
+  __typename?: "SessionStream";
+  id: Scalars["Int"];
+  timetableId: Scalars["Int"];
   timetable: Timetable;
-  name: Scalars['String'];
+  name: Scalars["String"];
   type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  weeks: Array<Scalars['Int']>;
-  location: Scalars['String'];
+  day: Scalars["Int"];
+  startTime: Scalars["Float"];
+  endTime: Scalars["Float"];
+  weeks: Array<Scalars["Int"]>;
+  location: Scalars["String"];
   sessions: Array<Session>;
   streamAllocations: Array<StreamAllocation>;
 };
 
 export enum SessionType {
-  Practical = 'PRACTICAL',
-  Tutorial = 'TUTORIAL',
-  Seminar = 'SEMINAR',
-  Lecture = 'LECTURE',
-  Studio = 'STUDIO'
+  Practical = "PRACTICAL",
+  Tutorial = "TUTORIAL",
+  Seminar = "SEMINAR",
+  Lecture = "LECTURE",
+  Studio = "STUDIO"
 }
 
 export type Session = {
-  __typename?: 'Session';
-  id: Scalars['Int'];
+  __typename?: "Session";
+  id: Scalars["Int"];
   sessionStream: SessionStream;
-  location: Scalars['String'];
-  week: Scalars['Int'];
+  location: Scalars["String"];
+  week: Scalars["Int"];
   sessionAllocations: Array<SessionAllocation>;
   requests: Array<StaffRequest>;
   preferredSwaps: Array<StaffRequest>;
 };
 
 export type SessionAllocation = {
-  __typename?: 'SessionAllocation';
-  id: Scalars['Int'];
+  __typename?: "SessionAllocation";
+  id: Scalars["Int"];
   session: Session;
   user: User;
 };
 
 export type StaffRequest = {
-  __typename?: 'StaffRequest';
-  id: Scalars['Int'];
+  __typename?: "StaffRequest";
+  id: Scalars["Int"];
   type: RequestType;
   status: RequestStatus;
   requester: User;
@@ -177,47 +177,47 @@ export type StaffRequest = {
 };
 
 export enum RequestType {
-  Permanent = 'PERMANENT',
-  Temporary = 'TEMPORARY'
+  Permanent = "PERMANENT",
+  Temporary = "TEMPORARY"
 }
 
 export enum RequestStatus {
-  Open = 'OPEN',
-  Closed = 'CLOSED'
+  Open = "OPEN",
+  Closed = "CLOSED"
 }
 
 export type StreamAllocation = {
-  __typename?: 'StreamAllocation';
-  id: Scalars['Int'];
+  __typename?: "StreamAllocation";
+  id: Scalars["Int"];
   sessionStream: SessionStream;
   user: User;
 };
 
 export enum Role {
-  CourseCoordinator = 'COURSE_COORDINATOR',
-  Staff = 'STAFF'
+  CourseCoordinator = "COURSE_COORDINATOR",
+  Staff = "STAFF"
 }
 
 export type Preference = {
-  __typename?: 'Preference';
-  id: Scalars['Int'];
+  __typename?: "Preference";
+  id: Scalars["Int"];
   sessionType: SessionType;
-  maxContigHours: Scalars['Float'];
-  maxWeeklyHours: Scalars['Float'];
+  maxContigHours: Scalars["Float"];
+  maxWeeklyHours: Scalars["Float"];
   courseStaff: CourseStaff;
 };
 
 export type Timeslot = {
-  __typename?: 'Timeslot';
-  id: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  day: Scalars['Float'];
+  __typename?: "Timeslot";
+  id: Scalars["Int"];
+  startTime: Scalars["Float"];
+  endTime: Scalars["Float"];
+  day: Scalars["Float"];
   user: User;
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   addTerm: Term;
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
@@ -230,46 +230,46 @@ export type Mutation = {
 
 export type MutationAddTermArgs = {
   type: TermType;
-  year: Scalars['Float'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
+  year: Scalars["Float"];
+  startDate: Scalars["DateTime"];
+  endDate: Scalars["DateTime"];
+  weekNames: Array<Scalars["String"]>;
 };
 
 
 export type MutationDeleteTermsArgs = {
-  id: Array<Scalars['Int']>;
+  id: Array<Scalars["Int"]>;
 };
 
 
 export type MutationAddCourseStaffArgs = {
   role: Role;
-  termId: Scalars['Float'];
-  username: Scalars['String'];
-  courseId: Scalars['Float'];
+  termId: Scalars["Float"];
+  username: Scalars["String"];
+  courseId: Scalars["Float"];
 };
 
 
 export type MutationAddSessionStreamArgs = {
-  location: Scalars['String'];
-  weeks: Array<Scalars['Int']>;
-  endTime: Scalars['Float'];
-  startTime: Scalars['Float'];
-  day: Scalars['Int'];
+  location: Scalars["String"];
+  weeks: Array<Scalars["Int"]>;
+  endTime: Scalars["Float"];
+  startTime: Scalars["Float"];
+  day: Scalars["Int"];
   type: SessionType;
-  name: Scalars['String'];
-  timetableId: Scalars['Int'];
+  name: Scalars["String"];
+  timetableId: Scalars["Int"];
 };
 
 
 export type MutationAddStreamStaffArgs = {
-  newStaffs: Array<Scalars['String']>;
-  streamId: Scalars['Float'];
+  newStaffs: Array<Scalars["String"]>;
+  streamId: Scalars["Float"];
 };
 
 
 export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['Float'];
+  sessionStreamId: Scalars["Float"];
 };
 
 
@@ -278,19 +278,19 @@ export type MutationUpdateAvailabilitiesArgs = {
 };
 
 export type TimeslotInput = {
-  id: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  day: Scalars['Int'];
+  id: Scalars["Int"];
+  startTime: Scalars["Float"];
+  endTime: Scalars["Float"];
+  day: Scalars["Int"];
   modificationType: AvailabilityModificationType;
 };
 
 export enum AvailabilityModificationType {
-  Unchanged = 'UNCHANGED',
-  Added = 'ADDED',
-  Modified = 'MODIFIED',
-  Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
+  Unchanged = "UNCHANGED",
+  Added = "ADDED",
+  Modified = "MODIFIED",
+  Removed = "REMOVED",
+  RemovedModified = "REMOVED_MODIFIED"
 }
 
 export type AddAvailabilitiesMutationVariables = Exact<{
@@ -299,33 +299,33 @@ export type AddAvailabilitiesMutationVariables = Exact<{
 
 
 export type AddAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
+  { __typename?: "Mutation" }
   & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+    { __typename?: "Timeslot" }
+    & Pick<Timeslot, "id" | "day" | "startTime" | "endTime">
   )> }
 );
 
 export type GetSessionsQueryVariables = Exact<{
-  termId: Scalars['Int'];
-  week: Scalars['Int'];
-  courseIds: Array<Scalars['Int']>;
+  termId: Scalars["Int"];
+  week: Scalars["Int"];
+  courseIds: Array<Scalars["Int"]>;
 }>;
 
 
 export type GetSessionsQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { sessions: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location'>
+    { __typename?: "Session" }
+    & Pick<Session, "id" | "location">
     & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'name' | 'startTime' | 'endTime' | 'day'>
+      { __typename?: "SessionStream" }
+      & Pick<SessionStream, "name" | "startTime" | "endTime" | "day">
     ), sessionAllocations: Array<(
-      { __typename?: 'SessionAllocation' }
+      { __typename?: "SessionAllocation" }
       & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'name'>
+        { __typename?: "User" }
+        & Pick<User, "name">
       ) }
     )> }
   )> }
@@ -335,18 +335,18 @@ export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HelloQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
+  { __typename?: "Query" }
+  & Pick<Query, "hello">
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { me?: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'username' | 'name' | 'email'>
+    { __typename?: "User" }
+    & Pick<User, "username" | "name" | "email">
   )> }
 );
 
@@ -354,10 +354,10 @@ export type MyAvailabilityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MyAvailabilityQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { myAvailability: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'startTime' | 'endTime' | 'day'>
+    { __typename?: "Timeslot" }
+    & Pick<Timeslot, "id" | "startTime" | "endTime" | "day">
   )> }
 );
 
@@ -365,16 +365,16 @@ export type MyCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MyCoursesQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { me?: Maybe<(
-    { __typename?: 'User' }
+    { __typename?: "User" }
     & { courseStaffs: Array<(
-      { __typename?: 'CourseStaff' }
+      { __typename?: "CourseStaff" }
       & { timetable: (
-        { __typename?: 'Timetable' }
+        { __typename?: "Timetable" }
         & { course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code' | 'title'>
+          { __typename?: "Course" }
+          & Pick<Course, "id" | "code" | "title">
         ) }
       ) }
     )> }
@@ -382,21 +382,21 @@ export type MyCoursesQuery = (
 );
 
 export type GetSessionStreamsQueryVariables = Exact<{
-  termId: Scalars['Int'];
-  courseIds: Array<Scalars['Int']>;
+  termId: Scalars["Int"];
+  courseIds: Array<Scalars["Int"]>;
 }>;
 
 
 export type GetSessionStreamsQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { sessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day'>
+    { __typename?: "SessionStream" }
+    & Pick<SessionStream, "id" | "type" | "name" | "startTime" | "endTime" | "day">
     & { streamAllocations: Array<(
-      { __typename?: 'StreamAllocation' }
+      { __typename?: "StreamAllocation" }
       & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'name'>
+        { __typename?: "User" }
+        & Pick<User, "name">
       ) }
     )> }
   )> }
@@ -406,10 +406,10 @@ export type TermsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TermsQuery = (
-  { __typename?: 'Query' }
+  { __typename?: "Query" }
   & { terms: Array<(
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames'>
+    { __typename?: "Term" }
+    & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames">
   )> }
 );
 
@@ -419,10 +419,10 @@ export type UpdateAvailabilitiesMutationVariables = Exact<{
 
 
 export type UpdateAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
+  { __typename?: "Mutation" }
   & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+    { __typename?: "Timeslot" }
+    & Pick<Timeslot, "id" | "day" | "startTime" | "endTime">
   )> }
 );
 
