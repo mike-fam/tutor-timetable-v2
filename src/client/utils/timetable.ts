@@ -36,6 +36,7 @@ export const sessionStyleFromProps = ({
     elemStackStart,
     elemStackWidth,
     longestBranchSize,
+    splitBranchSize,
 }: Omit<SessionProps, "name">): {
     topPx: CSS.Property.Top<number>;
     heightPx: CSS.Property.Height<number>;
@@ -62,14 +63,14 @@ export const sessionStyleFromProps = ({
         sessionDuration * timeSlotHeight +
         Math.max(Math.ceil(sessionDuration - 1), 0) * realGap;
     const display = sessionDuration ? "block" : "none";
-    const width = `calc((100% - ${(longestBranchSize - 1) * realGap}px) * ${
+    const width = `calc((100% - ${(stackSize - 1) * realGap}px) * ${
         elemStackWidth / stackSize
-    })`;
+    } + ${((stackSize - longestBranchSize) * realGap) / splitBranchSize}px)`;
     // const left = `calc(((100% - ${
     //     (longestBranchSize - 1) * realGap
     // }px) / ${stackSize} + ${realGap}px) * ${elemStackIndex})`;
     const left = `calc(${elemStackIndex * realGap}px + (100% - ${
-        (longestBranchSize - 1) * realGap
+        (stackSize - 1) * realGap
     }px) * ${elemStackStart / stackSize})`;
     return {
         topPx: `${top}px`,
@@ -138,6 +139,7 @@ export const getClashedRanges = (
                     elemStackStart: 0,
                     elemStackWidth: 1,
                     longestBranchSize,
+                    splitBranchSize: stackSize,
                 };
             } else {
                 const parentStackInfo = result[node.getParent()!.getElement()];
@@ -154,6 +156,10 @@ export const getClashedRanges = (
                             : (stackSize - parentStackEnd) /
                               (node.getHeight()! + 1),
                     longestBranchSize,
+                    splitBranchSize:
+                        node.getParent()!.getHeight()! === node.getHeight()! + 1
+                            ? parentStackInfo.splitBranchSize
+                            : node.getHeight()! + 1,
                 };
             }
         }

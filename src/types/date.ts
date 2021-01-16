@@ -26,6 +26,7 @@ export type TimeRange = {
 export type StackInfo = {
     stackSize: number;
     longestBranchSize: number;
+    splitBranchSize: number;
     elemStackStart: number;
     elemStackWidth: number;
     elemStackIndex: number;

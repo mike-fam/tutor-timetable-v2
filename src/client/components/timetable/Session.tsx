@@ -42,6 +42,7 @@ export const Session: React.FC<PropsWithStyle> = ({
                 "elemStackIndex",
                 "elemStackWidth",
                 "longestBranchSize",
+                "splitBranchSize",
                 "theme",
             ]),
         [props]
