@@ -5,21 +5,21 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { Timetable } from "../components/timetable/Timetable";
-import { Day } from "../components/timetable/Day";
-import { Props as SessionProps } from "../components/timetable/Session";
-import { AvailabilityTimeslot } from "../components/availabilities/AvailabilityTimeslot";
-import { TimetableSettingsContext } from "../utils/timetable";
-import { AvailabilityContext } from "../utils/availability";
-import { ModifyTimeslotParams, TempTimeslot } from "../types/availability";
-import { AvailabilitySession } from "../components/availabilities/AvailabilitySession";
+import { Timetable } from "../../components/timetable/Timetable";
+import { Day } from "../../components/timetable/Day";
+import { Props as SessionProps } from "../../components/timetable/Session";
+import { AvailabilityTimeslot } from "../../components/availabilities/AvailabilityTimeslot";
+import { TimetableSettingsContext } from "../../utils/timetable";
+import { AvailabilityContext } from "../../utils/availability";
+import { ModifyTimeslotParams, TempTimeslot } from "../../types/availability";
+import { AvailabilitySession } from "../../components/availabilities/AvailabilitySession";
 import { useDisclosure } from "@chakra-ui/react";
-import { useQueryWithError } from "../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
     AvailabilityModificationType,
     useMyAvailabilityQuery,
-} from "../generated/graphql";
-import { TimeslotModal } from "../components/availabilities/TimeslotModal";
+} from "../../generated/graphql";
+import { TimeslotModal } from "../../components/availabilities/TimeslotModal";
 
 type Props = {};
 

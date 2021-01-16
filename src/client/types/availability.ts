@@ -1,6 +1,6 @@
 import React from "react";
 import { TimetableSession } from "./timetable";
-import { Map, Set } from "immutable";
+import { Map } from "immutable";
 import { TimeslotInput } from "../generated/graphql";
 
 export type TempTimeslot = Omit<TimetableSession, "name">;

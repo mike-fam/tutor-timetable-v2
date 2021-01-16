@@ -1,11 +1,10 @@
 import {
     MutationHookOptions,
-    MutationResult,
     MutationTuple,
     QueryHookOptions,
     QueryResult,
 } from "@apollo/client";
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";
 
 export const useQueryWithError = <T, S>(

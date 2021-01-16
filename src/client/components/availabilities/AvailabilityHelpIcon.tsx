@@ -14,7 +14,7 @@ import { BsFillQuestionCircleFill } from "react-icons/bs";
 
 type Props = {};
 
-export const AvailabilityHelpIcon: React.FC<Props> = ({}) => {
+export const AvailabilityHelpIcon: React.FC<Props> = () => {
     return (
         <Popover placement="right-start" trigger="hover">
             <PopoverTrigger>

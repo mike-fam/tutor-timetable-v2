@@ -3,13 +3,13 @@ import React, { useCallback, useContext, useMemo } from "react";
 import {
     AvailabilityModificationType,
     useUpdateAvailabilitiesMutation,
-} from "../generated/graphql";
-import { useMutationWithError } from "../hooks/useQueryWithError";
-import { AvailabilityContext } from "../utils/availability";
+} from "../../generated/graphql";
+import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { AvailabilityContext } from "../../utils/availability";
 
 type Props = {};
 
-export const AvailabilitySubmitButton: React.FC<Props> = ({}) => {
+export const AvailabilitySubmitButton: React.FC<Props> = () => {
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
     const [
         updateAvailabilities,
