@@ -38,7 +38,8 @@ export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
                     {props.type === RequestModalType.View ? (
                         <p>Request title here</p>
                     ) : (
-                        <p>Create a new Request</p>
+                        /*Replace semester when done */
+                        <p>Create a new Request - Semester 1, 2021</p>
                     )}
                 </ModalHeader>
                 <ModalCloseButton />

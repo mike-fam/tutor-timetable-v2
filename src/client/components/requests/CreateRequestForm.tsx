@@ -62,10 +62,9 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                 <FormLabel>Swap Preferences:</FormLabel>
 
                 <Menu closeOnSelect={false}>
-                    <MenuButton
-                        as={Button}
-                        rightIcon={<AddIcon />}
-                    ></MenuButton>
+                    <MenuButton as={Button}>
+                        <AddIcon />
+                    </MenuButton>
                     {"   "}
                     {props.sessions.map((item, index) => (
                         <Box key={index} as={Button}>

@@ -15,7 +15,6 @@ export const RequestOptions: React.FunctionComponent<Props> = (
             <VStack spacing={1} align="stretch">
                 <Center>
                     <Button
-                        w="50%"
                         onClick={() => props.toggle(RequestModalType.Create)}
                     >
                         New Request
