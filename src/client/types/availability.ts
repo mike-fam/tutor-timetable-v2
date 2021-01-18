@@ -1,28 +1,15 @@
 import React from "react";
 import { TimetableSession } from "./timetable";
-import { Map, Set } from "immutable";
+import { Map } from "immutable";
+import { TimeslotInput } from "../generated/graphql";
 
 export type TempTimeslot = Omit<TimetableSession, "name">;
 
-export type AvailabilityTimeslotType = TempTimeslot & {
-    type: ModificationType;
-};
-
 export type AvailabilityState = {
-    existingTimeslots: Map<number, AvailabilityTimeslotType>;
-    tempRemovedTimeslots: Set<number>;
-    setExistingTimeslots: React.Dispatch<
-        React.SetStateAction<Map<number, AvailabilityTimeslotType>>
+    timeslots: Map<number, TimeslotInput>;
+    setTimeslots: React.Dispatch<
+        React.SetStateAction<Map<number, TimeslotInput>>
     >;
-    setTempRemovedTimeslots: React.Dispatch<React.SetStateAction<Set<number>>>;
 };
 
-export enum ModificationType {
-    UNCHANGED,
-    ADDED,
-    MODIFIED,
-    REMOVED,
-    REMOVED_MODIFIED,
-}
-
-export type ModifyTimeslotParams = Partial<AvailabilityTimeslotType>;
+export type ModifyTimeslotParams = Partial<TimeslotInput>;

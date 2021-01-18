@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { RequestContainer } from "./containers/requests/RequestContainer";
 import { TimetablePageContainer } from "./containers/TimetablePageContainer";
-import { AvailabilityPageContainer } from "./containers/AvailabilityPageContainer";
+import { AvailabilityPageContainer } from "./containers/availabilities/AvailabilityPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (

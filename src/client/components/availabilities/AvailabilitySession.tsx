@@ -3,10 +3,7 @@ import { Box, Center, Icon, VStack } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 import { Props as SessionProps, Session } from "../timetable/Session";
 import Draggable from "react-draggable";
-import {
-    ModificationType,
-    ModifyTimeslotParams,
-} from "../../types/availability";
+import { ModifyTimeslotParams } from "../../types/availability";
 import {
     firstLineHeight,
     realGap,
@@ -18,6 +15,7 @@ import { ContextMenu } from "../helpers/ContextMenu";
 import { ContextMenuTrigger } from "../helpers/ContextMenuTrigger";
 import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
+import { AvailabilityModificationType } from "../../generated/graphql";
 
 type Props = SessionProps & {
     key?: number;
@@ -25,7 +23,7 @@ type Props = SessionProps & {
     removeSession: (sessionId: number) => void;
     restoreSession: (sessionId: number) => void;
     editSession: (sessionId: number) => void;
-    modificationType: ModificationType;
+    modificationType: AvailabilityModificationType;
 };
 
 export const AvailabilitySession: React.FC<Props> = ({
@@ -45,8 +43,8 @@ export const AvailabilitySession: React.FC<Props> = ({
     }, [modificationType]);
     const removed = useMemo(() => {
         return (
-            modificationType === ModificationType.REMOVED_MODIFIED ||
-            modificationType === ModificationType.REMOVED
+            modificationType === AvailabilityModificationType.RemovedModified ||
+            modificationType === AvailabilityModificationType.Removed
         );
     }, [modificationType]);
     return (

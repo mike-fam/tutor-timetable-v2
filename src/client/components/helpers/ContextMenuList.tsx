@@ -2,7 +2,7 @@ import React, { RefObject, useContext, useEffect, useState } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 import { Variants } from "framer-motion";
 import { MotionBox } from "./MotionBox";
-import { useOutsideClick } from "@chakra-ui/react";
+import { useColorModeValue, useOutsideClick } from "@chakra-ui/react";
 
 type Props = {};
 
@@ -45,6 +45,8 @@ export const ContextMenuList: React.FC<Props> = ({ children }) => {
     } = useContext(ContextMenuContext);
 
     const [position, setPosition] = useState<Position>({});
+
+    const bgColour = useColorModeValue("white", "gray.800");
 
     // TODO: Any less manual way to do this
     useEffect(() => {
@@ -93,7 +95,7 @@ export const ContextMenuList: React.FC<Props> = ({ children }) => {
             ref={menuRef}
             borderWidth={2}
             position="fixed"
-            bg="white"
+            bgColor={bgColour}
             py={1}
             minW={40}
             maxW={96}

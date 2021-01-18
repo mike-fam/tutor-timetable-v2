@@ -14,21 +14,19 @@ import {
     ModalOverlay,
     Select,
 } from "@chakra-ui/react";
-import {
-    AvailabilityTimeslotType,
-    ModifyTimeslotParams,
-} from "../../types/availability";
+import { ModifyTimeslotParams } from "../../types/availability";
 import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
 import { FormikInput } from "../helpers/FormikInput";
+import { TimeslotInput } from "../../generated/graphql";
 
 type Props = {
     isOpen: boolean;
     close: () => void;
-    timeslot?: AvailabilityTimeslotType;
+    timeslot?: TimeslotInput;
     updateTimeslot: (
         timeslotId: number,
         newTimeslotProps: ModifyTimeslotParams

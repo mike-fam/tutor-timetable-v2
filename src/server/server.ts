@@ -19,6 +19,7 @@ import cors from "cors";
 import { SessionStreamResolver } from "./resolvers/SessionStreamResolver";
 import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
+import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
 
 declare global {
     namespace Express {
@@ -52,6 +53,7 @@ const main = async () => {
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [
+                AvailabilityResolver,
                 HelloResolver,
                 UserResolver,
                 TermResolver,
