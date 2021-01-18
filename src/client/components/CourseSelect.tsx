@@ -30,7 +30,7 @@ export const CourseSelect: React.FunctionComponent<Props> = ({
                 All Courses
             </Checkbox>
             <Stack pl={6} mt={1} spacing={1}>
-                {courses.map((course, id) => (
+                {courses.entrySeq().map(([id, course]) => (
                     <Checkbox
                         // https://github.com/chakra-ui/chakra-ui/issues/2428#issuecomment-724002563
                         isChecked={selectedCourses.contains(id)}

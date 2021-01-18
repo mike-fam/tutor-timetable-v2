@@ -8,7 +8,7 @@ import { AvailabilityPageContainer } from "./containers/availabilities/Availabil
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
         <BrowserRouter>
-            <NavBar user={"s123456789"} />
+            <NavBar />
             <Switch>
                 <Route path="/" component={TimetablePageContainer} exact />
                 <Route path="/requests" component={RequestContainer} />
