@@ -21,7 +21,9 @@ type Props = {};
 
 export const NavBar: React.FunctionComponent<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
-    const { username } = useContext(UserContext);
+    const {
+        user: { username },
+    } = useContext(UserContext);
     return (
         <Flex backgroundColor="grey">
             <Box>
