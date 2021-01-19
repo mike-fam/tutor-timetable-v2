@@ -20,7 +20,10 @@ import {
 import React from "react";
 
 type Props = {
-    updateSessions: (item: any) => void;
+    updateSessions: (item: Array<string> | string) => void;
+    updateCourse: (course: string) => void;
+    selectedCourse: string;
+    updateSwitch: (session: string) => void;
     sessions: Array<string>;
 };
 
@@ -39,7 +42,26 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
             <Textarea placeholder="Describe your request in more detail here" />
             <br></br>
             <br></br>
-            <Select size="sm" placeholder="Select session to switch out of">
+            <Select
+                size="sm"
+                placeholder="Select Course"
+                onChange={(e) => {
+                    props.updateCourse(e.target.value);
+                }}
+            >
+                <option value="CSSE1001">CSSE1001</option>
+                <option value="CSSE2002">CSSE2002</option>
+                <option value="CSSE3002">CSSE3002</option>
+            </Select>
+            <br></br>
+            <Select
+                size="sm"
+                placeholder="Select session to switch out of"
+                isDisabled={props.selectedCourse ? false : true}
+                onChange={(e) => {
+                    props.updateSwitch(e.target.value);
+                }}
+            >
                 <option>session 01</option>
                 <option>session 02</option>
                 <option>session 03</option>

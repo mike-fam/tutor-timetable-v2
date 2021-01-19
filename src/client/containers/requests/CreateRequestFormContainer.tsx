@@ -6,12 +6,22 @@ export const CreateRequestFormContainer: React.FunctionComponent = () => {
         Array<string>
     >([]);
 
-    const updateSelectedSessions = (item: any) => {
-        setSelectedSessions(item);
+    const [selectedCourse, setSelectedCourse] = React.useState<string>("");
+    const [sessionSwitch, setSessionSwitch] = React.useState<string>("");
+
+    const updateSelectedSessions = (item: Array<string> | string) => {
+        if (item instanceof Array) {
+            setSelectedSessions(item);
+        } else {
+            setSelectedSessions([item]);
+        }
     };
 
     return (
         <CreateRequestForm
+            updateCourse={setSelectedCourse}
+            selectedCourse={selectedCourse}
+            updateSwitch={setSessionSwitch}
             updateSessions={updateSelectedSessions}
             sessions={selectedSessions}
         />
