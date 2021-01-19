@@ -20,6 +20,7 @@ export const CreateRequestFormContainer: React.FunctionComponent = () => {
     const courseList = ["CSSE1001", "CSSE2002", "CSSE3002"];
     const sessionList = ["T01", "T02", "P01", "P02"];
 
+    // Amount of props will be cut down once backend is implemented
     return (
         <CreateRequestForm
             updateCourse={setSelectedCourse}
