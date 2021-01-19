@@ -6,8 +6,7 @@ import {
     FormLabel,
     Select,
 } from "@chakra-ui/react";
-import { capitalCase, sentenceCase } from "change-case";
-import { notSet } from "../../constants";
+import { capitalCase } from "change-case";
 
 type Props = {
     name: string;

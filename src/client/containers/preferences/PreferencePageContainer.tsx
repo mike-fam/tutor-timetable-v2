@@ -8,7 +8,7 @@ import { CourseSelectContainer } from "../CourseSelectContainer";
 
 type Props = {};
 
-export const PreferencePageContainer: React.FC<Props> = ({}) => {
+export const PreferencePageContainer: React.FC<Props> = () => {
     const [chosenTermId, setChosenTermId] = useState(notSet);
     const [chosenCourseId, setChosenCourseId] = useState(notSet);
     const changeTerm = useCallback((termId) => {

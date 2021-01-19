@@ -3,7 +3,10 @@ import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { Props as SessionProps } from "../../components/timetable/Session";
-import { TimetableContext, TimetableSettingsContext } from "../../utils/timetable";
+import {
+    TimetableContext,
+    TimetableSettingsContext,
+} from "../../utils/timetable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
     useGetSessionsQuery,

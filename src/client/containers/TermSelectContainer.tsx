@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
@@ -32,7 +32,7 @@ export const TermSelectContainer: React.FC<Props> = ({
                 )
             );
         }
-    }, [loading, data]);
+    }, [loading, data, chooseTerm]);
     return (
         <Loadable isLoading={loading}>
             <Dropdown
