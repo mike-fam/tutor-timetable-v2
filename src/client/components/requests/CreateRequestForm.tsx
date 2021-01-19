@@ -24,7 +24,9 @@ type Props = {
     updateCourse: (course: string) => void;
     selectedCourse: string;
     updateSwitch: (session: string) => void;
-    sessions: Array<string>;
+    sessionPrefs: Array<string>;
+    sessionList: Array<string>;
+    courseList: Array<string>;
 };
 
 export const CreateRequestForm: React.FunctionComponent<Props> = (
@@ -49,9 +51,11 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                     props.updateCourse(e.target.value);
                 }}
             >
-                <option value="CSSE1001">CSSE1001</option>
-                <option value="CSSE2002">CSSE2002</option>
-                <option value="CSSE3002">CSSE3002</option>
+                {props.courseList.map((course, index) => (
+                    <option value={course} key={index}>
+                        {course}
+                    </option>
+                ))}
             </Select>
             <br></br>
             <Select
@@ -62,9 +66,11 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                     props.updateSwitch(e.target.value);
                 }}
             >
-                <option>session 01</option>
-                <option>session 02</option>
-                <option>session 03</option>
+                {props.sessionList.map((session, index) => (
+                    <option value={session} key={index}>
+                        {session}
+                    </option>
+                ))}
             </Select>
             <br></br>
             <Box>
@@ -88,7 +94,7 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                         <AddIcon />
                     </MenuButton>
                     {"   "}
-                    {props.sessions.map((item, index) => (
+                    {props.sessionPrefs.map((item, index) => (
                         <Box key={index} as={Button}>
                             {item}
                         </Box>
