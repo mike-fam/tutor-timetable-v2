@@ -20,8 +20,8 @@ export class Preference extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(() => SessionType)
-    @Column("varchar", { length: 15 })
+    @Field(() => SessionType, { nullable: true })
+    @Column("varchar", { length: 15, nullable: true })
     sessionType: SessionType;
 
     @Field()

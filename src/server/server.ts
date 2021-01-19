@@ -20,6 +20,7 @@ import { SessionStreamResolver } from "./resolvers/SessionStreamResolver";
 import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
 import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
+import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 
 declare global {
     namespace Express {
@@ -61,6 +62,7 @@ const main = async () => {
                 SessionStreamResolver,
                 TimetableResolver,
                 SessionResolver,
+                PreferenceResolver,
             ],
             dateScalarMode: "isoDate",
         }),
