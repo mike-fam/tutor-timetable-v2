@@ -85,7 +85,7 @@ export class PreferenceResolver {
             .andWhere("courseStaff.userUsername = :username", {
                 username: req.user!.username,
             })
-            .getOneOrFail();
+            .getOne();
         if (!preference) {
             preference = Preference.create({
                 sessionType,

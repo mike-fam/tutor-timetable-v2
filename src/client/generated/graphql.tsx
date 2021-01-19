@@ -207,7 +207,7 @@ export enum Role {
 export type Preference = {
   __typename?: 'Preference';
   id: Scalars['Int'];
-  sessionType: SessionType;
+  sessionType?: Maybe<SessionType>;
   maxContigHours: Scalars['Float'];
   maxWeeklyHours: Scalars['Float'];
   courseStaff: CourseStaff;
@@ -290,7 +290,8 @@ export type MutationUpdateAvailabilitiesArgs = {
 
 
 export type MutationUpdatePreferenceArgs = {
-  preferenceInput: PreferenceFindInput;
+  preference: PreferenceInput;
+  preferenceFind: PreferenceFindInput;
 };
 
 export type TimeslotInput = {
@@ -308,6 +309,12 @@ export enum AvailabilityModificationType {
   Removed = 'REMOVED',
   RemovedModified = 'REMOVED_MODIFIED'
 }
+
+export type PreferenceInput = {
+  sessionType?: Maybe<SessionType>;
+  maxContigHours: Scalars['Float'];
+  maxWeeklyHours: Scalars['Float'];
+};
 
 export type AddAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput>;
@@ -391,9 +398,25 @@ export type MyCoursesQuery = (
         & { course: (
           { __typename?: 'Course' }
           & Pick<Course, 'id' | 'code' | 'title'>
+        ), term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
         ) }
       ) }
     )> }
+  )> }
+);
+
+export type MyPreferenceQueryVariables = Exact<{
+  preferenceFind: PreferenceFindInput;
+}>;
+
+
+export type MyPreferenceQuery = (
+  { __typename?: 'Query' }
+  & { myPreference?: Maybe<(
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
   )> }
 );
 
@@ -440,6 +463,20 @@ export type UpdateAvailabilitiesMutation = (
     { __typename?: 'Timeslot' }
     & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
   )> }
+);
+
+export type UpdatePreferenceMutationVariables = Exact<{
+  preferenceFind: PreferenceFindInput;
+  preference: PreferenceInput;
+}>;
+
+
+export type UpdatePreferenceMutation = (
+  { __typename?: 'Mutation' }
+  & { updatePreference: (
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+  ) }
 );
 
 
@@ -634,6 +671,9 @@ export const MyCoursesDocument = gql`
           code
           title
         }
+        term {
+          id
+        }
       }
     }
   }
@@ -664,6 +704,41 @@ export function useMyCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
 export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQuery>;
 export type MyCoursesQueryResult = Apollo.QueryResult<MyCoursesQuery, MyCoursesQueryVariables>;
+export const MyPreferenceDocument = gql`
+    query MyPreference($preferenceFind: PreferenceFindInput!) {
+  myPreference(preferenceFindInput: $preferenceFind) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+  }
+}
+    `;
+
+/**
+ * __useMyPreferenceQuery__
+ *
+ * To run a query within a React component, call `useMyPreferenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyPreferenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyPreferenceQuery({
+ *   variables: {
+ *      preferenceFind: // value for 'preferenceFind'
+ *   },
+ * });
+ */
+export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+      }
+export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+        }
+export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
+export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
+export type MyPreferenceQueryResult = Apollo.QueryResult<MyPreferenceQuery, MyPreferenceQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {
@@ -780,3 +855,38 @@ export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHoo
 export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
 export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
 export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
+export const UpdatePreferenceDocument = gql`
+    mutation UpdatePreference($preferenceFind: PreferenceFindInput!, $preference: PreferenceInput!) {
+  updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+  }
+}
+    `;
+export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
+
+/**
+ * __useUpdatePreferenceMutation__
+ *
+ * To run a mutation, you first call `useUpdatePreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePreferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePreferenceMutation, { data, loading, error }] = useUpdatePreferenceMutation({
+ *   variables: {
+ *      preferenceFind: // value for 'preferenceFind'
+ *      preference: // value for 'preference'
+ *   },
+ * });
+ */
+export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>) {
+        return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, baseOptions);
+      }
+export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
+export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
+export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;

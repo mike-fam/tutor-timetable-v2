@@ -22,7 +22,7 @@ export class Preference extends BaseEntity {
 
     @Field(() => SessionType, { nullable: true })
     @Column("varchar", { length: 15, nullable: true })
-    sessionType: SessionType;
+    sessionType: SessionType | undefined;
 
     @Field()
     @Column()

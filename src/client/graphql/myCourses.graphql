@@ -7,6 +7,9 @@ query MyCourses {
                     code
                     title
                 }
+                term {
+                    id
+                }
             }
         }
     }

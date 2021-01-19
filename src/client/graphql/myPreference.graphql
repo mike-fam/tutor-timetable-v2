@@ -1,0 +1,7 @@
+query MyPreference($preferenceFind: PreferenceFindInput!) {
+    myPreference(preferenceFindInput: $preferenceFind) {
+        maxContigHours
+        maxWeeklyHours
+        sessionType
+    }
+}

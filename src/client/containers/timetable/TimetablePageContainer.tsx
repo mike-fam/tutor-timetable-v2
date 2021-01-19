@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
-import isBefore from "date-fns/isBefore";
-import isAfter from "date-fns/isAfter";
 import startOfISOWeek from "date-fns/startOfISOWeek";
-import maxBy from "lodash/maxBy";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
 import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
@@ -12,9 +9,19 @@ import { TermSelectContainer } from "../TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
 import { WeekNavContainer } from "../WeekNavContainer";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { TimetableContext } from "../../utils/timetable";
+import {
+    TimetableContext,
+    TimetableSettingsContext,
+} from "../../utils/timetable";
 import { Set } from "immutable";
 import { differenceInWeeks, parseISO } from "date-fns";
+import { notSet } from "../../constants";
+import { getCurrentTerm } from "../../utils/term";
+import {
+    firstLineHeight,
+    realGap,
+    timeSlotHeight,
+} from "../../constants/timetable";
 
 type Props = {};
 
@@ -22,6 +29,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
     const [chosenTerm, setChosenTerm] = useState(-1);
     const [chosenWeek, setChosenWeek] = useState(-1);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
+    const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
     const { data: termsData, loading: termsLoading } = useQueryWithError(
         useTermsQuery,
         {}
@@ -32,7 +40,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
     } = useQueryWithError(useMyCoursesQuery, {});
     useEffect(() => {
         // Loading
-        if (myCoursesLoading || termsLoading) {
+        if (termsLoading) {
             return;
         }
         const today = new Date();
@@ -40,57 +48,46 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         if (!termsData) {
             return;
         }
-        if (!myCoursesData) {
-            return;
-        }
         // No term date yet.
         if (termsData.terms.length === 0) {
             return;
         }
-        let foundTerm = false;
-        let chosenTermId = -1;
-        // Choose current term by default
-        for (const term of termsData.terms) {
-            if (
-                isBefore(today, parseISO(term.endDate)) &&
-                isAfter(today, parseISO(term.startDate))
-            ) {
-                setChosenTerm(term.id);
-                console.log("found good term");
-                foundTerm = true;
-                chosenTermId = term.id;
-                break;
-            }
+        let chosenTerm = getCurrentTerm(termsData.terms);
+        // choose current week if current term found
+        setChosenTerm(chosenTerm.id);
+        const startDate = parseISO(chosenTerm.startDate);
+        const endDate = parseISO(chosenTerm.endDate);
+        // Choose current week if possible, otherwise choose "All weeks"
+        setChosenWeek(
+            startDate < today && today < endDate
+                ? differenceInWeeks(startOfISOWeek(today), startDate)
+                : notSet
+        );
+    }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
+
+    useEffect(() => {
+        if (myCoursesLoading) {
+            return;
         }
-        // no suitable term, set chosen term to the latest.
-        if (!foundTerm) {
-            console.log(
-                "not found term",
-                maxBy(termsData.terms, (term) => term.startDate)!.id
-            );
-            setChosenTerm(maxBy(termsData.terms, (term) => term.startDate)!.id);
-        } else {
-            // choose current week if current term found
-            const startDate = parseISO(termsData.terms[chosenTermId].startDate);
-            const endDate = parseISO(termsData.terms[chosenTermId].endDate);
-            // Choose current week if possible, otherwise choose "All weeks"
-            setChosenWeek(
-                startDate < today && today < endDate
-                    ? differenceInWeeks(startOfISOWeek(today), startDate)
-                    : -1
-            );
+        if (!myCoursesData) {
+            return;
         }
         // No courses data
         if (!myCoursesData.me || myCoursesData.me.courseStaffs.length === 0) {
             return;
         }
         for (const courseStaff of myCoursesData.me.courseStaffs) {
-            setChosenCourses((prev) =>
-                prev.add(courseStaff.timetable.course.id)
-            );
+            if (courseStaff.timetable.term.id !== chosenTerm) {
+                setChosenCourses((prev) =>
+                    prev.remove(courseStaff.timetable.course.id)
+                );
+            } else {
+                setChosenCourses((prev) =>
+                    prev.add(courseStaff.timetable.course.id)
+                );
+            }
         }
-    }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
-
+    }, [chosenTerm, myCoursesData, myCoursesLoading]);
     return (
         <Wrapper>
             {myCoursesLoading || termsLoading ? (
@@ -119,9 +116,22 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                             <Heading>Timetable</Heading>
                         </Box>
                         <Box gridColumn={2} gridRow={2} mb={5}>
-                            <TermSelectContainer chooseTerm={setChosenTerm} />
+                            <TermSelectContainer
+                                chooseTerm={setChosenTerm}
+                                chosenTerm={chosenTerm}
+                            />
                         </Box>
-                        <Box gridColumn={2} gridRow={3} mb={5}>
+                        <Box
+                            gridColumn={2}
+                            gridRow={3}
+                            mb={5}
+                            h={
+                                firstLineHeight +
+                                (dayEndTime - dayStartTime) *
+                                    (timeSlotHeight + realGap) +
+                                realGap
+                            }
+                        >
                             <TimetableContainer />
                         </Box>
                         <Box gridColumn={2} gridRow={4}>

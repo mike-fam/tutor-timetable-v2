@@ -11,6 +11,9 @@ type Props = {};
 export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () => {
     const { data, loading } = useQueryWithError(useMyCoursesQuery, {});
     const [courses, setCourses] = useState(Map<number, string>());
+    const { chosenCourses, setChosenCourses, chosenTermId } = useContext(
+        TimetableContext
+    );
     useEffect(() => {
         if (loading) {
             return;
@@ -19,13 +22,14 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () =>
             return;
         }
         for (const courseStaff of data.me.courseStaffs) {
-            setCourses((prev) => {
-                const { id, code } = courseStaff.timetable.course;
-                return prev.set(id, code);
-            });
+            const { id, code } = courseStaff.timetable.course;
+            if (courseStaff.timetable.term.id !== chosenTermId) {
+                setCourses((prev) => prev.remove(id));
+            } else {
+                setCourses((prev) => prev.set(id, code));
+            }
         }
-    }, [loading, data]);
-    const { chosenCourses, setChosenCourses } = useContext(TimetableContext);
+    }, [loading, data, chosenTermId]);
     const selectCourse = useCallback(
         (courseId: number, selected: boolean) => {
             setChosenCourses((prev) =>
