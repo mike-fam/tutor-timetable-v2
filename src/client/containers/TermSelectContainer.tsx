@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
-import { TimetableContext } from "../utils/timetable";
 import { sentenceCase } from "change-case";
 
-type Props = {};
+type Props = {
+    chooseTerm: (termId: number) => void;
+};
 
-export const TermSelectContainer: React.FC<Props> = () => {
+export const TermSelectContainer: React.FC<Props> = ({ chooseTerm }) => {
     const { loading, data } = useTermsQuery();
     const [termsMap, setTermsMap] = useState(Map<number, string>());
-    const { chooseTerm } = useContext(TimetableContext);
     useEffect(() => {
         if (loading || !data) {
             return;

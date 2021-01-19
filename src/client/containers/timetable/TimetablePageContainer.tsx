@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useMyCoursesQuery, useTermsQuery } from "../generated/graphql";
+import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import maxBy from "lodash/maxBy";
-import { Wrapper } from "../components/helpers/Wrapper";
+import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
-import { LoadingSpinner } from "../components/helpers/LoadingSpinner";
-import { CourseSelectContainer } from "./CourseSelectContainer";
-import { TermSelectContainer } from "./TermSelectContainer";
+import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
+import { CourseCheckboxListContainer } from "./CourseCheckboxListContainer";
+import { TermSelectContainer } from "../TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
-import { WeekNavContainer } from "./WeekNavContainer";
-import { useQueryWithError } from "../hooks/useQueryWithError";
-import { TimetableContext } from "../utils/timetable";
+import { WeekNavContainer } from "../WeekNavContainer";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { TimetableContext } from "../../utils/timetable";
 import { Set } from "immutable";
 import { differenceInWeeks, parseISO } from "date-fns";
 
@@ -113,13 +113,13 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                         templateRows="repeat(3, auto)"
                     >
                         <Box gridRow="3 / -1">
-                            <CourseSelectContainer />
+                            <CourseCheckboxListContainer />
                         </Box>
                         <Box gridColumn={2} gridRow={1} mb={7}>
                             <Heading>Timetable</Heading>
                         </Box>
                         <Box gridColumn={2} gridRow={2} mb={5}>
-                            <TermSelectContainer />
+                            <TermSelectContainer chooseTerm={setChosenTerm} />
                         </Box>
                         <Box gridColumn={2} gridRow={3} mb={5}>
                             <TimetableContainer />

@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { CourseSelect } from "../components/CourseSelect";
 import { Map } from "immutable";
-import { useMyCoursesQuery } from "../generated/graphql";
-import { useQueryWithError } from "../hooks/useQueryWithError";
-import { TimetableContext } from "../utils/timetable";
-import { Loadable } from "../components/helpers/Loadable";
+import { useMyCoursesQuery } from "../../generated/graphql";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { TimetableContext } from "../../utils/timetable";
+import { Loadable } from "../../components/helpers/Loadable";
+import { CheckboxList } from "../../components/helpers/CheckBoxList";
 
 type Props = {};
 
-export const CourseSelectContainer: React.FunctionComponent<Props> = () => {
+export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () => {
     const { data, loading } = useQueryWithError(useMyCoursesQuery, {});
     const [courses, setCourses] = useState(Map<number, string>());
     useEffect(() => {
@@ -37,10 +37,11 @@ export const CourseSelectContainer: React.FunctionComponent<Props> = () => {
 
     return (
         <Loadable isLoading={loading}>
-            <CourseSelect
-                courses={courses}
-                selectCourse={selectCourse}
-                selectedCourses={chosenCourses}
+            <CheckboxList
+                elements={courses}
+                selectElement={selectCourse}
+                selectedElements={chosenCourses}
+                selectAllLabel="Select all courses"
             />
         </Loadable>
     );
