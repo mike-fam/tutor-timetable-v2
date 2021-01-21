@@ -11,6 +11,7 @@ import {
     MenuItemOption,
     MenuList,
     MenuOptionGroup,
+    ModalFooter,
     Radio,
     RadioGroup,
     Select,

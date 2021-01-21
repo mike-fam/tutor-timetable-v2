@@ -1,10 +1,8 @@
 import React from "react";
 import { Role } from "../../../types/user";
-import {
-    RequestModal,
-    RequestModalType,
-} from "../../components/requests/RequestModal";
+import { RequestModalType } from "../../components/requests/RequestModal";
 import { Requests } from "../../components/requests/Requests";
+import { RequestModalContainer } from "./RequestModalContainer";
 
 export enum DisplayRequestType {
     All = "All",
@@ -57,7 +55,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
                 toggleModal={openRequestModal}
                 toggleFilters={updateFilters}
             />
-            <RequestModal
+            <RequestModalContainer
                 isOpen={modalToggle}
                 toggle={setModalToggle}
                 userType={props.userType}

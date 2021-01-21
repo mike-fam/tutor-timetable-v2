@@ -7,3 +7,8 @@ export enum RequestStatus {
     OPEN = "Open",
     CLOSED = "Closed",
 }
+
+export enum FormType {
+    CREATE = "Create",
+    APPLY = "Apply",
+}
