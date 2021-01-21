@@ -44,8 +44,8 @@ export class PreferenceResolver {
             .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userUsername = :username", {
-                username: user.username,
+            .andWhere("courseStaff.userId = :userId", {
+                userId: user.id,
             })
             .getOne();
     }
@@ -82,8 +82,8 @@ export class PreferenceResolver {
             .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userUsername = :username", {
-                username: req.user!.username,
+            .andWhere("courseStaff.userId = :userId", {
+                userId: req.user!.id,
             })
             .getOne();
         if (!preference) {

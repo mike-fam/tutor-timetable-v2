@@ -16,7 +16,7 @@ export class CourseStaffResolver {
         const newCourseStaff = await CourseStaff.create({
             role,
             timetable,
-            userUsername: req.user!.username,
+            userId: req.user!.id,
         });
         return newCourseStaff.save();
     }

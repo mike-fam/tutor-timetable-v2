@@ -26,9 +26,9 @@ export class CourseStaff extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field()
+    @Field(() => Int)
     @Column()
-    userUsername: string;
+    userId: number;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {

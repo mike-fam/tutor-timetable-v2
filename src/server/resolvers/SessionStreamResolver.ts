@@ -54,21 +54,17 @@ export class SessionStreamResolver {
     @Mutation(() => SessionStream)
     async addStreamStaff(
         @Arg("streamId") streamId: number,
-        @Arg("newStaffs", () => [String]) newStaffs: string[]
+        @Arg("newStaffs", () => [Int]) newStaffs: number[]
     ): Promise<SessionStream> {
         const stream = await SessionStream.findOneOrFail({ id: streamId });
         const allocations = [...(await stream.streamAllocations)];
-        for (const username of newStaffs) {
+        for (const userId of newStaffs) {
             if (
-                allocations.some(
-                    (allocation) => allocation.userUsername === username
-                )
+                allocations.some((allocation) => allocation.userId === userId)
             ) {
                 continue;
             }
-            allocations.push(
-                StreamAllocation.create({ userUsername: username })
-            );
+            allocations.push(StreamAllocation.create({ userId }));
         }
         stream.streamAllocations = Promise.resolve(allocations);
         await stream.save();

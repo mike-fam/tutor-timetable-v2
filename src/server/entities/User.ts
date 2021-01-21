@@ -1,5 +1,12 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    OneToMany,
+    PrimaryColumn,
+    PrimaryGeneratedColumn,
+} from "typeorm";
+import { Field, Int, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
 import { SessionAllocation } from "./SessionAllocation";
@@ -10,8 +17,12 @@ import { Timeslot } from "./Timeslot";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
+    @Field(() => Int)
+    @PrimaryGeneratedColumn()
+    id: number;
+
     @Field()
-    @PrimaryColumn({ length: 9 })
+    @Column({ length: 9, unique: true })
     username: string;
 
     @Field()
