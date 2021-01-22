@@ -12,15 +12,7 @@ import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../../types/context";
 import { getConnection } from "typeorm";
 import { SessionType } from "../../types/session";
-
-@InputType()
-class PreferenceFindInput {
-    @Field(() => Int)
-    courseId: number;
-
-    @Field(() => Int)
-    termId: number;
-}
+import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
 class PreferenceInput {
@@ -52,8 +44,8 @@ export class PreferenceResolver {
 
     @Query(() => Preference, { nullable: true })
     async myPreference(
-        @Arg("preferenceFindInput", () => PreferenceFindInput)
-        { courseId, termId }: PreferenceFindInput,
+        @Arg("preferenceFindInput", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
         @Ctx() { req }: MyContext
     ): Promise<Preference | undefined> {
         return await PreferenceResolver.getPreference(
@@ -65,8 +57,8 @@ export class PreferenceResolver {
 
     @Mutation(() => Preference)
     async updatePreference(
-        @Arg("preferenceFind", () => PreferenceFindInput)
-        { courseId, termId }: PreferenceFindInput,
+        @Arg("preferenceFind", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
         @Arg("preference", () => PreferenceInput)
         { sessionType, maxContigHours, maxWeeklyHours }: PreferenceInput,
         @Ctx() { req }: MyContext

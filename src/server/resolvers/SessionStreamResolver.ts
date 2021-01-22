@@ -37,7 +37,8 @@ export class SessionStreamResolver {
         @Arg("startTime") startTime: number,
         @Arg("endTime") endTime: number,
         @Arg("weeks", () => [Int]) weeks: number[],
-        @Arg("location") location: string
+        @Arg("location") location: string,
+        @Arg("numberOfStaff", () => Int) numberOfStaff: number
     ): Promise<SessionStream> {
         return await SessionStream.create({
             timetableId,
@@ -48,6 +49,7 @@ export class SessionStreamResolver {
             endTime,
             weeks,
             location,
+            numberOfStaff,
         }).save();
     }
 
