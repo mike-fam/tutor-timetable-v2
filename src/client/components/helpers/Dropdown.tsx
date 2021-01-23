@@ -11,16 +11,13 @@ type Props = SelectHTMLAttributes<HTMLSelectElement> &
 
 export const Dropdown: React.FunctionComponent<Props> = ({
     options,
-    noDefault = true,
     ...props
 }) => {
     return (
         <Select {...props}>
-            {noDefault ? (
-                <option disabled defaultChecked>
-                    Select a value
-                </option>
-            ) : null}
+            <option disabled defaultChecked>
+                Select a value
+            </option>
             {options.toArray().map(([id, optionString]) => (
                 <option key={id} value={id}>
                     {optionString}
