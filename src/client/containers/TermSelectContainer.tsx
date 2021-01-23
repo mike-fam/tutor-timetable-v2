@@ -30,6 +30,7 @@ export const TermSelectContainer: React.FC<Props> = () => {
             <Dropdown
                 onChange={(e) => chooseTerm(Number(e.target.value))}
                 options={termsMap}
+                maxW={72}
             />
         </Loadable>
     );
