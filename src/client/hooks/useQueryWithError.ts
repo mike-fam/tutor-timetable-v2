@@ -9,7 +9,7 @@ import { ErrorContext } from "../utils/errors";
 
 export const useQueryWithError = <T, S>(
     useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
-    args: S
+    args?: S
 ) => {
     const queryResult = useApolloQuery({ variables: args });
     const { addError } = useContext(ErrorContext);

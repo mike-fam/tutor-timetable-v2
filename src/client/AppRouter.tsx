@@ -9,7 +9,7 @@ import { PreferencePageContainer } from "./containers/preferences/PreferencePage
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
         <BrowserRouter>
-            <NavBar user={"s123456789"} />
+            <NavBar />
             <Switch>
                 <Route path="/" component={TimetablePageContainer} exact />
                 <Route path="/requests" component={RequestContainer} />
