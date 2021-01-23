@@ -1,20 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
-import { TimetableContext } from "../utils/timetable";
 import { sentenceCase } from "change-case";
+import { getCurrentTerm } from "../utils/term";
 
-type Props = {};
+type Props = {
+    chooseTerm: (termId: number) => void;
+    chosenTerm: number;
+};
 
-export const TermSelectContainer: React.FC<Props> = () => {
+export const TermSelectContainer: React.FC<Props> = ({
+    chooseTerm,
+    chosenTerm,
+}) => {
     const { loading, data } = useTermsQuery();
     const [termsMap, setTermsMap] = useState(Map<number, string>());
-    const { chooseTerm } = useContext(TimetableContext);
     useEffect(() => {
         if (loading || !data) {
             return;
+        }
+        if (data.terms.length > 0) {
+            chooseTerm(getCurrentTerm(data.terms).id);
         }
         for (const term of data.terms) {
             setTermsMap((termsMap) =>
@@ -24,11 +32,12 @@ export const TermSelectContainer: React.FC<Props> = () => {
                 )
             );
         }
-    }, [loading, data]);
+    }, [loading, data, chooseTerm]);
     return (
         <Loadable isLoading={loading}>
             <Dropdown
                 onChange={(e) => chooseTerm(Number(e.target.value))}
+                value={chosenTerm}
                 options={termsMap}
                 maxW={72}
             />
