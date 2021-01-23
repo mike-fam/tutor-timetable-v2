@@ -1,0 +1,10 @@
+mutation UpdatePreference(
+    $preferenceFind: PreferenceFindInput!
+    $preference: PreferenceInput!
+) {
+    updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
+        maxContigHours
+        maxWeeklyHours
+        sessionType
+    }
+}

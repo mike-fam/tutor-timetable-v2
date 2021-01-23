@@ -40,9 +40,12 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                 <Link as={RouterLink} to="/availabilities">
                     Availability
                 </Link>
+                <Link as={RouterLink} to="/preferences">
+                    Preferences
+                </Link>
                 {/*Dropdown menu. Update with proper items when ready.*/}
                 <Menu>
-                    <MenuButton righticon={<ChevronDownIcon />}>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                         Dropdown
                     </MenuButton>
                     <MenuList style={{ margin: 0 }}>

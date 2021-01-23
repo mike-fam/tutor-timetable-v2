@@ -1,17 +1,20 @@
 import React, { useContext, useMemo } from "react";
-import { Timetable } from "../components/timetable/Timetable";
-import { Day } from "../components/timetable/Day";
-import { TimeSlot } from "../components/timetable/TimeSlot";
-import { Props as SessionProps } from "../components/timetable/Session";
-import { TimetableContext, TimetableSettingsContext } from "../utils/timetable";
-import { useQueryWithError } from "../hooks/useQueryWithError";
+import { Timetable } from "../../components/timetable/Timetable";
+import { Day } from "../../components/timetable/Day";
+import { TimeSlot } from "../../components/timetable/TimeSlot";
+import { Props as SessionProps } from "../../components/timetable/Session";
+import {
+    TimetableContext,
+    TimetableSettingsContext,
+} from "../../utils/timetable";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
     useGetSessionsQuery,
     useGetSessionStreamsQuery,
-} from "../generated/graphql";
-import { Loadable } from "../components/helpers/Loadable";
-import { IsoDay } from "../../types/date";
-import { TimetableSession } from "../components/TimetableSession";
+} from "../../generated/graphql";
+import { Loadable } from "../../components/helpers/Loadable";
+import { IsoDay } from "../../../types/date";
+import { TimetableSession } from "../../components/timetable/TimetableSession";
 
 type Props = {};
 
