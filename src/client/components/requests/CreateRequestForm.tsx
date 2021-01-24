@@ -18,15 +18,16 @@ import {
     Textarea,
 } from "@chakra-ui/react";
 import React from "react";
+import { RequestFormOptions } from "../../../types/request";
+import { Map as ImmutableMap } from "immutable";
 
 type Props = {
+    updateForm: (key: RequestFormOptions, value: string) => void;
     updateSessions: (item: Array<string> | string) => void;
-    updateCourse: (course: string) => void;
-    selectedCourse: string;
-    updateSwitch: (session: string) => void;
+    formData: ImmutableMap<RequestFormOptions, string>;
     sessionPrefs: Array<string>;
-    sessionList: Array<string>;
     courseList: Array<string>;
+    sessionList: Array<string>;
 };
 
 export const CreateRequestForm: React.FunctionComponent<Props> = (
@@ -48,8 +49,9 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                 size="sm"
                 placeholder="Select Course"
                 onChange={(e) => {
-                    props.updateCourse(e.target.value);
+                    props.updateForm(RequestFormOptions.COURSE, e.target.value);
                 }}
+                value={props.formData.get(RequestFormOptions.COURSE)}
             >
                 {props.courseList.map((course, index) => (
                     <option value={course} key={index}>
@@ -61,9 +63,14 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
             <Select
                 size="sm"
                 placeholder="Select session to switch out of"
-                isDisabled={props.selectedCourse ? false : true}
+                isDisabled={
+                    props.formData.get(RequestFormOptions.COURSE) ? false : true
+                }
                 onChange={(e) => {
-                    props.updateSwitch(e.target.value);
+                    props.updateForm(
+                        RequestFormOptions.SESSION,
+                        e.target.value
+                    );
                 }}
             >
                 {props.sessionList.map((session, index) => (
