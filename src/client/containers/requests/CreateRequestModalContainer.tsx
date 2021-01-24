@@ -40,7 +40,6 @@ export const CreateRequestModalContainer: React.FunctionComponent = () => {
     const updateFormData = (key: RequestFormOptions, value: string) => {
         if (Object.values(RequestFormOptions).includes(key)) {
             setFormData(formData.set(key, value));
-            console.log(formData);
         }
     };
 

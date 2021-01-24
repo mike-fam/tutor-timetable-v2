@@ -20,6 +20,7 @@ import {
 import React from "react";
 import { RequestFormOptions } from "../../../types/request";
 import { Map as ImmutableMap } from "immutable";
+import { FilterType } from "../../containers/requests/RequestContainer";
 
 type Props = {
     updateForm: (key: RequestFormOptions, value: string) => void;
@@ -108,8 +109,8 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                     }
                 >
                     <Stack spacing={5} direction="row">
-                        <Radio value="Temporary">Temporary</Radio>
-                        <Radio value="Permanent">Permanent</Radio>
+                        <Radio value={FilterType.Temporary}>Temporary</Radio>
+                        <Radio value={FilterType.Permanent}>Permanent</Radio>
                     </Stack>
                 </RadioGroup>
             </Box>

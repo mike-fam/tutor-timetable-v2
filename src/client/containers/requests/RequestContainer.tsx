@@ -39,7 +39,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Requests toggleFilters={updateFilters} />
+            <Requests toggleFilters={updateFilters} filters={filters} />
         </>
     );
 };

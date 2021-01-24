@@ -1,27 +1,13 @@
-import {
-    Box,
-    Center,
-    Divider,
-    Heading,
-    HStack,
-    Stack,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-} from "@chakra-ui/react";
+import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
 import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
-import {
-    DisplayRequestType,
-    FilterType,
-} from "../../containers/requests/RequestContainer";
+import { FilterType } from "../../containers/requests/RequestContainer";
+import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestFilter } from "./RequestFilter";
-import { RequestList } from "./RequestList";
 
 type Props = {
     toggleFilters: (item: FilterType, selected: boolean) => void;
+    filters: Array<FilterType>;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
@@ -41,24 +27,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                             bg="tomato"
                             style={{ minHeight: "500px" }}
                         >
-                            <Tabs isFitted>
-                                <TabList>
-                                    <Tab>All Requests</Tab>
-                                    <Tab>Your Requests</Tab>
-                                </TabList>
-                                <TabPanels>
-                                    <TabPanel>
-                                        <RequestList
-                                            type={DisplayRequestType.All}
-                                        />
-                                    </TabPanel>
-                                    <TabPanel>
-                                        <RequestList
-                                            type={DisplayRequestType.Personal}
-                                        />
-                                    </TabPanel>
-                                </TabPanels>
-                            </Tabs>
+                            <RequestListContainer filters={props.filters} />
                         </Box>
 
                         <Stack w="15%">
