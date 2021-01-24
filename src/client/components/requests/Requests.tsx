@@ -19,11 +19,8 @@ import {
 } from "../../containers/requests/RequestContainer";
 import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
-import { RequestModalType } from "./RequestModal";
-import { RequestOptions } from "./RequestOptions";
 
 type Props = {
-    toggleModal: (type: RequestModalType) => void;
     toggleFilters: (item: FilterType, selected: boolean) => void;
 };
 
@@ -55,13 +52,11 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                     <TabPanel>
                                         <RequestList
                                             type={DisplayRequestType.All}
-                                            toggle={props.toggleModal}
                                         />
                                     </TabPanel>
                                     <TabPanel>
                                         <RequestList
                                             type={DisplayRequestType.Personal}
-                                            toggle={props.toggleModal}
                                         />
                                     </TabPanel>
                                 </TabPanels>

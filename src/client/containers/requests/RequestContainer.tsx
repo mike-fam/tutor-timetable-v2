@@ -1,8 +1,6 @@
 import React from "react";
 import { Role } from "../../../types/user";
-import { RequestModalType } from "../../components/requests/RequestModal";
 import { Requests } from "../../components/requests/Requests";
-import { CreateRequestModalContainer } from "./CreateRequestModalContainer";
 
 export enum DisplayRequestType {
     All = "All",
@@ -23,18 +21,8 @@ type Props = {
 export const RequestContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    //Modal stuff
-    const [modalToggle, setModalToggle] = React.useState<boolean>(false);
-    const [modalType, setModalType] = React.useState<RequestModalType>(
-        RequestModalType.Create
-    );
     //Filter management.
     const [filters, setFilters] = React.useState<Array<FilterType>>([]);
-
-    const openRequestModal = (type: RequestModalType) => {
-        setModalType(type);
-        setModalToggle(true);
-    };
 
     // Update list of filters.
     const updateFilters = (item: FilterType, selected: boolean) => {
@@ -51,10 +39,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Requests
-                toggleModal={openRequestModal}
-                toggleFilters={updateFilters}
-            />
+            <Requests toggleFilters={updateFilters} />
         </>
     );
 };
