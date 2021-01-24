@@ -22,6 +22,13 @@ export const CreateRequestModalContainer: React.FunctionComponent = () => {
     const sessionList = ["T01", "T02", "P01", "P02"];
     const semester = "Semester 1, 2021";
 
+    // Stops values from persisting after closing modal.
+    const handleModalClose = () => {
+        setFormData(initMap);
+        setSelectedSessions([]);
+        onClose();
+    };
+
     const updateSelectedSessions = (item: Array<string> | string) => {
         if (item instanceof Array) {
             setSelectedSessions(item);
@@ -31,8 +38,10 @@ export const CreateRequestModalContainer: React.FunctionComponent = () => {
     };
 
     const updateFormData = (key: RequestFormOptions, value: string) => {
-        if (Object.values(RequestFormOptions).includes(key))
+        if (Object.values(RequestFormOptions).includes(key)) {
             setFormData(formData.set(key, value));
+            console.log(formData);
+        }
     };
 
     return (
@@ -54,7 +63,7 @@ export const CreateRequestModalContainer: React.FunctionComponent = () => {
                 )}
                 renderFooterButton={() => <Button>Submit</Button>}
                 isOpen={isOpen}
-                onClose={onClose}
+                onClose={handleModalClose}
             />
         </>
     );

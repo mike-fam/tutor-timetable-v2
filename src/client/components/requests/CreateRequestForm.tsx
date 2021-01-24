@@ -36,13 +36,28 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
     return (
         <FormControl>
             <FormLabel>Request Title:</FormLabel>
-            <Input />
+            <Input
+                placeholder="Title"
+                value={props.formData.get(RequestFormOptions.TITLE) || ""}
+                onChange={(e) =>
+                    props.updateForm(RequestFormOptions.TITLE, e.target.value)
+                }
+            />
             <FormHelperText>
                 e.g. Looking to switch into P01 from P02
             </FormHelperText>
             <br></br>
             <FormLabel>Description (optional):</FormLabel>
-            <Textarea placeholder="Describe your request in more detail here" />
+            <Textarea
+                placeholder="Describe your request in more detail here"
+                value={props.formData.get(RequestFormOptions.DESCRIPTION) || ""}
+                onChange={(e) =>
+                    props.updateForm(
+                        RequestFormOptions.DESCRIPTION,
+                        e.target.value
+                    )
+                }
+            />
             <br></br>
             <br></br>
             <Select
@@ -72,6 +87,7 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
                         e.target.value
                     );
                 }}
+                value={props.formData.get(RequestFormOptions.SESSION)}
             >
                 {props.sessionList.map((session, index) => (
                     <option value={session} key={index}>
@@ -82,10 +98,18 @@ export const CreateRequestForm: React.FunctionComponent<Props> = (
             <br></br>
             <Box>
                 <FormLabel>Request Duration:</FormLabel>
-                <RadioGroup defaultValue="1">
+                <RadioGroup
+                    defaultValue="Temporary"
+                    onChange={(e) =>
+                        props.updateForm(
+                            RequestFormOptions.DURATION,
+                            e.toString()
+                        )
+                    }
+                >
                     <Stack spacing={5} direction="row">
-                        <Radio value="1">Temporary</Radio>
-                        <Radio value="2">Permanent</Radio>
+                        <Radio value="Temporary">Temporary</Radio>
+                        <Radio value="Permanent">Permanent</Radio>
                     </Stack>
                 </RadioGroup>
             </Box>

@@ -31,7 +31,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                 <Heading>Request a swap</Heading>
             </Center>
             <br></br>
-            {/* Each request item opens a modal */}
+
             <Box>
                 <Center>
                     <HStack spacing={8} w="75%">
@@ -46,9 +46,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                     <Tab>All Requests</Tab>
                                     <Tab>Your Requests</Tab>
                                 </TabList>
-
                                 <TabPanels>
-                                    {/* will likely use state management for these tabs later. */}
                                     <TabPanel>
                                         <RequestList
                                             type={DisplayRequestType.All}

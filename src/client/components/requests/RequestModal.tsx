@@ -17,10 +17,6 @@ export enum RequestModalType {
 }
 
 type Props = {
-    // isOpen: boolean;
-    // toggle: (toggle: boolean) => void;
-    // type: RequestModalType;
-    // userType: Role;
     renderHeader: () => ReactElement;
     renderBody: () => ReactElement;
     renderFooterButton: () => ReactElement;
