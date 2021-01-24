@@ -12,6 +12,7 @@ import {
     Tabs,
 } from "@chakra-ui/react";
 import React from "react";
+import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
 import {
     DisplayRequestType,
     FilterType,
@@ -72,7 +73,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                <RequestOptions toggle={props.toggleModal} />
+                                <CreateRequestModalContainer />
                             </Box>
                             <Divider></Divider>
                             <Box>

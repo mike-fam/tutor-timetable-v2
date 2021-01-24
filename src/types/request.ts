@@ -8,7 +8,10 @@ export enum RequestStatus {
     CLOSED = "Closed",
 }
 
-export enum FormType {
-    CREATE = "Create",
-    APPLY = "Apply",
+export enum RequestFormOptions {
+    TITLE = "Title",
+    DESCRIPTION = "Description",
+    COURSE = "Course",
+    SESSION = "Session",
+    DURATION = "Duration",
 }
