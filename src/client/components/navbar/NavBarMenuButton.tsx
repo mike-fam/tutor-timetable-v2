@@ -1,11 +1,42 @@
-import { Button, ButtonProps } from "@chakra-ui/react";
-import React, { forwardRef } from "react";
+import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
+import React, { forwardRef, ReactElement } from "react";
 
-type Props = Partial<Omit<ButtonProps, "borderRadius">>;
+const buttonStyle = {
+    display: "inline-flex",
+    appearance: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 250ms",
+    userSelect: "none",
+    position: "relative",
+    whiteSpace: "nowrap",
+    verticalAlign: "middle",
+    outline: "none",
+    px: 3,
+    mx: 1,
+    h: "100%",
+} as const;
+
+type Props = Partial<Omit<BoxProps, keyof typeof buttonStyle | "_hover">> & {
+    rightIcon?: ReactElement;
+};
 
 export const NavBarMenuButton: React.FC<Props> = forwardRef<
-    HTMLButtonElement,
+    HTMLDivElement,
     Props
 >((props, ref) => {
-    return <Button borderRadius={0} {...props} ref={ref} />;
+    const colour = useColorModeValue("gray.100", "blue.900");
+    return (
+        <Box
+            {...buttonStyle}
+            {...props}
+            _hover={{
+                bgColor: colour,
+            }}
+            ref={ref}
+        >
+            {props.children}
+            {props.rightIcon || null}
+        </Box>
+    );
 });
