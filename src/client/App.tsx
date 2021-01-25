@@ -1,16 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { AppRouter } from "./AppRouter";
-import {
-    ApolloClient,
-    ApolloError,
-    ApolloProvider,
-    InMemoryCache,
-} from "@apollo/client";
-import { ErrorContext } from "./utils/errors";
-import { useToast } from "@chakra-ui/react";
-import { Set } from "immutable";
-import { IsoDay } from "../types/date";
-import { TimetableSettingsContext } from "./utils/timetable";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { WrapperContainer } from "./containers/WrapperContainer";
 
 const client = new ApolloClient({
     uri: "/graphql",
@@ -20,50 +11,11 @@ const client = new ApolloClient({
 });
 
 export const App: React.FunctionComponent<{}> = () => {
-    const toast = useToast({});
-    const addError = useCallback(
-        (error: ApolloError) => {
-            toast({
-                title: error.name,
-                description: error.message,
-                position: "bottom",
-                status: "error",
-                isClosable: true,
-                duration: 9000,
-            });
-        },
-        [toast]
-    );
-    const [displayedDays, setDisplayedDays] = useState(
-        Set([
-            IsoDay.MON,
-            IsoDay.TUE,
-            IsoDay.WED,
-            IsoDay.THU,
-            IsoDay.FRI,
-            IsoDay.SAT,
-            IsoDay.SUN,
-        ])
-    );
-    const [dayStartTime, setDayStartTime] = useState(7);
-    const [dayEndTime, setDayEndTime] = useState(20);
-
     return (
-        <ErrorContext.Provider value={{ addError }}>
-            <ApolloProvider client={client}>
-                <TimetableSettingsContext.Provider
-                    value={{
-                        displayedDays,
-                        setDisplayedDays,
-                        dayStartTime,
-                        setDayStartTime,
-                        dayEndTime,
-                        setDayEndTime,
-                    }}
-                >
-                    <AppRouter />
-                </TimetableSettingsContext.Provider>
-            </ApolloProvider>
-        </ErrorContext.Provider>
+        <ApolloProvider client={client}>
+            <WrapperContainer>
+                <AppRouter />
+            </WrapperContainer>
+        </ApolloProvider>
     );
 };

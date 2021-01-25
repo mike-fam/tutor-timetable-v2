@@ -1,6 +1,7 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
     Box,
+    Button,
     ButtonGroup,
     Flex,
     Heading,
@@ -10,18 +11,19 @@ import {
     MenuItem,
     MenuList,
     Spacer,
-    Button,
     useColorMode,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { UserContext } from "../utils/user";
 
-type Props = {
-    user: string;
-};
+type Props = {};
 
-export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
+export const NavBar: React.FunctionComponent<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
+    const {
+        user: { username },
+    } = useContext(UserContext);
     return (
         <Flex backgroundColor="grey">
             <Box>
@@ -53,8 +55,8 @@ export const NavBar: React.FunctionComponent<Props> = (props: Props) => {
                     </MenuList>
                 </Menu>
                 <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                        Logged in as: {props.user}
+                    <MenuButton righticon={<ChevronDownIcon />}>
+                        Logged in as: {username}
                     </MenuButton>
                     <MenuList>
                         <MenuItem>Logout</MenuItem>

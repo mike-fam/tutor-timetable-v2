@@ -39,6 +39,7 @@ export const TermSelectContainer: React.FC<Props> = ({
                 onChange={(e) => chooseTerm(Number(e.target.value))}
                 value={chosenTerm}
                 options={termsMap}
+                maxW={72}
             />
         </Loadable>
     );
