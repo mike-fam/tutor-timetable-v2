@@ -6,7 +6,7 @@ import { RequestForm } from "../../components/requests/RequestForm";
 
 type Props = {};
 
-export const CreateRequestModalContainer: React.FC<Props> = ({}) => {
+export const CreateRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const formState = useRequestFormState();
