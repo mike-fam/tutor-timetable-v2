@@ -21,6 +21,7 @@ import { RequestFilter } from "./RequestFilter";
 import { RequestList } from "./RequestList";
 import { RequestModalType } from "./RequestModal";
 import { RequestOptions } from "./RequestOptions";
+import { CreateRequestModalContainerV2 } from "../../containers/requests/CreateRequestModalContainerV2";
 
 type Props = {
     toggleModal: (type: RequestModalType) => void;
@@ -73,7 +74,8 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                <CreateRequestModalContainer />
+                                {/*<CreateRequestModalContainer />*/}
+                                <CreateRequestModalContainerV2 />
                             </Box>
                             <Divider></Divider>
                             <Box>
