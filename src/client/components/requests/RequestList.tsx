@@ -23,5 +23,6 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                 ))}
             </Tabs>
         </>
+            <EditRequestModalContainer />
     );
 };
