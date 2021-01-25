@@ -14,6 +14,7 @@ export type RequestFormState = {
     updatePreferences: (value: Array<string> | string) => void;
     duration: RequestDuration;
     setDuration: Dispatch<SetStateAction<RequestDuration>>;
+    resetFormState: () => void;
 };
 
 /**
@@ -48,6 +49,15 @@ export const useRequestFormState = (
     const updatePreferences = (value: Array<string> | string) => {
         setPreferences(value instanceof Array ? value : [value]);
     };
+    const resetFormState = () => {
+        setCourse("");
+        setTitle("");
+        setDescription("");
+        setSession("");
+        setPreferences([]);
+        setDuration("Temporary");
+    };
+
     return {
         course,
         setCourse,
@@ -61,5 +71,6 @@ export const useRequestFormState = (
         updatePreferences,
         duration,
         setDuration,
+        resetFormState,
     };
 };

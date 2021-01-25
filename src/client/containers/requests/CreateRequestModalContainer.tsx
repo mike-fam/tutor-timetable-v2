@@ -14,6 +14,11 @@ export const CreateRequestModalContainer: React.FC<Props> = ({}) => {
     const sessionList = ["T01", "T02", "P01", "P02"];
     const semester = "Semester 1, 2021";
 
+    const handleOnClose = () => {
+        formState.resetFormState();
+        onClose();
+    };
+
     return (
         <>
             <Center>
@@ -30,7 +35,7 @@ export const CreateRequestModalContainer: React.FC<Props> = ({}) => {
                 )}
                 renderFooterButton={() => <Button>Submit</Button>}
                 isOpen={isOpen}
-                onClose={onClose}
+                onClose={handleOnClose}
             />
         </>
     );
