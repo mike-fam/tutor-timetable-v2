@@ -25,7 +25,11 @@ export type TimeRange = {
 
 export type StackInfo = {
     stackSize: number;
-    stackIndex: number;
+    longestBranchSize: number;
+    splitBranchSize: number;
+    elemStackStart: number;
+    elemStackWidth: number;
+    elemStackIndex: number;
 };
 
 export type Hour = {};

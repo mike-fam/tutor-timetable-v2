@@ -10,6 +10,7 @@ import {
     StaffRequest,
     StreamAllocation,
     Term,
+    Timeslot,
     Timetable,
     User,
 } from "./entities";
@@ -27,6 +28,7 @@ export default {
         StaffRequest,
         StreamAllocation,
         Term,
+        Timeslot,
         Timetable,
         User,
     ],

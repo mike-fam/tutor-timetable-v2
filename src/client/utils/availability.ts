@@ -1,13 +1,12 @@
 import { createContext } from "react";
-import { AvailabilityState, ModificationType } from "../types/availability";
-import { Map, Set } from "immutable";
+import { AvailabilityState } from "../types/availability";
+import { Map } from "immutable";
 import { SessionTheme } from "../types/timetable";
+import { AvailabilityModificationType } from "../generated/graphql";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
-    existingTimeslots: Map(),
-    tempRemovedTimeslots: Set(),
-    setExistingTimeslots: (prev) => prev,
-    setTempRemovedTimeslots: (prev) => prev,
+    timeslots: Map(),
+    setTimeslots: (prev) => prev,
 });
 
 export const leftFillNum = (num: number, targetLength: number) => {
@@ -15,17 +14,17 @@ export const leftFillNum = (num: number, targetLength: number) => {
 };
 
 export const modificationTypeToTheme = (
-    modificationType: ModificationType
+    modificationType: AvailabilityModificationType
 ): SessionTheme => {
     switch (modificationType) {
-        case ModificationType.ADDED:
+        case AvailabilityModificationType.Added:
             return SessionTheme.SUCCESS;
-        case ModificationType.MODIFIED:
+        case AvailabilityModificationType.Modified:
             return SessionTheme.WARNING;
-        case ModificationType.REMOVED:
-        case ModificationType.REMOVED_MODIFIED:
+        case AvailabilityModificationType.Removed:
+        case AvailabilityModificationType.RemovedModified:
             return SessionTheme.ERROR;
-        case ModificationType.UNCHANGED:
+        case AvailabilityModificationType.Unchanged:
             return SessionTheme.PRIMARY;
     }
 };

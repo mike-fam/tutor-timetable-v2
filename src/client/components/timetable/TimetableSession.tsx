@@ -1,5 +1,5 @@
 import React from "react";
-import { Props as SessionProps, Session } from "./timetable/Session";
+import { Props as SessionProps, Session } from "./Session";
 import { Box } from "@chakra-ui/react";
 
 type Props = SessionProps & {

@@ -2,9 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import {
     Button,
     Divider,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -12,23 +9,20 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Select,
 } from "@chakra-ui/react";
-import {
-    AvailabilityTimeslotType,
-    ModifyTimeslotParams,
-} from "../../types/availability";
-import { Field, FieldProps, Form, Formik, FormikErrors } from "formik";
+import { ModifyTimeslotParams } from "../../types/availability";
+import { Form, Formik, FormikErrors } from "formik";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { IsoDay } from "../../../types/date";
-import { isoNumberToDay } from "../../../utils/date";
 import { FormikInput } from "../helpers/FormikInput";
+import { TimeslotInput } from "../../generated/graphql";
+import { FormikSelect } from "../helpers/FormikSelect";
 
 type Props = {
     isOpen: boolean;
     close: () => void;
-    timeslot?: AvailabilityTimeslotType;
+    timeslot?: TimeslotInput;
     updateTimeslot: (
         timeslotId: number,
         newTimeslotProps: ModifyTimeslotParams
@@ -118,31 +112,19 @@ export const TimeslotModal: React.FC<Props> = ({
                                 id="endTimeAvailModal"
                                 type="time"
                             />
-                            <Field name="day">
-                                {({ field, meta }: FieldProps) => (
-                                    <FormControl id="dayAvailModal" pt={3}>
-                                        <FormLabel>Day</FormLabel>
-                                        <Select {...field} type="number">
-                                            {[
-                                                IsoDay.MON,
-                                                IsoDay.TUE,
-                                                IsoDay.WED,
-                                                IsoDay.THU,
-                                                IsoDay.FRI,
-                                                IsoDay.SAT,
-                                                IsoDay.SUN,
-                                            ].map((day) => (
-                                                <option value={day} key={day}>
-                                                    {isoNumberToDay(day)}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                        <FormErrorMessage>
-                                            {meta.error}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                )}
-                            </Field>
+                            <FormikSelect
+                                name="day"
+                                options={[
+                                    IsoDay.MON,
+                                    IsoDay.TUE,
+                                    IsoDay.WED,
+                                    IsoDay.THU,
+                                    IsoDay.FRI,
+                                    IsoDay.SAT,
+                                    IsoDay.SUN,
+                                ]}
+                                id="dayAvailModal"
+                            />
                         </ModalBody>
                         <Divider py={3} />
                         <ModalFooter>

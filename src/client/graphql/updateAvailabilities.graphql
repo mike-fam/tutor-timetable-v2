@@ -1,0 +1,8 @@
+mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
+    updateAvailabilities(timeslots: $timeslots) {
+        id
+        day
+        startTime
+        endTime
+    }
+}

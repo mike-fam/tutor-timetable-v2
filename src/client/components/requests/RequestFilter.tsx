@@ -1,7 +1,7 @@
 import { Box, Center, Stack } from "@chakra-ui/react";
 import React from "react";
 import { FilterType } from "../../containers/requests/RequestContainer";
-import { SimpleCheckboxList } from "../SimpleCheckboxList";
+import { SimpleCheckboxList } from "../helpers/SimpleCheckboxList";
 
 type Props = {
     setFilters: (item: FilterType, selected: boolean) => void;

@@ -4,6 +4,7 @@ import { sessionStyleFromProps } from "../../utils/timetable";
 import { SessionTheme } from "../../types/timetable";
 import { useSessionColour } from "../../hooks/useSessionColour";
 import omit from "lodash/omit";
+import { StackInfo } from "../../../types/date";
 
 export type Props = {
     id: number;
@@ -12,10 +13,8 @@ export type Props = {
     endTime: number;
     startDay: number;
     endDay: number;
-    stackSize: number;
-    stackIndex: number;
     theme?: SessionTheme;
-};
+} & StackInfo;
 
 type PropsWithStyle = Props & Partial<Omit<BoxProps, "id">>;
 
@@ -39,7 +38,11 @@ export const Session: React.FC<PropsWithStyle> = ({
                 "startDay",
                 "endDay",
                 "stackSize",
-                "stackIndex",
+                "elemStackStart",
+                "elemStackIndex",
+                "elemStackWidth",
+                "longestBranchSize",
+                "splitBranchSize",
                 "theme",
             ]),
         [props]

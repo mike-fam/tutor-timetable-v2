@@ -6,7 +6,7 @@ type Props = {};
 export const LoadingSpinner: React.FC<Props> = () => {
     return (
         <Box w="100%" h="100%">
-            <Center>
+            <Center h="100%">
                 <Spinner
                     thickness="4px"
                     speed="0.65s"

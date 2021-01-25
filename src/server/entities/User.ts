@@ -5,6 +5,7 @@ import { StreamAllocation } from "./StreamAllocation";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Lazy } from "../utils/query";
+import { Timeslot } from "./Timeslot";
 
 @ObjectType()
 @Entity()
@@ -54,4 +55,8 @@ export class User extends BaseEntity {
         lazy: true,
     })
     acceptedRequests: Lazy<StaffRequest[]>;
+
+    @Field(() => [Timeslot])
+    @OneToMany(() => Timeslot, (timeslot) => timeslot.user, { lazy: true })
+    availabilities: Lazy<Timeslot[]>;
 }
