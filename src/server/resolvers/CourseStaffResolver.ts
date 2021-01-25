@@ -3,7 +3,6 @@ import {
     Ctx,
     Field,
     InputType,
-    Int,
     Mutation,
     Query,
     Resolver,

@@ -3,11 +3,9 @@ import {
     Ctx,
     Field,
     Float,
-    InputType,
     Int,
     Mutation,
     ObjectType,
-    Query,
     Resolver,
 } from "type-graphql";
 import { SessionType } from "../../types/session";
@@ -21,15 +19,6 @@ import axios from "axios";
 type WeekId = number;
 type SessionStreamId = number;
 type StaffId = number;
-
-@InputType()
-class PreferenceThreshold {
-    @Field(() => SessionType)
-    type: SessionType;
-
-    @Field()
-    threshold: number;
-}
 
 @ObjectType()
 class Allocation {
