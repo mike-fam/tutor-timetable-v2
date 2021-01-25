@@ -1,47 +1,18 @@
 import React from "react";
-import { CreateRequestForm } from "../../components/requests/CreateRequestForm";
-import { RequestModal } from "../../components/requests/RequestModal";
-import { Map } from "immutable";
-import { RequestFormOptions } from "../../../types/request";
 import { Button, Center, useDisclosure } from "@chakra-ui/react";
+import { RequestModal } from "../../components/requests/RequestModal";
+import { useRequestFormState } from "../../hooks/useRequestFormState";
+import { RequestForm } from "../../components/requests/RequestForm";
 
-export const CreateRequestModalContainer: React.FunctionComponent = () => {
+type Props = {};
+
+export const CreateRequestModalContainer: React.FC<Props> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [selectedSessions, setSelectedSessions] = React.useState<
-        Array<string>
-    >([]);
-
-    const initMap = Map<RequestFormOptions, string>();
-
-    const [formData, setFormData] = React.useState<
-        Map<RequestFormOptions, string>
-    >(initMap);
-
+    const formState = useRequestFormState();
     const courseList = ["CSSE1001", "CSSE2002", "CSSE3002"];
     const sessionList = ["T01", "T02", "P01", "P02"];
     const semester = "Semester 1, 2021";
-
-    // Stops values from persisting after closing modal.
-    const handleModalClose = () => {
-        setFormData(initMap);
-        setSelectedSessions([]);
-        onClose();
-    };
-
-    const updateSelectedSessions = (item: Array<string> | string) => {
-        if (item instanceof Array) {
-            setSelectedSessions(item);
-        } else {
-            setSelectedSessions([item]);
-        }
-    };
-
-    const updateFormData = (key: RequestFormOptions, value: string) => {
-        if (Object.values(RequestFormOptions).includes(key)) {
-            setFormData(formData.set(key, value));
-        }
-    };
 
     return (
         <>
@@ -51,18 +22,15 @@ export const CreateRequestModalContainer: React.FunctionComponent = () => {
             <RequestModal
                 renderHeader={() => <p>Create A New Request - {semester}</p>}
                 renderBody={() => (
-                    <CreateRequestForm
-                        updateForm={updateFormData}
-                        updateSessions={updateSelectedSessions}
-                        formData={formData}
-                        sessionList={sessionList}
+                    <RequestForm
+                        {...formState}
                         courseList={courseList}
-                        sessionPrefs={selectedSessions}
+                        sessionList={sessionList}
                     />
                 )}
                 renderFooterButton={() => <Button>Submit</Button>}
                 isOpen={isOpen}
-                onClose={handleModalClose}
+                onClose={onClose}
             />
         </>
     );

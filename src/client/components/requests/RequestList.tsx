@@ -1,5 +1,6 @@
 import { Box, Heading, Tab, TabList, Tabs } from "@chakra-ui/react";
 import React from "react";
+import { EditRequestModalContainer } from "../../containers/requests/EditRequestModalContainer";
 
 type Props = {
     // placeholder
@@ -22,7 +23,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                     </Box>
                 ))}
             </Tabs>
-        </>
             <EditRequestModalContainer />
+        </>
     );
 };
