@@ -19,6 +19,7 @@ const buttonStyle = {
 
 type Props = Partial<Omit<BoxProps, keyof typeof buttonStyle | "_hover">> & {
     rightIcon?: ReactElement;
+    leftIcon?: ReactElement;
 };
 
 export const NavBarMenuButton: React.FC<Props> = forwardRef<
@@ -35,6 +36,7 @@ export const NavBarMenuButton: React.FC<Props> = forwardRef<
             }}
             ref={ref}
         >
+            {props.leftIcon || null}
             {props.children}
             {props.rightIcon || null}
         </Box>

@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, Icon } from "@chakra-ui/icons";
 import {
     Box,
     Divider,
@@ -15,6 +15,7 @@ import React, { useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
+import { BsPersonFill } from "react-icons/all";
 
 type Props = {};
 
@@ -61,9 +62,10 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                 <Menu>
                     <MenuButton
                         as={NavBarMenuButton}
-                        rightIcon={<ChevronDownIcon />}
+                        leftIcon={<Icon as={BsPersonFill} mr={1} />}
+                        rightIcon={<ChevronDownIcon ml={1} />}
                     >
-                        Logged in as: {username}
+                        {username}
                     </MenuButton>
                     <MenuList>
                         <MenuItem>Logout</MenuItem>
