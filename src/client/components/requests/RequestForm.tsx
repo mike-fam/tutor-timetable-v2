@@ -26,9 +26,10 @@ import {
 type Props = RequestFormState & {
     courseList: Array<string>;
     sessionList: Array<string>;
+    editable?: boolean;
 };
 
-export const CreateRequestFormV2: React.FunctionComponent<Props> = ({
+export const RequestForm: React.FunctionComponent<Props> = ({
     course,
     setCourse,
     title,
@@ -43,6 +44,7 @@ export const CreateRequestFormV2: React.FunctionComponent<Props> = ({
     setDuration,
     courseList,
     sessionList,
+    editable = true,
 }) => {
     return (
         <FormControl>
@@ -88,7 +90,7 @@ export const CreateRequestFormV2: React.FunctionComponent<Props> = ({
                 placeholder="Select session to switch out of"
                 isDisabled={
                     // FIXME: Fourth
-                    //formData.get(RequestFormOptions.COURSE) ? false : true
+                    // !formData.get(RequestFormOptions.COURSE)
                     !course
                 }
                 onChange={(e) => {

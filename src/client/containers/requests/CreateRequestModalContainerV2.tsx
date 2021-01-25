@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Center, useDisclosure } from "@chakra-ui/react";
 import { RequestModal } from "../../components/requests/RequestModal";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
-import { CreateRequestFormV2 } from "../../components/requests/CreateRequestFormV2";
+import { RequestForm } from "../../components/requests/RequestForm";
 
 type Props = {};
 
@@ -22,7 +22,7 @@ export const CreateRequestModalContainerV2: React.FC<Props> = ({}) => {
             <RequestModal
                 renderHeader={() => <p>Create A New Request - {semester}</p>}
                 renderBody={() => (
-                    <CreateRequestFormV2
+                    <RequestForm
                         {...formState}
                         courseList={courseList}
                         sessionList={sessionList}

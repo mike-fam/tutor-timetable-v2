@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Center, useDisclosure } from "@chakra-ui/react";
 import { RequestModal } from "../../components/requests/RequestModal";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
-import { CreateRequestFormV2 } from "../../components/requests/CreateRequestFormV2";
+import { RequestForm } from "../../components/requests/RequestForm";
 
 type Props = {};
 
@@ -28,7 +28,7 @@ export const EditRequestModalContainer: React.FC<Props> = ({}) => {
                     <p>Edit An Existing Request - {semester}</p>
                 )}
                 renderBody={() => (
-                    <CreateRequestFormV2
+                    <RequestForm
                         {...formState}
                         courseList={courseList}
                         sessionList={sessionList}
