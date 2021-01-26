@@ -1,20 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { TermSelectContainer } from "../TermSelectContainer";
-import { notSet } from "../../constants";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { PreferenceUpdateContainer } from "./PreferenceUpdateContainer";
 import { Divider, Flex, FormLabel, Heading } from "@chakra-ui/react";
 import { CourseSelectContainer } from "../CourseSelectContainer";
+import { useTermCourse } from "../../hooks/useTermCourse";
 
 type Props = {};
 
 export const PreferencePageContainer: React.FC<Props> = () => {
-    const [chosenTermId, setChosenTermId] = useState(notSet);
-    const [chosenCourseId, setChosenCourseId] = useState(notSet);
-    const changeTerm = useCallback((termId) => {
-        setChosenTermId(termId);
-        setChosenCourseId(notSet);
-    }, []);
+    const { term, changeTerm, course, changeCourse } = useTermCourse();
     return (
         <Wrapper>
             <Flex direction="column" w="50%">
@@ -23,18 +18,15 @@ export const PreferencePageContainer: React.FC<Props> = () => {
                 <FormLabel mt={3}>Term</FormLabel>
                 <TermSelectContainer
                     chooseTerm={changeTerm}
-                    chosenTerm={chosenTermId}
+                    chosenTerm={term}
                 />
                 <FormLabel mt={3}>Course</FormLabel>
                 <CourseSelectContainer
-                    chosenTerm={chosenTermId}
-                    chooseCourse={setChosenCourseId}
-                    chosenCourse={chosenCourseId}
+                    chosenTerm={term}
+                    chosenCourse={course}
+                    chooseCourse={changeCourse}
                 />
-                <PreferenceUpdateContainer
-                    courseId={chosenCourseId}
-                    termId={chosenTermId}
-                />
+                <PreferenceUpdateContainer courseId={course} termId={term} />
             </Flex>
         </Wrapper>
     );
