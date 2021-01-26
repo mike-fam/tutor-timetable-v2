@@ -61,6 +61,8 @@ export const Day: React.FunctionComponent<Props> = ({
                         startDay: startTime,
                         endDay: endTime,
                         name: session.name,
+                        allocation: session.allocation || [],
+                        location: session.location || "",
                         ...stackInfo[session.id],
                     },
                     key

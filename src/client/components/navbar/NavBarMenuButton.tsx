@@ -25,7 +25,7 @@ type Props = Partial<Omit<BoxProps, keyof typeof buttonStyle | "_hover">> & {
 export const NavBarMenuButton: React.FC<Props> = forwardRef<
     HTMLDivElement,
     Props
->((props, ref) => {
+>(({ leftIcon, rightIcon, ...props }, ref) => {
     const colour = useColorModeValue("gray.100", "blue.900");
     return (
         <Box
@@ -36,9 +36,9 @@ export const NavBarMenuButton: React.FC<Props> = forwardRef<
             }}
             ref={ref}
         >
-            {props.leftIcon || null}
+            {leftIcon || null}
             {props.children}
-            {props.rightIcon || null}
+            {rightIcon || null}
         </Box>
     );
 });

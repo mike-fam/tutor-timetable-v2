@@ -5,6 +5,7 @@ import { RequestContainer } from "./containers/requests/RequestContainer";
 import { TimetablePageContainer } from "./containers/timetable/TimetablePageContainer";
 import { AvailabilityPageContainer } from "./containers/availabilities/AvailabilityPageContainer";
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
+import { AllocatorPageContainer } from "./containers/allocator/AllocatorPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -21,6 +22,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     path="/preferences"
                     component={PreferencePageContainer}
                 />
+                <Route path="/allocator" component={AllocatorPageContainer} />
             </Switch>
         </BrowserRouter>
     );

@@ -8,6 +8,8 @@ export type TimetableSession = {
     startTime: number;
     endTime: number;
     day: IsoDay;
+    location?: string;
+    allocation?: Array<string>;
 };
 
 export type TimetableState = {
