@@ -9,11 +9,13 @@ import { getCurrentTerm } from "../utils/term";
 type Props = {
     chooseTerm: (termId: number) => void;
     chosenTerm: number;
+    maxW?: number | string;
 };
 
 export const TermSelectContainer: React.FC<Props> = ({
     chooseTerm,
     chosenTerm,
+    maxW,
 }) => {
     const { loading, data } = useTermsQuery();
     const [termsMap, setTermsMap] = useState(Map<number, string>());
@@ -39,7 +41,7 @@ export const TermSelectContainer: React.FC<Props> = ({
                 onChange={(e) => chooseTerm(Number(e.target.value))}
                 value={chosenTerm}
                 options={termsMap}
-                maxW={72}
+                maxW={maxW}
             />
         </Loadable>
     );

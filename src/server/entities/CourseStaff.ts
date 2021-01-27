@@ -19,7 +19,7 @@ import { checkFieldValueInEnum, Lazy } from "../utils/query";
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(Role, "role"))
-@Unique(["timetable", "user"])
+@Unique(["timetableId", "userId"])
 export class CourseStaff extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -34,6 +34,9 @@ export class CourseStaff extends BaseEntity {
     @Field(() => Int)
     @Column()
     userId: number;
+
+    @Column()
+    timetableId: number;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {

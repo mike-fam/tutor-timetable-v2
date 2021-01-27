@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { forwardRef, useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
 import { SessionTheme } from "../../types/timetable";
 import { useSessionColour } from "../../hooks/useSessionColour";
@@ -13,16 +13,17 @@ export type Props = {
     endTime: number;
     startDay: number;
     endDay: number;
+    allocation: Array<string>;
+    location: string;
     theme?: SessionTheme;
 } & StackInfo;
 
 type PropsWithStyle = Props & Partial<Omit<BoxProps, "id">>;
 
-export const Session: React.FC<PropsWithStyle> = ({
-    theme = SessionTheme.PRIMARY,
-    children,
-    ...props
-}) => {
+export const Session: React.FC<PropsWithStyle> = forwardRef<
+    HTMLDivElement,
+    PropsWithStyle
+>(({ theme = SessionTheme.PRIMARY, children, ...props }, ref) => {
     const { width, heightPx, display, left, topPx } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
@@ -61,8 +62,9 @@ export const Session: React.FC<PropsWithStyle> = ({
             rounded="base"
             overflow="hidden"
             {...styleProps}
+            ref={ref}
         >
             {children}
         </Box>
     );
-};
+});

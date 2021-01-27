@@ -16,7 +16,7 @@ import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
-@Unique(["course", "term"])
+@Unique(["courseId", "termId"])
 export class Timetable extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()

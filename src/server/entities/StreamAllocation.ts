@@ -13,7 +13,7 @@ import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
-@Unique(["sessionStream", "user"])
+@Unique(["sessionStreamId", "userId"])
 export class StreamAllocation extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -30,6 +30,9 @@ export class StreamAllocation extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.streamAllocations, { lazy: true })
     user: Lazy<User>;
+
+    @Column()
+    sessionStreamId: number;
 
     @Column()
     userId: number;

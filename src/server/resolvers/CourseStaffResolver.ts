@@ -11,6 +11,7 @@ import { CourseStaff, Timetable } from "../entities";
 import { Role } from "../../types/user";
 import { MyContext } from "../../types/context";
 import { CourseTermIdInput } from "./CourseTermId";
+import { getConnection } from "typeorm";
 
 @InputType()
 export class CourseStaffInput extends CourseTermIdInput {
@@ -40,7 +41,16 @@ export class CourseStaffResolver {
     }
 
     @Query(() => [CourseStaff])
-    async courseStaffs(): Promise<CourseStaff[]> {
-        return await CourseStaff.find({});
+    async courseStaffs(
+        @Arg("courseTermInput", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput
+    ): Promise<CourseStaff[]> {
+        return await getConnection()
+            .getRepository(CourseStaff)
+            .createQueryBuilder("courseStaff")
+            .innerJoinAndSelect("courseStaff.timetable", "timetable")
+            .where("timetable.courseId = :courseId", { courseId })
+            .andWhere("timetable.termId = :termId", { termId })
+            .getMany();
     }
 }

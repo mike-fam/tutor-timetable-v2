@@ -1,5 +1,6 @@
 import {
     BaseEntity,
+    Column,
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
@@ -12,7 +13,7 @@ import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
-@Unique(["session", "user"])
+@Unique(["sessionId", "userId"])
 export class SessionAllocation extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
@@ -27,4 +28,10 @@ export class SessionAllocation extends BaseEntity {
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.sessionAllocations, { lazy: true })
     user: Lazy<User>;
+
+    @Column()
+    sessionId: number;
+
+    @Column()
+    userId: number;
 }
