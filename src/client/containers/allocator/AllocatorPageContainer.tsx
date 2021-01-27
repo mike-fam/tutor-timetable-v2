@@ -1,4 +1,12 @@
-import { Button, Heading, HStack, Stack, Text } from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    Heading,
+    HStack,
+    Spacer,
+    Stack,
+    Text,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { TermSelectContainer } from "../TermSelectContainer";
@@ -17,7 +25,7 @@ import { Set } from "immutable";
 
 type Props = {};
 
-export const AllocatorPageContainer: React.FC<Props> = ({}) => {
+export const AllocatorPageContainer: React.FC<Props> = () => {
     const { termId, changeTerm, courseId, changeCourse } = useTermCourse();
     const [showing, setShowing] = useState<"default" | "generated">("default");
     const [sessions, setSessions] = useState<TimetableSessionType[]>([]);
@@ -133,29 +141,53 @@ export const AllocatorPageContainer: React.FC<Props> = ({}) => {
                             selectedStaff={selectedStaff}
                             setSelectedStaff={setSelectedStaff}
                         />
-                        <Button
-                            onClick={() => {
-                                requestAllocation({
-                                    variables: {
-                                        courseTerm: { courseId, termId },
-                                        staffIds: selectedStaff.toArray(),
-                                        newThreshold: 0.5,
-                                    },
-                                });
-                            }}
-                            isLoading={requestAllocationLoading}
-                            isFullWidth={false}
-                            ml="auto"
-                        >
-                            Generate Allocation
-                        </Button>
-                        <Text fontSize="2xl" fontWeight="light" as="h2" pt={8}>
-                            Timetable preview{" "}
-                            {showing === "default"
-                                ? "(No allocation yet generated)"
-                                : "(Allocation generated)"}
-                            :
-                        </Text>
+                        <Flex align="flex-end">
+                            <Text
+                                fontSize="2xl"
+                                fontWeight="light"
+                                as="h2"
+                                pt={8}
+                            >
+                                Timetable preview{" "}
+                                {showing === "default"
+                                    ? "(No allocation yet generated)"
+                                    : "(Allocation generated)"}
+                                :
+                            </Text>
+                            <Spacer />
+                            <Button
+                                colorScheme="blue"
+                                onClick={() => {
+                                    requestAllocation({
+                                        variables: {
+                                            courseTerm: { courseId, termId },
+                                            staffIds: selectedStaff.toArray(),
+                                            newThreshold: 0.5,
+                                        },
+                                    });
+                                }}
+                                isLoading={requestAllocationLoading}
+                                disabled={showing === "default"}
+                            >
+                                Apply Allocation
+                            </Button>
+                            <Button
+                                colorScheme="green"
+                                onClick={() => {
+                                    requestAllocation({
+                                        variables: {
+                                            courseTerm: { courseId, termId },
+                                            staffIds: selectedStaff.toArray(),
+                                            newThreshold: 0.5,
+                                        },
+                                    });
+                                }}
+                                isLoading={requestAllocationLoading}
+                                ml={2}
+                            >
+                                Generate Allocation
+                            </Button>
+                        </Flex>
                         <AllocatorTimetableContainer
                             sessions={sessions}
                             loading={

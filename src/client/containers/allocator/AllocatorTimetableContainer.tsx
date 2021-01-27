@@ -1,7 +1,5 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Loadable } from "../../components/helpers/Loadable";
-import { useGetSessionStreamsLazyQuery } from "../../generated/graphql";
-import { notSet } from "../../constants";
 import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";

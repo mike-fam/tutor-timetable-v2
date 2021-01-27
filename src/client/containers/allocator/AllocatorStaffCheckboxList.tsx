@@ -1,5 +1,5 @@
 import { Checkbox, Grid } from "@chakra-ui/react";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { Role, useCourseStaffsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
@@ -35,7 +35,7 @@ export const AllocatorStaffCheckboxList: React.FC<Props> = ({
             }
             setSelectedStaff((prev) => prev.add(courseStaff.user.id));
         }
-    }, [loading, data]);
+    }, [loading, data, setSelectedStaff]);
     return (
         <Loadable isLoading={loading}>
             {data?.courseStaffs ? (

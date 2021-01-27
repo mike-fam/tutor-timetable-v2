@@ -10,7 +10,6 @@ import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
-import { User } from "./entities";
 import { MyContext } from "../types/context";
 import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";

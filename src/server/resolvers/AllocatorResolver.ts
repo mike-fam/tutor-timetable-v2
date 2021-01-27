@@ -15,6 +15,7 @@ import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
 import { MyContext } from "../../types/context";
 import axios from "axios";
+import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
 
 type WeekId = number;
@@ -47,6 +48,9 @@ class AllocatorOutput {
 
     @Field(() => AllocationType)
     type: AllocationType;
+
+    @Field()
+    token: string;
 
     @Field()
     detail: string;
@@ -111,6 +115,8 @@ type AllocatorInput = {
     requester: string;
     data: AllocatorInputData;
 };
+
+const allocationTokenManager = new Map<string, AllocatorOutputData>();
 
 @Resolver()
 export class AllocatorResolver {
@@ -197,6 +203,8 @@ export class AllocatorResolver {
             process.env.ALLOCATOR_URL || "http://localhost:8000/allocator/",
             input
         );
+        const token = uuid();
+        allocationTokenManager.set(token, allocatorOutput.data);
         const output = new AllocatorOutput();
         output.allocations = await Promise.all(
             Object.entries(allocatorOutput.data.allocations).map(
@@ -212,6 +220,51 @@ export class AllocatorResolver {
         output.detail = allocatorOutput.data.detail;
         output.type = allocatorOutput.data.type;
         output.runtime = allocatorOutput.data.runtime;
+        output.token = token;
         return output;
     }
+
+    // @Mutation(() => Boolean)
+    // async applyAllocation(
+    //     @Arg("allocationToken") token: string,
+    //     @Arg("override", () => Boolean) override: boolean
+    // ): Promise<boolean> {
+    //     const allocationOutput = allocationTokenManager.get(token);
+    //     if (!allocationOutput) {
+    //         throw new Error("Token already consumed.");
+    //     } else if (allocationOutput.type === AllocationType.Failed) {
+    //         throw new Error("You cannot apply a failed allocation");
+    //     }
+    //     const streamAllocationsToBeSaved: StreamAllocation[] = [];
+    //     const sessionStreams = await SessionStream.findByIds(
+    //         Object.keys(allocationOutput.allocations).map((id) => parseInt(id))
+    //     );
+    //     const hasAllocation = (
+    //         await Promise.all(
+    //             sessionStreams.map(
+    //                 async (stream) =>
+    //                     (await stream.streamAllocations).length > 0
+    //             )
+    //         )
+    //     ).some((value) => value);
+    //     if (!override && hasAllocation) {
+    //         throw new Error(
+    //             "This timetable already has an allocation." +
+    //                 " If you want to continue with this allocation" +
+    //                 " and override the existing timetable, set 'override' to true"
+    //         );
+    //     }
+    //     for (const [sessionStreamId, staffIds] of Object.entries(
+    //         allocationOutput.allocations
+    //     )) {
+    //         for (const userId of staffIds) {
+    //             streamAllocationsToBeSaved.push(
+    //                 StreamAllocation.create({
+    //                     sessionStreamId: parseInt(sessionStreamId),
+    //                     userId,
+    //                 })
+    //             );
+    //         }
+    //     }
+    // }
 }
