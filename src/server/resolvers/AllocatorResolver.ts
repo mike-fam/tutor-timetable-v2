@@ -10,11 +10,12 @@ import {
 } from "type-graphql";
 import { SessionType } from "../../types/session";
 import { IsoDay } from "../../types/date";
-import { Timetable } from "../entities";
+import { SessionStream, Timetable, User } from "../entities";
 import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
 import { MyContext } from "../../types/context";
 import axios from "axios";
+import { CourseTermIdInput } from "./CourseTermId";
 
 type WeekId = number;
 type SessionStreamId = number;
@@ -22,20 +23,30 @@ type StaffId = number;
 
 @ObjectType()
 class Allocation {
-    @Field(() => Int)
-    sessionStreamId: SessionStreamId;
+    @Field(() => SessionStream)
+    sessionStream: SessionStream;
 
-    @Field(() => [Int])
-    staffIds: Array<StaffId>;
+    @Field(() => [User])
+    staff: Array<User>;
+}
+
+export enum AllocationType {
+    Success = "success",
+    Failed = "failed",
+}
+
+export enum AllocationStatus {
+    Optimal = "Optimal solution found",
+    Infeasible = "Infeasible model",
 }
 
 @ObjectType()
 class AllocatorOutput {
-    @Field()
-    status: string;
+    @Field(() => AllocationStatus)
+    status: AllocationStatus;
 
-    @Field()
-    type: string;
+    @Field(() => AllocationType)
+    type: AllocationType;
 
     @Field()
     detail: string;
@@ -48,8 +59,8 @@ class AllocatorOutput {
 }
 
 type AllocatorOutputData = {
-    status: string;
-    type: string;
+    status: AllocationStatus;
+    type: AllocationType;
     detail: string;
     runtime: number;
     allocations: {
@@ -104,15 +115,17 @@ type AllocatorInput = {
 @Resolver()
 export class AllocatorResolver {
     @Mutation(() => AllocatorOutput)
-    async requestAllocator(
-        @Arg("timetableId", () => Int) timetableId: number,
+    async requestAllocation(
+        @Arg("courseTermInput", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
         @Arg("staffIds", () => [Int]) staffIds: number[],
         @Arg("newThreshold", () => Float, { nullable: true })
         newThreshold: number | undefined,
         @Ctx() { req }: MyContext
     ): Promise<AllocatorOutput> {
         const timetable = await Timetable.findOneOrFail({
-            id: timetableId,
+            courseId,
+            termId,
         });
         const sessionStreams = await timetable.sessionStreams;
         const term = await timetable.term;
@@ -185,12 +198,16 @@ export class AllocatorResolver {
             input
         );
         const output = new AllocatorOutput();
-        output.allocations = Object.entries(
-            allocatorOutput.data.allocations
-        ).map(([streamId, staffIds]) => ({
-            sessionStreamId: parseInt(streamId),
-            staffIds,
-        }));
+        output.allocations = await Promise.all(
+            Object.entries(allocatorOutput.data.allocations).map(
+                async ([streamId, staffIds]) => ({
+                    sessionStream: await SessionStream.findOneOrFail(
+                        parseInt(streamId)
+                    ),
+                    staff: await User.findByIds(staffIds),
+                })
+            )
+        );
         output.status = allocatorOutput.data.status;
         output.detail = allocatorOutput.data.detail;
         output.type = allocatorOutput.data.type;

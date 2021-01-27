@@ -37,8 +37,8 @@ export const TimetableSession: React.FC<Props> = ({
                     <Text fontWeight="bold">Allocations:</Text>
                     {allocation.length > 0 ? (
                         <UnorderedList>
-                            {allocation.map((name) => (
-                                <ListItem>{name}</ListItem>
+                            {allocation.map((name, index) => (
+                                <ListItem key={index}>{name}</ListItem>
                             ))}
                         </UnorderedList>
                     ) : (

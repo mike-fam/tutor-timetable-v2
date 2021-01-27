@@ -7,6 +7,15 @@ const client = new ApolloClient({
     uri: "/graphql",
     cache: new InMemoryCache({
         addTypename: false,
+        typePolicies: {
+            Query: {
+                fields: {
+                    me: {
+                        merge: true,
+                    },
+                },
+            },
+        },
     }),
 });
 

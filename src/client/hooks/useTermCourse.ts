@@ -2,16 +2,16 @@ import { useCallback, useState } from "react";
 import { notSet } from "../constants";
 
 export const useTermCourse = () => {
-    const [term, setChosenTermId] = useState(notSet);
-    const [course, changeCourse] = useState(notSet);
+    const [termId, setChosenTermId] = useState(notSet);
+    const [courseId, changeCourse] = useState(notSet);
     const changeTerm = useCallback((termId) => {
         setChosenTermId(termId);
         changeCourse(notSet);
     }, []);
     return {
-        term,
+        termId,
         changeTerm,
-        course,
+        courseId,
         changeCourse,
     };
 };

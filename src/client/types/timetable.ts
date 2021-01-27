@@ -2,7 +2,7 @@ import { IsoDay } from "../../types/date";
 import { Set } from "immutable";
 import React from "react";
 
-export type TimetableSession = {
+export type TimetableSessionType = {
     id: number;
     name: string;
     startTime: number;

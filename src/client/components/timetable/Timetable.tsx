@@ -5,7 +5,7 @@ import { gap } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
 import { Set } from "immutable";
 import { IsoDay } from "../../../types/date";
-import { TimetableSession } from "../../types/timetable";
+import { TimetableSessionType } from "../../types/timetable";
 
 export type Props = {
     displayedDays: Set<IsoDay>;
@@ -15,7 +15,7 @@ export type Props = {
     ) => ReactElement;
     startTime?: number;
     endTime?: number;
-    sessions: Array<TimetableSession>;
+    sessions: Array<TimetableSessionType>;
 };
 
 export const Timetable: React.FC<Props> = ({

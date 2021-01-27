@@ -7,39 +7,22 @@ import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { TimetableSession } from "../../components/timetable/TimetableSession";
+import { TimetableSessionType } from "../../types/timetable";
 
 type Props = {
-    courseId: number;
-    termId: number;
+    sessions: TimetableSessionType[];
+    loading: boolean;
 };
 
 export const AllocatorTimetableContainer: React.FC<Props> = ({
-    courseId,
-    termId,
+    sessions,
+    loading,
 }) => {
     const { displayedDays } = useContext(TimetableSettingsContext);
-    const [
-        getSessionStream,
-        { data, loading },
-    ] = useGetSessionStreamsLazyQuery();
-    useEffect(() => {
-        if (termId === notSet || courseId === notSet) {
-            return;
-        }
-        getSessionStream({
-            variables: {
-                termId,
-                courseIds: [courseId],
-            },
-        });
-    }, [termId, courseId, getSessionStream]);
-    if (termId === notSet || courseId === notSet) {
-        return null;
-    }
     return (
         <Loadable isLoading={loading}>
             <Timetable
-                sessions={data?.sessionStreams || []}
+                sessions={sessions}
                 displayedDays={displayedDays}
                 renderDay={(dayProps, key) => (
                     <Day

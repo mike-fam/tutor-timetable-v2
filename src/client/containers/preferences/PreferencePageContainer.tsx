@@ -9,7 +9,7 @@ import { useTermCourse } from "../../hooks/useTermCourse";
 type Props = {};
 
 export const PreferencePageContainer: React.FC<Props> = () => {
-    const { term, changeTerm, course, changeCourse } = useTermCourse();
+    const { termId, changeTerm, courseId, changeCourse } = useTermCourse();
     return (
         <Wrapper>
             <Flex direction="column" w="50%">
@@ -18,15 +18,18 @@ export const PreferencePageContainer: React.FC<Props> = () => {
                 <FormLabel mt={3}>Term</FormLabel>
                 <TermSelectContainer
                     chooseTerm={changeTerm}
-                    chosenTerm={term}
+                    chosenTerm={termId}
                 />
                 <FormLabel mt={3}>Course</FormLabel>
                 <CourseSelectContainer
-                    chosenTerm={term}
-                    chosenCourse={course}
+                    chosenTerm={termId}
+                    chosenCourse={courseId}
                     chooseCourse={changeCourse}
                 />
-                <PreferenceUpdateContainer courseId={course} termId={term} />
+                <PreferenceUpdateContainer
+                    courseId={courseId}
+                    termId={termId}
+                />
             </Flex>
         </Wrapper>
     );

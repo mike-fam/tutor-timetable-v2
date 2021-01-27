@@ -1,5 +1,5 @@
 import { Checkbox, Grid } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { Role, useCourseStaffsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
@@ -9,11 +9,15 @@ import sortBy from "lodash/sortBy";
 type Props = {
     courseId: number;
     termId: number;
+    selectedStaff: Set<number>;
+    setSelectedStaff: Dispatch<SetStateAction<Set<number>>>;
 };
 
 export const AllocatorStaffCheckboxList: React.FC<Props> = ({
     courseId,
     termId,
+    selectedStaff,
+    setSelectedStaff,
 }) => {
     const { loading, data } = useQueryWithError(useCourseStaffsQuery, {
         courseTermInput: {
@@ -21,7 +25,6 @@ export const AllocatorStaffCheckboxList: React.FC<Props> = ({
             termId,
         },
     });
-    const [selectedStaff, setSelectedStaff] = useState<Set<number>>(Set());
     useEffect(() => {
         if (loading || !data?.courseStaffs) {
             return;
