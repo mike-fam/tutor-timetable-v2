@@ -8,12 +8,12 @@ import {
     ObjectType,
     Resolver,
 } from "type-graphql";
-import { SessionType } from "../../types/session";
+import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
-import { SessionStream, Timetable, User } from "../entities";
+import { SessionStream, StreamAllocation, Timetable, User } from "../entities";
 import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
-import { MyContext } from "../../types/context";
+import { MyContext } from "../types/context";
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
@@ -224,47 +224,49 @@ export class AllocatorResolver {
         return output;
     }
 
-    // @Mutation(() => Boolean)
-    // async applyAllocation(
-    //     @Arg("allocationToken") token: string,
-    //     @Arg("override", () => Boolean) override: boolean
-    // ): Promise<boolean> {
-    //     const allocationOutput = allocationTokenManager.get(token);
-    //     if (!allocationOutput) {
-    //         throw new Error("Token already consumed.");
-    //     } else if (allocationOutput.type === AllocationType.Failed) {
-    //         throw new Error("You cannot apply a failed allocation");
-    //     }
-    //     const streamAllocationsToBeSaved: StreamAllocation[] = [];
-    //     const sessionStreams = await SessionStream.findByIds(
-    //         Object.keys(allocationOutput.allocations).map((id) => parseInt(id))
-    //     );
-    //     const hasAllocation = (
-    //         await Promise.all(
-    //             sessionStreams.map(
-    //                 async (stream) =>
-    //                     (await stream.streamAllocations).length > 0
-    //             )
-    //         )
-    //     ).some((value) => value);
-    //     if (!override && hasAllocation) {
-    //         throw new Error(
-    //             "This timetable already has an allocation." +
-    //                 " If you want to continue with this allocation" +
-    //                 " and override the existing timetable, set 'override' to true"
-    //         );
-    //     }
-    //     for (const [sessionStreamId, staffIds] of Object.entries(
-    //         allocationOutput.allocations
-    //     )) {
-    //         for (const userId of staffIds) {
-    //             streamAllocationsToBeSaved.push(
-    //                 StreamAllocation.create({
-    //                     sessionStreamId: parseInt(sessionStreamId),
-    //                     userId,
-    //                 })
-    //             );
-    //         }
-    //     }
-    // }
+    @Mutation(() => Boolean)
+    async applyAllocation(
+        @Arg("allocationToken") token: string,
+        @Arg("override", () => Boolean) override: boolean
+    ): Promise<boolean> {
+        const allocationOutput = allocationTokenManager.get(token);
+        if (!allocationOutput) {
+            throw new Error("Token already consumed.");
+        } else if (allocationOutput.type === AllocationType.Failed) {
+            throw new Error("You cannot apply a failed allocation");
+        }
+        const streamAllocationsToBeSaved: StreamAllocation[] = [];
+        const sessionStreams = await SessionStream.findByIds(
+            Object.keys(allocationOutput.allocations).map((id) => parseInt(id))
+        );
+        const hasAllocation = (
+            await Promise.all(
+                sessionStreams.map(
+                    async (stream) =>
+                        (await stream.streamAllocations).length > 0
+                )
+            )
+        ).some((value) => value);
+        if (!override && hasAllocation) {
+            throw new Error(
+                "This timetable already has an allocation." +
+                    " If you want to continue with this allocation" +
+                    " and override the existing timetable, set 'override' to true"
+            );
+        }
+        for (const [sessionStreamId, staffIds] of Object.entries(
+            allocationOutput.allocations
+        )) {
+            for (const userId of staffIds) {
+                streamAllocationsToBeSaved.push(
+                    StreamAllocation.create({
+                        sessionStreamId: parseInt(sessionStreamId),
+                        userId,
+                    })
+                );
+            }
+        }
+        console.log(streamAllocationsToBeSaved);
+        return true;
+    }
 }

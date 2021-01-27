@@ -10,7 +10,7 @@ import {
     ModalOverlay,
 } from "@chakra-ui/react";
 import React from "react";
-import { Role } from "../../../types/user";
+import { Role } from "../../../server/types/user";
 import { CreateRequestFormContainer } from "../../containers/requests/CreateRequestFormContainer";
 
 export enum RequestModalType {

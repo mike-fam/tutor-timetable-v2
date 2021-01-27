@@ -8,8 +8,8 @@ import {
     Resolver,
 } from "type-graphql";
 import { CourseStaff, Timetable } from "../entities";
-import { Role } from "../../types/user";
-import { MyContext } from "../../types/context";
+import { Role } from "../types/user";
+import { MyContext } from "../types/context";
 import { CourseTermIdInput } from "./CourseTermId";
 import { getConnection } from "typeorm";
 
