@@ -60,11 +60,12 @@ export type QuerySessionsArgs = {
 };
 
 export type QueryMyPreferenceArgs = {
-    preferenceFindInput: PreferenceFindInput;
+    preferenceFindInput: CourseTermIdInput;
 };
 
 export type User = {
     __typename?: "User";
+    id: Scalars["Int"];
     username: Scalars["String"];
     name: Scalars["String"];
     email: Scalars["String"];
@@ -79,11 +80,12 @@ export type User = {
 export type CourseStaff = {
     __typename?: "CourseStaff";
     id: Scalars["Int"];
-    userUsername: Scalars["String"];
+    isNew: Scalars["Boolean"];
+    userId: Scalars["Int"];
     timetable: Timetable;
     role: Role;
     user: User;
-    preference: Preference;
+    preference?: Maybe<Preference>;
 };
 
 export type Timetable = {
@@ -137,6 +139,7 @@ export type SessionStream = {
     endTime: Scalars["Float"];
     weeks: Array<Scalars["Int"]>;
     location: Scalars["String"];
+    numberOfStaff: Scalars["Int"];
     sessions: Array<Session>;
     streamAllocations: Array<StreamAllocation>;
 };
@@ -219,7 +222,7 @@ export type Timeslot = {
     user: User;
 };
 
-export type PreferenceFindInput = {
+export type CourseTermIdInput = {
     courseId: Scalars["Int"];
     termId: Scalars["Int"];
 };
@@ -234,6 +237,7 @@ export type Mutation = {
     generateSessions: Array<Session>;
     updateAvailabilities: Array<Timeslot>;
     updatePreference: Preference;
+    requestAllocator: AllocatorOutput;
 };
 
 export type MutationAddTermArgs = {
@@ -249,12 +253,11 @@ export type MutationDeleteTermsArgs = {
 };
 
 export type MutationAddCourseStaffArgs = {
-    role: Role;
-    termId: Scalars["Float"];
-    courseId: Scalars["Float"];
+    courseStaffInput: CourseStaffInput;
 };
 
 export type MutationAddSessionStreamArgs = {
+    numberOfStaff: Scalars["Int"];
     location: Scalars["String"];
     weeks: Array<Scalars["Int"]>;
     endTime: Scalars["Float"];
@@ -266,7 +269,7 @@ export type MutationAddSessionStreamArgs = {
 };
 
 export type MutationAddStreamStaffArgs = {
-    newStaffs: Array<Scalars["String"]>;
+    newStaffs: Array<Scalars["Int"]>;
     streamId: Scalars["Float"];
 };
 
@@ -280,7 +283,21 @@ export type MutationUpdateAvailabilitiesArgs = {
 
 export type MutationUpdatePreferenceArgs = {
     preference: PreferenceInput;
-    preferenceFind: PreferenceFindInput;
+    preferenceFind: CourseTermIdInput;
+};
+
+export type MutationRequestAllocatorArgs = {
+    newThreshold?: Maybe<Scalars["Float"]>;
+    preferenceThresholds: Array<PreferenceThreshold>;
+    staffIds: Array<Scalars["Int"]>;
+    timetableId: Scalars["Int"];
+};
+
+export type CourseStaffInput = {
+    courseId: Scalars["Int"];
+    termId: Scalars["Int"];
+    role: Role;
+    isNew: Scalars["Boolean"];
 };
 
 export type TimeslotInput = {
@@ -303,6 +320,26 @@ export type PreferenceInput = {
     sessionType?: Maybe<SessionType>;
     maxContigHours: Scalars["Float"];
     maxWeeklyHours: Scalars["Float"];
+};
+
+export type AllocatorOutput = {
+    __typename?: "AllocatorOutput";
+    status: Scalars["String"];
+    type: Scalars["String"];
+    detail: Scalars["String"];
+    runtime: Scalars["Float"];
+    allocations: Array<Allocation>;
+};
+
+export type Allocation = {
+    __typename?: "Allocation";
+    sessionStreamId: Scalars["Int"];
+    staffIds: Array<Scalars["Int"]>;
+};
+
+export type PreferenceThreshold = {
+    type: SessionType;
+    threshold: Scalars["Float"];
 };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
@@ -384,7 +421,7 @@ export type MyCoursesQuery = { __typename?: "Query" } & {
 };
 
 export type MyPreferenceQueryVariables = Exact<{
-    preferenceFind: PreferenceFindInput;
+    preferenceFind: CourseTermIdInput;
 }>;
 
 export type MyPreferenceQuery = { __typename?: "Query" } & {
@@ -441,7 +478,7 @@ export type UpdateAvailabilitiesMutation = { __typename?: "Mutation" } & {
 };
 
 export type UpdatePreferenceMutationVariables = Exact<{
-    preferenceFind: PreferenceFindInput;
+    preferenceFind: CourseTermIdInput;
     preference: PreferenceInput;
 }>;
 
@@ -778,7 +815,7 @@ export type MyCoursesQueryResult = Apollo.QueryResult<
     MyCoursesQueryVariables
 >;
 export const MyPreferenceDocument = gql`
-    query MyPreference($preferenceFind: PreferenceFindInput!) {
+    query MyPreference($preferenceFind: CourseTermIdInput!) {
         myPreference(preferenceFindInput: $preferenceFind) {
             maxContigHours
             maxWeeklyHours
@@ -1005,7 +1042,7 @@ export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<
 >;
 export const UpdatePreferenceDocument = gql`
     mutation UpdatePreference(
-        $preferenceFind: PreferenceFindInput!
+        $preferenceFind: CourseTermIdInput!
         $preference: PreferenceInput!
     ) {
         updatePreference(

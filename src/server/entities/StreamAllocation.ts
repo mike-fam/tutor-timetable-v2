@@ -32,5 +32,5 @@ export class StreamAllocation extends BaseEntity {
     user: Lazy<User>;
 
     @Column()
-    userUsername: string;
+    userId: number;
 }

@@ -42,7 +42,7 @@ export class SessionStream extends BaseEntity {
 
     @Field(() => SessionType)
     @Column("varchar", { length: 15 })
-    type: Lazy<SessionType>;
+    type: SessionType;
 
     @Field(() => Int)
     @Column("int")
@@ -63,6 +63,10 @@ export class SessionStream extends BaseEntity {
     @Field()
     @Column("varchar", { length: 15 })
     location: string;
+
+    @Field(() => Int)
+    @Column("int")
+    numberOfStaff: number;
 
     @Field(() => [Session])
     @OneToMany(() => Session, (session) => session.sessionStream, {

@@ -1,5 +1,5 @@
 mutation UpdatePreference(
-    $preferenceFind: PreferenceFindInput!
+    $preferenceFind: CourseTermIdInput!
     $preference: PreferenceInput!
 ) {
     updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
