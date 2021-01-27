@@ -1,4 +1,13 @@
 import { Request, Response } from "express";
+import { User } from "../server/entities";
+
+declare global {
+    namespace Express {
+        export interface Request {
+            user?: User;
+        }
+    }
+}
 
 export type MyContext = {
     req: Request;

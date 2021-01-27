@@ -23,13 +23,6 @@ import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
 import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 
-declare global {
-    namespace Express {
-        export interface Request {
-            user?: User;
-        }
-    }
-}
 const main = async () => {
     await createConnection(ormconfig);
     const app: Express = express();
