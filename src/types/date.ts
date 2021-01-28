@@ -31,4 +31,3 @@ export type StackInfo = {
     elemStackWidth: number;
     elemStackIndex: number;
 };
-

@@ -29,8 +29,5 @@ mutation RequestAllocation(
 }
 
 mutation ApplyAllocation($token: String!, $override: Boolean!) {
-    applyAllocation(
-        allocationToken: $token
-        override: $override
-    )
+    applyAllocation(allocationToken: $token, override: $override)
 }

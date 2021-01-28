@@ -38,18 +38,17 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         maxWeeklyHours: 100,
         sessionType: NO_PREFERENCE,
     });
-    const {
-        data: sessionStreamData,
-        loading: sessionStreamsLoading,
-    } = useQueryWithError(useGetSessionStreamsQuery, {
-        courseIds: [courseId],
-        termId,
-    });
+    const { data: sessionStreamData } = useQueryWithError(
+        useGetSessionStreamsQuery,
+        {
+            courseIds: [courseId],
+            termId,
+        }
+    );
     const [
         fetchMyPreference,
         {
             data: preferenceData,
-            loading: preferenceLoading,
             called: preferenceQueryCalled,
             refetch: refetchMyPreference,
         },

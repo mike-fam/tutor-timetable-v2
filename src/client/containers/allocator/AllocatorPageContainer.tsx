@@ -47,7 +47,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     } = useDisclosure();
     const [
         getSessionStream,
-        { data: defaultSessionData, loading: defaultSessionLoading },
+        { data: defaultSessionData },
     ] = useGetSessionStreamsLazyQuery();
     const [
         requestAllocation,
