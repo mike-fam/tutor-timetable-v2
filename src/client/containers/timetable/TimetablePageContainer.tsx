@@ -134,7 +134,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                         >
                             <TimetableContainer />
                         </Box>
-                        <Box gridColumn={2} gridRow={4}>
+                        <Box gridColumn={2} gridRow={4} mb={2}>
                             <WeekNavContainer />
                         </Box>
                     </Grid>
