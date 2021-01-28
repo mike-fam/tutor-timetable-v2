@@ -69,8 +69,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                 duration: 9000,
                 isClosable: true,
             });
+            setShowing("default");
         }
-        setShowing("default");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyAllocationData]);
 
