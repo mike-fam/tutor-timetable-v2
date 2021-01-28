@@ -37,7 +37,8 @@ export class SessionStreamResolver {
         @Arg("startTime") startTime: number,
         @Arg("endTime") endTime: number,
         @Arg("weeks", () => [Int]) weeks: number[],
-        @Arg("location") location: string
+        @Arg("location") location: string,
+        @Arg("numberOfStaff", () => Int) numberOfStaff: number
     ): Promise<SessionStream> {
         return await SessionStream.create({
             timetableId,
@@ -48,27 +49,24 @@ export class SessionStreamResolver {
             endTime,
             weeks,
             location,
+            numberOfStaff,
         }).save();
     }
 
     @Mutation(() => SessionStream)
     async addStreamStaff(
         @Arg("streamId") streamId: number,
-        @Arg("newStaffs", () => [String]) newStaffs: string[]
+        @Arg("newStaffs", () => [Int]) newStaffs: number[]
     ): Promise<SessionStream> {
         const stream = await SessionStream.findOneOrFail({ id: streamId });
         const allocations = [...(await stream.streamAllocations)];
-        for (const username of newStaffs) {
+        for (const userId of newStaffs) {
             if (
-                allocations.some(
-                    (allocation) => allocation.userUsername === username
-                )
+                allocations.some((allocation) => allocation.userId === userId)
             ) {
                 continue;
             }
-            allocations.push(
-                StreamAllocation.create({ userUsername: username })
-            );
+            allocations.push(StreamAllocation.create({ userId }));
         }
         stream.streamAllocations = Promise.resolve(allocations);
         await stream.save();

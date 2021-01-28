@@ -25,6 +25,7 @@ export const TimetableContainer: React.FC<Props> = () => {
     const { chosenTermId, chosenWeek, chosenCourses } = useContext(
         TimetableContext
     );
+    // TODO: Use lazy query
     const { data: sessionsData, loading: sessionsLoading } = useQueryWithError(
         useGetSessionsQuery,
         {

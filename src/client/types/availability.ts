@@ -1,9 +1,9 @@
 import React from "react";
-import { TimetableSession } from "./timetable";
+import { TimetableSessionType } from "./timetable";
 import { Map } from "immutable";
 import { TimeslotInput } from "../generated/graphql";
 
-export type TempTimeslot = Omit<TimetableSession, "name">;
+export type TempTimeslot = Omit<TimetableSessionType, "name">;
 
 export type AvailabilityState = {
     timeslots: Map<number, TimeslotInput>;

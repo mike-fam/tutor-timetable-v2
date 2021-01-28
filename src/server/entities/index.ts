@@ -3,6 +3,10 @@ import { SessionType } from "../../types/session";
 import { TermType } from "../../types/term";
 import { Role } from "../../types/user";
 import { RequestStatus, RequestType } from "../../types/request";
+import {
+    AllocationStatus,
+    AllocationType,
+} from "../resolvers/AllocatorResolver";
 
 registerEnumType(SessionType, {
     name: "SessionType",
@@ -22,6 +26,14 @@ registerEnumType(RequestType, {
 
 registerEnumType(RequestStatus, {
     name: "RequestStatus",
+});
+
+registerEnumType(AllocationType, {
+    name: "AllocationType",
+});
+
+registerEnumType(AllocationStatus, {
+    name: "AllocationStatus",
 });
 
 export { Course } from "./Course";

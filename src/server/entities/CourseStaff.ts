@@ -1,5 +1,6 @@
 import {
     BaseEntity,
+    Check,
     Column,
     Entity,
     JoinColumn,
@@ -7,28 +8,35 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Unique,
-    Check,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Role } from "../../types/user";
-import { checkFieldValueInEnum } from "../utils/query";
-import { Lazy } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(Role, "role"))
-@Unique(["timetable", "user"])
+@Unique(["timetableId", "userId"])
 export class CourseStaff extends BaseEntity {
     @Field(() => Int)
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field()
+    @Field(() => Boolean)
+    @Column({
+        type: Boolean,
+    })
+    isNew: boolean;
+
+    @Field(() => Int)
     @Column()
-    userUsername: string;
+    userId: number;
+
+    @Column()
+    timetableId: number;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
@@ -44,11 +52,11 @@ export class CourseStaff extends BaseEntity {
     @ManyToOne(() => User, (user) => user.courseStaffs, { lazy: true })
     user: Lazy<User>;
 
-    @Field(() => Preference)
+    @Field(() => Preference, { nullable: true })
     @OneToOne(() => Preference, (preference) => preference.courseStaff, {
         lazy: true,
         nullable: true,
     })
     @JoinColumn()
-    preference: Lazy<Preference>;
+    preference: Lazy<Preference> | undefined;
 }

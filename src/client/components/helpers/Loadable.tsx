@@ -4,7 +4,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 type Props = {
     isLoading: boolean;
     renderLoading?: () => ReactElement;
-    children: ReactElement;
+    children: ReactElement | null;
 };
 
 export const Loadable: React.FC<Props> = ({

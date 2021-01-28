@@ -3,7 +3,6 @@ import {
     Ctx,
     Field,
     InputType,
-    Int,
     Mutation,
     Query,
     Resolver,
@@ -12,15 +11,7 @@ import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../../types/context";
 import { getConnection } from "typeorm";
 import { SessionType } from "../../types/session";
-
-@InputType()
-class PreferenceFindInput {
-    @Field(() => Int)
-    courseId: number;
-
-    @Field(() => Int)
-    termId: number;
-}
+import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
 class PreferenceInput {
@@ -44,16 +35,16 @@ export class PreferenceResolver {
             .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userUsername = :username", {
-                username: user.username,
+            .andWhere("courseStaff.userId = :userId", {
+                userId: user.id,
             })
             .getOne();
     }
 
     @Query(() => Preference, { nullable: true })
     async myPreference(
-        @Arg("preferenceFindInput", () => PreferenceFindInput)
-        { courseId, termId }: PreferenceFindInput,
+        @Arg("preferenceFindInput", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
         @Ctx() { req }: MyContext
     ): Promise<Preference | undefined> {
         return await PreferenceResolver.getPreference(
@@ -65,8 +56,8 @@ export class PreferenceResolver {
 
     @Mutation(() => Preference)
     async updatePreference(
-        @Arg("preferenceFind", () => PreferenceFindInput)
-        { courseId, termId }: PreferenceFindInput,
+        @Arg("preferenceFind", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
         @Arg("preference", () => PreferenceInput)
         { sessionType, maxContigHours, maxWeeklyHours }: PreferenceInput,
         @Ctx() { req }: MyContext
@@ -82,8 +73,8 @@ export class PreferenceResolver {
             .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userUsername = :username", {
-                username: req.user!.username,
+            .andWhere("courseStaff.userId = :userId", {
+                userId: req.user!.id,
             })
             .getOne();
         if (!preference) {

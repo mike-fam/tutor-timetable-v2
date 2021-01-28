@@ -1,0 +1,9 @@
+query CourseStaffs($courseTermInput: CourseTermIdInput!) {
+    courseStaffs(courseTermInput: $courseTermInput) {
+        role
+        user {
+            id
+            name
+        }
+    }
+}

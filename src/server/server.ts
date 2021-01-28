@@ -10,7 +10,6 @@ import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
-import { User } from "./entities";
 import { MyContext } from "../types/context";
 import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";
@@ -21,15 +20,9 @@ import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
 import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
 import { PreferenceResolver } from "./resolvers/PreferenceResolver";
+import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 
-declare global {
-    namespace Express {
-        export interface Request {
-            user?: User;
-        }
-    }
-}
 const main = async () => {
     await createConnection(ormconfig);
     const app: Express = express();
@@ -65,6 +58,7 @@ const main = async () => {
                 SessionResolver,
                 PreferenceResolver,
                 StaffRequestResolver,
+                AllocatorResolver,
             ],
             dateScalarMode: "isoDate",
         }),

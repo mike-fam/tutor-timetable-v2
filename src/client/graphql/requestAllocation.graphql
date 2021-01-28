@@ -1,0 +1,28 @@
+mutation RequestAllocation(
+    $courseTerm: CourseTermIdInput!
+    $staffIds: [Int!]!
+    $newThreshold: Float
+) {
+    requestAllocation(
+        courseTermInput: $courseTerm
+        staffIds: $staffIds
+        newThreshold: $newThreshold
+    ) {
+        status
+        detail
+        type
+        allocations {
+            sessionStream {
+                id
+                name
+                startTime
+                endTime
+                day
+                location
+            }
+            staff {
+                name
+            }
+        }
+    }
+}
