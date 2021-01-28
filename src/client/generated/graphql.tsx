@@ -36,9 +36,11 @@ export type QueryTermArgs = {
   id: Scalars['String'];
 };
 
+
 export type QueryCourseStaffsArgs = {
-    courseTermInput: CourseTermIdInput;
+  courseTermInput: CourseTermIdInput;
 };
+
 
 export type QuerySessionStreamsArgs = {
   courseIds: Array<Scalars['Int']>;
@@ -65,32 +67,32 @@ export type QuerySessionsArgs = {
 
 
 export type QueryMyPreferenceArgs = {
-    preferenceFindInput: CourseTermIdInput;
+  preferenceFindInput: CourseTermIdInput;
 };
 
 export type User = {
-    __typename?: "User";
-    id: Scalars["Int"];
-    username: Scalars["String"];
-    name: Scalars["String"];
-    email: Scalars["String"];
-    courseStaffs: Array<CourseStaff>;
-    streamAllocations: Array<StreamAllocation>;
-    sessionAllocations: Array<SessionAllocation>;
-    requests: Array<StaffRequest>;
-    acceptedRequests: Array<StaffRequest>;
-    availabilities: Array<Timeslot>;
+  __typename?: 'User';
+  id: Scalars['Int'];
+  username: Scalars['String'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  courseStaffs: Array<CourseStaff>;
+  streamAllocations: Array<StreamAllocation>;
+  sessionAllocations: Array<SessionAllocation>;
+  requests: Array<StaffRequest>;
+  acceptedRequests: Array<StaffRequest>;
+  availabilities: Array<Timeslot>;
 };
 
 export type CourseStaff = {
-    __typename?: "CourseStaff";
-    id: Scalars["Int"];
-    isNew: Scalars["Boolean"];
-    userId: Scalars["Int"];
-    timetable: Timetable;
-    role: Role;
-    user: User;
-    preference?: Maybe<Preference>;
+  __typename?: 'CourseStaff';
+  id: Scalars['Int'];
+  isNew: Scalars['Boolean'];
+  userId: Scalars['Int'];
+  timetable: Timetable;
+  role: Role;
+  user: User;
+  preference?: Maybe<Preference>;
 };
 
 export type Timetable = {
@@ -134,20 +136,20 @@ export enum TermType {
 
 
 export type SessionStream = {
-    __typename?: "SessionStream";
-    id: Scalars["Int"];
-    timetableId: Scalars["Int"];
-    timetable: Timetable;
-    name: Scalars["String"];
-    type: SessionType;
-    day: Scalars["Int"];
-    startTime: Scalars["Float"];
-    endTime: Scalars["Float"];
-    weeks: Array<Scalars["Int"]>;
-    location: Scalars["String"];
-    numberOfStaff: Scalars["Int"];
-    sessions: Array<Session>;
-    streamAllocations: Array<StreamAllocation>;
+  __typename?: 'SessionStream';
+  id: Scalars['Int'];
+  timetableId: Scalars['Int'];
+  timetable: Timetable;
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  weeks: Array<Scalars['Int']>;
+  location: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  sessions: Array<Session>;
+  streamAllocations: Array<StreamAllocation>;
 };
 
 export enum SessionType {
@@ -229,28 +231,31 @@ export type Timeslot = {
 };
 
 export type CourseTermIdInput = {
-    courseId: Scalars["Int"];
-    termId: Scalars["Int"];
+  courseId: Scalars['Int'];
+  termId: Scalars['Int'];
 };
 
 export type Mutation = {
-    __typename?: "Mutation";
-    requestAllocation: AllocatorOutput;
-    addTerm: Term;
-    deleteTerms: Array<Term>;
-    addCourseStaff: CourseStaff;
-    addSessionStream: SessionStream;
-    addStreamStaff: SessionStream;
-    generateSessions: Array<Session>;
-    updateAvailabilities: Array<Timeslot>;
-    updatePreference: Preference;
+  __typename?: 'Mutation';
+  requestAllocation: AllocatorOutput;
+  addTerm: Term;
+  deleteTerms: Array<Term>;
+  addCourseStaff: CourseStaff;
+  addSessionStream: SessionStream;
+  addStreamStaff: SessionStream;
+  generateSessions: Array<Session>;
+  updateAvailabilities: Array<Timeslot>;
+  updatePreference: Preference;
+  createRequest: Scalars['String'];
 };
 
+
 export type MutationRequestAllocationArgs = {
-    newThreshold?: Maybe<Scalars["Float"]>;
-    staffIds: Array<Scalars["Int"]>;
-    courseTermInput: CourseTermIdInput;
+  newThreshold?: Maybe<Scalars['Float']>;
+  staffIds: Array<Scalars['Int']>;
+  courseTermInput: CourseTermIdInput;
 };
+
 
 export type MutationAddTermArgs = {
   type: TermType;
@@ -267,26 +272,26 @@ export type MutationDeleteTermsArgs = {
 
 
 export type MutationAddCourseStaffArgs = {
-    courseStaffInput: CourseStaffInput;
+  courseStaffInput: CourseStaffInput;
 };
 
 
 export type MutationAddSessionStreamArgs = {
-    numberOfStaff: Scalars["Int"];
-    location: Scalars["String"];
-    weeks: Array<Scalars["Int"]>;
-    endTime: Scalars["Float"];
-    startTime: Scalars["Float"];
-    day: Scalars["Int"];
-    type: SessionType;
-    name: Scalars["String"];
-    timetableId: Scalars["Int"];
+  numberOfStaff: Scalars['Int'];
+  location: Scalars['String'];
+  weeks: Array<Scalars['Int']>;
+  endTime: Scalars['Float'];
+  startTime: Scalars['Float'];
+  day: Scalars['Int'];
+  type: SessionType;
+  name: Scalars['String'];
+  timetableId: Scalars['Int'];
 };
 
 
 export type MutationAddStreamStaffArgs = {
-    newStaffs: Array<Scalars["Int"]>;
-    streamId: Scalars["Float"];
+  newStaffs: Array<Scalars['Int']>;
+  streamId: Scalars['Float'];
 };
 
 
@@ -301,40 +306,46 @@ export type MutationUpdateAvailabilitiesArgs = {
 
 
 export type MutationUpdatePreferenceArgs = {
-    preference: PreferenceInput;
-    preferenceFind: CourseTermIdInput;
+  preference: PreferenceInput;
+  preferenceFind: CourseTermIdInput;
+};
+
+
+export type MutationCreateRequestArgs = {
+  requestDetails: RequestFormInputType;
 };
 
 export type AllocatorOutput = {
-    __typename?: "AllocatorOutput";
-    status: AllocationStatus;
-    type: AllocationType;
-    detail: Scalars["String"];
-    runtime: Scalars["Float"];
-    allocations: Array<Allocation>;
+  __typename?: 'AllocatorOutput';
+  status: AllocationStatus;
+  type: AllocationType;
+  token: Scalars['String'];
+  detail: Scalars['String'];
+  runtime: Scalars['Float'];
+  allocations: Array<Allocation>;
 };
 
 export enum AllocationStatus {
-    Optimal = "Optimal",
-    Infeasible = "Infeasible",
+  Optimal = 'Optimal',
+  Infeasible = 'Infeasible'
 }
 
 export enum AllocationType {
-    Success = "Success",
-    Failed = "Failed",
+  Success = 'Success',
+  Failed = 'Failed'
 }
 
 export type Allocation = {
-    __typename?: "Allocation";
-    sessionStream: SessionStream;
-    staff: Array<User>;
+  __typename?: 'Allocation';
+  sessionStream: SessionStream;
+  staff: Array<User>;
 };
 
 export type CourseStaffInput = {
-    courseId: Scalars["Int"];
-    termId: Scalars["Int"];
-    role: Role;
-    isNew: Scalars["Boolean"];
+  courseId: Scalars['Int'];
+  termId: Scalars['Int'];
+  role: Role;
+  isNew: Scalars['Boolean'];
 };
 
 export type TimeslotInput = {
@@ -371,43 +382,61 @@ export type AddAvailabilitiesMutationVariables = Exact<{
 }>;
 
 
+export type AddAvailabilitiesMutation = (
+  { __typename?: 'Mutation' }
+  & { updateAvailabilities: Array<(
+    { __typename?: 'Timeslot' }
+    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+  )> }
+);
+
 export type CourseStaffsQueryVariables = Exact<{
-    courseTermInput: CourseTermIdInput;
+  courseTermInput: CourseTermIdInput;
 }>;
 
-export type CourseStaffsQuery = { __typename?: "Query" } & {
-    courseStaffs: Array<
-        { __typename?: "CourseStaff" } & Pick<CourseStaff, "role"> & {
-                user: { __typename?: "User" } & Pick<User, "id" | "name">;
-            }
-    >;
-};
+
+export type CourseStaffsQuery = (
+  { __typename?: 'Query' }
+  & { courseStaffs: Array<(
+    { __typename?: 'CourseStaff' }
+    & Pick<CourseStaff, 'role'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    ) }
+  )> }
+);
+
+export type CreateRequestMutationVariables = Exact<{
+  requestDetails: RequestFormInputType;
+}>;
+
+
+export type CreateRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'createRequest'>
+);
 
 export type GetSessionStreamsQueryVariables = Exact<{
-    termId: Scalars["Int"];
-    courseIds: Array<Scalars["Int"]>;
+  termId: Scalars['Int'];
+  courseIds: Array<Scalars['Int']>;
 }>;
 
-export type GetSessionStreamsQuery = { __typename?: "Query" } & {
-    sessionStreams: Array<
-        { __typename?: "SessionStream" } & Pick<
-            SessionStream,
-            | "id"
-            | "type"
-            | "name"
-            | "startTime"
-            | "endTime"
-            | "day"
-            | "location"
-        > & {
-                streamAllocations: Array<
-                    { __typename?: "StreamAllocation" } & {
-                        user: { __typename?: "User" } & Pick<User, "name">;
-                    }
-                >;
-            }
-    >;
-};
+
+export type GetSessionStreamsQuery = (
+  { __typename?: 'Query' }
+  & { sessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location'>
+    & { streamAllocations: Array<(
+      { __typename?: 'StreamAllocation' }
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'name'>
+      ) }
+    )> }
+  )> }
+);
 
 export type GetSessionsQueryVariables = Exact<{
   termId: Scalars['Int'];
@@ -453,23 +482,7 @@ export type MeQuery = (
   )> }
 );
 
-export type MyCoursesQuery = { __typename?: "Query" } & {
-    me?: Maybe<
-        { __typename?: "User" } & {
-            courseStaffs: Array<
-                { __typename?: "CourseStaff" } & Pick<CourseStaff, "role"> & {
-                        timetable: { __typename?: "Timetable" } & {
-                            course: { __typename?: "Course" } & Pick<
-                                Course,
-                                "id" | "code" | "title"
-                            >;
-                            term: { __typename?: "Term" } & Pick<Term, "id">;
-                        };
-                    }
-            >;
-        }
-    >;
-};
+export type MyAvailabilityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MyAvailabilityQuery = (
@@ -489,6 +502,7 @@ export type MyCoursesQuery = (
     { __typename?: 'User' }
     & { courseStaffs: Array<(
       { __typename?: 'CourseStaff' }
+      & Pick<CourseStaff, 'role'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { course: (
@@ -504,51 +518,41 @@ export type MyCoursesQuery = (
 );
 
 export type MyPreferenceQueryVariables = Exact<{
-    preferenceFind: CourseTermIdInput;
+  preferenceFind: CourseTermIdInput;
 }>;
 
+
+export type MyPreferenceQuery = (
+  { __typename?: 'Query' }
+  & { myPreference?: Maybe<(
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+  )> }
+);
 
 export type RequestAllocationMutationVariables = Exact<{
-    courseTerm: CourseTermIdInput;
-    staffIds: Array<Scalars["Int"]>;
-    newThreshold?: Maybe<Scalars["Float"]>;
+  courseTerm: CourseTermIdInput;
+  staffIds: Array<Scalars['Int']>;
+  newThreshold?: Maybe<Scalars['Float']>;
 }>;
 
-export type RequestAllocationMutation = { __typename?: "Mutation" } & {
-    requestAllocation: { __typename?: "AllocatorOutput" } & Pick<
-        AllocatorOutput,
-        "status" | "detail" | "type"
-    > & {
-            allocations: Array<
-                { __typename?: "Allocation" } & {
-                    sessionStream: { __typename?: "SessionStream" } & Pick<
-                        SessionStream,
-                        | "id"
-                        | "name"
-                        | "startTime"
-                        | "endTime"
-                        | "day"
-                        | "location"
-                    >;
-                    staff: Array<{ __typename?: "User" } & Pick<User, "name">>;
-                }
-            >;
-        };
-};
 
-export type GetSessionStreamsQuery = (
-  { __typename?: 'Query' }
-  & { sessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day'>
-    & { streamAllocations: Array<(
-      { __typename?: 'StreamAllocation' }
-      & { user: (
+export type RequestAllocationMutation = (
+  { __typename?: 'Mutation' }
+  & { requestAllocation: (
+    { __typename?: 'AllocatorOutput' }
+    & Pick<AllocatorOutput, 'status' | 'detail' | 'type'>
+    & { allocations: Array<(
+      { __typename?: 'Allocation' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'location'>
+      ), staff: Array<(
         { __typename?: 'User' }
         & Pick<User, 'name'>
-      ) }
+      )> }
     )> }
-  )> }
+  ) }
 );
 
 export type TermsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -576,8 +580,8 @@ export type UpdateAvailabilitiesMutation = (
 );
 
 export type UpdatePreferenceMutationVariables = Exact<{
-    preferenceFind: CourseTermIdInput;
-    preference: PreferenceInput;
+  preferenceFind: CourseTermIdInput;
+  preference: PreferenceInput;
 }>;
 
 
@@ -624,21 +628,18 @@ export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOp
       }
 export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
-export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<
-    AddAvailabilitiesMutation,
-    AddAvailabilitiesMutationVariables
->;
+export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 export const CourseStaffsDocument = gql`
     query CourseStaffs($courseTermInput: CourseTermIdInput!) {
-        courseStaffs(courseTermInput: $courseTermInput) {
-            role
-            user {
-                id
-                name
-            }
-        }
+  courseStaffs(courseTermInput: $courseTermInput) {
+    role
+    user {
+      id
+      name
     }
-`;
+  }
+}
+    `;
 
 /**
  * __useCourseStaffsQuery__
@@ -656,56 +657,63 @@ export const CourseStaffsDocument = gql`
  *   },
  * });
  */
-export function useCourseStaffsQuery(
-    baseOptions: Apollo.QueryHookOptions<
-        CourseStaffsQuery,
-        CourseStaffsQueryVariables
-    >
-) {
-    return Apollo.useQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(
-        CourseStaffsDocument,
-        baseOptions
-    );
+export function useCourseStaffsQuery(baseOptions: Apollo.QueryHookOptions<CourseStaffsQuery, CourseStaffsQueryVariables>) {
+        return Apollo.useQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, baseOptions);
+      }
+export function useCourseStaffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseStaffsQuery, CourseStaffsQueryVariables>) {
+          return Apollo.useLazyQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, baseOptions);
+        }
+export type CourseStaffsQueryHookResult = ReturnType<typeof useCourseStaffsQuery>;
+export type CourseStaffsLazyQueryHookResult = ReturnType<typeof useCourseStaffsLazyQuery>;
+export type CourseStaffsQueryResult = Apollo.QueryResult<CourseStaffsQuery, CourseStaffsQueryVariables>;
+export const CreateRequestDocument = gql`
+    mutation CreateRequest($requestDetails: RequestFormInputType!) {
+  createRequest(requestDetails: $requestDetails)
 }
-export function useCourseStaffsLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<
-        CourseStaffsQuery,
-        CourseStaffsQueryVariables
-    >
-) {
-    return Apollo.useLazyQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(
-        CourseStaffsDocument,
-        baseOptions
-    );
-}
-export type CourseStaffsQueryHookResult = ReturnType<
-    typeof useCourseStaffsQuery
->;
-export type CourseStaffsLazyQueryHookResult = ReturnType<
-    typeof useCourseStaffsLazyQuery
->;
-export type CourseStaffsQueryResult = Apollo.QueryResult<
-    CourseStaffsQuery,
-    CourseStaffsQueryVariables
->;
+    `;
+export type CreateRequestMutationFn = Apollo.MutationFunction<CreateRequestMutation, CreateRequestMutationVariables>;
+
+/**
+ * __useCreateRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRequestMutation, { data, loading, error }] = useCreateRequestMutation({
+ *   variables: {
+ *      requestDetails: // value for 'requestDetails'
+ *   },
+ * });
+ */
+export function useCreateRequestMutation(baseOptions?: Apollo.MutationHookOptions<CreateRequestMutation, CreateRequestMutationVariables>) {
+        return Apollo.useMutation<CreateRequestMutation, CreateRequestMutationVariables>(CreateRequestDocument, baseOptions);
+      }
+export type CreateRequestMutationHookResult = ReturnType<typeof useCreateRequestMutation>;
+export type CreateRequestMutationResult = Apollo.MutationResult<CreateRequestMutation>;
+export type CreateRequestMutationOptions = Apollo.BaseMutationOptions<CreateRequestMutation, CreateRequestMutationVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
-        sessionStreams(courseIds: $courseIds, termId: $termId) {
-            id
-            type
-            name
-            startTime
-            endTime
-            day
-            location
-            streamAllocations {
-                user {
-                    name
-                }
-            }
-        }
+  sessionStreams(courseIds: $courseIds, termId: $termId) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    streamAllocations {
+      user {
+        name
+      }
     }
-`;
+  }
+}
+    `;
 
 /**
  * __useGetSessionStreamsQuery__
@@ -724,38 +732,15 @@ export const GetSessionStreamsDocument = gql`
  *   },
  * });
  */
-export function useGetSessionStreamsQuery(
-    baseOptions: Apollo.QueryHookOptions<
-        GetSessionStreamsQuery,
-        GetSessionStreamsQueryVariables
-    >
-) {
-    return Apollo.useQuery<
-        GetSessionStreamsQuery,
-        GetSessionStreamsQueryVariables
-    >(GetSessionStreamsDocument, baseOptions);
-}
-export function useGetSessionStreamsLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<
-        GetSessionStreamsQuery,
-        GetSessionStreamsQueryVariables
-    >
-) {
-    return Apollo.useLazyQuery<
-        GetSessionStreamsQuery,
-        GetSessionStreamsQueryVariables
-    >(GetSessionStreamsDocument, baseOptions);
-}
-export type GetSessionStreamsQueryHookResult = ReturnType<
-    typeof useGetSessionStreamsQuery
->;
-export type GetSessionStreamsLazyQueryHookResult = ReturnType<
-    typeof useGetSessionStreamsLazyQuery
->;
-export type GetSessionStreamsQueryResult = Apollo.QueryResult<
-    GetSessionStreamsQuery,
-    GetSessionStreamsQueryVariables
->;
+export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+      }
+export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+        }
+export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
+export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
+export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
 export const GetSessionsDocument = gql`
     query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
   sessions(termId: $termId, courseIds: $courseIds, week: $week) {
@@ -904,25 +889,19 @@ export type MyAvailabilityLazyQueryHookResult = ReturnType<typeof useMyAvailabil
 export type MyAvailabilityQueryResult = Apollo.QueryResult<MyAvailabilityQuery, MyAvailabilityQueryVariables>;
 export const MyCoursesDocument = gql`
     query MyCourses {
-        me {
-            courseStaffs {
-                timetable {
-                    course {
-                        id
-                        code
-                        title
-                    }
-                    term {
-                        id
-                    }
-                }
-                role
-            }
+  me {
+    courseStaffs {
+      timetable {
+        course {
+          id
+          code
+          title
         }
         term {
           id
         }
       }
+      role
     }
   }
 }
@@ -954,13 +933,13 @@ export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQue
 export type MyCoursesQueryResult = Apollo.QueryResult<MyCoursesQuery, MyCoursesQueryVariables>;
 export const MyPreferenceDocument = gql`
     query MyPreference($preferenceFind: CourseTermIdInput!) {
-        myPreference(preferenceFindInput: $preferenceFind) {
-            maxContigHours
-            maxWeeklyHours
-            sessionType
-        }
-    }
-`;
+  myPreference(preferenceFindInput: $preferenceFind) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+  }
+}
+    `;
 
 /**
  * __useMyPreferenceQuery__
@@ -978,72 +957,42 @@ export const MyPreferenceDocument = gql`
  *   },
  * });
  */
-export function useMyPreferenceQuery(
-    baseOptions: Apollo.QueryHookOptions<
-        MyPreferenceQuery,
-        MyPreferenceQueryVariables
-    >
-) {
-    return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(
-        MyPreferenceDocument,
-        baseOptions
-    );
-}
-export function useMyPreferenceLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<
-        MyPreferenceQuery,
-        MyPreferenceQueryVariables
-    >
-) {
-    return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(
-        MyPreferenceDocument,
-        baseOptions
-    );
-}
-export type MyPreferenceQueryHookResult = ReturnType<
-    typeof useMyPreferenceQuery
->;
-export type MyPreferenceLazyQueryHookResult = ReturnType<
-    typeof useMyPreferenceLazyQuery
->;
-export type MyPreferenceQueryResult = Apollo.QueryResult<
-    MyPreferenceQuery,
-    MyPreferenceQueryVariables
->;
-export const RequestAllocationDocument = gql`
-    mutation RequestAllocation(
-        $courseTerm: CourseTermIdInput!
-        $staffIds: [Int!]!
-        $newThreshold: Float
-    ) {
-        requestAllocation(
-            courseTermInput: $courseTerm
-            staffIds: $staffIds
-            newThreshold: $newThreshold
-        ) {
-            status
-            detail
-            type
-            allocations {
-                sessionStream {
-                    id
-                    name
-                    startTime
-                    endTime
-                    day
-                    location
-                }
-                staff {
-                    name
-                }
-            }
+export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+      }
+export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
         }
+export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
+export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
+export type MyPreferenceQueryResult = Apollo.QueryResult<MyPreferenceQuery, MyPreferenceQueryVariables>;
+export const RequestAllocationDocument = gql`
+    mutation RequestAllocation($courseTerm: CourseTermIdInput!, $staffIds: [Int!]!, $newThreshold: Float) {
+  requestAllocation(
+    courseTermInput: $courseTerm
+    staffIds: $staffIds
+    newThreshold: $newThreshold
+  ) {
+    status
+    detail
+    type
+    allocations {
+      sessionStream {
+        id
+        name
+        startTime
+        endTime
+        day
+        location
+      }
+      staff {
+        name
+      }
     }
-`;
-export type RequestAllocationMutationFn = Apollo.MutationFunction<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
->;
+  }
+}
+    `;
+export type RequestAllocationMutationFn = Apollo.MutationFunction<RequestAllocationMutation, RequestAllocationMutationVariables>;
 
 /**
  * __useRequestAllocationMutation__
@@ -1064,25 +1013,12 @@ export type RequestAllocationMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useRequestAllocationMutation(
-    baseOptions?: Apollo.MutationHookOptions<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >
-) {
-    return Apollo.useMutation<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >(RequestAllocationDocument, baseOptions);
-}
-export type RequestAllocationMutationHookResult = ReturnType<
-    typeof useRequestAllocationMutation
->;
+export function useRequestAllocationMutation(baseOptions?: Apollo.MutationHookOptions<RequestAllocationMutation, RequestAllocationMutationVariables>) {
+        return Apollo.useMutation<RequestAllocationMutation, RequestAllocationMutationVariables>(RequestAllocationDocument, baseOptions);
+      }
+export type RequestAllocationMutationHookResult = ReturnType<typeof useRequestAllocationMutation>;
 export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
-export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
->;
+export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<RequestAllocationMutation, RequestAllocationMutationVariables>;
 export const TermsDocument = gql`
     query Terms {
   terms {
@@ -1156,24 +1092,15 @@ export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdate
 export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
 export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
 export const UpdatePreferenceDocument = gql`
-    mutation UpdatePreference(
-        $preferenceFind: CourseTermIdInput!
-        $preference: PreferenceInput!
-    ) {
-        updatePreference(
-            preferenceFind: $preferenceFind
-            preference: $preference
-        ) {
-            maxContigHours
-            maxWeeklyHours
-            sessionType
-        }
-    }
-`;
-export type UpdatePreferenceMutationFn = Apollo.MutationFunction<
-    UpdatePreferenceMutation,
-    UpdatePreferenceMutationVariables
->;
+    mutation UpdatePreference($preferenceFind: CourseTermIdInput!, $preference: PreferenceInput!) {
+  updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+  }
+}
+    `;
+export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
 
 /**
  * __useUpdatePreferenceMutation__
