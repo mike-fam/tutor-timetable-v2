@@ -360,6 +360,7 @@ export class AllocatorResolver {
             }
         }
         await SessionAllocation.save(sessionAllocationsToBeSaved);
+        allocationTokenManager.delete(token);
         return true;
     }
 }
