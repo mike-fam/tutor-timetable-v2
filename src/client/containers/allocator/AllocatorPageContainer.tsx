@@ -70,6 +70,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                 isClosable: true,
             });
         }
+        setShowing("default");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyAllocationData]);
 
