@@ -286,7 +286,7 @@ export class AllocatorResolver {
         if (!override && hasAllocation) {
             throw new Error(
                 "This timetable already has an allocation." +
-                    " If you want to continue with this allocation" +
+                    " If you want to force apply this allocation" +
                     " and override the existing timetable, set 'override' to true"
             );
         }
