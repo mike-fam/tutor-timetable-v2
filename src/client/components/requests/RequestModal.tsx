@@ -26,7 +26,7 @@ type Props = {
 
 export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <Modal size={"xl"} isOpen={props.isOpen} onClose={props.onClose}>
+        <Modal size={"6xl"} isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>{props.renderHeader()}</ModalHeader>

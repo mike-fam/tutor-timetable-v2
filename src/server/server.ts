@@ -21,6 +21,7 @@ import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
 import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
 import { PreferenceResolver } from "./resolvers/PreferenceResolver";
+import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 
 declare global {
     namespace Express {
@@ -63,6 +64,7 @@ const main = async () => {
                 TimetableResolver,
                 SessionResolver,
                 PreferenceResolver,
+                StaffRequestResolver,
             ],
             dateScalarMode: "isoDate",
         }),

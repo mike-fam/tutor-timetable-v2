@@ -49,7 +49,6 @@ export const RequestForm: React.FunctionComponent<Props> = ({
     return (
         <FormControl>
             <FormLabel>Request Title:</FormLabel>
-            {/* FIXME: First */}
             <Input
                 value={title}
                 onChange={(e) => {
@@ -59,8 +58,6 @@ export const RequestForm: React.FunctionComponent<Props> = ({
             <FormHelperText>
                 e.g. Looking to switch into P01 from P02
             </FormHelperText>
-            {/* FIXME: Second */}
-            {/*<br></br>*/}
             <FormLabel mt={3}>Description (optional):</FormLabel>
             <Textarea
                 placeholder="Describe your request in more detail here"
@@ -69,7 +66,6 @@ export const RequestForm: React.FunctionComponent<Props> = ({
                     setDescription(e.target.value);
                 }}
             />
-            {/* FIXME: Third */}
             <Select
                 size="sm"
                 placeholder="Select Course"
@@ -88,11 +84,7 @@ export const RequestForm: React.FunctionComponent<Props> = ({
             <Select
                 size="sm"
                 placeholder="Select session to switch out of"
-                isDisabled={
-                    // FIXME: Fourth
-                    // !formData.get(RequestFormOptions.COURSE)
-                    !course
-                }
+                isDisabled={!course}
                 onChange={(e) => {
                     setSession(e.target.value);
                 }}
@@ -130,8 +122,6 @@ export const RequestForm: React.FunctionComponent<Props> = ({
                     <MenuButton as={Button}>
                         <AddIcon />
                     </MenuButton>
-                    {/* FIXME:  Fourth */}
-                    {"   "}
                     {preferences.map((item, index) => (
                         <Box key={index} as={Button}>
                             {item}
