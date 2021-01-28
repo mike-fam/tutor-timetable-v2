@@ -37,7 +37,7 @@ export const AllocatorStaffCheckboxList: React.FC<Props> = ({
         }
     }, [loading, data, setSelectedStaff]);
     return (
-        <Loadable isLoading={loading}>
+        <Loadable isLoading={data === undefined}>
             {data?.courseStaffs ? (
                 <Grid templateColumns="repeat(5, 1fr)" gap={6}>
                     {sortBy(data.courseStaffs, (courseStaff) => {

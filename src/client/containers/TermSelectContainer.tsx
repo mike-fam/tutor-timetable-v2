@@ -36,7 +36,7 @@ export const TermSelectContainer: React.FC<Props> = ({
         }
     }, [loading, data, chooseTerm]);
     return (
-        <Loadable isLoading={loading}>
+        <Loadable isLoading={data === undefined}>
             <Dropdown
                 onChange={(e) => chooseTerm(Number(e.target.value))}
                 value={chosenTerm}

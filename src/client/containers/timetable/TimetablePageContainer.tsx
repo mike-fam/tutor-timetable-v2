@@ -26,8 +26,8 @@ import {
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
-    const [chosenTerm, setChosenTerm] = useState(-1);
-    const [chosenWeek, setChosenWeek] = useState(-1);
+    const [chosenTerm, setChosenTerm] = useState(notSet);
+    const [chosenWeek, setChosenWeek] = useState(notSet);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
     const { data: termsData, loading: termsLoading } = useQueryWithError(

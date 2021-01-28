@@ -29,7 +29,7 @@ export class Session extends BaseEntity {
     sessionStream: SessionStream;
 
     @Column()
-    sessionStreamId: string;
+    sessionStreamId: number;
 
     @Field()
     @Column("varchar", { length: 15 })
