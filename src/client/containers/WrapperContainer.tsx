@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
+import { Box, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
 import { Set } from "immutable";
 import { IsoDay } from "../../types/date";
@@ -9,6 +9,8 @@ import { UserContext } from "../utils/user";
 import { ErrorContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
+import { Footer } from "../Footer";
+import { footerHeight } from "../constants";
 
 type Props = {};
 
@@ -71,7 +73,10 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         setDayEndTime,
                     }}
                 >
-                    {children}
+                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`}>
+                        {children}
+                    </Box>
+                    <Footer />
                 </TimetableSettingsContext.Provider>
             </ErrorContext.Provider>
         </UserContext.Provider>
