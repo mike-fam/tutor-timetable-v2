@@ -1,20 +1,21 @@
 import { Box, Heading, Tab, TabList, Tabs } from "@chakra-ui/react";
 import React from "react";
 import { EditRequestModalContainer } from "../../containers/requests/EditRequestModalContainer";
+import { TabViewType } from "../../containers/requests/RequestListContainer";
 
 type Props = {
-    // placeholder
+    // TODO: Replace when data is figured out.
     requestList: Array<number>;
-    setTabListView: Function;
+    setTabListView: (value: TabViewType) => void;
 };
 
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <>
-            <Tabs isFitted>
+            <Tabs isFitted onChange={(e) => props.setTabListView(e)}>
                 <TabList>
-                    <Tab>All Requests</Tab>
-                    <Tab>Your Requests</Tab>
+                    <Tab value={TabViewType.ALL}>All Requests</Tab>
+                    <Tab value={TabViewType.PERSONAL}>Your Requests</Tab>
                 </TabList>
                 {props.requestList.map((item, index) => (
                     <Box key={index}>
