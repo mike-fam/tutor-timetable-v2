@@ -1,8 +1,7 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
-import { Props as SessionProps } from "../../components/timetable/Session";
 import {
     TimetableContext,
     TimetableSettingsContext,
@@ -14,11 +13,19 @@ import {
 } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
-import { TimetableSession } from "../../components/timetable/TimetableSession";
+import {
+    TimetableSession,
+    TimetableSessionProps,
+} from "../../components/timetable/TimetableSession";
+import { Map } from "immutable";
+import { notSet } from "../../constants";
 
 type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
+    const [sessionInfo, setSessionsInfo] = useState<
+        Map<number, TimetableSessionProps>
+    >(Map());
     const { displayedDays, dayStartTime, dayEndTime } = useContext(
         TimetableSettingsContext
     );
@@ -72,6 +79,31 @@ export const TimetableContainer: React.FC<Props> = () => {
         sessionStreamsData,
         sessionStreamsLoading,
     ]);
+    useEffect(() => {
+        if (chosenWeek === notSet) {
+            sessionStreamsData?.sessionStreams.forEach((sessionStream) => {
+                setSessionsInfo((prev) =>
+                    prev.set(sessionStream.id, {
+                        location: sessionStream.location,
+                        allocation: sessionStream.streamAllocations.map(
+                            (allocation) => allocation.user.name
+                        ),
+                    })
+                );
+            });
+        } else {
+            sessionsData?.sessions.forEach((session) => {
+                setSessionsInfo((prev) =>
+                    prev.set(session.id, {
+                        location: session.location,
+                        allocation: session.sessionAllocations.map(
+                            (allocation) => allocation.user.name
+                        ),
+                    })
+                );
+            });
+        }
+    }, [chosenWeek, sessionStreamsData, sessionsData]);
     return (
         <Loadable isLoading={sessionsLoading}>
             <Timetable
@@ -83,9 +115,23 @@ export const TimetableContainer: React.FC<Props> = () => {
                     <Day
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(sessionProps: SessionProps, key) => (
-                            <TimetableSession {...sessionProps} key={key} />
+                        renderSession={(
+                            sessionProps,
+                            key,
+                            moreProps: TimetableSessionProps
+                        ) => (
+                            <TimetableSession
+                                {...sessionProps}
+                                key={key}
+                                {...moreProps}
+                            />
                         )}
+                        getSessionProps={(sessionId) =>
+                            sessionInfo.get(sessionId) || {
+                                allocation: [],
+                                location: "",
+                            }
+                        }
                         key={key}
                     />
                 )}

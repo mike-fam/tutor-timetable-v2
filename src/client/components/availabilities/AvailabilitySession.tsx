@@ -17,14 +17,15 @@ import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
 import { AvailabilityModificationType } from "../../generated/graphql";
 
-type Props = SessionProps & {
-    key?: number;
+export type AvailabilitySessionProps = {
     updateSession: (sessionId: number, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: number) => void;
     restoreSession: (sessionId: number) => void;
     editSession: (sessionId: number) => void;
     modificationType: AvailabilityModificationType;
 };
+
+type Props = SessionProps & AvailabilitySessionProps;
 
 export const AvailabilitySession: React.FC<Props> = ({
     updateSession,

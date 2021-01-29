@@ -13,8 +13,6 @@ export type Props = {
     endTime: number;
     startDay: number;
     endDay: number;
-    allocation: Array<string>;
-    location: string;
     theme?: SessionTheme;
 } & StackInfo;
 

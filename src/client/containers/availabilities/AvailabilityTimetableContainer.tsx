@@ -12,7 +12,10 @@ import { AvailabilityTimeslot } from "../../components/availabilities/Availabili
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { AvailabilityContext } from "../../utils/availability";
 import { ModifyTimeslotParams, TempTimeslot } from "../../types/availability";
-import { AvailabilitySession } from "../../components/availabilities/AvailabilitySession";
+import {
+    AvailabilitySession,
+    AvailabilitySessionProps,
+} from "../../components/availabilities/AvailabilitySession";
 import { useDisclosure } from "@chakra-ui/react";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
@@ -83,7 +86,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
         [tempAddIndex, setTimeslots]
     );
 
-    const modifyTimeslot = useCallback(
+    const modifySession = useCallback(
         (timeslotId: number, newTimeslotProps: ModifyTimeslotParams) => {
             const session = timeslots.get(timeslotId);
             if (!session) {
@@ -113,7 +116,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
         [timeslots, setTimeslots]
     );
 
-    const removeTimeslot = useCallback(
+    const removeSession = useCallback(
         (timeslotId) => {
             // Added timeslot
             if (timeslotId < 0) {
@@ -138,7 +141,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
         [timeslots, setTimeslots]
     );
 
-    const restoreTimeslot = useCallback(
+    const restoreSession = useCallback(
         (timeslotId) => {
             const timeslot = timeslots.get(timeslotId);
             if (!timeslot) {
@@ -183,10 +186,18 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                                 addNewTimeslot={addTempTimeslot}
                             />
                         )}
-                        renderSession={(sessionProps: SessionProps, key) => (
+                        renderSession={(
+                            sessionProps: SessionProps,
+                            key,
+                            moreProps: AvailabilitySessionProps
+                        ) => (
                             <AvailabilitySession
                                 {...sessionProps}
                                 key={key}
+                                {...moreProps}
+                                updateSession={modifySession}
+                                removeSession={removeSession}
+                                restoreSession={restoreSession}
                                 modificationType={
                                     sessionProps.id < 0
                                         ? AvailabilityModificationType.Added
@@ -194,13 +205,22 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                                               ?.modificationType ||
                                           AvailabilityModificationType.Unchanged
                                 }
-                                updateSession={modifyTimeslot}
-                                removeSession={removeTimeslot}
-                                restoreSession={restoreTimeslot}
                                 editSession={editSession}
                             />
                         )}
                         key={key}
+                        getSessionProps={(sessionId) => ({
+                            updateSession: modifySession,
+                            removeSession,
+                            restoreSession,
+                            editSession,
+                            modificationType:
+                                sessionId < 0
+                                    ? AvailabilityModificationType.Added
+                                    : timeslots.get(sessionId)
+                                          ?.modificationType ||
+                                      AvailabilityModificationType.Unchanged,
+                        })}
                     />
                 )}
                 sessions={sessions}
@@ -209,7 +229,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 isOpen={isModalOpen}
                 close={closeModal}
                 timeslot={timeslots.get(editedSessionId)}
-                updateTimeslot={modifyTimeslot}
+                updateTimeslot={modifySession}
             />
         </>
     );

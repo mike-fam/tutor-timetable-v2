@@ -1,5 +1,5 @@
 import { Grid, Text } from "@chakra-ui/react";
-import React, { ReactElement, useMemo } from "react";
+import React, { PropsWithChildren, ReactElement, useMemo } from "react";
 import range from "lodash/range";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
@@ -11,24 +11,31 @@ import {
 import { Props as SessionProps } from "./Session";
 import { getClashedRanges } from "../../utils/timetable";
 import { Props as TimetableProps } from "./Timetable";
+import { TimetableSessionType } from "../../types/timetable";
 
-export type Props = {
+export type Props<T> = {
     day: IsoDay;
     startTime: number;
     endTime: number;
     renderTimeSlot: (key: number, time: number, day: number) => ReactElement;
-    sessions: TimetableProps["sessions"];
-    renderSession: (sessionProps: SessionProps, key: number) => ReactElement;
+    sessions: Array<TimetableSessionType>;
+    getSessionProps: (sessionId: number) => T;
+    renderSession: (
+        sessionProps: SessionProps,
+        key: number,
+        moreProps: T
+    ) => ReactElement<SessionProps & T>;
 };
 
-export const Day: React.FunctionComponent<Props> = ({
+export const Day = <T,>({
     day,
     startTime,
     endTime,
     sessions,
     renderTimeSlot,
     renderSession,
-}) => {
+    getSessionProps,
+}: PropsWithChildren<Props<T>>) => {
     const stackInfo = useMemo(
         () =>
             getClashedRanges(
@@ -61,11 +68,10 @@ export const Day: React.FunctionComponent<Props> = ({
                         startDay: startTime,
                         endDay: endTime,
                         name: session.name,
-                        allocation: session.allocation || [],
-                        location: session.location || "",
                         ...stackInfo[session.id],
                     },
-                    key
+                    key,
+                    getSessionProps(session.id)
                 )
             )}
         </Grid>

@@ -13,7 +13,12 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 
-type Props = SessionProps;
+export type TimetableSessionProps = {
+    allocation: string[];
+    location: string;
+};
+
+type Props = SessionProps & TimetableSessionProps;
 
 export const TimetableSession: React.FC<Props> = ({
     children: _,
