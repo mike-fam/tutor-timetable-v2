@@ -1,5 +1,6 @@
 mutation CreateRequest($requestDetails: RequestFormInputType!) {
     createRequest(requestDetails: $requestDetails) {
+        id
         title
         description
         type

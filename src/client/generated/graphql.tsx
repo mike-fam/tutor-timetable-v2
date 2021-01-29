@@ -463,7 +463,7 @@ export type CreateRequestMutation = (
   { __typename?: 'Mutation' }
   & { createRequest: (
     { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'title' | 'description' | 'type' | 'status'>
+    & Pick<StaffRequest, 'id' | 'title' | 'description' | 'type' | 'status'>
     & { requester: (
       { __typename?: 'User' }
       & Pick<User, 'name' | 'email'>
@@ -789,6 +789,7 @@ export type CourseStaffsQueryResult = Apollo.QueryResult<CourseStaffsQuery, Cour
 export const CreateRequestDocument = gql`
     mutation CreateRequest($requestDetails: RequestFormInputType!) {
   createRequest(requestDetails: $requestDetails) {
+    id
     title
     description
     type

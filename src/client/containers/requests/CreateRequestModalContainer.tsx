@@ -5,13 +5,16 @@ import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { RequestForm } from "../../components/requests/RequestForm";
 import { useCreateRequestMutation } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
+import { useMutationWithError } from "../../hooks/useQueryWithError";
 
 type Props = {};
 
 export const CreateRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [submitForm, { data, loading }] = useCreateRequestMutation();
+    const [submitForm, { data, loading, error }] = useMutationWithError(
+        useCreateRequestMutation
+    );
 
     const formState = useRequestFormState();
     //TODO: Placeholders, replace with actual values.
@@ -40,9 +43,11 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                 },
             },
         });
-        setTimeout(() => {
-            onClose();
-        }, 1000);
+        if (!error) {
+            setTimeout(() => {
+                onClose();
+            }, 1000);
+        }
     };
 
     return (
