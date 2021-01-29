@@ -8,9 +8,9 @@ import {
     Resolver,
 } from "type-graphql";
 import { CourseStaff, Preference, User } from "../entities";
-import { MyContext } from "../../types/context";
+import { MyContext } from "../types/context";
 import { getConnection } from "typeorm";
-import { SessionType } from "../../types/session";
+import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()

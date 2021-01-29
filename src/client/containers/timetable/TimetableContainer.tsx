@@ -15,6 +15,7 @@ import {
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import { TimetableSession } from "../../components/timetable/TimetableSession";
+import { notSet } from "../../constants";
 
 type Props = {};
 
@@ -42,7 +43,7 @@ export const TimetableContainer: React.FC<Props> = () => {
         courseIds: chosenCourses.toArray(),
     });
     const sessions = useMemo(() => {
-        if (chosenWeek === -1) {
+        if (chosenWeek === notSet) {
             if (sessionStreamsLoading || !sessionStreamsData) {
                 return [];
             }
@@ -52,6 +53,10 @@ export const TimetableContainer: React.FC<Props> = () => {
                 startTime: sessionStream.startTime,
                 endTime: sessionStream.endTime,
                 day: sessionStream.day,
+                location: sessionStream.location,
+                allocation: sessionStream.streamAllocations.map(
+                    (allocation) => allocation.user.name
+                ),
             }));
         } else {
             if (sessionsLoading || !sessionsData) {
@@ -63,6 +68,10 @@ export const TimetableContainer: React.FC<Props> = () => {
                 startTime: session.sessionStream.startTime,
                 endTime: session.sessionStream.endTime,
                 day: session.sessionStream.day as IsoDay,
+                location: session.location,
+                allocation: session.sessionAllocations.map(
+                    (allocation) => allocation.user.name
+                ),
             }));
         }
     }, [
@@ -73,7 +82,13 @@ export const TimetableContainer: React.FC<Props> = () => {
         sessionStreamsLoading,
     ]);
     return (
-        <Loadable isLoading={sessionsLoading}>
+        <Loadable
+            isLoading={
+                chosenWeek === notSet
+                    ? sessionStreamsData === undefined
+                    : sessionsData === undefined
+            }
+        >
             <Timetable
                 sessions={sessions}
                 displayedDays={displayedDays}

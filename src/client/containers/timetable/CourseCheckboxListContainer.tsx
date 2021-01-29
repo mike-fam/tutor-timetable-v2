@@ -40,7 +40,7 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () =>
     );
 
     return (
-        <Loadable isLoading={loading}>
+        <Loadable isLoading={data === undefined}>
             <CheckboxList
                 elements={courses}
                 selectElement={selectCourse}

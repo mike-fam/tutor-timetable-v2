@@ -234,6 +234,7 @@ export type CourseTermIdInput = {
 export type Mutation = {
     __typename?: "Mutation";
     requestAllocation: AllocatorOutput;
+    applyAllocation: Scalars["Boolean"];
     addTerm: Term;
     deleteTerms: Array<Term>;
     addCourseStaff: CourseStaff;
@@ -248,6 +249,11 @@ export type MutationRequestAllocationArgs = {
     newThreshold?: Maybe<Scalars["Float"]>;
     staffIds: Array<Scalars["Int"]>;
     courseTermInput: CourseTermIdInput;
+};
+
+export type MutationApplyAllocationArgs = {
+    override: Scalars["Boolean"];
+    allocationToken: Scalars["String"];
 };
 
 export type MutationAddTermArgs = {
@@ -300,6 +306,7 @@ export type AllocatorOutput = {
     __typename?: "AllocatorOutput";
     status: AllocationStatus;
     type: AllocationType;
+    token: Scalars["String"];
     detail: Scalars["String"];
     runtime: Scalars["Float"];
     allocations: Array<Allocation>;
@@ -362,6 +369,44 @@ export type AddAvailabilitiesMutation = { __typename?: "Mutation" } & {
         >
     >;
 };
+
+export type RequestAllocationMutationVariables = Exact<{
+    courseTerm: CourseTermIdInput;
+    staffIds: Array<Scalars["Int"]>;
+    newThreshold?: Maybe<Scalars["Float"]>;
+}>;
+
+export type RequestAllocationMutation = { __typename?: "Mutation" } & {
+    requestAllocation: { __typename?: "AllocatorOutput" } & Pick<
+        AllocatorOutput,
+        "status" | "detail" | "type" | "token"
+    > & {
+            allocations: Array<
+                { __typename?: "Allocation" } & {
+                    sessionStream: { __typename?: "SessionStream" } & Pick<
+                        SessionStream,
+                        | "id"
+                        | "name"
+                        | "startTime"
+                        | "endTime"
+                        | "day"
+                        | "location"
+                    >;
+                    staff: Array<{ __typename?: "User" } & Pick<User, "name">>;
+                }
+            >;
+        };
+};
+
+export type ApplyAllocationMutationVariables = Exact<{
+    token: Scalars["String"];
+    override: Scalars["Boolean"];
+}>;
+
+export type ApplyAllocationMutation = { __typename?: "Mutation" } & Pick<
+    Mutation,
+    "applyAllocation"
+>;
 
 export type CourseStaffsQueryVariables = Exact<{
     courseTermInput: CourseTermIdInput;
@@ -479,34 +524,6 @@ export type MyPreferenceQuery = { __typename?: "Query" } & {
     >;
 };
 
-export type RequestAllocationMutationVariables = Exact<{
-    courseTerm: CourseTermIdInput;
-    staffIds: Array<Scalars["Int"]>;
-    newThreshold?: Maybe<Scalars["Float"]>;
-}>;
-
-export type RequestAllocationMutation = { __typename?: "Mutation" } & {
-    requestAllocation: { __typename?: "AllocatorOutput" } & Pick<
-        AllocatorOutput,
-        "status" | "detail" | "type"
-    > & {
-            allocations: Array<
-                { __typename?: "Allocation" } & {
-                    sessionStream: { __typename?: "SessionStream" } & Pick<
-                        SessionStream,
-                        | "id"
-                        | "name"
-                        | "startTime"
-                        | "endTime"
-                        | "day"
-                        | "location"
-                    >;
-                    staff: Array<{ __typename?: "User" } & Pick<User, "name">>;
-                }
-            >;
-        };
-};
-
 export type TermsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type TermsQuery = { __typename?: "Query" } & {
@@ -593,6 +610,127 @@ export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabil
 export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<
     AddAvailabilitiesMutation,
     AddAvailabilitiesMutationVariables
+>;
+export const RequestAllocationDocument = gql`
+    mutation RequestAllocation(
+        $courseTerm: CourseTermIdInput!
+        $staffIds: [Int!]!
+        $newThreshold: Float
+    ) {
+        requestAllocation(
+            courseTermInput: $courseTerm
+            staffIds: $staffIds
+            newThreshold: $newThreshold
+        ) {
+            status
+            detail
+            type
+            token
+            allocations {
+                sessionStream {
+                    id
+                    name
+                    startTime
+                    endTime
+                    day
+                    location
+                }
+                staff {
+                    name
+                }
+            }
+        }
+    }
+`;
+export type RequestAllocationMutationFn = Apollo.MutationFunction<
+    RequestAllocationMutation,
+    RequestAllocationMutationVariables
+>;
+
+/**
+ * __useRequestAllocationMutation__
+ *
+ * To run a mutation, you first call `useRequestAllocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestAllocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestAllocationMutation, { data, loading, error }] = useRequestAllocationMutation({
+ *   variables: {
+ *      courseTerm: // value for 'courseTerm'
+ *      staffIds: // value for 'staffIds'
+ *      newThreshold: // value for 'newThreshold'
+ *   },
+ * });
+ */
+export function useRequestAllocationMutation(
+    baseOptions?: Apollo.MutationHookOptions<
+        RequestAllocationMutation,
+        RequestAllocationMutationVariables
+    >
+) {
+    return Apollo.useMutation<
+        RequestAllocationMutation,
+        RequestAllocationMutationVariables
+    >(RequestAllocationDocument, baseOptions);
+}
+export type RequestAllocationMutationHookResult = ReturnType<
+    typeof useRequestAllocationMutation
+>;
+export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
+export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<
+    RequestAllocationMutation,
+    RequestAllocationMutationVariables
+>;
+export const ApplyAllocationDocument = gql`
+    mutation ApplyAllocation($token: String!, $override: Boolean!) {
+        applyAllocation(allocationToken: $token, override: $override)
+    }
+`;
+export type ApplyAllocationMutationFn = Apollo.MutationFunction<
+    ApplyAllocationMutation,
+    ApplyAllocationMutationVariables
+>;
+
+/**
+ * __useApplyAllocationMutation__
+ *
+ * To run a mutation, you first call `useApplyAllocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApplyAllocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [applyAllocationMutation, { data, loading, error }] = useApplyAllocationMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      override: // value for 'override'
+ *   },
+ * });
+ */
+export function useApplyAllocationMutation(
+    baseOptions?: Apollo.MutationHookOptions<
+        ApplyAllocationMutation,
+        ApplyAllocationMutationVariables
+    >
+) {
+    return Apollo.useMutation<
+        ApplyAllocationMutation,
+        ApplyAllocationMutationVariables
+    >(ApplyAllocationDocument, baseOptions);
+}
+export type ApplyAllocationMutationHookResult = ReturnType<
+    typeof useApplyAllocationMutation
+>;
+export type ApplyAllocationMutationResult = Apollo.MutationResult<ApplyAllocationMutation>;
+export type ApplyAllocationMutationOptions = Apollo.BaseMutationOptions<
+    ApplyAllocationMutation,
+    ApplyAllocationMutationVariables
 >;
 export const CourseStaffsDocument = gql`
     query CourseStaffs($courseTermInput: CourseTermIdInput!) {
@@ -1054,79 +1192,6 @@ export type MyPreferenceLazyQueryHookResult = ReturnType<
 export type MyPreferenceQueryResult = Apollo.QueryResult<
     MyPreferenceQuery,
     MyPreferenceQueryVariables
->;
-export const RequestAllocationDocument = gql`
-    mutation RequestAllocation(
-        $courseTerm: CourseTermIdInput!
-        $staffIds: [Int!]!
-        $newThreshold: Float
-    ) {
-        requestAllocation(
-            courseTermInput: $courseTerm
-            staffIds: $staffIds
-            newThreshold: $newThreshold
-        ) {
-            status
-            detail
-            type
-            allocations {
-                sessionStream {
-                    id
-                    name
-                    startTime
-                    endTime
-                    day
-                    location
-                }
-                staff {
-                    name
-                }
-            }
-        }
-    }
-`;
-export type RequestAllocationMutationFn = Apollo.MutationFunction<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
->;
-
-/**
- * __useRequestAllocationMutation__
- *
- * To run a mutation, you first call `useRequestAllocationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRequestAllocationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [requestAllocationMutation, { data, loading, error }] = useRequestAllocationMutation({
- *   variables: {
- *      courseTerm: // value for 'courseTerm'
- *      staffIds: // value for 'staffIds'
- *      newThreshold: // value for 'newThreshold'
- *   },
- * });
- */
-export function useRequestAllocationMutation(
-    baseOptions?: Apollo.MutationHookOptions<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >
-) {
-    return Apollo.useMutation<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >(RequestAllocationDocument, baseOptions);
-}
-export type RequestAllocationMutationHookResult = ReturnType<
-    typeof useRequestAllocationMutation
->;
-export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
-export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
 >;
 export const TermsDocument = gql`
     query Terms {

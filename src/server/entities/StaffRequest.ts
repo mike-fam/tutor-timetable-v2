@@ -12,7 +12,7 @@ import { User } from "./User";
 import { Session } from "./Session";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
-import { RequestStatus, RequestType } from "../../types/request";
+import { RequestStatus, RequestType } from "../types/request";
 
 @ObjectType()
 @Entity()
