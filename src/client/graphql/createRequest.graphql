@@ -1,3 +1,18 @@
 mutation CreateRequest($requestDetails: RequestFormInputType!) {
-    createRequest(requestDetails: $requestDetails)
+    createRequest(requestDetails: $requestDetails) {
+        title
+        description
+        type
+        requester {
+            name
+            email
+        }
+        status
+        session {
+            id
+        }
+        swapPreference {
+            id
+        }
+    }
 }

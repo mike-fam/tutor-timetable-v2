@@ -248,7 +248,7 @@ export type Mutation = {
   generateSessions: Array<Session>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
-  createRequest: Scalars['String'];
+  createRequest: StaffRequest;
 };
 
 
@@ -418,7 +418,20 @@ export type CreateRequestMutationVariables = Exact<{
 
 export type CreateRequestMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'createRequest'>
+  & { createRequest: (
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'title' | 'description' | 'type' | 'status'>
+    & { requester: (
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'email'>
+    ), session: (
+      { __typename?: 'Session' }
+      & Pick<Session, 'id'>
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & Pick<Session, 'id'>
+    )> }
+  ) }
 );
 
 export type GetSessionStreamsQueryVariables = Exact<{
@@ -672,7 +685,22 @@ export type CourseStaffsLazyQueryHookResult = ReturnType<typeof useCourseStaffsL
 export type CourseStaffsQueryResult = Apollo.QueryResult<CourseStaffsQuery, CourseStaffsQueryVariables>;
 export const CreateRequestDocument = gql`
     mutation CreateRequest($requestDetails: RequestFormInputType!) {
-  createRequest(requestDetails: $requestDetails)
+  createRequest(requestDetails: $requestDetails) {
+    title
+    description
+    type
+    requester {
+      name
+      email
+    }
+    status
+    session {
+      id
+    }
+    swapPreference {
+      id
+    }
+  }
 }
     `;
 export type CreateRequestMutationFn = Apollo.MutationFunction<CreateRequestMutation, CreateRequestMutationVariables>;

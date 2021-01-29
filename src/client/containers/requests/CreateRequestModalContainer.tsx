@@ -40,6 +40,9 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                 },
             },
         });
+        setTimeout(() => {
+            onClose();
+        }, 1000);
     };
 
     return (
