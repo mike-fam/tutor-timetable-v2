@@ -31,5 +31,3 @@ export type StackInfo = {
     elemStackWidth: number;
     elemStackIndex: number;
 };
-
-export type Hour = {};

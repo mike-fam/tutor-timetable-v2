@@ -9,7 +9,9 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React from "react";
+import { Role } from "../../../server/types/user";
+import { CreateRequestFormContainer } from "../../containers/requests/CreateRequestFormContainer";
 
 export enum RequestModalType {
     View = "View",

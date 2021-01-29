@@ -11,6 +11,7 @@ mutation RequestAllocation(
         status
         detail
         type
+        token
         allocations {
             sessionStream {
                 id
@@ -25,4 +26,8 @@ mutation RequestAllocation(
             }
         }
     }
+}
+
+mutation ApplyAllocation($token: String!, $override: Boolean!) {
+    applyAllocation(allocationToken: $token, override: $override)
 }

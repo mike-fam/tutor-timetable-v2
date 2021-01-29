@@ -13,7 +13,7 @@ import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
 import { Field, Int, ObjectType } from "type-graphql";
-import { Role } from "../../types/user";
+import { Role } from "../types/user";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 
 @ObjectType()

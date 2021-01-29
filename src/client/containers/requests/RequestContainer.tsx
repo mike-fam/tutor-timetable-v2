@@ -1,5 +1,9 @@
 import React from "react";
-import { Role } from "../../../types/user";
+import { Role } from "../../../server/types/user";
+import {
+    RequestModal,
+    RequestModalType,
+} from "../../components/requests/RequestModal";
 import { Requests } from "../../components/requests/Requests";
 
 export enum DisplayRequestType {

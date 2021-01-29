@@ -6,7 +6,7 @@ import {
     StreamAllocation,
 } from "../entities";
 import { getConnection } from "typeorm";
-import { SessionType } from "../../types/session";
+import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 
 @Resolver()

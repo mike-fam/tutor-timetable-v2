@@ -10,7 +10,7 @@ import {
     Resolver,
 } from "type-graphql";
 import { Timeslot } from "../entities";
-import { MyContext } from "../../types/context";
+import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { getConnection } from "typeorm";
 

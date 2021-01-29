@@ -9,7 +9,7 @@ import {
     Resolver,
 } from "type-graphql";
 import { Term } from "../entities";
-import { TermType } from "../../types/term";
+import { TermType } from "../types/term";
 
 @ArgsType()
 class TermArgs {

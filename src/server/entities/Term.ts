@@ -10,7 +10,7 @@ import {
 import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
 import { checkFieldValueInEnum } from "../utils/query";
-import { TermType } from "../../types/term";
+import { TermType } from "../types/term";
 import { Lazy } from "../utils/query";
 
 @ObjectType()

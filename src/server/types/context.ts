@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "../server/entities";
+import { User } from "../entities";
 
 declare global {
     namespace Express {

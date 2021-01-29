@@ -26,7 +26,7 @@ export const NavBarMenuButton: React.FC<Props> = forwardRef<
     HTMLDivElement,
     Props
 >(({ leftIcon, rightIcon, ...props }, ref) => {
-    const colour = useColorModeValue("gray.100", "blue.900");
+    const colour = useColorModeValue("gray.200", "blue.900");
     return (
         <Box
             {...buttonStyle}

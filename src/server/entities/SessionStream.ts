@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Timetable } from "./Timetable";
-import { SessionType } from "../../types/session";
+import { SessionType } from "../types/session";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { IsoDay } from "../../types/date";
 import { Session } from "./Session";

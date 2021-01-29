@@ -38,35 +38,34 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         maxWeeklyHours: 100,
         sessionType: NO_PREFERENCE,
     });
-    const {
-        data: sessionStreamData,
-        loading: sessionStreamsLoading,
-    } = useQueryWithError(useGetSessionStreamsQuery, {
-        courseIds: [courseId],
-        termId,
-    });
+    const { data: sessionStreamData } = useQueryWithError(
+        useGetSessionStreamsQuery,
+        {
+            courseIds: [courseId],
+            termId,
+        }
+    );
     const [
         fetchMyPreference,
         {
             data: preferenceData,
-            loading: preferenceLoading,
             called: preferenceQueryCalled,
             refetch: refetchMyPreference,
         },
     ] = useMyPreferenceLazyQuery();
-    const [updatePreference, { loading }] = useMutationWithError(
-        useUpdatePreferenceMutation,
-        {
-            preferenceFind: { courseId, termId },
-            preference: {
-                ...preference,
-                sessionType:
-                    preference.sessionType === NO_PREFERENCE
-                        ? null
-                        : preference.sessionType,
-            },
-        }
-    );
+    const [
+        updatePreference,
+        { loading: updatePreferenceLoading },
+    ] = useMutationWithError(useUpdatePreferenceMutation, {
+        preferenceFind: { courseId, termId },
+        preference: {
+            ...preference,
+            sessionType:
+                preference.sessionType === NO_PREFERENCE
+                    ? null
+                    : preference.sessionType,
+        },
+    });
     useEffect(() => {
         if (courseId === notSet || termId === notSet) {
             return;
@@ -101,7 +100,11 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         return null;
     }
     return (
-        <Loadable isLoading={preferenceLoading || sessionStreamsLoading}>
+        <Loadable
+            isLoading={
+                preferenceData === undefined || sessionStreamData === undefined
+            }
+        >
             <Formik
                 enableReinitialize={true}
                 initialValues={preference}
@@ -157,7 +160,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                     <Button
                         colorScheme="green"
                         type="submit"
-                        isLoading={loading}
+                        isLoading={updatePreferenceLoading}
                     >
                         Submit Changes
                     </Button>
