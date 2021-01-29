@@ -3,6 +3,7 @@ import { Button, Center, useDisclosure } from "@chakra-ui/react";
 import { RequestModal } from "../../components/requests/RequestModal";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { RequestForm } from "../../components/requests/RequestForm";
+import { RequestType } from "../../generated/graphql";
 
 type Props = {};
 
@@ -11,7 +12,7 @@ export const EditRequestModalContainer: React.FC<Props> = () => {
     const formState = useRequestFormState({
         course: 0,
         title: "Test title",
-        duration: "Permanent",
+        duration: RequestType.Temporary,
         description: "Test Desc",
     });
 

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
+import { RequestType } from "../generated/graphql";
 
-export type RequestDuration = "Permanent" | "Temporary";
 export type RequestFormState = {
     title: string;
     setTitle: Dispatch<SetStateAction<string>>;
@@ -12,8 +12,8 @@ export type RequestFormState = {
     setSession: Dispatch<SetStateAction<number>>;
     preferences: Array<number>;
     updatePreferences: (value: Array<number> | number) => void;
-    duration: RequestDuration;
-    setDuration: Dispatch<SetStateAction<RequestDuration>>;
+    duration: RequestType;
+    setDuration: Dispatch<SetStateAction<RequestType>>;
     resetFormState: () => void;
 };
 
@@ -43,8 +43,8 @@ export const useRequestFormState = (
     const [preferences, setPreferences] = useState<Array<number>>(
         initialState?.preferences || []
     );
-    const [duration, setDuration] = useState<RequestDuration>(
-        initialState?.duration || "Temporary"
+    const [duration, setDuration] = useState<RequestType>(
+        initialState?.duration || RequestType.Temporary
     );
     const updatePreferences = (value: Array<number> | number) => {
         setPreferences(value instanceof Array ? value : [value]);
@@ -55,7 +55,7 @@ export const useRequestFormState = (
         setDescription("");
         setSession(-1);
         setPreferences([]);
-        setDuration("Temporary");
+        setDuration(RequestType.Temporary);
     };
 
     return {

@@ -182,6 +182,8 @@ export type StaffRequest = {
   __typename?: 'StaffRequest';
   id: Scalars['Int'];
   type: RequestType;
+  title: Scalars['String'];
+  description: Scalars['String'];
   status: RequestStatus;
   requester: User;
   acceptor: User;
@@ -373,8 +375,10 @@ export type PreferenceInput = {
 export type RequestFormInputType = {
   title: Scalars['String'];
   preferences: Array<Scalars['Int']>;
-  duration: Scalars['String'];
+  duration: RequestType;
   description?: Maybe<Scalars['String']>;
+  userId: Scalars['Int'];
+  sessionId: Scalars['Int'];
 };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
