@@ -1,11 +1,18 @@
 import {
+    LazyQueryResult,
     MutationHookOptions,
     MutationTuple,
     QueryHookOptions,
     QueryResult,
+    QueryTuple,
 } from "@apollo/client";
 import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";
+import * as Apollo from "@apollo/client";
+import {
+    CourseStaffsQuery,
+    CourseStaffsQueryVariables,
+} from "../generated/graphql";
 
 export const useQueryWithError = <T, S>(
     useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
@@ -37,4 +44,24 @@ export const useMutationWithError = <T, S>(
         }
     }, [error, addError]);
     return mutationResult;
+};
+
+export const useLazyQueryWithError = <T, S>(
+    useApolloLazyQuery: (
+        baseOptions?: Apollo.LazyQueryHookOptions<T, S>
+    ) => QueryTuple<T, S>,
+    args?: S
+) => {
+    const queryResult = useApolloLazyQuery({
+        variables: args,
+        errorPolicy: "all",
+    });
+    const { addError } = useContext(ErrorContext);
+    const [, { error }] = useMemo(() => queryResult, [queryResult]);
+    useEffect(() => {
+        if (error) {
+            addError(error);
+        }
+    }, [error, addError]);
+    return queryResult;
 };

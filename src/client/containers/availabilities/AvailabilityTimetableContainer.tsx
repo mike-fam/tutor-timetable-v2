@@ -195,17 +195,6 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                                 {...sessionProps}
                                 key={key}
                                 {...moreProps}
-                                updateSession={modifySession}
-                                removeSession={removeSession}
-                                restoreSession={restoreSession}
-                                modificationType={
-                                    sessionProps.id < 0
-                                        ? AvailabilityModificationType.Added
-                                        : timeslots.get(sessionProps.id)
-                                              ?.modificationType ||
-                                          AvailabilityModificationType.Unchanged
-                                }
-                                editSession={editSession}
                             />
                         )}
                         key={key}

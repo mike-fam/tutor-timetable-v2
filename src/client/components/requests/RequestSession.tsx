@@ -1,14 +1,31 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { Props as SessionProps, Session } from "../timetable/Session";
-import { Set } from "immutable";
 import { SessionTheme } from "../../types/timetable";
+import { Box } from "@chakra-ui/react";
 
-type Props = SessionProps & {
-    chooseSessions: Dispatch<SetStateAction<Set<number>>>;
-    chosenSessions: Set<number>;
+export type RequestSessionProps = {
+    onClick: (sessionId: number) => void;
     theme: SessionTheme;
 };
 
-export const RequestSession: React.FC<Props> = ({ ...props }) => {
-    return <Session {...props}></Session>;
+type Props = SessionProps & RequestSessionProps;
+
+export const RequestSession: React.FC<Props> = ({
+    onClick,
+    theme,
+    ...props
+}) => {
+    return (
+        <Session
+            {...props}
+            _hover={{
+                filter: "brightness(0.8)",
+            }}
+            onClick={() => {
+                onClick(props.id);
+            }}
+        >
+            <Box p={1}>{props.name}</Box>
+        </Session>
+    );
 };
