@@ -11,10 +11,8 @@ import {
     Textarea,
 } from "@chakra-ui/react";
 import React from "react";
-import {
-    RequestDuration,
-    RequestFormState,
-} from "../../hooks/useRequestFormState";
+import { RequestType } from "../../generated/graphql";
+import { RequestFormState } from "../../hooks/useRequestFormState";
 
 type Props = RequestFormState & {
     courseList: Array<number>;
@@ -47,6 +45,7 @@ export const RequestForm: React.FunctionComponent<Props> = ({
                 onChange={(e) => {
                     setTitle(e.target.value);
                 }}
+                isRequired
             />
             <FormHelperText>
                 e.g. Looking to switch into P01 from P02
@@ -80,12 +79,12 @@ export const RequestForm: React.FunctionComponent<Props> = ({
                 <RadioGroup
                     value={duration}
                     onChange={(value) => {
-                        setDuration(value as RequestDuration);
+                        setDuration(value as RequestType);
                     }}
                 >
                     <Stack spacing={5} direction="row">
-                        <Radio value="Temporary">Temporary</Radio>
-                        <Radio value="Permanent">Permanent</Radio>
+                        <Radio value={RequestType.Temporary}>Temporary</Radio>
+                        <Radio value={RequestType.Permanent}>Permanent</Radio>
                     </Stack>
                 </RadioGroup>
             </Box>

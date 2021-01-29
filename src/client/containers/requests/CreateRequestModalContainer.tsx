@@ -4,6 +4,7 @@ import { RequestModal } from "../../components/requests/RequestModal";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { RequestForm } from "../../components/requests/RequestForm";
 import { useCreateRequestMutation } from "../../generated/graphql";
+import { Loadable } from "../../components/helpers/Loadable";
 
 type Props = {};
 
@@ -32,6 +33,10 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                     duration: formState.duration,
                     // TODO: replace when preferences are done.
                     preferences: [0, 2, 3],
+                    //TODO: replace actual userID
+                    userId: 4,
+                    //TODO: replace actual sessionID
+                    sessionId: 51,
                 },
             },
         });
@@ -52,13 +57,15 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                     />
                 )}
                 renderFooterButton={() => (
-                    <Button
-                        onClick={() => {
-                            handleSubmit();
-                        }}
-                    >
-                        Submit
-                    </Button>
+                    <Loadable isLoading={loading}>
+                        <Button
+                            onClick={() => {
+                                handleSubmit();
+                            }}
+                        >
+                            Submit
+                        </Button>
+                    </Loadable>
                 )}
                 isOpen={isOpen}
                 onClose={handleOnClose}
