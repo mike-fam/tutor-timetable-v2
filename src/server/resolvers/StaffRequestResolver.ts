@@ -22,7 +22,7 @@ export class StaffRequestResolver {
         @Arg("requestDetails", () => RequestFormInputType)
         { title, preferences, duration, description }: RequestFormInputType
     ): Promise<string> {
-        console.log(title);
+        console.log(title, preferences, description, duration);
         return title;
     }
 }

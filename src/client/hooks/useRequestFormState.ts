@@ -6,12 +6,12 @@ export type RequestFormState = {
     setTitle: Dispatch<SetStateAction<string>>;
     description: string;
     setDescription: Dispatch<SetStateAction<string>>;
-    course: string;
-    setCourse: Dispatch<SetStateAction<string>>;
-    session: string;
-    setSession: Dispatch<SetStateAction<string>>;
-    preferences: Array<string>;
-    updatePreferences: (value: Array<string> | string) => void;
+    course: number;
+    setCourse: Dispatch<SetStateAction<number>>;
+    session: number;
+    setSession: Dispatch<SetStateAction<number>>;
+    preferences: Array<number>;
+    updatePreferences: (value: Array<number> | number) => void;
     duration: RequestDuration;
     setDuration: Dispatch<SetStateAction<RequestDuration>>;
     resetFormState: () => void;
@@ -34,26 +34,26 @@ export const useRequestFormState = (
         >
     >
 ): RequestFormState => {
-    const [course, setCourse] = useState<string>(initialState?.course || "");
+    const [course, setCourse] = useState<number>(initialState?.course || -1);
     const [title, setTitle] = useState<string>(initialState?.title || "");
     const [description, setDescription] = useState<string>(
         initialState?.description || ""
     );
-    const [session, setSession] = useState<string>(initialState?.session || "");
-    const [preferences, setPreferences] = useState<Array<string>>(
+    const [session, setSession] = useState<number>(initialState?.session || -1);
+    const [preferences, setPreferences] = useState<Array<number>>(
         initialState?.preferences || []
     );
     const [duration, setDuration] = useState<RequestDuration>(
         initialState?.duration || "Temporary"
     );
-    const updatePreferences = (value: Array<string> | string) => {
+    const updatePreferences = (value: Array<number> | number) => {
         setPreferences(value instanceof Array ? value : [value]);
     };
     const resetFormState = () => {
-        setCourse("");
+        setCourse(-1);
         setTitle("");
         setDescription("");
-        setSession("");
+        setSession(-1);
         setPreferences([]);
         setDuration("Temporary");
     };

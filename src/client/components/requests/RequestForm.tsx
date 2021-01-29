@@ -1,16 +1,9 @@
-import { AddIcon } from "@chakra-ui/icons";
 import {
     Box,
-    Button,
     FormControl,
     FormHelperText,
     FormLabel,
     Input,
-    Menu,
-    MenuButton,
-    MenuItemOption,
-    MenuList,
-    MenuOptionGroup,
     Radio,
     RadioGroup,
     Select,
@@ -24,8 +17,8 @@ import {
 } from "../../hooks/useRequestFormState";
 
 type Props = RequestFormState & {
-    courseList: Array<string>;
-    sessionList: Array<string>;
+    courseList: Array<number>;
+    sessionList: Array<number>;
     editable?: boolean;
 };
 
@@ -70,29 +63,14 @@ export const RequestForm: React.FunctionComponent<Props> = ({
                 size="sm"
                 placeholder="Select Course"
                 onChange={(e) => {
-                    setCourse(e.target.value);
+                    // TODO: It doesnt like numbers, not a good fix, take a look when you can
+                    setCourse(parseInt(e.target.value));
                 }}
                 value={course}
             >
                 {courseList.map((course, index) => (
                     <option value={course} key={index}>
                         {course}
-                    </option>
-                ))}
-            </Select>
-            <br></br>
-            <Select
-                size="sm"
-                placeholder="Select session to switch out of"
-                isDisabled={!course}
-                onChange={(e) => {
-                    setSession(e.target.value);
-                }}
-                value={session}
-            >
-                {sessionList.map((session, index) => (
-                    <option value={session} key={index}>
-                        {session}
                     </option>
                 ))}
             </Select>
@@ -117,38 +95,6 @@ export const RequestForm: React.FunctionComponent<Props> = ({
             <br></br>
             <Box>
                 <FormLabel>Swap Preferences:</FormLabel>
-
-                <Menu closeOnSelect={false}>
-                    <MenuButton as={Button}>
-                        <AddIcon />
-                    </MenuButton>
-                    {preferences.map((item, index) => (
-                        <Box key={index} as={Button}>
-                            {item}
-                        </Box>
-                    ))}
-                    <MenuList minWidth="240px">
-                        <MenuOptionGroup
-                            type="checkbox"
-                            onChange={(e) => {
-                                updatePreferences(e);
-                            }}
-                        >
-                            <MenuItemOption value="session 1">
-                                session 1
-                            </MenuItemOption>
-                            <MenuItemOption value="session 2">
-                                session 2
-                            </MenuItemOption>
-                            <MenuItemOption value="session 3">
-                                session 3
-                            </MenuItemOption>
-                        </MenuOptionGroup>
-                    </MenuList>
-                </Menu>
-                <FormHelperText>
-                    You can select 0, 1 or many preferences.
-                </FormHelperText>
             </Box>
         </FormControl>
     );

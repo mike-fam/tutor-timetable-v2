@@ -9,13 +9,15 @@ type Props = {};
 export const EditRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const formState = useRequestFormState({
-        course: "CSSE1001",
+        course: 0,
         title: "Test title",
         duration: "Permanent",
         description: "Test Desc",
     });
-    const courseList = ["CSSE1001", "CSSE2002", "CSSE3002"];
-    const sessionList = ["T01", "T02", "P01", "P02"];
+
+    //TODO: Placeholders, replace with actual values.
+    const courseList = [0, 1, 2, 3];
+    const sessionList = [0, 1, 2, 3];
     const semester = "Semester 1, 2021";
 
     return (

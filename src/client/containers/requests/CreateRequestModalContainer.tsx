@@ -13,13 +13,28 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
     const [submitForm, { data, loading }] = useCreateRequestMutation();
 
     const formState = useRequestFormState();
-    const courseList = ["CSSE1001", "CSSE2002", "CSSE3002"];
-    const sessionList = ["T01", "T02", "P01", "P02"];
+    //TODO: Placeholders, replace with actual values.
+    const courseList = [0, 1, 2, 3];
+    const sessionList = [0, 1, 2, 3];
     const semester = "Semester 1, 2021";
 
     const handleOnClose = () => {
         formState.resetFormState();
         onClose();
+    };
+
+    const handleSubmit = () => {
+        submitForm({
+            variables: {
+                requestDetails: {
+                    title: formState.title,
+                    description: formState.description,
+                    duration: formState.duration,
+                    // TODO: replace when preferences are done.
+                    preferences: [0, 2, 3],
+                },
+            },
+        });
     };
 
     return (
@@ -36,7 +51,15 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                         sessionList={sessionList}
                     />
                 )}
-                renderFooterButton={() => <Button>Submit</Button>}
+                renderFooterButton={() => (
+                    <Button
+                        onClick={() => {
+                            handleSubmit();
+                        }}
+                    >
+                        Submit
+                    </Button>
+                )}
                 isOpen={isOpen}
                 onClose={handleOnClose}
             />

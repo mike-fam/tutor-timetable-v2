@@ -26,6 +26,14 @@ export class StaffRequest extends BaseEntity {
     @Column("varchar")
     type: RequestType;
 
+    @Field()
+    @Column("varchar")
+    title: string;
+
+    @Field()
+    @Column("varchar")
+    description: string;
+
     @Field(() => RequestStatus)
     @Column("varchar")
     status: RequestStatus;
