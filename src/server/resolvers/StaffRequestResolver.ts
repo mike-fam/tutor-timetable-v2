@@ -1,5 +1,5 @@
 import { Arg, Field, InputType, Int, Mutation, Resolver } from "type-graphql";
-import { RequestStatus, RequestType } from "../../types/request";
+import { RequestStatus, RequestType } from "../../server/types/request";
 import { Session, StaffRequest, User } from "../entities";
 
 @InputType()

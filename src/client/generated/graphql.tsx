@@ -238,17 +238,18 @@ export type CourseTermIdInput = {
 };
 
 export type Mutation = {
-    __typename?: "Mutation";
-    requestAllocation: AllocatorOutput;
-    applyAllocation: Scalars["Boolean"];
-    addTerm: Term;
-    deleteTerms: Array<Term>;
-    addCourseStaff: CourseStaff;
-    addSessionStream: SessionStream;
-    addStreamStaff: SessionStream;
-    generateSessions: Array<Session>;
-    updateAvailabilities: Array<Timeslot>;
-    updatePreference: Preference;
+  __typename?: 'Mutation';
+  requestAllocation: AllocatorOutput;
+  applyAllocation: Scalars['Boolean'];
+  addTerm: Term;
+  deleteTerms: Array<Term>;
+  addCourseStaff: CourseStaff;
+  addSessionStream: SessionStream;
+  addStreamStaff: SessionStream;
+  generateSessions: Array<Session>;
+  updateAvailabilities: Array<Timeslot>;
+  updatePreference: Preference;
+  createRequest: StaffRequest;
 };
 
 
@@ -258,10 +259,12 @@ export type MutationRequestAllocationArgs = {
   courseTermInput: CourseTermIdInput;
 };
 
+
 export type MutationApplyAllocationArgs = {
-    override: Scalars["Boolean"];
-    allocationToken: Scalars["String"];
+  override: Scalars['Boolean'];
+  allocationToken: Scalars['String'];
 };
+
 
 export type MutationAddTermArgs = {
   type: TermType;
@@ -322,13 +325,13 @@ export type MutationCreateRequestArgs = {
 };
 
 export type AllocatorOutput = {
-    __typename?: "AllocatorOutput";
-    status: AllocationStatus;
-    type: AllocationType;
-    token: Scalars["String"];
-    detail: Scalars["String"];
-    runtime: Scalars["Float"];
-    allocations: Array<Allocation>;
+  __typename?: 'AllocatorOutput';
+  status: AllocationStatus;
+  type: AllocationType;
+  token: Scalars['String'];
+  detail: Scalars['String'];
+  runtime: Scalars['Float'];
+  allocations: Array<Allocation>;
 };
 
 export enum AllocationStatus {
@@ -390,43 +393,49 @@ export type AddAvailabilitiesMutationVariables = Exact<{
 }>;
 
 
+export type AddAvailabilitiesMutation = (
+  { __typename?: 'Mutation' }
+  & { updateAvailabilities: Array<(
+    { __typename?: 'Timeslot' }
+    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+  )> }
+);
+
 export type RequestAllocationMutationVariables = Exact<{
-    courseTerm: CourseTermIdInput;
-    staffIds: Array<Scalars["Int"]>;
-    newThreshold?: Maybe<Scalars["Float"]>;
+  courseTerm: CourseTermIdInput;
+  staffIds: Array<Scalars['Int']>;
+  newThreshold?: Maybe<Scalars['Float']>;
 }>;
 
-export type RequestAllocationMutation = { __typename?: "Mutation" } & {
-    requestAllocation: { __typename?: "AllocatorOutput" } & Pick<
-        AllocatorOutput,
-        "status" | "detail" | "type" | "token"
-    > & {
-            allocations: Array<
-                { __typename?: "Allocation" } & {
-                    sessionStream: { __typename?: "SessionStream" } & Pick<
-                        SessionStream,
-                        | "id"
-                        | "name"
-                        | "startTime"
-                        | "endTime"
-                        | "day"
-                        | "location"
-                    >;
-                    staff: Array<{ __typename?: "User" } & Pick<User, "name">>;
-                }
-            >;
-        };
-};
+
+export type RequestAllocationMutation = (
+  { __typename?: 'Mutation' }
+  & { requestAllocation: (
+    { __typename?: 'AllocatorOutput' }
+    & Pick<AllocatorOutput, 'status' | 'detail' | 'type' | 'token'>
+    & { allocations: Array<(
+      { __typename?: 'Allocation' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'location'>
+      ), staff: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'name'>
+      )> }
+    )> }
+  ) }
+);
 
 export type ApplyAllocationMutationVariables = Exact<{
-    token: Scalars["String"];
-    override: Scalars["Boolean"];
+  token: Scalars['String'];
+  override: Scalars['Boolean'];
 }>;
 
-export type ApplyAllocationMutation = { __typename?: "Mutation" } & Pick<
-    Mutation,
-    "applyAllocation"
->;
+
+export type ApplyAllocationMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'applyAllocation'>
+);
 
 export type CourseStaffsQueryVariables = Exact<{
   courseTermInput: CourseTermIdInput;
@@ -573,7 +582,13 @@ export type MyPreferenceQueryVariables = Exact<{
 }>;
 
 
-export type TermsQueryVariables = Exact<{ [key: string]: never }>;
+export type MyPreferenceQuery = (
+  { __typename?: 'Query' }
+  & { myPreference?: Maybe<(
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+  )> }
+);
 
 export type TermsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -648,45 +663,35 @@ export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOp
       }
 export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
-export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<
-    AddAvailabilitiesMutation,
-    AddAvailabilitiesMutationVariables
->;
+export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 export const RequestAllocationDocument = gql`
-    mutation RequestAllocation(
-        $courseTerm: CourseTermIdInput!
-        $staffIds: [Int!]!
-        $newThreshold: Float
-    ) {
-        requestAllocation(
-            courseTermInput: $courseTerm
-            staffIds: $staffIds
-            newThreshold: $newThreshold
-        ) {
-            status
-            detail
-            type
-            token
-            allocations {
-                sessionStream {
-                    id
-                    name
-                    startTime
-                    endTime
-                    day
-                    location
-                }
-                staff {
-                    name
-                }
-            }
-        }
+    mutation RequestAllocation($courseTerm: CourseTermIdInput!, $staffIds: [Int!]!, $newThreshold: Float) {
+  requestAllocation(
+    courseTermInput: $courseTerm
+    staffIds: $staffIds
+    newThreshold: $newThreshold
+  ) {
+    status
+    detail
+    type
+    token
+    allocations {
+      sessionStream {
+        id
+        name
+        startTime
+        endTime
+        day
+        location
+      }
+      staff {
+        name
+      }
     }
-`;
-export type RequestAllocationMutationFn = Apollo.MutationFunction<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
->;
+  }
+}
+    `;
+export type RequestAllocationMutationFn = Apollo.MutationFunction<RequestAllocationMutation, RequestAllocationMutationVariables>;
 
 /**
  * __useRequestAllocationMutation__
@@ -707,34 +712,18 @@ export type RequestAllocationMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useRequestAllocationMutation(
-    baseOptions?: Apollo.MutationHookOptions<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >
-) {
-    return Apollo.useMutation<
-        RequestAllocationMutation,
-        RequestAllocationMutationVariables
-    >(RequestAllocationDocument, baseOptions);
-}
-export type RequestAllocationMutationHookResult = ReturnType<
-    typeof useRequestAllocationMutation
->;
+export function useRequestAllocationMutation(baseOptions?: Apollo.MutationHookOptions<RequestAllocationMutation, RequestAllocationMutationVariables>) {
+        return Apollo.useMutation<RequestAllocationMutation, RequestAllocationMutationVariables>(RequestAllocationDocument, baseOptions);
+      }
+export type RequestAllocationMutationHookResult = ReturnType<typeof useRequestAllocationMutation>;
 export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
-export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<
-    RequestAllocationMutation,
-    RequestAllocationMutationVariables
->;
+export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<RequestAllocationMutation, RequestAllocationMutationVariables>;
 export const ApplyAllocationDocument = gql`
     mutation ApplyAllocation($token: String!, $override: Boolean!) {
-        applyAllocation(allocationToken: $token, override: $override)
-    }
-`;
-export type ApplyAllocationMutationFn = Apollo.MutationFunction<
-    ApplyAllocationMutation,
-    ApplyAllocationMutationVariables
->;
+  applyAllocation(allocationToken: $token, override: $override)
+}
+    `;
+export type ApplyAllocationMutationFn = Apollo.MutationFunction<ApplyAllocationMutation, ApplyAllocationMutationVariables>;
 
 /**
  * __useApplyAllocationMutation__
@@ -754,25 +743,12 @@ export type ApplyAllocationMutationFn = Apollo.MutationFunction<
  *   },
  * });
  */
-export function useApplyAllocationMutation(
-    baseOptions?: Apollo.MutationHookOptions<
-        ApplyAllocationMutation,
-        ApplyAllocationMutationVariables
-    >
-) {
-    return Apollo.useMutation<
-        ApplyAllocationMutation,
-        ApplyAllocationMutationVariables
-    >(ApplyAllocationDocument, baseOptions);
-}
-export type ApplyAllocationMutationHookResult = ReturnType<
-    typeof useApplyAllocationMutation
->;
+export function useApplyAllocationMutation(baseOptions?: Apollo.MutationHookOptions<ApplyAllocationMutation, ApplyAllocationMutationVariables>) {
+        return Apollo.useMutation<ApplyAllocationMutation, ApplyAllocationMutationVariables>(ApplyAllocationDocument, baseOptions);
+      }
+export type ApplyAllocationMutationHookResult = ReturnType<typeof useApplyAllocationMutation>;
 export type ApplyAllocationMutationResult = Apollo.MutationResult<ApplyAllocationMutation>;
-export type ApplyAllocationMutationOptions = Apollo.BaseMutationOptions<
-    ApplyAllocationMutation,
-    ApplyAllocationMutationVariables
->;
+export type ApplyAllocationMutationOptions = Apollo.BaseMutationOptions<ApplyAllocationMutation, ApplyAllocationMutationVariables>;
 export const CourseStaffsDocument = gql`
     query CourseStaffs($courseTermInput: CourseTermIdInput!) {
   courseStaffs(courseTermInput: $courseTermInput) {
@@ -1116,38 +1092,15 @@ export const MyPreferenceDocument = gql`
  *   },
  * });
  */
-export function useMyPreferenceQuery(
-    baseOptions: Apollo.QueryHookOptions<
-        MyPreferenceQuery,
-        MyPreferenceQueryVariables
-    >
-) {
-    return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(
-        MyPreferenceDocument,
-        baseOptions
-    );
-}
-export function useMyPreferenceLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<
-        MyPreferenceQuery,
-        MyPreferenceQueryVariables
-    >
-) {
-    return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(
-        MyPreferenceDocument,
-        baseOptions
-    );
-}
-export type MyPreferenceQueryHookResult = ReturnType<
-    typeof useMyPreferenceQuery
->;
-export type MyPreferenceLazyQueryHookResult = ReturnType<
-    typeof useMyPreferenceLazyQuery
->;
-export type MyPreferenceQueryResult = Apollo.QueryResult<
-    MyPreferenceQuery,
-    MyPreferenceQueryVariables
->;
+export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+      }
+export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+        }
+export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
+export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
+export type MyPreferenceQueryResult = Apollo.QueryResult<MyPreferenceQuery, MyPreferenceQueryVariables>;
 export const TermsDocument = gql`
     query Terms {
   terms {
