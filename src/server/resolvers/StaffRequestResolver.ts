@@ -41,12 +41,17 @@ export class StaffRequestResolver {
         const session = await Session.findOne({ id: sessionId });
         const swapPreference = await Session.findByIds(preferences);
 
-        const isUnique = await StaffRequest.find({
-            requester: requester,
-            session: session,
-        });
+        const isUnique =
+            (
+                await StaffRequest.find({
+                    requester: requester,
+                    session: session,
+                })
+            ).length > 0
+                ? false
+                : true;
 
-        if (isUnique.length > 0) {
+        if (!isUnique) {
             throw new Error(
                 "You have already made a request for this session."
             );
