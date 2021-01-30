@@ -11,6 +11,7 @@ type Props = {
     chosenTerm: number;
     coordinatorOnly?: boolean;
     maxW?: number | string;
+    editable?: boolean;
 };
 
 export const CourseSelectContainer: React.FC<Props> = ({
@@ -19,6 +20,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
     chosenTerm,
     coordinatorOnly = false,
     maxW,
+    editable = true,
 }) => {
     const { loading, data } = useQueryWithError(useMyCoursesQuery, {});
     const [coursesMap, setCoursesMap] = useState(Map<number, string>());
@@ -48,6 +50,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
     return (
         <Loadable isLoading={loading}>
             <Dropdown
+                isDisabled={!editable}
                 onChange={(e) => chooseCourse(Number(e.target.value))}
                 value={chosenCourse}
                 options={coursesMap}

@@ -37,7 +37,7 @@ type Props = {
 // TODO: display sessions that user can choose
 //		warning on sessions that user is not available on
 
-export const CreateRequestTimetableContainer: React.FC<Props> = ({
+export const SessionRequestTimetableContainer: React.FC<Props> = ({
     chosenCourse,
     chosenTerm,
     chooseSession,

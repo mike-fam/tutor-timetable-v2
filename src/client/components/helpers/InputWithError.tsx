@@ -18,6 +18,7 @@ export const InputWithError: React.FC<Props> = ({
     onChange,
     validate,
     label,
+    isDisabled,
     ...props
 }) => {
     const [error, setError] = useState("");
@@ -25,7 +26,12 @@ export const InputWithError: React.FC<Props> = ({
         console.log(error);
     }, [error]);
     return (
-        <FormControl isInvalid={!!error} mt={4}>
+        <FormControl
+            isInvalid={!!error}
+            mt={4}
+            isDisabled={isDisabled}
+            isReadOnly={isDisabled}
+        >
             <FormLabel>{label}:</FormLabel>
             <Input
                 {...props}

@@ -19,14 +19,15 @@ import { CourseSelectContainer } from "../CourseSelectContainer";
 import { getCurrentTerm } from "../../utils/term";
 import { RequestType, useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { CreateRequestTimetableContainer } from "./CreateRequestTimetableContainer";
+import { SessionRequestTimetableContainer } from "./SessionRequestTimetableContainer";
+import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 
 type Props = {};
 
 export const CreateRequestButton: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
-
+    const formState = useRequestFormState();
     const {
         title,
         setTitle,
@@ -40,7 +41,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
         updatePreferences,
         session,
         setSession,
-    } = useRequestFormState();
+    } = formState;
 
     const validateStep = useCallback(
         (step: number) => {
@@ -80,70 +81,21 @@ export const CreateRequestButton: React.FC<Props> = () => {
                 size="6xl"
                 isCentered
             >
-                <StepModalStep
-                    step={0}
-                    header="Basic information"
-                    height="800px"
-                >
-                    {/* TODO: Move this to another component */}
-                    <InputWithError
-                        label="Request Title"
-                        validate={(value) =>
-                            value.length === 0 ? "Title must not be empty" : ""
-                        }
-                        value={title}
-                        onChange={(e) => {
-                            setTitle(e.target.value);
-                        }}
-                    />
-                    <InputWithError
-                        label="Description"
-                        validate={() => ""}
-                        as={Textarea}
-                        value={description}
-                        onChange={(e) => {
-                            setDescription(e.target.value);
-                        }}
-                    />
-                    <FormControl mt={4}>
-                        <FormLabel>Course:</FormLabel>
-                        <CourseSelectContainer
-                            chooseCourse={setCourse}
-                            chosenCourse={course}
-                            chosenTerm={currentTerm}
-                        />
-                    </FormControl>
-                    <FormControl mt={4}>
-                        <FormLabel>Request Duration:</FormLabel>
-                        <RadioGroup
-                            value={duration}
-                            onChange={(value) => {
-                                setDuration(value as RequestType);
-                            }}
-                        >
-                            <Stack spacing={5} direction="row">
-                                <Radio value={RequestType.Temporary}>
-                                    Temporary
-                                </Radio>
-                                <Radio value={RequestType.Permanent}>
-                                    Permanent
-                                </Radio>
-                            </Stack>
-                        </RadioGroup>
-                    </FormControl>
+                <StepModalStep step={0} header="Basic information">
+                    <RequestFormV3 {...formState} currentTerm={currentTerm} />
                 </StepModalStep>
                 <StepModalStep
                     step={1}
-                    header="Choose session to switch out of"
+                    header="Choose session to switch out of:"
                 >
-                    <CreateRequestTimetableContainer
+                    <SessionRequestTimetableContainer
                         chosenCourse={course}
                         chosenTerm={currentTerm}
                         chooseSession={setSession}
                         chosenSession={session}
                     />
                 </StepModalStep>
-                <StepModalStep step={2} header="Basic information">
+                <StepModalStep step={2} header="Choose preferred session(s) to switch in to">
                     Test 2
                 </StepModalStep>
                 <StepModalStep step={3} header="Basic information">
