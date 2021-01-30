@@ -1,0 +1,24 @@
+query getRequestById($requestId: Int!) {
+    getRequestById(requestId: $requestId) {
+        id
+        type
+        title
+        description
+        status
+        requester {
+            username
+        }
+        acceptor {
+            username
+        }
+        finaliser {
+            username
+        }
+        session {
+            id
+        }
+        swapPreference {
+            id
+        }
+    }
+}

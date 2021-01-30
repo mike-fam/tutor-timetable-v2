@@ -29,6 +29,7 @@ export type Query = {
   sessions: Array<Session>;
   myAvailability: Array<Timeslot>;
   myPreference?: Maybe<Preference>;
+  getRequestById: StaffRequest;
 };
 
 
@@ -68,6 +69,11 @@ export type QuerySessionsArgs = {
 
 export type QueryMyPreferenceArgs = {
   preferenceFindInput: CourseTermIdInput;
+};
+
+
+export type QueryGetRequestByIdArgs = {
+  requestId: Scalars['Int'];
 };
 
 export type User = {
@@ -477,6 +483,35 @@ export type CreateRequestMutation = (
   ) }
 );
 
+export type GetRequestByIdQueryVariables = Exact<{
+  requestId: Scalars['Int'];
+}>;
+
+
+export type GetRequestByIdQuery = (
+  { __typename?: 'Query' }
+  & { getRequestById: (
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'id' | 'type' | 'title' | 'description' | 'status'>
+    & { requester: (
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
+    ), acceptor: (
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
+    ), finaliser: (
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
+    ), session: (
+      { __typename?: 'Session' }
+      & Pick<Session, 'id'>
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & Pick<Session, 'id'>
+    )> }
+  ) }
+);
+
 export type GetSessionStreamsQueryVariables = Exact<{
   termId: Scalars['Int'];
   courseIds: Array<Scalars['Int']>;
@@ -832,6 +867,58 @@ export function useCreateRequestMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateRequestMutationHookResult = ReturnType<typeof useCreateRequestMutation>;
 export type CreateRequestMutationResult = Apollo.MutationResult<CreateRequestMutation>;
 export type CreateRequestMutationOptions = Apollo.BaseMutationOptions<CreateRequestMutation, CreateRequestMutationVariables>;
+export const GetRequestByIdDocument = gql`
+    query getRequestById($requestId: Int!) {
+  getRequestById(requestId: $requestId) {
+    id
+    type
+    title
+    description
+    status
+    requester {
+      username
+    }
+    acceptor {
+      username
+    }
+    finaliser {
+      username
+    }
+    session {
+      id
+    }
+    swapPreference {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRequestByIdQuery__
+ *
+ * To run a query within a React component, call `useGetRequestByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRequestByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRequestByIdQuery({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useGetRequestByIdQuery(baseOptions: Apollo.QueryHookOptions<GetRequestByIdQuery, GetRequestByIdQueryVariables>) {
+        return Apollo.useQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, baseOptions);
+      }
+export function useGetRequestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestByIdQuery, GetRequestByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, baseOptions);
+        }
+export type GetRequestByIdQueryHookResult = ReturnType<typeof useGetRequestByIdQuery>;
+export type GetRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRequestByIdLazyQuery>;
+export type GetRequestByIdQueryResult = Apollo.QueryResult<GetRequestByIdQuery, GetRequestByIdQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {

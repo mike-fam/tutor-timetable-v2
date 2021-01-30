@@ -1,5 +1,13 @@
 import { ArrayMinSize, IsString, MinLength } from "class-validator";
-import { Arg, Field, InputType, Int, Mutation, Resolver } from "type-graphql";
+import {
+    Arg,
+    Field,
+    InputType,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from "type-graphql";
 import { RequestStatus, RequestType } from "../../server/types/request";
 import { Session, StaffRequest, User } from "../entities";
 
@@ -61,6 +69,7 @@ export class StaffRequestResolver {
             );
         }
 
+        // Currently does not store swap preferences.
         return await StaffRequest.create({
             title,
             description,
@@ -70,5 +79,17 @@ export class StaffRequestResolver {
             session,
             swapPreference,
         }).save();
+    }
+
+    @Query(() => StaffRequest)
+    async getRequestById(
+        @Arg("requestId", () => Int) requestId: number
+    ): Promise<StaffRequest> {
+        const result = await StaffRequest.findOne({ id: requestId });
+        if (result === undefined) {
+            throw new Error("Request ID does not exist");
+        } else {
+            return result;
+        }
     }
 }
