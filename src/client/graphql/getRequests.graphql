@@ -15,10 +15,16 @@ query getRequestById($requestId: Int!) {
             username
         }
         session {
-            id
+            sessionStream {
+                id
+                name
+            }
         }
         swapPreference {
-            id
+            sessionStream {
+                id
+                name
+            }
         }
     }
 }
