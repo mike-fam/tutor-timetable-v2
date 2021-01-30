@@ -6,9 +6,10 @@ import { Box } from "@chakra-ui/react";
 export type RequestSessionProps = {
     onClick: (sessionId: number) => void;
     theme: SessionTheme;
+    disabled: boolean;
 };
 
-type Props = SessionProps & RequestSessionProps;
+type Props = Omit<SessionProps & RequestSessionProps, "_hover">;
 
 export const RequestSession: React.FC<Props> = ({
     onClick,

@@ -6,11 +6,10 @@ import { isoNumberToDay } from "../../../utils/date";
 import {
     firstLineHeight,
     gap,
-    timeSlotHeight,
+    timetableTimeslotHeight,
 } from "../../constants/timetable";
 import { Props as SessionProps } from "./Session";
 import { getClashedRanges } from "../../utils/timetable";
-import { Props as TimetableProps } from "./Timetable";
 import { TimetableSessionType } from "../../types/timetable";
 
 export type Props<T> = {
@@ -25,6 +24,7 @@ export type Props<T> = {
         key: number,
         moreProps: T
     ) => ReactElement<SessionProps & T>;
+    timeslotHeight: number;
 };
 
 export const Day = <T,>({
@@ -35,6 +35,7 @@ export const Day = <T,>({
     renderTimeSlot,
     renderSession,
     getSessionProps,
+    timeslotHeight,
 }: PropsWithChildren<Props<T>>) => {
     const stackInfo = useMemo(
         () =>
@@ -51,7 +52,7 @@ export const Day = <T,>({
         <Grid
             templateRows={`${firstLineHeight}px repeat(${
                 endTime - startTime
-            }, ${timeSlotHeight}px)`}
+            }, ${timeslotHeight}px)`}
             gap={gap}
             pos="relative"
         >
@@ -68,6 +69,7 @@ export const Day = <T,>({
                         startDay: startTime,
                         endDay: endTime,
                         name: session.name,
+                        timeslotHeight,
                         ...stackInfo[session.id],
                     },
                     key,

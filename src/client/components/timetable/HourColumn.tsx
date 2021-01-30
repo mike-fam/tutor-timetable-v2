@@ -2,7 +2,7 @@ import React from "react";
 import {
     firstLineHeight,
     gap,
-    timeSlotHeight,
+    timetableTimeslotHeight,
 } from "../../constants/timetable";
 import range from "lodash/range";
 import { Box, Grid } from "@chakra-ui/react";
@@ -10,14 +10,19 @@ import { Box, Grid } from "@chakra-ui/react";
 type Props = {
     startTime: number;
     endTime: number;
+    timeslotHeight: number;
 };
 
-export const HourColumn: React.FC<Props> = ({ startTime, endTime }) => {
+export const HourColumn: React.FC<Props> = ({
+    startTime,
+    endTime,
+    timeslotHeight,
+}) => {
     return (
         <Grid
             templateRows={`${firstLineHeight}px repeat(${
                 endTime - startTime
-            }, ${timeSlotHeight}px)`}
+            }, ${timeslotHeight}px)`}
             gap={gap}
         >
             {range(startTime, endTime).map((hour, key) => (

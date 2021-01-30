@@ -20,7 +20,7 @@ import { getCurrentTerm } from "../../utils/term";
 import {
     firstLineHeight,
     realGap,
-    timeSlotHeight,
+    timetableTimeslotHeight,
 } from "../../constants/timetable";
 
 type Props = {};
@@ -128,7 +128,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                             h={
                                 firstLineHeight +
                                 (dayEndTime - dayStartTime) *
-                                    (timeSlotHeight + realGap) +
+                                    (timetableTimeslotHeight + realGap) +
                                 realGap
                             }
                         >

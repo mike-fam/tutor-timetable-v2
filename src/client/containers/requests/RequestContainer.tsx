@@ -1,6 +1,8 @@
 import React from "react";
 import { Role } from "../../../types/user";
 import { Requests } from "../../components/requests/Requests";
+import { StepModal } from "../../components/helpers/StepModal";
+import { Box } from "@chakra-ui/react";
 
 export enum DisplayRequestType {
     All = "All",

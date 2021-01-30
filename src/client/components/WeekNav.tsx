@@ -3,6 +3,7 @@ import React from "react";
 import range from "lodash/range";
 
 type Props = {
+    showAllWeeks?: boolean;
     weekNames: Array<string>;
     weeksNum: number;
     chosenWeek: number;
@@ -14,16 +15,17 @@ export const WeekNav: React.FunctionComponent<Props> = ({
     weeksNum,
     chooseWeek,
     chosenWeek,
+    showAllWeeks = true,
 }) => {
     return (
         <Tabs
-            index={chosenWeek + 1}
+            index={showAllWeeks ? chosenWeek + 1 : chosenWeek}
             onChange={(index) => {
-                chooseWeek(index - 1);
+                chooseWeek(showAllWeeks ? index - 1 : index);
             }}
         >
             <TabList flexWrap="wrap" justifyContent="center">
-                <Tab h="60px">All Weeks</Tab>
+                {showAllWeeks && <Tab h="60px">All Weeks</Tab>}
                 {range(weeksNum).map((index) => (
                     <Tab h="60px" key={index}>
                         {weekNames[index] || `Week [${index}]`}

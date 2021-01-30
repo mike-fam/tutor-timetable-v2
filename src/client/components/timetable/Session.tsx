@@ -14,6 +14,7 @@ export type Props = {
     startDay: number;
     endDay: number;
     theme?: SessionTheme;
+    timeslotHeight: number;
 } & StackInfo;
 
 type PropsWithStyle = Props & Partial<Omit<BoxProps, "id">>;

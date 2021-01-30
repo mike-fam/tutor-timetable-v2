@@ -4,6 +4,7 @@ import { CreateRequestModalContainer } from "../../containers/requests/CreateReq
 import { FilterType } from "../../containers/requests/RequestContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestFilter } from "./RequestFilter";
+import { CreateRequestButton } from "../../containers/requests/CreateRequestModalContainerV3";
 
 type Props = {
     toggleFilters: (item: FilterType, selected: boolean) => void;
@@ -35,8 +36,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                {/*<CreateRequestModalContainer />*/}
-                                <CreateRequestModalContainer />
+                                <CreateRequestButton />
                             </Box>
                             <Divider></Divider>
                             <Box>
