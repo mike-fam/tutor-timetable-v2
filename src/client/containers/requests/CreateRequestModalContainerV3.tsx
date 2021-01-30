@@ -4,8 +4,10 @@ import {
     Center,
     FormControl,
     FormLabel,
+    Radio,
+    RadioGroup,
+    Stack,
     Textarea,
-    useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
@@ -15,10 +17,8 @@ import { notSet } from "../../constants";
 import { InputWithError } from "../../components/helpers/InputWithError";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { getCurrentTerm } from "../../utils/term";
-import { useTermsQuery } from "../../generated/graphql";
+import { RequestType, useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { RequestTimetableContainer } from "./RequestTimetableContainer";
-import { SessionTheme } from "../../types/timetable";
 import { CreateRequestTimetableContainer } from "./CreateRequestTimetableContainer";
 
 type Props = {};
@@ -45,7 +45,6 @@ export const CreateRequestButton: React.FC<Props> = () => {
     const validateStep = useCallback(
         (step: number) => {
             if (step === 0) {
-                console.log(title.length !== 0 && course !== notSet);
                 return title.length !== 0 && course !== notSet;
             } else {
                 return false;
@@ -86,6 +85,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     header="Basic information"
                     height="800px"
                 >
+                    {/* TODO: Move this to another component */}
                     <InputWithError
                         label="Request Title"
                         validate={(value) =>
@@ -105,7 +105,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
                             setDescription(e.target.value);
                         }}
                     />
-                    <FormControl>
+                    <FormControl mt={4}>
                         <FormLabel>Course:</FormLabel>
                         <CourseSelectContainer
                             chooseCourse={setCourse}
@@ -113,11 +113,34 @@ export const CreateRequestButton: React.FC<Props> = () => {
                             chosenTerm={currentTerm}
                         />
                     </FormControl>
+                    <FormControl mt={4}>
+                        <FormLabel>Request Duration:</FormLabel>
+                        <RadioGroup
+                            value={duration}
+                            onChange={(value) => {
+                                setDuration(value as RequestType);
+                            }}
+                        >
+                            <Stack spacing={5} direction="row">
+                                <Radio value={RequestType.Temporary}>
+                                    Temporary
+                                </Radio>
+                                <Radio value={RequestType.Permanent}>
+                                    Permanent
+                                </Radio>
+                            </Stack>
+                        </RadioGroup>
+                    </FormControl>
                 </StepModalStep>
-                <StepModalStep step={1} header="Basic information">
+                <StepModalStep
+                    step={1}
+                    header="Choose session to switch out of"
+                >
                     <CreateRequestTimetableContainer
                         chosenCourse={course}
                         chosenTerm={currentTerm}
+                        chooseSession={setSession}
+                        chosenSession={session}
                     />
                 </StepModalStep>
                 <StepModalStep step={2} header="Basic information">

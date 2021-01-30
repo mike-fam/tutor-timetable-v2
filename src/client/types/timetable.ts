@@ -29,8 +29,8 @@ export type TimetableSettings = {
 };
 
 export enum SessionTheme {
-    SUCCESS,
-    ERROR,
-    WARNING,
-    PRIMARY,
+    SUCCESS = "SUCCESS",
+    ERROR = "ERROR",
+    WARNING = "WARNING",
+    PRIMARY = "PRIMARY",
 }

@@ -8,8 +8,10 @@ query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
             day
         }
         location
+        week
         sessionAllocations {
             user {
+                username
                 name
             }
         }

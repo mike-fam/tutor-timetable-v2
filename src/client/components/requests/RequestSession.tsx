@@ -1,32 +1,42 @@
 import React from "react";
-import { Props as SessionProps, Session } from "../timetable/Session";
+import { Props as TimetableSessionProps } from "../timetable/TimetableSession";
+import { Props as SessionProps } from "../timetable/Session";
 import { SessionTheme } from "../../types/timetable";
-import { Box } from "@chakra-ui/react";
+import { useColorMode } from "@chakra-ui/react";
+import { TimetableSession } from "../timetable/TimetableSession";
 
 export type RequestSessionProps = {
     onClick: (sessionId: number) => void;
     theme: SessionTheme;
     disabled: boolean;
-};
+} & Omit<TimetableSessionProps, keyof SessionProps>;
 
-type Props = Omit<SessionProps & RequestSessionProps, "_hover">;
+type Props = Omit<SessionProps, "_hover" | "onClick" | "opacity"> &
+    RequestSessionProps;
 
 export const RequestSession: React.FC<Props> = ({
     onClick,
-    theme,
+    disabled,
     ...props
 }) => {
+    const { colorMode } = useColorMode();
     return (
-        <Session
+        <TimetableSession
             {...props}
-            _hover={{
-                filter: "brightness(0.8)",
-            }}
+            _hover={
+                disabled
+                    ? {}
+                    : {
+                          filter:
+                              colorMode === "light"
+                                  ? "brightness(2)"
+                                  : "brightness(0.7)",
+                      }
+            }
             onClick={() => {
-                onClick(props.id);
+                !disabled && onClick(props.id);
             }}
-        >
-            <Box p={1}>{props.name}</Box>
-        </Session>
+            opacity={disabled ? 0.5 : 1}
+        />
     );
 };

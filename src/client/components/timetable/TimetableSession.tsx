@@ -18,7 +18,7 @@ export type TimetableSessionProps = {
     location: string;
 };
 
-type Props = SessionProps & TimetableSessionProps;
+export type Props = SessionProps & TimetableSessionProps;
 
 export const TimetableSession: React.FC<Props> = ({
     children: _,

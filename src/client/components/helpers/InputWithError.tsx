@@ -25,7 +25,7 @@ export const InputWithError: React.FC<Props> = ({
         console.log(error);
     }, [error]);
     return (
-        <FormControl isInvalid={!!error}>
+        <FormControl isInvalid={!!error} mt={4}>
             <FormLabel>{label}:</FormLabel>
             <Input
                 {...props}

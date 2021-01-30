@@ -8,6 +8,7 @@ type Props = {
     weeksNum: number;
     chosenWeek: number;
     chooseWeek: React.Dispatch<React.SetStateAction<number>>;
+    disabled?: number[];
 };
 
 export const WeekNav: React.FunctionComponent<Props> = ({
@@ -16,6 +17,7 @@ export const WeekNav: React.FunctionComponent<Props> = ({
     chooseWeek,
     chosenWeek,
     showAllWeeks = true,
+    disabled = [],
 }) => {
     return (
         <Tabs
@@ -27,7 +29,11 @@ export const WeekNav: React.FunctionComponent<Props> = ({
             <TabList flexWrap="wrap" justifyContent="center">
                 {showAllWeeks && <Tab h="60px">All Weeks</Tab>}
                 {range(weeksNum).map((index) => (
-                    <Tab h="60px" key={index}>
+                    <Tab
+                        h="60px"
+                        key={index}
+                        isDisabled={disabled.includes(index)}
+                    >
                         {weekNames[index] || `Week [${index}]`}
                     </Tab>
                 ))}

@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
-import { Map, Set } from "immutable";
+import { Map } from "immutable";
 import {
     RequestSession,
     RequestSessionProps,
@@ -18,7 +18,7 @@ import { ArrayElement } from "../../types/helpers";
 import { notSet } from "../../constants";
 import { requestTimeslotHeight } from "../../types/requests";
 
-type SessionResponseType = ArrayElement<GetSessionsQuery["sessions"]>;
+export type SessionResponseType = ArrayElement<GetSessionsQuery["sessions"]>;
 
 type Props = {
     chosenCourse: number;
@@ -26,7 +26,8 @@ type Props = {
     chosenWeek: number;
     checkDisabled: (session: SessionResponseType) => boolean;
     getTheme: (session: SessionResponseType) => SessionTheme;
-    filterSessions: (
+    chooseSession: (sessionId: number) => void;
+    filterSessions?: (
         sessions: GetSessionsQuery["sessions"]
     ) => GetSessionsQuery["sessions"];
 };
@@ -37,7 +38,8 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     chosenWeek,
     checkDisabled,
     getTheme,
-    filterSessions,
+    chooseSession,
+    filterSessions = (sessions) => sessions,
 }) => {
     const { displayedDays, dayStartTime, dayEndTime } = useContext(
         TimetableSettingsContext
@@ -51,13 +53,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     const [timetableSessions, setTimetableSessions] = useState<
         TimetableSessionType[]
     >([]);
-    const [chosenSessions, setChosenSessions] = useState<Set<number>>(Set());
-    const addSession = useCallback((sessionId) => {
-        setChosenSessions((prev) => prev.add(sessionId));
-    }, []);
-    const unaddSession = useCallback((sessionId) => {
-        setChosenSessions((prev) => prev.remove(sessionId));
-    }, []);
+
     useEffect(() => {
         if (
             chosenTerm === notSet ||
@@ -82,11 +78,13 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         sessions.forEach((session) => {
             setSessionInfo((prev) =>
                 prev.set(session.id, {
-                    onClick: chosenSessions.includes(session.id)
-                        ? unaddSession
-                        : addSession,
+                    onClick: chooseSession,
                     disabled: checkDisabled(session),
                     theme: getTheme(session),
+                    location: session.location,
+                    allocation: session.sessionAllocations.map(
+                        (allocation) => allocation.user.name
+                    ),
                 })
             );
         });
@@ -99,15 +97,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
                 day: session.sessionStream.day,
             }))
         );
-    }, [
-        sessionData,
-        chosenSessions,
-        addSession,
-        unaddSession,
-        checkDisabled,
-        getTheme,
-        filterSessions,
-    ]);
+    }, [sessionData, checkDisabled, getTheme, filterSessions, chooseSession]);
     return (
         <Timetable
             displayedDays={displayedDays}
@@ -133,9 +123,11 @@ export const RequestTimetableContainer: React.FC<Props> = ({
                     renderTimeSlot={(key) => <TimeSlot key={key} />}
                     getSessionProps={(sessionId) =>
                         sessionInfo.get(sessionId) || {
-                            onClick: () => {},
+                            onClick: chooseSession,
                             disabled: true,
                             theme: SessionTheme.PRIMARY,
+                            location: "",
+                            allocation: [],
                         }
                     }
                 />
