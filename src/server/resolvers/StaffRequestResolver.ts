@@ -65,11 +65,11 @@ export class StaffRequestResolver {
 
         // Displays the session name in the error. Let me know if this is too much.
         if (!isUnique) {
-            const session = await SessionStream.findOne({
+            const sessionStream = await SessionStream.findOne({
                 id: (await Session.findOne({ id: sessionId }))?.sessionStreamId,
             });
             throw new Error(
-                "You have already made a request for " + session?.name
+                "You have already made a request for " + sessionStream?.name
             );
         }
 
