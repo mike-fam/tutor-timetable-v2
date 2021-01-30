@@ -28,3 +28,23 @@ query getRequestById($requestId: Int!) {
         }
     }
 }
+
+query getRequestsByUserId($userId: Int!) {
+    getRequestsByUserId(userId: $userId) {
+        title
+        status
+        requester {
+            name
+        }
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}

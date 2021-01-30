@@ -86,10 +86,28 @@ export class StaffRequestResolver {
         @Arg("requestId", () => Int) requestId: number
     ): Promise<StaffRequest> {
         const result = await StaffRequest.findOne({ id: requestId });
-        if (result === undefined) {
-            throw new Error("Request ID does not exist");
-        } else {
+        if (result) {
             return result;
+        } else {
+            throw new Error("Request does not exist");
+        }
+    }
+
+    @Query(() => [StaffRequest])
+    async getRequestsByUserId(
+        @Arg("userId", () => Int) userId: number
+    ): Promise<StaffRequest[]> {
+        const user = await User.findOne({ id: userId });
+
+        if (user) {
+            const result = await StaffRequest.find({ requester: user });
+            if (result.length > 0) {
+                return result;
+            } else {
+                throw new Error("Request not found");
+            }
+        } else {
+            throw new Error("User not found");
         }
     }
 }

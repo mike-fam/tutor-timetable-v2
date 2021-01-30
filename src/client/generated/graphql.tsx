@@ -30,6 +30,7 @@ export type Query = {
   myAvailability: Array<Timeslot>;
   myPreference?: Maybe<Preference>;
   getRequestById: StaffRequest;
+  getRequestsByUserId: Array<StaffRequest>;
 };
 
 
@@ -74,6 +75,11 @@ export type QueryMyPreferenceArgs = {
 
 export type QueryGetRequestByIdArgs = {
   requestId: Scalars['Int'];
+};
+
+
+export type QueryGetRequestsByUserIdArgs = {
+  userId: Scalars['Int'];
 };
 
 export type User = {
@@ -504,12 +510,47 @@ export type GetRequestByIdQuery = (
       & Pick<User, 'username'>
     ), session: (
       { __typename?: 'Session' }
-      & Pick<Session, 'id'>
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
     ), swapPreference: Array<(
       { __typename?: 'Session' }
-      & Pick<Session, 'id'>
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
     )> }
   ) }
+);
+
+export type GetRequestsByUserIdQueryVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type GetRequestsByUserIdQuery = (
+  { __typename?: 'Query' }
+  & { getRequestsByUserId: Array<(
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'title' | 'status'>
+    & { requester: (
+      { __typename?: 'User' }
+      & Pick<User, 'name'>
+    ), session: (
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    )> }
+  )> }
 );
 
 export type GetSessionStreamsQueryVariables = Exact<{
@@ -885,10 +926,16 @@ export const GetRequestByIdDocument = gql`
       username
     }
     session {
-      id
+      sessionStream {
+        id
+        name
+      }
     }
     swapPreference {
-      id
+      sessionStream {
+        id
+        name
+      }
     }
   }
 }
@@ -919,6 +966,53 @@ export function useGetRequestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetRequestByIdQueryHookResult = ReturnType<typeof useGetRequestByIdQuery>;
 export type GetRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRequestByIdLazyQuery>;
 export type GetRequestByIdQueryResult = Apollo.QueryResult<GetRequestByIdQuery, GetRequestByIdQueryVariables>;
+export const GetRequestsByUserIdDocument = gql`
+    query getRequestsByUserId($userId: Int!) {
+  getRequestsByUserId(userId: $userId) {
+    title
+    status
+    requester {
+      name
+    }
+    session {
+      sessionStream {
+        name
+      }
+    }
+    swapPreference {
+      sessionStream {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRequestsByUserIdQuery__
+ *
+ * To run a query within a React component, call `useGetRequestsByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRequestsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRequestsByUserIdQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetRequestsByUserIdQuery(baseOptions: Apollo.QueryHookOptions<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>) {
+        return Apollo.useQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, baseOptions);
+      }
+export function useGetRequestsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, baseOptions);
+        }
+export type GetRequestsByUserIdQueryHookResult = ReturnType<typeof useGetRequestsByUserIdQuery>;
+export type GetRequestsByUserIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByUserIdLazyQuery>;
+export type GetRequestsByUserIdQueryResult = Apollo.QueryResult<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {
