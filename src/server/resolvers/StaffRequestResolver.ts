@@ -9,7 +9,7 @@ import {
     Resolver,
 } from "type-graphql";
 import { RequestStatus, RequestType } from "../../server/types/request";
-import { Session, StaffRequest, User } from "../entities";
+import { Session, SessionStream, StaffRequest, User } from "../entities";
 
 @InputType()
 class RequestFormInputType {
@@ -63,9 +63,13 @@ export class StaffRequestResolver {
                 ? false
                 : true;
 
+        // Displays the session name in the error. Let me know if this is too much.
         if (!isUnique) {
+            const session = await SessionStream.findOne({
+                id: (await Session.findOne({ id: sessionId }))?.sessionStreamId,
+            });
             throw new Error(
-                "You have already made a request for this session."
+                "You have already made a request for " + session?.name
             );
         }
 
