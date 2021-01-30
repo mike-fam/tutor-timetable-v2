@@ -104,12 +104,7 @@ export class StaffRequestResolver {
         const user = await User.findOne({ id: userId });
 
         if (user) {
-            const result = await StaffRequest.find({ requester: user });
-            if (result.length > 0) {
-                return result;
-            } else {
-                throw new Error("Request not found");
-            }
+            return await StaffRequest.find({ requester: user });
         } else {
             throw new Error("User not found");
         }
