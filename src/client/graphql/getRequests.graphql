@@ -31,10 +31,32 @@ query getRequestById($requestId: Int!) {
 
 query getRequestsByUserId($userId: Int!) {
     getRequestsByUserId(userId: $userId) {
+        id
         title
         status
         requester {
             name
+        }
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}
+
+query getRequestsByCourseIds($courseIds: [Int!]!) {
+    getRequestsByCourseIds(courseIds: $courseIds) {
+        id
+        title
+        status
+        requester {
+            username
         }
         session {
             sessionStream {

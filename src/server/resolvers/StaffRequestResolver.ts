@@ -8,8 +8,15 @@ import {
     Query,
     Resolver,
 } from "type-graphql";
+import { getConnection } from "typeorm";
 import { RequestStatus, RequestType } from "../../server/types/request";
-import { Session, SessionStream, StaffRequest, User } from "../entities";
+import {
+    Course,
+    Session,
+    SessionStream,
+    StaffRequest,
+    User,
+} from "../entities";
 
 @InputType()
 class RequestFormInputType {
@@ -49,9 +56,9 @@ export class StaffRequestResolver {
             sessionId,
         }: RequestFormInputType
     ): Promise<StaffRequest> {
-        const requester = await User.findOne({ id: userId });
-        const session = await Session.findOne({ id: sessionId });
-        const swapPreference = await Session.findByIds(preferences);
+        const requester = await User.findOneOrFail({ id: userId });
+        const session = await Session.findOneOrFail({ id: sessionId });
+        const swapPreference = Session.findByIds(preferences);
 
         const isUnique =
             (
@@ -63,7 +70,7 @@ export class StaffRequestResolver {
                 ? false
                 : true;
 
-        // Displays the session name in the error. Let me know if this is too much.
+        // Displays the session name in the error.
         if (!isUnique) {
             const sessionStream = await SessionStream.findOne({
                 id: (await Session.findOne({ id: sessionId }))?.sessionStreamId,
@@ -73,18 +80,19 @@ export class StaffRequestResolver {
             );
         }
 
-        // Currently does not store swap preferences.
-        return await StaffRequest.create({
+        const request = StaffRequest.create({
             title,
             description,
             type: duration,
             requester,
             status: RequestStatus.OPEN,
             session,
-            swapPreference,
-        }).save();
+        });
+        request.swapPreference = swapPreference;
+        return await request.save();
     }
 
+    // Used for displaying requests in modal.
     @Query(() => StaffRequest)
     async getRequestById(
         @Arg("requestId", () => Int) requestId: number
@@ -97,6 +105,7 @@ export class StaffRequestResolver {
         }
     }
 
+    // Used for displaying all requests associated with the user.
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
         @Arg("userId", () => Int) userId: number
@@ -108,5 +117,20 @@ export class StaffRequestResolver {
         } else {
             throw new Error("User not found");
         }
+    }
+
+    // Used for displaying requests on the main requests page.
+    @Query(() => [StaffRequest])
+    async getRequestsByCourseIds(
+        @Arg("courseIds", () => [Int]) courseIds: number[]
+    ): Promise<StaffRequest[]> {
+        return await getConnection()
+            .getRepository(StaffRequest)
+            .createQueryBuilder("staffRequest")
+            .innerJoinAndSelect("staffRequest.session", "session")
+            .innerJoinAndSelect("session.sessionStream", "sessionStream")
+            .innerJoinAndSelect("sessionStream.timetable", "timetable")
+            .where("timetable.courseId IN (:...courseIds)", { courseIds })
+            .getMany();
     }
 }

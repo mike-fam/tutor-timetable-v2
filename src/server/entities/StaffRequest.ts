@@ -57,6 +57,7 @@ export class StaffRequest extends BaseEntity {
     @Field(() => [Session])
     @ManyToMany(() => Session, (session) => session.preferredSwaps, {
         lazy: true,
+        cascade: true,
     })
     @JoinTable()
     swapPreference: Lazy<Session[]>;
