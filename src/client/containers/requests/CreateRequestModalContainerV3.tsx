@@ -1,23 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import {
-    Button,
-    Center,
-    FormControl,
-    FormLabel,
-    Radio,
-    RadioGroup,
-    Stack,
-    Textarea,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Center, useDisclosure } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { notSet } from "../../constants";
-import { InputWithError } from "../../components/helpers/InputWithError";
-import { CourseSelectContainer } from "../CourseSelectContainer";
 import { getCurrentTerm } from "../../utils/term";
-import { RequestType, useTermsQuery } from "../../generated/graphql";
+import { useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { SessionRequestTimetableContainer } from "./SessionRequestTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
@@ -38,20 +26,25 @@ export const CreateRequestButton: React.FC<Props> = () => {
         course,
         setCourse,
         preferences,
-        updatePreferences,
+        setPreferences,
+        addPreference,
+        removePreference,
         session,
         setSession,
     } = formState;
 
     const validateStep = useCallback(
         (step: number) => {
-            if (step === 0) {
-                return title.length !== 0 && course !== notSet;
-            } else {
-                return false;
+            switch (step) {
+                case 0:
+                    return title.length !== 0 && course !== notSet;
+                case 1:
+                    return session !== notSet;
+                default:
+                    return false;
             }
         },
-        [title, course]
+        [title, course, session]
     );
 
     const currentTerm = useMemo(() => {
@@ -92,10 +85,13 @@ export const CreateRequestButton: React.FC<Props> = () => {
                         chosenCourse={course}
                         chosenTerm={currentTerm}
                         chooseSession={setSession}
-                        chosenSession={session}
+                        chosenSessions={[session]}
                     />
                 </StepModalStep>
-                <StepModalStep step={2} header="Choose preferred session(s) to switch in to">
+                <StepModalStep
+                    step={2}
+                    header="Choose preferred session(s) to switch in to"
+                >
                     Test 2
                 </StepModalStep>
                 <StepModalStep step={3} header="Basic information">

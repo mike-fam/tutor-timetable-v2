@@ -1,8 +1,11 @@
-import { Term } from "../generated/graphql";
+import { Term, TermsQuery } from "../generated/graphql";
 import isBefore from "date-fns/isBefore";
 import { parseISO } from "date-fns";
 import isAfter from "date-fns/isAfter";
 import maxBy from "lodash/maxBy";
+import differenceInWeeks from "date-fns/differenceInWeeks";
+import { ArrayElement } from "../types/helpers";
+import { TermResponseType } from "../types/term";
 
 export const getCurrentTerm = (
     terms: Array<Pick<Term, "id" | "startDate" | "endDate">>
@@ -19,4 +22,18 @@ export const getCurrentTerm = (
     }
     // no suitable term, set chosen term to the latest.
     return maxBy(terms, (term) => parseISO(term.startDate))!;
+};
+
+export const getWeeksNum = (term?: TermResponseType) => {
+    if (!term) {
+        return 0;
+    }
+    return differenceInWeeks(parseISO(term.endDate), parseISO(term.startDate));
+};
+
+export const getCurrentWeek = (term?: TermResponseType) => {
+    if (!term) {
+        return 0;
+    }
+    return differenceInWeeks(new Date(), parseISO(term.startDate));
 };

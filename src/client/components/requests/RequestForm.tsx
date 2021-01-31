@@ -30,7 +30,7 @@ export const RequestForm: React.FunctionComponent<Props> = ({
     session,
     setSession,
     preferences,
-    updatePreferences,
+    setPreferences,
     duration,
     setDuration,
     courseList,

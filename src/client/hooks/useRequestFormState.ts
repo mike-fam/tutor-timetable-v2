@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { RequestType } from "../generated/graphql";
+import { Set } from "immutable";
 
 export type RequestFormState = {
     title: string;
@@ -10,8 +11,10 @@ export type RequestFormState = {
     setCourse: Dispatch<SetStateAction<number>>;
     session: number;
     setSession: Dispatch<SetStateAction<number>>;
-    preferences: Array<number>;
-    updatePreferences: (value: Array<number> | number) => void;
+    preferences: Set<number>;
+    setPreferences: Dispatch<SetStateAction<Set<number>>>;
+    addPreference: (sessionId: number) => void;
+    removePreference: (sessionId: number) => void;
     duration: RequestType;
     setDuration: Dispatch<SetStateAction<RequestType>>;
     resetFormState: () => void;
@@ -40,21 +43,24 @@ export const useRequestFormState = (
         initialState?.description || ""
     );
     const [session, setSession] = useState<number>(initialState?.session || -1);
-    const [preferences, setPreferences] = useState<Array<number>>(
-        initialState?.preferences || []
+    const [preferences, setPreferences] = useState<Set<number>>(
+        initialState?.preferences || Set()
     );
     const [duration, setDuration] = useState<RequestType>(
         initialState?.duration || RequestType.Temporary
     );
-    const updatePreferences = (value: Array<number> | number) => {
-        setPreferences(value instanceof Array ? value : [value]);
-    };
+    const addPreference = useCallback((sessionId: number) => {
+        setPreferences((prev) => prev.add(sessionId));
+    }, []);
+    const removePreference = useCallback((sessionId: number) => {
+        setPreferences((prev) => prev.remove(sessionId));
+    }, []);
     const resetFormState = () => {
         setCourse(-1);
         setTitle("");
         setDescription("");
         setSession(-1);
-        setPreferences([]);
+        setPreferences(Set());
         setDuration(RequestType.Temporary);
     };
 
@@ -68,7 +74,9 @@ export const useRequestFormState = (
         setSession,
         setDescription,
         preferences,
-        updatePreferences,
+        setPreferences,
+        addPreference,
+        removePreference,
         duration,
         setDuration,
         resetFormState,

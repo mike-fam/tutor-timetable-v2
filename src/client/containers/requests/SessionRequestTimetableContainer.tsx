@@ -7,30 +7,21 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import {
-    RequestTimetableContainer,
-    SessionResponseType,
-} from "./RequestTimetableContainer";
 import { SessionTheme } from "../../types/timetable";
-import {
-    GetSessionsQuery,
-    useMyAvailabilityQuery,
-    useTermsQuery,
-} from "../../generated/graphql";
-import { WeekNav } from "../../components/WeekNav";
+import { useTermsQuery } from "../../generated/graphql";
 import { notSet } from "../../constants";
-import differenceInWeeks from "date-fns/differenceInWeeks";
-import parseISO from "date-fns/parseISO";
-import getISODay from "date-fns/getISODay";
 import range from "lodash/range";
-import { Loadable } from "../../components/helpers/Loadable";
 import { UserContext } from "../../utils/user";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { getCurrentWeek, getWeeksNum } from "../../utils/term";
+import { SessionResponseType } from "../../types/session";
+import { getSessionsOfUser, isSessionPast } from "../../utils/session";
+import { InteractiveRequestTimetableContainer } from "./InteractiveRequestTimetableContainer";
 
 type Props = {
     chosenCourse: number;
     chosenTerm: number;
-    chosenSession: number;
+    chosenSessions: number[];
     chooseSession: Dispatch<SetStateAction<number>>;
 };
 
@@ -41,112 +32,59 @@ export const SessionRequestTimetableContainer: React.FC<Props> = ({
     chosenCourse,
     chosenTerm,
     chooseSession,
-    chosenSession,
+    chosenSessions,
 }) => {
+    const [chosenWeek, chooseWeek] = useState(notSet);
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const { user } = useContext(UserContext);
-    const [chosenWeek, chooseWeek] = useState(notSet);
     const term = useMemo(
         () => termsData?.terms.filter((term) => term.id === chosenTerm)[0],
         [termsData, chosenTerm]
     );
-    const { data: availabilityData } = useQueryWithError(
-        useMyAvailabilityQuery
-    );
-    const weeksNum = useMemo(() => {
-        if (!term) {
-            return 0;
-        }
-        return differenceInWeeks(
-            parseISO(term.endDate),
-            parseISO(term.startDate)
-        );
-    }, [term]);
-    const currentWeek = useMemo(() => {
-        if (!term) {
-            return 0;
-        }
-        return differenceInWeeks(
-            new Date(2021, 2, 1),
-            parseISO(term.startDate)
-        );
-    }, [term]);
-    useEffect(() => {
-        if (!term) {
-            return;
-        }
-        chooseWeek(
-            Math.min(
-                Math.max(0, currentWeek),
-                differenceInWeeks(
-                    parseISO(term.endDate),
-                    parseISO(term.startDate)
-                )
-            )
-        );
-    }, [currentWeek, term]);
+    const currentWeek = useMemo(() => getCurrentWeek(term), [term]);
     const disabledWeeks = useMemo(
         () => (currentWeek > 0 ? range(0, currentWeek) : []),
         [currentWeek]
     );
     const filterSessions = useCallback(
-        (sessions: GetSessionsQuery["sessions"]) => {
-            return sessions.filter((session) =>
-                session.sessionAllocations
-                    .map((allocation) => allocation.user.username)
-                    .includes(user.username)
-            );
+        (sessions: Array<SessionResponseType>) => {
+            return getSessionsOfUser(sessions, user.username);
         },
         [user.username]
     );
-    const checkDisabled = useCallback(
+    const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {
-            if (!term) {
-                return true;
-            }
-            if (session.week < currentWeek) {
-                return true;
-            } else {
-                return (
-                    session.week === currentWeek &&
-                    session.sessionStream.day < getISODay(new Date())
-                );
-            }
+            return isSessionPast(session, term);
         },
-        [term, currentWeek]
+        [term]
     );
     const getSessionTheme = useCallback(
         (session: SessionResponseType) => {
-            return session.id === chosenSession
+            return chosenSessions.includes(session.id)
                 ? SessionTheme.SUCCESS
                 : SessionTheme.PRIMARY;
         },
-        [chosenSession]
+        [chosenSessions]
     );
+    const weeksNum = useMemo(() => getWeeksNum(term), [term]);
+    useEffect(() => {
+        if (!term) {
+            return;
+        }
+        chooseWeek(Math.min(Math.max(0, currentWeek), weeksNum));
+    }, [currentWeek, term, weeksNum]);
     return (
-        <Loadable isLoading={!termsData}>
-            <>
-                <RequestTimetableContainer
-                    chosenCourse={chosenCourse}
-                    chosenTerm={chosenTerm}
-                    chosenWeek={chosenWeek}
-                    checkDisabled={checkDisabled}
-                    getTheme={getSessionTheme}
-                    filterSessions={filterSessions}
-                    chooseSession={(sessionId) => {
-                        console.log("Click click", sessionId);
-                        chooseSession(sessionId);
-                    }}
-                />
-                <WeekNav
-                    showAllWeeks={false}
-                    weekNames={term?.weekNames || []}
-                    weeksNum={weeksNum}
-                    chosenWeek={chosenWeek}
-                    chooseWeek={chooseWeek}
-                    disabled={disabledWeeks}
-                />
-            </>
-        </Loadable>
+        <InteractiveRequestTimetableContainer
+            chosenCourse={chosenCourse}
+            chosenTerm={chosenTerm}
+            chosenSessions={chosenSessions}
+            chooseSession={chooseSession}
+            disabledWeeks={disabledWeeks}
+            filterSessions={filterSessions}
+            checkSessionDisabled={checkSessionDisabled}
+            getSessionTheme={getSessionTheme}
+            chosenWeek={chosenWeek}
+            chooseWeek={chooseWeek}
+        />
     );
 };

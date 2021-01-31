@@ -6,7 +6,7 @@ import {
     AvailabilityModificationType,
     MyAvailabilityQuery,
 } from "../generated/graphql";
-import { SessionResponseType } from "../containers/requests/RequestTimetableContainer";
+import { SessionResponseType } from "../types/session";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
     timeslots: Map(),
