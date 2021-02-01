@@ -23,7 +23,7 @@ type Props = {
     chosenTerm: number;
     chosenWeek: number;
     checkDisabled: (session: SessionResponseType) => boolean;
-    getTheme: (session: SessionResponseType) => SessionTheme;
+    getSessionTheme: (session: SessionResponseType) => SessionTheme;
     chooseSession: (sessionId: number) => void;
     filterSessions?: (
         sessions: GetSessionsQuery["sessions"]
@@ -35,7 +35,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     chosenCourse,
     chosenWeek,
     checkDisabled,
-    getTheme,
+    getSessionTheme,
     chooseSession,
     filterSessions = (sessions) => sessions,
 }) => {
@@ -78,7 +78,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
                 prev.set(session.id, {
                     onClick: chooseSession,
                     disabled: checkDisabled(session),
-                    theme: getTheme(session),
+                    theme: getSessionTheme(session),
                     location: session.location,
                     allocation: session.sessionAllocations.map(
                         (allocation) => allocation.user.name
@@ -95,7 +95,13 @@ export const RequestTimetableContainer: React.FC<Props> = ({
                 day: session.sessionStream.day,
             }))
         );
-    }, [sessionData, checkDisabled, getTheme, filterSessions, chooseSession]);
+    }, [
+        sessionData,
+        checkDisabled,
+        getSessionTheme,
+        filterSessions,
+        chooseSession,
+    ]);
     return (
         <Timetable
             displayedDays={displayedDays}

@@ -28,7 +28,7 @@ type Props = {
     chosenTerm: number;
     chosenWeek: number;
     chosenSessions: number[];
-    chooseSession: Dispatch<SetStateAction<number>>;
+    chooseSession: (sessionId: number) => void;
     chooseWeek: Dispatch<SetStateAction<number>>;
     disabledWeeks: number[];
     filterSessions: (
@@ -90,7 +90,7 @@ export const InteractiveRequestTimetableContainer: React.FC<Props> = ({
                     chosenTerm={chosenTerm}
                     chosenWeek={chosenWeek}
                     checkDisabled={checkSessionDisabled}
-                    getTheme={getSessionTheme}
+                    getSessionTheme={getSessionTheme}
                     filterSessions={filterSessions}
                     chooseSession={chooseSession}
                 />

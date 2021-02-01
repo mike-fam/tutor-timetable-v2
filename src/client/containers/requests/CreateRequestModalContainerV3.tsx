@@ -85,12 +85,12 @@ export const CreateRequestButton: React.FC<Props> = () => {
                         chosenCourse={course}
                         chosenTerm={currentTerm}
                         chooseSession={setSession}
-                        chosenSessions={[session]}
+                        chosenSession={session}
                     />
                 </StepModalStep>
                 <StepModalStep
                     step={2}
-                    header="Choose preferred session(s) to switch in to"
+                    header="Choose preferred session(s) to switch in to:"
                 >
                     Test 2
                 </StepModalStep>

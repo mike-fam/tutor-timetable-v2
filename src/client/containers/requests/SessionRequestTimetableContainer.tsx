@@ -21,7 +21,7 @@ import { InteractiveRequestTimetableContainer } from "./InteractiveRequestTimeta
 type Props = {
     chosenCourse: number;
     chosenTerm: number;
-    chosenSessions: number[];
+    chosenSession: number;
     chooseSession: Dispatch<SetStateAction<number>>;
 };
 
@@ -32,7 +32,7 @@ export const SessionRequestTimetableContainer: React.FC<Props> = ({
     chosenCourse,
     chosenTerm,
     chooseSession,
-    chosenSessions,
+    chosenSession,
 }) => {
     const [chosenWeek, chooseWeek] = useState(notSet);
     const { data: termsData } = useQueryWithError(useTermsQuery);
@@ -60,11 +60,11 @@ export const SessionRequestTimetableContainer: React.FC<Props> = ({
     );
     const getSessionTheme = useCallback(
         (session: SessionResponseType) => {
-            return chosenSessions.includes(session.id)
+            return session.id === chosenSession
                 ? SessionTheme.SUCCESS
                 : SessionTheme.PRIMARY;
         },
-        [chosenSessions]
+        [chosenSession]
     );
     const weeksNum = useMemo(() => getWeeksNum(term), [term]);
     useEffect(() => {
@@ -77,7 +77,7 @@ export const SessionRequestTimetableContainer: React.FC<Props> = ({
         <InteractiveRequestTimetableContainer
             chosenCourse={chosenCourse}
             chosenTerm={chosenTerm}
-            chosenSessions={chosenSessions}
+            chosenSessions={[chosenSession]}
             chooseSession={chooseSession}
             disabledWeeks={disabledWeeks}
             filterSessions={filterSessions}
