@@ -1,4 +1,9 @@
-import { ArrayMinSize, IsString, MinLength } from "class-validator";
+import {
+    ArrayNotEmpty,
+    ArrayUnique,
+    IsNotEmpty,
+    IsString,
+} from "class-validator";
 import {
     Arg,
     Field,
@@ -10,17 +15,24 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { RequestStatus, RequestType } from "../../server/types/request";
-import { Session, SessionStream, StaffRequest, User } from "../entities";
+import {
+    Course,
+    Session,
+    SessionStream,
+    StaffRequest,
+    User,
+} from "../entities";
 
 @InputType()
 class RequestFormInputType {
     @Field()
-    @MinLength(1)
+    @IsNotEmpty()
     title: string;
 
     // Sessions the user wants to switch into.
     @Field(() => [Int])
-    @ArrayMinSize(1)
+    @ArrayNotEmpty()
+    @ArrayUnique()
     preferences: number[];
 
     @Field(() => RequestType)
@@ -44,15 +56,17 @@ class EditRequestFormInputType {
     requestId: number;
 
     @Field({ nullable: true })
-    @MinLength(1)
+    @IsNotEmpty()
     title: string;
 
     // Sessions the user wants to switch into.
     @Field(() => [Int], { nullable: true })
-    @ArrayMinSize(1)
+    @ArrayNotEmpty()
+    @ArrayUnique()
     preferences: number[];
 
     @Field(() => RequestType, { nullable: true })
+    @IsNotEmpty()
     duration: RequestType;
 
     @Field({ nullable: true })
@@ -83,7 +97,11 @@ export class StaffRequestResolver {
     ): Promise<StaffRequest> {
         const requester = await User.findOneOrFail({ id: userId });
         const session = await Session.findOneOrFail({ id: sessionId });
-        const swapPreference = Session.findByIds(preferences);
+        // const swapPreference = Session.findByIds(preferences);
+        let swapPreference: Array<Session> = [];
+        for (let sid of preferences) {
+            swapPreference.push(await Session.findOneOrFail({ id: sid }));
+        }
 
         const isUnique =
             (
@@ -149,7 +167,11 @@ export class StaffRequestResolver {
     async getRequestsByCourseIds(
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<StaffRequest[]> {
-        // Need checks for courseIds.
+        // Checks each courseId exists. Not entirely sure if this is best way of going about it.
+        for (let id of courseIds) {
+            Course.findOneOrFail(id);
+        }
+
         return await getConnection()
             .getRepository(StaffRequest)
             .createQueryBuilder("staffRequest")
@@ -187,10 +209,12 @@ export class StaffRequestResolver {
             request.session = session;
         }
         if (preferences) {
-            if (preferences.length > 0) {
-                const swapPreference = await Session.findByIds(preferences);
-                request.swapPreference = swapPreference;
+            // Checks to make sure each session id exists.
+            let swapPreference: Array<Session> = [];
+            for (let sid of preferences) {
+                swapPreference.push(await Session.findOneOrFail({ id: sid }));
             }
+            request.swapPreference = swapPreference;
         }
         if (title) {
             request.title = title;
