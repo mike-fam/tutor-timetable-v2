@@ -31,6 +31,7 @@ export type Query = {
   myPreference?: Maybe<Preference>;
   getRequestById: StaffRequest;
   getRequestsByUserId: Array<StaffRequest>;
+  getRequestsByCourseIds: Array<StaffRequest>;
 };
 
 
@@ -80,6 +81,11 @@ export type QueryGetRequestByIdArgs = {
 
 export type QueryGetRequestsByUserIdArgs = {
   userId: Scalars['Int'];
+};
+
+
+export type QueryGetRequestsByCourseIdsArgs = {
+  courseIds: Array<Scalars['Int']>;
 };
 
 export type User = {
@@ -262,6 +268,7 @@ export type Mutation = {
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
+  editExistingRequest: StaffRequest;
 };
 
 
@@ -336,6 +343,11 @@ export type MutationCreateRequestArgs = {
   requestDetails: RequestFormInputType;
 };
 
+
+export type MutationEditExistingRequestArgs = {
+  requestDetails: EditRequestFormInputType;
+};
+
 export type AllocatorOutput = {
   __typename?: 'AllocatorOutput';
   status: AllocationStatus;
@@ -398,6 +410,16 @@ export type RequestFormInputType = {
   description?: Maybe<Scalars['String']>;
   userId: Scalars['Int'];
   sessionId: Scalars['Int'];
+};
+
+export type EditRequestFormInputType = {
+  requestId: Scalars['Int'];
+  title?: Maybe<Scalars['String']>;
+  preferences?: Maybe<Array<Scalars['Int']>>;
+  duration?: Maybe<RequestType>;
+  description?: Maybe<Scalars['String']>;
+  sessionId?: Maybe<Scalars['Int']>;
+  closeRequest: Scalars['Boolean'];
 };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
@@ -533,10 +555,39 @@ export type GetRequestsByUserIdQuery = (
   { __typename?: 'Query' }
   & { getRequestsByUserId: Array<(
     { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'title' | 'status'>
+    & Pick<StaffRequest, 'id' | 'title' | 'status'>
     & { requester: (
       { __typename?: 'User' }
       & Pick<User, 'name'>
+    ), session: (
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    )> }
+  )> }
+);
+
+export type GetRequestsByCourseIdsQueryVariables = Exact<{
+  courseIds: Array<Scalars['Int']>;
+}>;
+
+
+export type GetRequestsByCourseIdsQuery = (
+  { __typename?: 'Query' }
+  & { getRequestsByCourseIds: Array<(
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'id' | 'title' | 'status'>
+    & { requester: (
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
     ), session: (
       { __typename?: 'Session' }
       & { sessionStream: (
@@ -701,6 +752,32 @@ export type UpdatePreferenceMutation = (
   & { updatePreference: (
     { __typename?: 'Preference' }
     & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+  ) }
+);
+
+export type EditRequestMutationVariables = Exact<{
+  requestDetails: EditRequestFormInputType;
+}>;
+
+
+export type EditRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { editExistingRequest: (
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'id' | 'title' | 'description' | 'status' | 'type'>
+    & { session: (
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    )> }
   ) }
 );
 
@@ -969,6 +1046,7 @@ export type GetRequestByIdQueryResult = Apollo.QueryResult<GetRequestByIdQuery, 
 export const GetRequestsByUserIdDocument = gql`
     query getRequestsByUserId($userId: Int!) {
   getRequestsByUserId(userId: $userId) {
+    id
     title
     status
     requester {
@@ -1013,6 +1091,54 @@ export function useGetRequestsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetRequestsByUserIdQueryHookResult = ReturnType<typeof useGetRequestsByUserIdQuery>;
 export type GetRequestsByUserIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByUserIdLazyQuery>;
 export type GetRequestsByUserIdQueryResult = Apollo.QueryResult<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>;
+export const GetRequestsByCourseIdsDocument = gql`
+    query getRequestsByCourseIds($courseIds: [Int!]!) {
+  getRequestsByCourseIds(courseIds: $courseIds) {
+    id
+    title
+    status
+    requester {
+      username
+    }
+    session {
+      sessionStream {
+        name
+      }
+    }
+    swapPreference {
+      sessionStream {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRequestsByCourseIdsQuery__
+ *
+ * To run a query within a React component, call `useGetRequestsByCourseIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRequestsByCourseIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRequestsByCourseIdsQuery({
+ *   variables: {
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetRequestsByCourseIdsQuery(baseOptions: Apollo.QueryHookOptions<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>) {
+        return Apollo.useQuery<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>(GetRequestsByCourseIdsDocument, baseOptions);
+      }
+export function useGetRequestsByCourseIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>(GetRequestsByCourseIdsDocument, baseOptions);
+        }
+export type GetRequestsByCourseIdsQueryHookResult = ReturnType<typeof useGetRequestsByCourseIdsQuery>;
+export type GetRequestsByCourseIdsLazyQueryHookResult = ReturnType<typeof useGetRequestsByCourseIdsLazyQuery>;
+export type GetRequestsByCourseIdsQueryResult = Apollo.QueryResult<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {
@@ -1390,3 +1516,49 @@ export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
 export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
 export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
+export const EditRequestDocument = gql`
+    mutation EditRequest($requestDetails: EditRequestFormInputType!) {
+  editExistingRequest(requestDetails: $requestDetails) {
+    id
+    title
+    description
+    status
+    type
+    session {
+      sessionStream {
+        name
+      }
+    }
+    swapPreference {
+      sessionStream {
+        name
+      }
+    }
+  }
+}
+    `;
+export type EditRequestMutationFn = Apollo.MutationFunction<EditRequestMutation, EditRequestMutationVariables>;
+
+/**
+ * __useEditRequestMutation__
+ *
+ * To run a mutation, you first call `useEditRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editRequestMutation, { data, loading, error }] = useEditRequestMutation({
+ *   variables: {
+ *      requestDetails: // value for 'requestDetails'
+ *   },
+ * });
+ */
+export function useEditRequestMutation(baseOptions?: Apollo.MutationHookOptions<EditRequestMutation, EditRequestMutationVariables>) {
+        return Apollo.useMutation<EditRequestMutation, EditRequestMutationVariables>(EditRequestDocument, baseOptions);
+      }
+export type EditRequestMutationHookResult = ReturnType<typeof useEditRequestMutation>;
+export type EditRequestMutationResult = Apollo.MutationResult<EditRequestMutation>;
+export type EditRequestMutationOptions = Apollo.BaseMutationOptions<EditRequestMutation, EditRequestMutationVariables>;

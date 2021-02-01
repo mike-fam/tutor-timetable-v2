@@ -10,13 +10,7 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { RequestStatus, RequestType } from "../../server/types/request";
-import {
-    Course,
-    Session,
-    SessionStream,
-    StaffRequest,
-    User,
-} from "../entities";
+import { Session, SessionStream, StaffRequest, User } from "../entities";
 
 @InputType()
 class RequestFormInputType {
@@ -24,6 +18,7 @@ class RequestFormInputType {
     @MinLength(1)
     title: string;
 
+    // Sessions the user wants to switch into.
     @Field(() => [Int])
     @ArrayMinSize(1)
     preferences: number[];
@@ -38,8 +33,38 @@ class RequestFormInputType {
     @Field(() => Int)
     userId: number;
 
+    // Session user wants to switch out of.
     @Field(() => Int)
     sessionId: number;
+}
+
+@InputType()
+class EditRequestFormInputType {
+    @Field(() => Int)
+    requestId: number;
+
+    @Field({ nullable: true })
+    @MinLength(1)
+    title: string;
+
+    // Sessions the user wants to switch into.
+    @Field(() => [Int], { nullable: true })
+    @ArrayMinSize(1)
+    preferences: number[];
+
+    @Field(() => RequestType, { nullable: true })
+    duration: RequestType;
+
+    @Field({ nullable: true })
+    @IsString()
+    description: string;
+
+    // Session user wants to switch out of.
+    @Field(() => Int, { nullable: true })
+    sessionId: number;
+
+    @Field(() => Boolean)
+    closeRequest: boolean;
 }
 
 @Resolver()
@@ -124,6 +149,7 @@ export class StaffRequestResolver {
     async getRequestsByCourseIds(
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<StaffRequest[]> {
+        // Need checks for courseIds.
         return await getConnection()
             .getRepository(StaffRequest)
             .createQueryBuilder("staffRequest")
@@ -132,5 +158,49 @@ export class StaffRequestResolver {
             .innerJoinAndSelect("sessionStream.timetable", "timetable")
             .where("timetable.courseId IN (:...courseIds)", { courseIds })
             .getMany();
+    }
+
+    // Needs testing. Only pass in values that needs changing.
+    @Mutation(() => StaffRequest)
+    async editExistingRequest(
+        @Arg("requestDetails", () => EditRequestFormInputType)
+        {
+            title,
+            preferences,
+            duration,
+            description,
+            sessionId,
+            requestId,
+            closeRequest,
+        }: EditRequestFormInputType
+    ): Promise<StaffRequest> {
+        const request = await StaffRequest.findOneOrFail({ id: requestId });
+
+        if (closeRequest) {
+            request.status = RequestStatus.CLOSED;
+            return request.save();
+        }
+
+        // I think there is a better way to implement this.
+        if (sessionId) {
+            const session = await Session.findOneOrFail({ id: sessionId });
+            request.session = session;
+        }
+        if (preferences) {
+            if (preferences.length > 0) {
+                const swapPreference = await Session.findByIds(preferences);
+                request.swapPreference = swapPreference;
+            }
+        }
+        if (title) {
+            request.title = title;
+        }
+        if (duration) {
+            request.type = duration;
+        }
+        if (description) {
+            request.description = description;
+        }
+        return request.save();
     }
 }
