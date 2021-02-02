@@ -81,6 +81,22 @@ class EditRequestFormInputType {
     closeRequest: boolean;
 }
 
+@InputType()
+class OfferInputType {
+    @Field(() => Int)
+    @IsNotEmpty()
+    userId: number;
+
+    @Field(() => Int)
+    @IsNotEmpty()
+    requestId: number;
+
+    @Field(() => [Session])
+    @ArrayUnique()
+    @ArrayNotEmpty()
+    sessionPreferences: Session[];
+}
+
 @Resolver()
 export class StaffRequestResolver {
     @Mutation(() => StaffRequest)
