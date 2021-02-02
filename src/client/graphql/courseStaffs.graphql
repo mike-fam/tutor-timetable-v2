@@ -3,7 +3,9 @@ query CourseStaffs($courseTermInput: CourseTermIdInput!) {
         role
         user {
             id
+            username
             name
         }
+        isNew
     }
 }

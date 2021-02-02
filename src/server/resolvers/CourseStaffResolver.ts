@@ -4,6 +4,9 @@ import { Role } from "../types/user";
 import { CourseTermIdInput } from "./CourseTermId";
 import { getConnection } from "typeorm";
 import { redacted } from "../constants";
+import { getOrCreateUsersByUsernames } from "../utils/user";
+import asyncFilter from "node-filter-async";
+import { asyncMap } from "../../utils/array";
 
 @InputType()
 export class CourseStaffInput extends CourseTermIdInput {
@@ -12,7 +15,10 @@ export class CourseStaffInput extends CourseTermIdInput {
 
     @Field(() => Boolean)
     isNew: boolean;
+}
 
+@InputType()
+export class CourseStaffUserInput extends CourseStaffInput {
     @Field()
     username: string;
 }
@@ -21,8 +27,8 @@ export class CourseStaffInput extends CourseTermIdInput {
 export class CourseStaffResolver {
     @Mutation(() => CourseStaff)
     async addCourseStaff(
-        @Arg("courseStaffInput")
-        { courseId, termId, role, isNew, username }: CourseStaffInput
+        @Arg("courseStaffUserInput")
+        { courseId, termId, role, isNew, username }: CourseStaffUserInput
     ): Promise<CourseStaff> {
         const timetable = await Timetable.findOneOrFail({ courseId, termId });
         let user = await User.findOne({ username });
@@ -54,5 +60,45 @@ export class CourseStaffResolver {
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
             .getMany();
+    }
+
+    @Mutation(() => [CourseStaff])
+    async addUsersToCourse(
+        @Arg("courseStaffInput")
+        { role, isNew, termId, courseId }: CourseStaffInput,
+        @Arg("usernames", () => [String]) usernames: string[]
+    ): Promise<CourseStaff[]> {
+        const timetable = await Timetable.findOneOrFail({ courseId, termId });
+        const users = await getOrCreateUsersByUsernames(usernames);
+        console.log("users:", users);
+        const existingCourseStaff = await CourseStaff.find({
+            where: users.map((user) => ({
+                timetableId: timetable.id,
+                userId: user.id,
+            })),
+        });
+        const newUsers = await asyncFilter(
+            users,
+            async (user) =>
+                !(
+                    await asyncMap(
+                        existingCourseStaff,
+                        async (courseStaff) => (await courseStaff.user).username
+                    )
+                ).includes(user.username)
+        );
+        if (newUsers.length === 0) {
+            return [];
+        }
+        return await CourseStaff.save(
+            CourseStaff.create(
+                newUsers.map((user) => ({
+                    timetable,
+                    user,
+                    role,
+                    isNew,
+                }))
+            )
+        );
     }
 }

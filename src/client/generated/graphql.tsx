@@ -242,6 +242,7 @@ export type Mutation = {
   addTerm: Term;
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
+  addUsersToCourse: Array<CourseStaff>;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
   generateSessions: Array<Session>;
@@ -278,6 +279,12 @@ export type MutationDeleteTermsArgs = {
 
 
 export type MutationAddCourseStaffArgs = {
+  courseStaffUserInput: CourseStaffUserInput;
+};
+
+
+export type MutationAddUsersToCourseArgs = {
+  usernames: Array<Scalars['String']>;
   courseStaffInput: CourseStaffInput;
 };
 
@@ -342,12 +349,19 @@ export type Allocation = {
   staff: Array<User>;
 };
 
-export type CourseStaffInput = {
+export type CourseStaffUserInput = {
   courseId: Scalars['Int'];
   termId: Scalars['Int'];
   role: Role;
   isNew: Scalars['Boolean'];
   username: Scalars['String'];
+};
+
+export type CourseStaffInput = {
+  courseId: Scalars['Int'];
+  termId: Scalars['Int'];
+  role: Role;
+  isNew: Scalars['Boolean'];
 };
 
 export type TimeslotInput = {
@@ -430,10 +444,10 @@ export type CourseStaffsQuery = (
   { __typename?: 'Query' }
   & { courseStaffs: Array<(
     { __typename?: 'CourseStaff' }
-    & Pick<CourseStaff, 'role'>
+    & Pick<CourseStaff, 'role' | 'isNew'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
+      & Pick<User, 'id' | 'username' | 'name'>
     ) }
   )> }
 );
@@ -716,8 +730,10 @@ export const CourseStaffsDocument = gql`
     role
     user {
       id
+      username
       name
     }
+    isNew
   }
 }
     `;

@@ -64,6 +64,11 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                                     Allocator
                                 </RouterLink>
                             </MenuItem>
+                            <MenuItem>
+                                <RouterLink to="/course-staff">
+                                    Course Staff
+                                </RouterLink>
+                            </MenuItem>
                         </MenuList>
                     </Menu>
                     <Menu>
