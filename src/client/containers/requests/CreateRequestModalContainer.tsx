@@ -43,9 +43,10 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                 },
             },
         });
+        // This still needs fixing.
         if (!error) {
             setTimeout(() => {
-                onClose();
+                handleOnClose();
             }, 1000);
         }
     };
