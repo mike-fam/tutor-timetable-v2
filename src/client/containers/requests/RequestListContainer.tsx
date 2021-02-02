@@ -1,5 +1,7 @@
 import React from "react";
 import { RequestList } from "../../components/requests/RequestList";
+import { useGetRequestsByCourseIdsQuery } from "../../generated/graphql";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { FilterType } from "./RequestContainer";
 
 type Props = {
@@ -16,11 +18,27 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
 ) => {
     const [tabView, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
 
-    const testList = [0, 1, 2, 3, 4, 5];
+    const { loading, data, refetch } = useQueryWithError(
+        useGetRequestsByCourseIdsQuery,
+        {
+            courseIds: [1, 2],
+        }
+    );
+
+    const handleTabChange = (tab: TabViewType) => {
+        if (tabView !== tab) {
+            setTabView(1 - tabView);
+            refetch();
+        }
+    };
 
     return (
         <>
-            <RequestList requestList={testList} setTabListView={setTabView} />
+            <RequestList
+                requestList={data}
+                loading={loading}
+                setTabListView={handleTabChange}
+            />
         </>
     );
 };

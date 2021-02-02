@@ -24,8 +24,10 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                         <Box
                             w="85%"
                             h="100%"
-                            bg="tomato"
-                            style={{ minHeight: "500px" }}
+                            style={{
+                                minHeight: "700px",
+                                border: "1px solid black",
+                            }}
                         >
                             <RequestListContainer filters={props.filters} />
                         </Box>
