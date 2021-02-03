@@ -148,18 +148,15 @@ export class StaffRequestResolver {
             swapPreference.push(sessionQuery);
         }
 
-        const isUnique =
+        // Checks for duplicate requests of a session.
+        if (
             (
                 await StaffRequest.find({
                     requester: requester,
                     session: session,
                 })
             ).length > 0
-                ? false
-                : true;
-
-        // Displays the session name in the error.
-        if (!isUnique) {
+        ) {
             const sessionStream = await SessionStream.findOne({
                 id: (await Session.findOne({ id: sessionId }))?.sessionStreamId,
             });

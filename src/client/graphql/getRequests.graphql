@@ -68,5 +68,6 @@ query getRequestsByCourseIds($courseIds: [Int!]!) {
                 name
             }
         }
+        type
     }
 }

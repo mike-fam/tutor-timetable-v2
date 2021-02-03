@@ -584,7 +584,7 @@ export type GetRequestsByCourseIdsQuery = (
   { __typename?: 'Query' }
   & { getRequestsByCourseIds: Array<(
     { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status'>
+    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type'>
     & { requester: (
       { __typename?: 'User' }
       & Pick<User, 'username'>
@@ -1110,6 +1110,7 @@ export const GetRequestsByCourseIdsDocument = gql`
         name
       }
     }
+    type
   }
 }
     `;

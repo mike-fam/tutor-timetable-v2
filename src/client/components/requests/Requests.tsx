@@ -1,13 +1,16 @@
 import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
 import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
-import { FilterType } from "../../containers/requests/RequestContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
+import { RequestStatus, RequestType } from "../../generated/graphql";
 import { RequestFilter } from "./RequestFilter";
 
 type Props = {
-    toggleFilters: (item: FilterType, selected: boolean) => void;
-    filters: Array<FilterType>;
+    toggleFilters: (
+        item: RequestType | RequestStatus,
+        selected: boolean
+    ) => void;
+    filters: Array<RequestType | RequestStatus>;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
