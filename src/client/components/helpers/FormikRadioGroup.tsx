@@ -1,6 +1,6 @@
-import { FormLabel, Radio, RadioGroup } from "@chakra-ui/react";
+import { FormControl, FormLabel, Radio, Stack } from "@chakra-ui/react";
 import { capitalCase } from "change-case";
-import { Field, FieldProps } from "formik";
+import { useField } from "formik";
 import React from "react";
 
 type Props = {
@@ -10,18 +10,23 @@ type Props = {
 };
 
 export const FormikRadioGroup: React.FC<Props> = ({ name, values, label }) => {
+    const [, { value }, { setValue }] = useField(name);
+
     return (
-        <>
+        <FormControl>
             <FormLabel>{label || capitalCase(name)}</FormLabel>
-            <Field name={name}>
-                {({ field }: FieldProps) => (
-                    <RadioGroup {...field}>
-                        {values.map((value) => (
-                            <Radio>{value}</Radio>
-                        ))}
-                    </RadioGroup>
-                )}
-            </Field>
-        </>
+            <Stack direction="row">
+                {values.map((radioValue) => (
+                    <Radio
+                        onChange={(e) => {
+                            setValue(e.target.value);
+                        }}
+                        value={radioValue}
+                        isChecked={value === radioValue}>
+                        {radioValue}
+                    </Radio>
+                ))}
+            </Stack>
+        </FormControl>
     );
 };

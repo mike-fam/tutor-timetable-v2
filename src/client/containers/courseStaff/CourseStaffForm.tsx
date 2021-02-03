@@ -8,14 +8,14 @@ import { FormikRadioGroup } from "../../components/helpers/FormikRadioGroup";
 type Props = {
     username?: string;
     role?: Role;
-    isNew?: boolean;
+    isNew?: string;
     onSubmit: () => void;
 };
 
 export const CourseStaffForm: React.FC<Props> = ({
     username = "",
     role = Role.Staff,
-    isNew = false,
+    isNew = "Experienced",
     onSubmit,
 }) => {
     return (
