@@ -26,7 +26,7 @@ export const FormikSelect: React.FC<Props> = ({
     return (
         <Field name={name}>
             {({ field, meta }: FieldProps) => (
-                <FormControl id={id || name} pt={3}>
+                <FormControl id={id || name} mt={3}>
                     <FormLabel>{label || capitalCase(name)}</FormLabel>
                     <Select {...field}>
                         {options.map((option) => (

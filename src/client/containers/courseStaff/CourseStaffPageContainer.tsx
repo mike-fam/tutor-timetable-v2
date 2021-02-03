@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-    Box,
     FormControl,
     FormLabel,
     Heading,
-    HStack,
+    IconButton,
     Stack,
     Text,
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -25,10 +17,13 @@ import { TermResponseType } from "../../types/term";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { capitalCase } from "change-case";
 import { CourseStaffTableContainer } from "./CourseStaffTableContainer";
+import { AddIcon } from "@chakra-ui/icons";
+import { AddCourseStaffModal } from "./AddCourseStaffModal";
 
 type Props = {};
 
 export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const { termId, courseId, changeCourse, changeTerm } = useTermCourse();
     const [term, setTerm] = useState<TermResponseType>();
@@ -43,7 +38,7 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
     return (
         <Wrapper>
             <Heading>Course Staff</Heading>
-            <Stack mt={4} spacing={4}>
+            <Stack mt={4} spacing={4} direction="column">
                 <Text fontWeight="bold">
                     Term: {term && `${capitalCase(term.type)}, ${term.year}`}
                 </Text>
@@ -57,8 +52,15 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
                         coordinatorOnly={true}
                     />
                 </FormControl>
+                <IconButton
+                    aria-label="add-course-staff-button"
+                    icon={<AddIcon />}
+                    colorScheme="green"
+                    onClick={onOpen}
+                />
                 <CourseStaffTableContainer term={termId} course={courseId} />
             </Stack>
+            <AddCourseStaffModal isOpen={isOpen} onClose={onClose} />
         </Wrapper>
     );
 };

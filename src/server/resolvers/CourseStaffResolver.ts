@@ -101,4 +101,17 @@ export class CourseStaffResolver {
             )
         );
     }
+
+    // TODO: Validation
+    @Mutation(() => Boolean)
+    async removeCourseStaff(
+        @Arg("courseStaffId") courseStaffId: number
+    ): Promise<boolean> {
+        try {
+            await CourseStaff.delete(courseStaffId);
+            return true;
+        } catch (e) {
+            throw new Error("Could not remove this staff member");
+        }
+    }
 }

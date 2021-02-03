@@ -36,8 +36,8 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
             IsoDay.WED,
             IsoDay.THU,
             IsoDay.FRI,
-            IsoDay.SAT,
-            IsoDay.SUN,
+            // IsoDay.SAT,
+            // IsoDay.SUN,
         ])
     );
     const [user, setUser] = useState<UserState>({
