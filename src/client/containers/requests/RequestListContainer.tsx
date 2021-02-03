@@ -1,6 +1,9 @@
 import React from "react";
 import { RequestList } from "../../components/requests/RequestList";
-import { useGetRequestsByCourseIdsQuery } from "../../generated/graphql";
+import {
+    RequestStatus,
+    useGetRequestsByCourseIdsQuery,
+} from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { FilterType } from "./RequestContainer";
 
@@ -17,6 +20,16 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [tabView, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
+
+    const [requestData, setRequestData] = React.useState<
+        Array<{
+            title: string;
+            status: RequestStatus;
+            session: string;
+            user: string;
+            preferences: Array<string>;
+        }>
+    >();
 
     const { loading, data, refetch } = useQueryWithError(
         useGetRequestsByCourseIdsQuery,
