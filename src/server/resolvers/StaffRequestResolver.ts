@@ -185,12 +185,7 @@ export class StaffRequestResolver {
     async getRequestById(
         @Arg("requestId", () => Int) requestId: number
     ): Promise<StaffRequest> {
-        const result = await StaffRequest.findOne({ id: requestId });
-        if (result) {
-            return result;
-        } else {
-            throw new Error("Request does not exist");
-        }
+        return await StaffRequest.findOneOrFail({ id: requestId });
     }
 
     // Used for displaying all requests associated with the user.
@@ -198,13 +193,9 @@ export class StaffRequestResolver {
     async getRequestsByUserId(
         @Arg("userId", () => Int) userId: number
     ): Promise<StaffRequest[]> {
-        const user = await User.findOne({ id: userId });
+        const user = await User.findOneOrFail({ id: userId });
 
-        if (user) {
-            return await StaffRequest.find({ requester: user });
-        } else {
-            throw new Error("User not found");
-        }
+        return await StaffRequest.find({ requester: user });
     }
 
     // Used for displaying requests on the main requests page.
@@ -212,7 +203,7 @@ export class StaffRequestResolver {
     async getRequestsByCourseIds(
         @Arg("courseIds", () => [Int]) courseIds: number[]
     ): Promise<StaffRequest[]> {
-        // Checks each courseId exists. Not entirely sure if this is best way of going about it.
+        // Checks each courseId exists.
         for (let id of courseIds) {
             Course.findOneOrFail(id);
         }
