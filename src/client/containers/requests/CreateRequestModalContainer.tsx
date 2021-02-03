@@ -35,11 +35,11 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                     description: formState.description,
                     duration: formState.duration,
                     // TODO: replace when preferences are done.
-                    preferences: [72, 73, 74],
+                    preferences: [71, 72, 73],
                     //TODO: replace actual userID
-                    userId: 4,
+                    userId: 3,
                     //TODO: replace actual sessionID
-                    sessionId: 71,
+                    sessionId: 104,
                 },
             },
         });

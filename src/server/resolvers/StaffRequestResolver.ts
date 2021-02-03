@@ -18,6 +18,7 @@ import { RequestStatus, RequestType } from "../../server/types/request";
 import {
     Course,
     Session,
+    SessionAllocation,
     SessionStream,
     StaffRequest,
     User,
@@ -113,10 +114,38 @@ export class StaffRequestResolver {
     ): Promise<StaffRequest> {
         const requester = await User.findOneOrFail({ id: userId });
         const session = await Session.findOneOrFail({ id: sessionId });
-        // const swapPreference = Session.findByIds(preferences);
+        const userSessions = await SessionAllocation.find({ userId });
+
+        // Checks if user is in session.
+        if (
+            (await SessionAllocation.find({ sessionId, userId })).length === 0
+        ) {
+            throw new Error(
+                "You cannot switch out of a session you are not in"
+            );
+        }
+
+        // Checks if session is in preferences.
+        if (preferences.includes(sessionId)) {
+            throw new Error("Your session cannot be in your preferences");
+        }
+
+        // Checks if user is trying to switch into a session they are already in.
+        if (
+            userSessions.filter(
+                (item) => preferences.indexOf(item.sessionId) > -1
+            ).length !== 0
+        ) {
+            throw new Error(
+                "Your cannot switch into a session you are already in"
+            );
+        }
+
+        // Checks session preferences exist.
         let swapPreference: Array<Session> = [];
         for (let sid of preferences) {
-            swapPreference.push(await Session.findOneOrFail({ id: sid }));
+            const sessionQuery = await Session.findOneOrFail({ id: sid });
+            swapPreference.push(sessionQuery);
         }
 
         const isUnique =
