@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
 import {
     RequestStatus,
@@ -6,6 +6,7 @@ import {
     useGetRequestsByCourseIdsQuery,
 } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { RequestResponse } from "../../types/requests";
 
 type Props = {
     filters: Array<RequestType | RequestStatus>;
@@ -21,8 +22,6 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
 ) => {
     const [tabView, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
 
-    const [requestData, setRequestData] = React.useState<Array<any>>([]);
-
     const { loading, data, refetch } = useQueryWithError(
         useGetRequestsByCourseIdsQuery,
         {
@@ -30,68 +29,28 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
         }
     );
 
+    const filteredRequestData: Array<RequestResponse> = useMemo(() => {
+        if (!data) {
+            return [];
+        }
+        return data.getRequestsByCourseIds.filter(
+            (request) =>
+                props.filters.includes(request.type) &&
+                props.filters.includes(request.status)
+        );
+    }, [data, props.filters]);
+
     const handleTabChange = (tab: TabViewType) => {
         if (tabView !== tab) {
             setTabView(1 - tabView);
-            filterRequestData();
             refetch();
-        }
-    };
-
-    // WIP. Probably better solutions.
-    const filterRequestData = () => {
-        let temp: any[] = [];
-        let filtered: Array<Array<any>> = [];
-        if (props.filters.length > 0 && data) {
-            for (let filter of props.filters) {
-                if (Object.keys(RequestType).includes(filter)) {
-                    if (
-                        props.filters.includes(
-                            "Permanent" as RequestType.Permanent
-                        ) &&
-                        props.filters.includes(
-                            "Temporary" as RequestType.Temporary
-                        )
-                    ) {
-                        filtered.push(data.getRequestsByCourseIds);
-                    } else {
-                        filtered.push(
-                            data.getRequestsByCourseIds.filter(
-                                (item) =>
-                                    item.type.toLowerCase() ===
-                                    filter.toLowerCase()
-                            )
-                        );
-                    }
-                }
-                if (Object.keys(RequestStatus).includes(filter)) {
-                    if (
-                        props.filters.includes("Open" as RequestStatus.Open) &&
-                        props.filters.includes("Closed" as RequestStatus.Closed)
-                    ) {
-                        filtered.push(data.getRequestsByCourseIds);
-                    } else {
-                        filtered.push(
-                            data.getRequestsByCourseIds.filter(
-                                (item) =>
-                                    item.status.toLowerCase() ===
-                                    filter.toLowerCase()
-                            )
-                        );
-                    }
-                }
-            }
-
-            temp = filtered.reduce((a, b) => a.filter((c) => b.includes(c)));
-            setRequestData([...temp]);
-            console.log(requestData);
         }
     };
 
     return (
         <>
             <RequestList
-                requestList={data}
+                requestList={filteredRequestData}
                 loading={loading}
                 setTabListView={handleTabChange}
             />

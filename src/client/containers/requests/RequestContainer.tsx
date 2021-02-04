@@ -12,13 +12,6 @@ export enum DisplayRequestType {
     Personal = "Personal",
 }
 
-// export enum FilterType {
-//     Temporary = "Temporary",
-//     Permanent = "Permanent",
-//     Cover = "Cover",
-//     Swap = "Swap",
-// }
-
 type Props = {
     userType: Role;
 };

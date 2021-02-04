@@ -13,10 +13,11 @@ import {
 import React from "react";
 import { TabViewType } from "../../containers/requests/RequestListContainer";
 import { GetRequestsByCourseIdsQuery } from "../../generated/graphql";
+import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 
 type Props = {
-    requestList: GetRequestsByCourseIdsQuery | undefined;
+    requestList: Array<RequestResponse>;
     loading: boolean;
     setTabListView: (value: TabViewType) => void;
 };
@@ -41,53 +42,41 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {props.requestList?.getRequestsByCourseIds.map(
-                                (requestItem, index) => (
-                                    <Tr
-                                        key={index}
-                                        _hover={{
-                                            cursor: "pointer",
-                                            background: "grey",
-                                        }}
-                                    >
-                                        <Td>{requestItem.title}</Td>
-                                        <Td>
-                                            {requestItem.requester.username}
-                                        </Td>
-                                        <Td>{requestItem.status}</Td>
-                                        <Td>
-                                            {
-                                                requestItem.session
-                                                    .sessionStream.name
-                                            }
-                                        </Td>
-                                        <Td>
-                                            {requestItem.swapPreference.map(
-                                                (session, i) => (
-                                                    <Text
-                                                        key={i}
-                                                        style={{
-                                                            display: "inline",
-                                                        }}
-                                                    >
-                                                        {
-                                                            session
-                                                                .sessionStream
-                                                                .name
-                                                        }
-                                                        {i + 1 ===
-                                                        requestItem
-                                                            .swapPreference
-                                                            .length
-                                                            ? ""
-                                                            : ", "}
-                                                    </Text>
-                                                )
-                                            )}
-                                        </Td>
-                                    </Tr>
-                                )
-                            )}
+                            {props.requestList.map((requestItem, index) => (
+                                <Tr
+                                    key={index}
+                                    _hover={{
+                                        cursor: "pointer",
+                                        background: "grey",
+                                    }}
+                                >
+                                    <Td>{requestItem.title}</Td>
+                                    <Td>{requestItem.requester.username}</Td>
+                                    <Td>{requestItem.status}</Td>
+                                    <Td>
+                                        {requestItem.session.sessionStream.name}
+                                    </Td>
+                                    <Td>
+                                        {requestItem.swapPreference.map(
+                                            (session, i) => (
+                                                <Text
+                                                    key={i}
+                                                    style={{
+                                                        display: "inline",
+                                                    }}
+                                                >
+                                                    {session.sessionStream.name}
+                                                    {i + 1 ===
+                                                    requestItem.swapPreference
+                                                        .length
+                                                        ? ""
+                                                        : ", "}
+                                                </Text>
+                                            )
+                                        )}
+                                    </Td>
+                                </Tr>
+                            ))}
                         </Tbody>
                     </Table>
                 </Loadable>

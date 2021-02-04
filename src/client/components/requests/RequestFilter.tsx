@@ -15,8 +15,8 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                 <Stack>
                     <SimpleCheckboxList
                         elements={[
-                            "Permanent" as RequestType.Permanent,
-                            "Temporary" as RequestType.Temporary,
+                            RequestType.Permanent,
+                            RequestType.Temporary,
                         ]}
                         selectFunc={props.setFilters}
                         helpTexts={[
@@ -25,10 +25,7 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                         ]}
                     />
                     <SimpleCheckboxList
-                        elements={[
-                            "Open" as RequestStatus.Open,
-                            "Closed" as RequestStatus.Closed,
-                        ]}
+                        elements={[RequestStatus.Open, RequestStatus.Closed]}
                         selectFunc={props.setFilters}
                         helpTexts={[
                             "Display open requests",
