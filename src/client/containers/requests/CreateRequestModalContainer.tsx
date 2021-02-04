@@ -12,7 +12,7 @@ type Props = {};
 export const CreateRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [submitForm, { data, loading, error }] = useMutationWithError(
+    const [submitForm, { loading }] = useMutationWithError(
         useCreateRequestMutation
     );
 
@@ -27,23 +27,25 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
         onClose();
     };
 
-    const handleSubmit = () => {
-        submitForm({
-            variables: {
-                requestDetails: {
-                    title: formState.title,
-                    description: formState.description,
-                    duration: formState.duration,
-                    // TODO: replace when preferences are done.
-                    preferences: [71, 72, 73],
-                    //TODO: replace actual userID
-                    userId: 3,
-                    //TODO: replace actual sessionID
-                    sessionId: 104,
+    const handleSubmit = async () => {
+        const result = await Promise.resolve(
+            submitForm({
+                variables: {
+                    requestDetails: {
+                        title: formState.title,
+                        description: formState.description,
+                        duration: formState.duration,
+                        // TODO: replace when preferences are done.
+                        preferences: [71, 72, 73],
+                        //TODO: replace actual userID
+                        userId: 3,
+                        //TODO: replace actual sessionID
+                        sessionId: 104,
+                    },
                 },
-            },
-        });
-        if (data !== undefined && data !== null) {
+            })
+        );
+        if (!result.errors) {
             setTimeout(() => {
                 handleOnClose();
             }, 1000);
