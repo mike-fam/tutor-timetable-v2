@@ -7,7 +7,7 @@ import { notSet } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
 import { useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { SessionRequestTimetableContainer } from "./SessionRequestTimetableContainer";
+import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 
 type Props = {};
@@ -85,7 +85,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     step={1}
                     header="Choose session to switch out of:"
                 >
-                    <SessionRequestTimetableContainer
+                    <CreateRequestSessionTimetableContainer
                         chosenCourse={course}
                         chosenTerm={currentTerm}
                         chooseSession={setSession}
