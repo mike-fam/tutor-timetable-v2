@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Role } from "../../../server/types/user";
 import { Requests } from "../../components/requests/Requests";
 import { RequestStatus, RequestType } from "../../generated/graphql";
@@ -21,20 +21,16 @@ export const RequestContainer: React.FunctionComponent<Props> = (
     >([]);
 
     // Update list of filters.
-    const updateFilters = (
-        item: RequestType | RequestStatus,
-        selected: boolean
-    ) => {
-        let tempArr: Array<RequestType | RequestStatus> = [...filters];
-
-        if (filters.indexOf(item) > -1 && !selected) {
-            tempArr.splice(filters.indexOf(item), 1);
-            setFilters(tempArr);
-        } else if (filters.indexOf(item) === -1 && selected) {
-            tempArr.push(item);
-            setFilters(tempArr);
-        }
-    };
+    const updateFilters = useCallback(
+        (item: RequestType | RequestStatus, selected: boolean) => {
+            if (selected && !filters.includes(item)) {
+                setFilters((prev) => [...prev, item]);
+            } else if (!selected && filters.includes(item)) {
+                setFilters((prev) => prev.filter((value) => value !== item));
+            }
+        },
+        [filters]
+    );
 
     return (
         <>

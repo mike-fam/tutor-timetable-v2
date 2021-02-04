@@ -23,6 +23,7 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                             "Display permanent requests",
                             "Display temporary requests",
                         ]}
+                        defaultSelectedAll={true}
                     />
                     <SimpleCheckboxList
                         elements={[RequestStatus.Open, RequestStatus.Closed]}
@@ -31,6 +32,7 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
                             "Display open requests",
                             "Display closed requests",
                         ]}
+                        defaultSelectedAll={true}
                     />
                 </Stack>
             </Center>
