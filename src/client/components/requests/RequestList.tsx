@@ -32,7 +32,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                 </TabList>
                 <Loadable isLoading={props.loading}>
                     {props.requestList.length > 0 ? (
-                        <Table>
+                        <Table size="lg">
                             <Thead>
                                 <Tr>
                                     <Th>Request Title</Th>
