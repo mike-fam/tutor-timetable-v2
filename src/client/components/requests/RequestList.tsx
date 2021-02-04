@@ -55,7 +55,13 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                         }}
                                     >
                                         <Td>{requestItem.title}</Td>
-                                        <Td>TODO</Td>
+                                        <Td>
+                                            {
+                                                requestItem.session
+                                                    .sessionStream.timetable
+                                                    .course.code
+                                            }
+                                        </Td>
                                         <Td>
                                             {requestItem.requester.username}
                                         </Td>

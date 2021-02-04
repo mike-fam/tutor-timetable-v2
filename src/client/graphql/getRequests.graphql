@@ -61,6 +61,11 @@ query getRequestsByCourseIds($courseIds: [Int!]!) {
         session {
             sessionStream {
                 name
+                timetable {
+                    course {
+                        code
+                    }
+                }
             }
         }
         session {

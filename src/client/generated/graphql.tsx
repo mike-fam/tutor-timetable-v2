@@ -594,6 +594,13 @@ export type GetRequestsByCourseIdsQuery = (
       & { sessionStream: (
         { __typename?: 'SessionStream' }
         & Pick<SessionStream, 'name'>
+        & { timetable: (
+          { __typename?: 'Timetable' }
+          & { course: (
+            { __typename?: 'Course' }
+            & Pick<Course, 'code'>
+          ) }
+        ) }
       ) }
     ), swapPreference: Array<(
       { __typename?: 'Session' }
@@ -1105,6 +1112,11 @@ export const GetRequestsByCourseIdsDocument = gql`
     session {
       sessionStream {
         name
+        timetable {
+          course {
+            code
+          }
+        }
       }
       week
     }
