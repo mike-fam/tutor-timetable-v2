@@ -1,4 +1,5 @@
 import {
+    Box,
     ModalBody,
     ModalBodyProps,
     ModalCloseButton,
@@ -19,14 +20,11 @@ export const StepModalStep: React.FC<Props> = ({
     ...props
 }) => {
     const { currentStep } = useContext(StepModalContext);
-    if (currentStep !== step) {
-        return null;
-    }
     return (
-        <>
+        <Box d={currentStep === step ? "block" : "none"}>
             <ModalHeader>{header}</ModalHeader>
             <ModalCloseButton />
             <ModalBody {...props}>{children}</ModalBody>
-        </>
+        </Box>
     );
 };

@@ -31,6 +31,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
         removePreference,
         session,
         setSession,
+        resetFormState,
     } = formState;
 
     const validateStep = useCallback(
@@ -70,7 +71,10 @@ export const CreateRequestButton: React.FC<Props> = () => {
                 validateStep={validateStep}
                 stepCount={5}
                 isOpen={isOpen}
-                onClose={onClose}
+                onClose={() => {
+                    resetFormState();
+                    onClose();
+                }}
                 size="6xl"
                 isCentered
             >

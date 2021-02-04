@@ -1,27 +1,14 @@
-import React, {
-    Dispatch,
-    SetStateAction,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
 import { SessionTheme } from "../../types/timetable";
-import {
-    useGetSessionsLazyQuery,
-    useTermsQuery,
-} from "../../generated/graphql";
+import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
-import { notSet } from "../../constants";
 import { Loadable } from "../../components/helpers/Loadable";
-import {
-    useLazyQueryWithError,
-    useQueryWithError,
-} from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { Text } from "@chakra-ui/react";
 import { getWeeksNum } from "../../utils/term";
 import { SessionResponseType } from "../../types/session";
-import { Map } from "immutable";
+import { useSessionMap } from "../../hooks/useSessionMap";
 
 type Props = {
     chosenCourse: number;
@@ -38,7 +25,7 @@ type Props = {
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
 };
 
-export const InteractiveRequestTimetableContainer: React.FC<Props> = ({
+export const InteractiveRequestTimetable: React.FC<Props> = ({
     chosenCourse,
     chosenTerm,
     chooseSession,
@@ -51,37 +38,18 @@ export const InteractiveRequestTimetableContainer: React.FC<Props> = ({
     chooseWeek,
 }) => {
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const [sessions, setSessions] = useState<Map<number, SessionResponseType>>(
-        Map()
-    );
-    const [getSessions, { data: sessionsData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
+    const { sessions, sessionsData, fetchSessions } = useSessionMap(
+        chosenTerm,
+        chosenCourse
     );
     useEffect(() => {
-        if ([chosenCourse, chosenTerm, chosenWeek].includes(notSet)) {
-            return;
-        }
-        getSessions({
-            variables: {
-                courseIds: [chosenCourse],
-                termId: chosenTerm,
-                week: chosenWeek,
-            },
-        });
-    }, [chosenCourse, chosenTerm, chosenWeek, getSessions]);
+        fetchSessions(chosenWeek);
+    }, [fetchSessions, chosenWeek]);
     const term = useMemo(
         () => termsData?.terms.filter((term) => term.id === chosenTerm)[0],
         [termsData, chosenTerm]
     );
     const weeksNum = useMemo(() => getWeeksNum(term), [term]);
-    useEffect(() => {
-        if (!sessionsData) {
-            return;
-        }
-        sessionsData.sessions.forEach((session) => {
-            setSessions((prev) => prev.set(session.id, session));
-        });
-    }, [sessionsData]);
     return (
         <Loadable isLoading={!termsData || !sessionsData}>
             <>

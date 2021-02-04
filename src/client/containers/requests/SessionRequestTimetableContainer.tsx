@@ -16,7 +16,7 @@ import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { getCurrentWeek, getWeeksNum } from "../../utils/term";
 import { SessionResponseType } from "../../types/session";
 import { getSessionsOfUser, isSessionPast } from "../../utils/session";
-import { InteractiveRequestTimetableContainer } from "./InteractiveRequestTimetableContainer";
+import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 
 type Props = {
     chosenCourse: number;
@@ -68,13 +68,13 @@ export const SessionRequestTimetableContainer: React.FC<Props> = ({
     );
     const weeksNum = useMemo(() => getWeeksNum(term), [term]);
     useEffect(() => {
-        if (!term) {
+        if (chosenWeek !== notSet) {
             return;
         }
         chooseWeek(Math.min(Math.max(0, currentWeek), weeksNum));
-    }, [currentWeek, term, weeksNum]);
+    }, [currentWeek, weeksNum, chosenWeek]);
     return (
-        <InteractiveRequestTimetableContainer
+        <InteractiveRequestTimetable
             chosenCourse={chosenCourse}
             chosenTerm={chosenTerm}
             chosenSessions={[chosenSession]}

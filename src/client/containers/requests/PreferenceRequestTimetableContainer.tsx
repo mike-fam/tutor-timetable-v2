@@ -1,12 +1,4 @@
-import React, {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-} from "react";
-import { InteractiveRequestTimetableContainer } from "./InteractiveRequestTimetableContainer";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Set } from "immutable";
 import { notSet } from "../../constants";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -46,7 +38,7 @@ export const PreferenceRequestTimetableContainer: React.FC<Props> = ({
         [preferences, removePreference, addPreference]
     );
     return (
-        // <InteractiveRequestTimetableContainer
+        // <InteractiveRequestTimetable
         //     chosenCourse={chosenCourse}
         //     chosenTerm={chosenTerm}
         //     chosenWeek={chosenWeek}

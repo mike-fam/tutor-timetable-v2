@@ -20,7 +20,7 @@ export type Query = {
   hello: Scalars['String'];
   me?: Maybe<User>;
   terms: Array<Term>;
-  term?: Maybe<Term>;
+  term: Term;
   courseStaffs: Array<CourseStaff>;
   sessionStreams: Array<SessionStream>;
   timetables: Array<Timetable>;
@@ -33,7 +33,7 @@ export type Query = {
 
 
 export type QueryTermArgs = {
-  id: Scalars['String'];
+  termId: Scalars['Int'];
 };
 
 
@@ -570,6 +570,19 @@ export type TermsQuery = (
   )> }
 );
 
+export type TermQueryVariables = Exact<{
+  termId: Scalars['Int'];
+}>;
+
+
+export type TermQuery = (
+  { __typename?: 'Query' }
+  & { term: (
+    { __typename?: 'Term' }
+    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames'>
+  ) }
+);
+
 export type UpdateAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput>;
 }>;
@@ -1062,6 +1075,44 @@ export function useTermsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Term
 export type TermsQueryHookResult = ReturnType<typeof useTermsQuery>;
 export type TermsLazyQueryHookResult = ReturnType<typeof useTermsLazyQuery>;
 export type TermsQueryResult = Apollo.QueryResult<TermsQuery, TermsQueryVariables>;
+export const TermDocument = gql`
+    query Term($termId: Int!) {
+  term(termId: $termId) {
+    id
+    type
+    year
+    startDate
+    endDate
+    weekNames
+  }
+}
+    `;
+
+/**
+ * __useTermQuery__
+ *
+ * To run a query within a React component, call `useTermQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTermQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTermQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *   },
+ * });
+ */
+export function useTermQuery(baseOptions: Apollo.QueryHookOptions<TermQuery, TermQueryVariables>) {
+        return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+      }
+export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>) {
+          return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+        }
+export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
+export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
+export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
 export const UpdateAvailabilitiesDocument = gql`
     mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
