@@ -152,9 +152,18 @@ export class StaffRequestResolver {
         let swapPreference: Array<Session> = [];
         for (let sid of preferences) {
             const sessionQuery = await Session.findOneOrFail({ id: sid });
-            if (sessionQuery.sessionStream.timetableId !== userTimeTable.id) {
+            const sessionStreamQuery = await SessionStream.findOneOrFail({
+                id: sessionQuery.sessionStreamId,
+            });
+            if (sessionStreamQuery.timetableId !== userTimeTable.id) {
+                console.log(
+                    "sessionstreamID: ",
+                    sessionStreamQuery.id,
+                    "timetableId: ",
+                    userTimeTable.id
+                );
                 throw new Error(
-                    "One or more sessions are from a different course."
+                    "One or more preferences are from a different course."
                 );
             }
             swapPreference.push(sessionQuery);
