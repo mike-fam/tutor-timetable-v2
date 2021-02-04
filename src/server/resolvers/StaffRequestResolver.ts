@@ -21,6 +21,7 @@ import {
     SessionAllocation,
     SessionStream,
     StaffRequest,
+    Timetable,
     User,
 } from "../entities";
 
@@ -115,6 +116,12 @@ export class StaffRequestResolver {
         const requester = await User.findOneOrFail({ id: userId });
         const session = await Session.findOneOrFail({ id: sessionId });
         const userSessions = await SessionAllocation.find({ userId });
+        const userSessionStream = await SessionStream.findOneOrFail({
+            id: session.sessionStreamId,
+        });
+        const userTimeTable = await Timetable.findOneOrFail({
+            id: userSessionStream.timetableId,
+        });
 
         // Checks if user is in session.
         if (
@@ -141,10 +148,15 @@ export class StaffRequestResolver {
             );
         }
 
-        // Checks session preferences exist.
+        // Checks session preferences exist and if they are part of the correct timetable.
         let swapPreference: Array<Session> = [];
         for (let sid of preferences) {
             const sessionQuery = await Session.findOneOrFail({ id: sid });
+            if (sessionQuery.sessionStream.timetableId !== userTimeTable.id) {
+                throw new Error(
+                    "One or more sessions are from a different course."
+                );
+            }
             swapPreference.push(sessionQuery);
         }
 

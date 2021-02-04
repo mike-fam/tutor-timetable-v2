@@ -63,10 +63,16 @@ query getRequestsByCourseIds($courseIds: [Int!]!) {
                 name
             }
         }
+        session {
+            week
+        }
         swapPreference {
             sessionStream {
                 name
             }
+        }
+        swapPreference {
+            week
         }
         type
     }

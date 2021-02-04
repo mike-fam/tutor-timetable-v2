@@ -1,9 +1,5 @@
 import React from "react";
 import { Role } from "../../../server/types/user";
-import {
-    RequestModal,
-    RequestModalType,
-} from "../../components/requests/RequestModal";
 import { Requests } from "../../components/requests/Requests";
 import { RequestStatus, RequestType } from "../../generated/graphql";
 

@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { TabViewType } from "../../containers/requests/RequestListContainer";
-import { GetRequestsByCourseIdsQuery } from "../../generated/graphql";
 import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 
@@ -54,7 +53,11 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                     <Td>{requestItem.requester.username}</Td>
                                     <Td>{requestItem.status}</Td>
                                     <Td>
-                                        {requestItem.session.sessionStream.name}
+                                        {requestItem.session.sessionStream
+                                            .name +
+                                            " (Week " +
+                                            requestItem.session.week +
+                                            ")"}
                                     </Td>
                                     <Td>
                                         {requestItem.swapPreference.map(
@@ -65,7 +68,11 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                                         display: "inline",
                                                     }}
                                                 >
-                                                    {session.sessionStream.name}
+                                                    {session.sessionStream
+                                                        .name +
+                                                        " (Week " +
+                                                        session.week +
+                                                        ")"}
                                                     {i + 1 ===
                                                     requestItem.swapPreference
                                                         .length

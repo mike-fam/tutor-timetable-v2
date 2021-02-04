@@ -8,6 +8,7 @@ import {
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { RequestResponse } from "../../types/requests";
 
+// TODO: Needs user data and update filter function.
 type Props = {
     filters: Array<RequestType | RequestStatus>;
 };
@@ -29,6 +30,7 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
         }
     );
 
+    //Handles filtering all requests.
     const filteredRequestData: Array<RequestResponse> = useMemo(() => {
         if (!data) {
             return [];
