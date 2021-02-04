@@ -208,6 +208,7 @@ export class StaffRequestResolver {
     }
 
     // Used for displaying requests on the main requests page.
+    // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
     async getRequestsByCourseIds(
         @Arg("courseIds", () => [Int]) courseIds: number[]

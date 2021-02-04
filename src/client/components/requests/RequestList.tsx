@@ -34,6 +34,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                         <Thead>
                             <Tr>
                                 <Th>Request Title</Th>
+                                <Th>Course</Th>
                                 <Th>Opened By</Th>
                                 <Th>Status</Th>
                                 <Th>Session</Th>
@@ -42,6 +43,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                         </Thead>
                         <Tbody>
                             {props.requestList.map((requestItem, index) => (
+                                // TODO: Styling
                                 <Tr
                                     key={index}
                                     _hover={{
@@ -50,6 +52,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                     }}
                                 >
                                     <Td>{requestItem.title}</Td>
+                                    <Td>TODO</Td>
                                     <Td>{requestItem.requester.username}</Td>
                                     <Td>{requestItem.status}</Td>
                                     <Td>
