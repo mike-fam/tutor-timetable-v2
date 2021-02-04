@@ -8,19 +8,17 @@ import React, {
     useState,
 } from "react";
 import { SessionTheme } from "../../types/timetable";
-import { useTermsQuery } from "../../generated/graphql";
 import { notSet } from "../../constants";
 import range from "lodash/range";
 import { UserContext } from "../../utils/user";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { getCurrentWeek, getWeeksNum } from "../../utils/term";
 import { SessionResponseType } from "../../types/session";
 import { getSessionsOfUser, isSessionPast } from "../../utils/session";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
+import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourse: number;
-    chosenTerm: number;
+    chosenCourseId: number;
+    chosenTermId: number;
     chosenSession: number;
     chooseSession: Dispatch<SetStateAction<number>>;
 };
@@ -29,19 +27,14 @@ type Props = {
 //		warning on sessions that user is not available on
 
 export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
-    chosenCourse,
-    chosenTerm,
+    chosenCourseId,
+    chosenTermId,
     chooseSession,
     chosenSession,
 }) => {
     const [chosenWeek, chooseWeek] = useState(notSet);
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { chosenTerm, weekNum, currentWeek } = useTermMetadata(chosenTermId);
     const { user } = useContext(UserContext);
-    const term = useMemo(
-        () => termsData?.terms.filter((term) => term.id === chosenTerm)[0],
-        [termsData, chosenTerm]
-    );
-    const currentWeek = useMemo(() => getCurrentWeek(term), [term]);
     const disabledWeeks = useMemo(
         () => (currentWeek > 0 ? range(0, currentWeek) : []),
         [currentWeek]
@@ -54,9 +47,9 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
     );
     const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {
-            return isSessionPast(session, term);
+            return isSessionPast(session, chosenTerm);
         },
-        [term]
+        [chosenTerm]
     );
     const getSessionTheme = useCallback(
         (session: SessionResponseType) => {
@@ -66,17 +59,16 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
         },
         [chosenSession]
     );
-    const weeksNum = useMemo(() => getWeeksNum(term), [term]);
     useEffect(() => {
         if (chosenWeek !== notSet) {
             return;
         }
-        chooseWeek(Math.min(Math.max(0, currentWeek), weeksNum));
-    }, [currentWeek, weeksNum, chosenWeek]);
+        chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));
+    }, [currentWeek, weekNum, chosenWeek]);
     return (
         <InteractiveRequestTimetable
-            chosenCourse={chosenCourse}
-            chosenTerm={chosenTerm}
+            chosenCourseId={chosenCourseId}
+            chosenTermId={chosenTermId}
             chosenSessions={[chosenSession]}
             chooseSession={chooseSession}
             disabledWeeks={disabledWeeks}

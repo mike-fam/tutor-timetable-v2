@@ -9,10 +9,11 @@ import { Text } from "@chakra-ui/react";
 import { getWeeksNum } from "../../utils/term";
 import { SessionResponseType } from "../../types/session";
 import { useSessionMap } from "../../hooks/useSessionMap";
+import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourse: number;
-    chosenTerm: number;
+    chosenCourseId: number;
+    chosenTermId: number;
     chosenWeek: number;
     chosenSessions: number[];
     chooseSession: (sessionId: number) => void;
@@ -26,8 +27,8 @@ type Props = {
 };
 
 export const InteractiveRequestTimetable: React.FC<Props> = ({
-    chosenCourse,
-    chosenTerm,
+    chosenCourseId,
+    chosenTermId,
     chooseSession,
     chosenSessions,
     disabledWeeks,
@@ -39,23 +40,19 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
 }) => {
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const { sessions, sessionsData, fetchSessions } = useSessionMap(
-        chosenTerm,
-        chosenCourse
+        chosenTermId,
+        chosenCourseId
     );
     useEffect(() => {
         fetchSessions(chosenWeek);
     }, [fetchSessions, chosenWeek]);
-    const term = useMemo(
-        () => termsData?.terms.filter((term) => term.id === chosenTerm)[0],
-        [termsData, chosenTerm]
-    );
-    const weeksNum = useMemo(() => getWeeksNum(term), [term]);
+    const { weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     return (
         <Loadable isLoading={!termsData || !sessionsData}>
             <>
                 <RequestTimetableContainer
-                    chosenCourse={chosenCourse}
-                    chosenTerm={chosenTerm}
+                    chosenCourse={chosenCourseId}
+                    chosenTerm={chosenTermId}
                     chosenWeek={chosenWeek}
                     checkDisabled={checkSessionDisabled}
                     getSessionTheme={getSessionTheme}
@@ -64,8 +61,8 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
                 />
                 <WeekNav
                     showAllWeeks={false}
-                    weekNames={term?.weekNames || []}
-                    weeksNum={weeksNum}
+                    weekNames={chosenTerm?.weekNames || []}
+                    weeksNum={weekNum}
                     chosenWeek={chosenWeek}
                     chooseWeek={chooseWeek}
                     disabled={disabledWeeks}
@@ -80,7 +77,7 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
                                 return "";
                             }
                             return `${session.sessionStream.name} on ${
-                                term?.weekNames[session.week]
+                                chosenTerm?.weekNames[session.week]
                             }`;
                         })
                         .join(", ")}

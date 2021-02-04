@@ -1,10 +1,9 @@
-import { Term, TermsQuery } from "../generated/graphql";
+import { Term } from "../generated/graphql";
 import isBefore from "date-fns/isBefore";
 import { parseISO } from "date-fns";
 import isAfter from "date-fns/isAfter";
 import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
-import { ArrayElement } from "../types/helpers";
 import { TermResponseType } from "../types/term";
 
 export const getCurrentTerm = (

@@ -9,6 +9,7 @@ import { useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
+import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 
 type Props = {};
 
@@ -18,15 +19,10 @@ export const CreateRequestButton: React.FC<Props> = () => {
     const formState = useRequestFormState();
     const {
         title,
-        setTitle,
         description,
-        setDescription,
         duration,
-        setDuration,
         course,
-        setCourse,
         preferences,
-        setPreferences,
         addPreference,
         removePreference,
         session,
@@ -41,6 +37,9 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     return title.length !== 0 && course !== notSet;
                 case 1:
                     return session !== notSet;
+                case 2:
+                case 3:
+                    return true;
                 default:
                     return false;
             }
@@ -69,7 +68,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     });
                 }}
                 validateStep={validateStep}
-                stepCount={5}
+                stepCount={4}
                 isOpen={isOpen}
                 onClose={() => {
                     resetFormState();
@@ -86,8 +85,8 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     header="Choose session to switch out of:"
                 >
                     <CreateRequestSessionTimetableContainer
-                        chosenCourse={course}
-                        chosenTerm={currentTerm}
+                        chosenCourseId={course}
+                        chosenTermId={currentTerm}
                         chooseSession={setSession}
                         chosenSession={session}
                     />
@@ -96,13 +95,17 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     step={2}
                     header="Choose preferred session(s) to switch in to:"
                 >
-                    Test 2
+                    <CreateRequestPreferenceTimetableContainer
+                        chosenCourseId={course}
+                        chosenTermId={currentTerm}
+                        chosenSession={session}
+                        preferences={preferences}
+                        addPreference={addPreference}
+                        removePreference={removePreference}
+                    />
                 </StepModalStep>
-                <StepModalStep step={3} header="Basic information">
+                <StepModalStep step={3} header="Review Request Information">
                     Test 3
-                </StepModalStep>
-                <StepModalStep step={4} header="Basic information">
-                    Test 4
                 </StepModalStep>
             </StepModal>
         </>

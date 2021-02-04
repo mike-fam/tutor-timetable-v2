@@ -29,6 +29,8 @@ export type Query = {
   sessions: Array<Session>;
   myAvailability: Array<Timeslot>;
   myPreference?: Maybe<Preference>;
+  courses: Array<Course>;
+  course: Course;
 };
 
 
@@ -68,6 +70,11 @@ export type QuerySessionsArgs = {
 
 export type QueryMyPreferenceArgs = {
   preferenceFindInput: CourseTermIdInput;
+};
+
+
+export type QueryCourseArgs = {
+  courseId: Scalars['Int'];
 };
 
 export type User = {
@@ -394,6 +401,19 @@ export type AddAvailabilitiesMutation = (
   )> }
 );
 
+export type CourseQueryVariables = Exact<{
+  courseId: Scalars['Int'];
+}>;
+
+
+export type CourseQuery = (
+  { __typename?: 'Query' }
+  & { course: (
+    { __typename?: 'Course' }
+    & Pick<Course, 'code' | 'title'>
+  ) }
+);
+
 export type CourseStaffsQueryVariables = Exact<{
   courseTermInput: CourseTermIdInput;
 }>;
@@ -646,6 +666,40 @@ export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOp
 export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
+export const CourseDocument = gql`
+    query Course($courseId: Int!) {
+  course(courseId: $courseId) {
+    code
+    title
+  }
+}
+    `;
+
+/**
+ * __useCourseQuery__
+ *
+ * To run a query within a React component, call `useCourseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCourseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCourseQuery({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useCourseQuery(baseOptions: Apollo.QueryHookOptions<CourseQuery, CourseQueryVariables>) {
+        return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+      }
+export function useCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>) {
+          return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+        }
+export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
+export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
+export type CourseQueryResult = Apollo.QueryResult<CourseQuery, CourseQueryVariables>;
 export const CourseStaffsDocument = gql`
     query CourseStaffs($courseTermInput: CourseTermIdInput!) {
   courseStaffs(courseTermInput: $courseTermInput) {

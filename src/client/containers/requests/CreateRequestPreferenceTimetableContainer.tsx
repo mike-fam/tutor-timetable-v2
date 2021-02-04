@@ -1,19 +1,23 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { Set } from "immutable";
 import { notSet } from "../../constants";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { useTermsQuery } from "../../generated/graphql";
 import { UserContext } from "../../utils/user";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import { SessionResponseType } from "../../types/session";
 import { getSessionsOfUser } from "../../utils/session";
-import { getCurrentWeek } from "../../utils/term";
 import range from "lodash/range";
 import { SessionTheme } from "../../types/timetable";
+import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourse: number;
-    chosenTerm: number;
+    chosenCourseId: number;
+    chosenTermId: number;
     chosenSession: number;
     preferences: Set<number>;
     addPreference: (sessionId: number) => void;
@@ -21,16 +25,16 @@ type Props = {
 };
 
 export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
-    chosenCourse,
-    chosenTerm,
+    chosenCourseId,
+    chosenTermId,
     chosenSession,
     preferences,
     addPreference,
     removePreference,
 }) => {
     const [chosenWeek, chooseWeek] = useState(notSet);
-    const { data: termsData } = useQueryWithError(useTermsQuery);
     const { user } = useContext(UserContext);
+    const { currentWeek, weekNum } = useTermMetadata(chosenTermId);
 
     const filterSessions = useCallback(
         (sessions: Array<SessionResponseType>) => {
@@ -46,11 +50,6 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         },
         [preferences, removePreference, addPreference]
     );
-    const term = useMemo(
-        () => termsData?.terms.filter((term) => term.id === chosenTerm)[0],
-        [termsData, chosenTerm]
-    );
-    const currentWeek = useMemo(() => getCurrentWeek(term), [term]);
     const disabledWeeks = useMemo(
         () => (currentWeek > 0 ? range(0, currentWeek) : []),
         [currentWeek]
@@ -61,17 +60,29 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         },
         [chosenSession]
     );
-    const getSessionTheme = useCallback((session: SessionResponseType) => {
-        if (session.id === chosenSession || preferences.includes(session.id)) {
-            return SessionTheme.SUCCESS;
-        } else {
-            return SessionTheme.PRIMARY;
+    const getSessionTheme = useCallback(
+        (session: SessionResponseType) => {
+            if (
+                session.id === chosenSession ||
+                preferences.includes(session.id)
+            ) {
+                return SessionTheme.SUCCESS;
+            } else {
+                return SessionTheme.PRIMARY;
+            }
+        },
+        [chosenSession, preferences]
+    );
+    useEffect(() => {
+        if (chosenWeek !== notSet) {
+            return;
         }
-    }, [chosenSession, preferences]);
+        chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));
+    }, [currentWeek, weekNum, chosenWeek]);
     return (
         <InteractiveRequestTimetable
-            chosenCourse={chosenCourse}
-            chosenTerm={chosenTerm}
+            chosenCourseId={chosenCourseId}
+            chosenTermId={chosenTermId}
             chosenWeek={chosenWeek}
             chosenSessions={preferences.toArray()}
             chooseSession={chooseSession}

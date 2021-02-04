@@ -1,5 +1,5 @@
+import * as Apollo from "@apollo/client";
 import {
-    LazyQueryResult,
     MutationHookOptions,
     MutationTuple,
     QueryHookOptions,
@@ -8,11 +8,6 @@ import {
 } from "@apollo/client";
 import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";
-import * as Apollo from "@apollo/client";
-import {
-    CourseStaffsQuery,
-    CourseStaffsQueryVariables,
-} from "../generated/graphql";
 
 export const useQueryWithError = <T, S>(
     useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
