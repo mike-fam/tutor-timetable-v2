@@ -6,8 +6,11 @@ import { RequestForm } from "../../components/requests/RequestForm";
 import { useCreateRequestMutation } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { UserState } from "../../types/user";
 
-type Props = {};
+type Props = {
+    user: UserState;
+};
 
 export const CreateRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();

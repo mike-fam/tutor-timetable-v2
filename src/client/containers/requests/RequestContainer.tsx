@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { Role } from "../../../server/types/user";
 import { Requests } from "../../components/requests/Requests";
 import { RequestStatus, RequestType } from "../../generated/graphql";
+import { UserContext } from "../../utils/user";
 
 export enum DisplayRequestType {
     All = "All",
@@ -20,6 +21,8 @@ export const RequestContainer: React.FunctionComponent<Props> = (
         Array<RequestType | RequestStatus>
     >([]);
 
+    const { user } = useContext(UserContext);
+
     // Update list of filters.
     const updateFilters = useCallback(
         (item: RequestType | RequestStatus, selected: boolean) => {
@@ -34,7 +37,11 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Requests toggleFilters={updateFilters} filters={filters} />
+            <Requests
+                toggleFilters={updateFilters}
+                filters={filters}
+                user={user}
+            />
         </>
     );
 };

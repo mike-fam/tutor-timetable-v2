@@ -3,6 +3,7 @@ import React from "react";
 import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestStatus, RequestType } from "../../generated/graphql";
+import { UserState } from "../../types/user";
 import { RequestFilter } from "./RequestFilter";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
         selected: boolean
     ) => void;
     filters: Array<RequestType | RequestStatus>;
+    user: UserState;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
@@ -32,7 +34,10 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 border: "1px solid black",
                             }}
                         >
-                            <RequestListContainer filters={props.filters} />
+                            <RequestListContainer
+                                filters={props.filters}
+                                user={props.user}
+                            />
                         </Box>
 
                         <Stack w="15%">
@@ -40,8 +45,9 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                {/*<CreateRequestModalContainer />*/}
-                                <CreateRequestModalContainer />
+                                <CreateRequestModalContainer
+                                    user={props.user}
+                                />
                             </Box>
                             <Divider></Divider>
                             <Box>

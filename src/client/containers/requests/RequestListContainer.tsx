@@ -7,10 +7,12 @@ import {
 } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { RequestResponse } from "../../types/requests";
+import { UserState } from "../../types/user";
 
 // TODO: Needs user data and update filter function.
 type Props = {
     filters: Array<RequestType | RequestStatus>;
+    user: UserState;
 };
 
 export enum TabViewType {
@@ -35,12 +37,21 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
         if (!data) {
             return [];
         }
-        return data.getRequestsByCourseIds.filter(
-            (request) =>
-                props.filters.includes(request.type) &&
-                props.filters.includes(request.status)
-        );
-    }, [data, props.filters]);
+        return data.getRequestsByCourseIds.filter((request) => {
+            if (tabView === TabViewType.PERSONAL) {
+                return (
+                    props.filters.includes(request.type) &&
+                    props.filters.includes(request.status) &&
+                    request.requester.username === props.user.username
+                );
+            } else {
+                return (
+                    props.filters.includes(request.type) &&
+                    props.filters.includes(request.status)
+                );
+            }
+        });
+    }, [data, props.filters, props.user.username, tabView]);
 
     const handleTabChange = (tab: TabViewType) => {
         if (tabView !== tab) {

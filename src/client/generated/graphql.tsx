@@ -587,7 +587,7 @@ export type GetRequestsByCourseIdsQuery = (
     & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type'>
     & { requester: (
       { __typename?: 'User' }
-      & Pick<User, 'username'>
+      & Pick<User, 'id' | 'username'>
     ), session: (
       { __typename?: 'Session' }
       & Pick<Session, 'week'>
@@ -1107,6 +1107,7 @@ export const GetRequestsByCourseIdsDocument = gql`
     title
     status
     requester {
+      id
       username
     }
     session {
