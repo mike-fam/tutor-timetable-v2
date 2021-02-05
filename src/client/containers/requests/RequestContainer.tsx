@@ -1,5 +1,4 @@
 import React, { useCallback, useContext } from "react";
-import { Role } from "../../../server/types/user";
 import { Requests } from "../../components/requests/Requests";
 import { RequestStatus, RequestType } from "../../generated/graphql";
 import { UserContext } from "../../utils/user";
