@@ -27,7 +27,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                 <Center>
                     <HStack spacing={8} w="75%">
                         <Box
-                            w="85%"
+                            w="100%"
                             h="100%"
                             style={{
                                 minHeight: "700px",
@@ -40,7 +40,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                             />
                         </Box>
 
-                        <Stack w="15%">
+                        <Stack>
                             <Center>
                                 <h1>options</h1>
                             </Center>

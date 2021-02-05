@@ -9,13 +9,7 @@ export enum DisplayRequestType {
     Personal = "Personal",
 }
 
-type Props = {
-    userType: Role;
-};
-
-export const RequestContainer: React.FunctionComponent<Props> = (
-    props: Props
-) => {
+export const RequestContainer: React.FunctionComponent = () => {
     //Filter management.
     const [filters, setFilters] = React.useState<
         Array<RequestType | RequestStatus>
