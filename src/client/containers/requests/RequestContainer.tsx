@@ -1,6 +1,12 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
+import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
 import { Requests } from "../../components/requests/Requests";
-import { RequestStatus, RequestType } from "../../generated/graphql";
+import {
+    RequestStatus,
+    RequestType,
+    useTermsQuery,
+} from "../../generated/graphql";
+import { getCurrentTerm } from "../../utils/term";
 import { UserContext } from "../../utils/user";
 
 export enum DisplayRequestType {
@@ -14,7 +20,17 @@ export const RequestContainer: React.FunctionComponent = () => {
         Array<RequestType | RequestStatus>
     >([]);
 
+    const { data } = useTermsQuery();
+
     const { user } = useContext(UserContext);
+
+    // Get Current Term
+    const currentTerm = useMemo(() => {
+        if (!data) {
+            return null;
+        }
+        return getCurrentTerm(data.terms);
+    }, [data]);
 
     // Update list of filters.
     const updateFilters = useCallback(
@@ -34,6 +50,7 @@ export const RequestContainer: React.FunctionComponent = () => {
                 toggleFilters={updateFilters}
                 filters={filters}
                 user={user}
+                currentTerm={currentTerm}
             />
         </>
     );

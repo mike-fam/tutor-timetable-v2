@@ -21,6 +21,7 @@ import {
     SessionAllocation,
     SessionStream,
     StaffRequest,
+    Term,
     Timetable,
     User,
 } from "../entities";
@@ -206,10 +207,11 @@ export class StaffRequestResolver {
         return await StaffRequest.findOneOrFail({ id: requestId });
     }
 
-    // Used for displaying all requests associated with the user.
+    // Used for displaying all requests associated with the user for a given term
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
-        @Arg("userId", () => Int) userId: number
+        @Arg("userId", () => Int) userId: number,
+        @Arg("termId", () => Int) termId: number
     ): Promise<StaffRequest[]> {
         const user = await User.findOneOrFail({ id: userId });
 
@@ -220,11 +222,13 @@ export class StaffRequestResolver {
     // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
     async getRequestsByCourseIds(
-        @Arg("courseIds", () => [Int]) courseIds: number[]
+        @Arg("courseIds", () => [Int]) courseIds: number[],
+        @Arg("termId", () => Int) termId: number
     ): Promise<StaffRequest[]> {
-        // Checks each courseId exists.
+        // Checks each courseId exists and the term provided is correct.
         for (let id of courseIds) {
-            Course.findOneOrFail(id);
+            await Course.findOneOrFail(id);
+            await Timetable.findOneOrFail({ courseId: id, termId: termId });
         }
 
         return await getConnection()
@@ -233,7 +237,10 @@ export class StaffRequestResolver {
             .innerJoinAndSelect("staffRequest.session", "session")
             .innerJoinAndSelect("session.sessionStream", "sessionStream")
             .innerJoinAndSelect("sessionStream.timetable", "timetable")
-            .where("timetable.courseId IN (:...courseIds)", { courseIds })
+            .where(
+                "timetable.courseId IN (:...courseIds) AND timetable.termId =:termId",
+                { courseIds, termId }
+            )
             .getMany();
     }
 

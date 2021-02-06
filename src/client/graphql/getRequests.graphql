@@ -29,8 +29,8 @@ query getRequestById($requestId: Int!) {
     }
 }
 
-query getRequestsByUserId($userId: Int!) {
-    getRequestsByUserId(userId: $userId) {
+query getRequestsByUserId($userId: Int!, $termId: Int!) {
+    getRequestsByUserId(userId: $userId, termId: $termId) {
         id
         title
         status
@@ -50,8 +50,8 @@ query getRequestsByUserId($userId: Int!) {
     }
 }
 
-query getRequestsByCourseIds($courseIds: [Int!]!) {
-    getRequestsByCourseIds(courseIds: $courseIds) {
+query getRequestsByCourseIds($courseIds: [Int!]!, $termId: Int!) {
+    getRequestsByCourseIds(courseIds: $courseIds, termId: $termId) {
         id
         title
         status

@@ -80,11 +80,13 @@ export type QueryGetRequestByIdArgs = {
 
 
 export type QueryGetRequestsByUserIdArgs = {
+  termId: Scalars['Int'];
   userId: Scalars['Int'];
 };
 
 
 export type QueryGetRequestsByCourseIdsArgs = {
+  termId: Scalars['Int'];
   courseIds: Array<Scalars['Int']>;
 };
 
@@ -548,6 +550,7 @@ export type GetRequestByIdQuery = (
 
 export type GetRequestsByUserIdQueryVariables = Exact<{
   userId: Scalars['Int'];
+  termId: Scalars['Int'];
 }>;
 
 
@@ -577,6 +580,7 @@ export type GetRequestsByUserIdQuery = (
 
 export type GetRequestsByCourseIdsQueryVariables = Exact<{
   courseIds: Array<Scalars['Int']>;
+  termId: Scalars['Int'];
 }>;
 
 
@@ -1053,8 +1057,8 @@ export type GetRequestByIdQueryHookResult = ReturnType<typeof useGetRequestByIdQ
 export type GetRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRequestByIdLazyQuery>;
 export type GetRequestByIdQueryResult = Apollo.QueryResult<GetRequestByIdQuery, GetRequestByIdQueryVariables>;
 export const GetRequestsByUserIdDocument = gql`
-    query getRequestsByUserId($userId: Int!) {
-  getRequestsByUserId(userId: $userId) {
+    query getRequestsByUserId($userId: Int!, $termId: Int!) {
+  getRequestsByUserId(userId: $userId, termId: $termId) {
     id
     title
     status
@@ -1088,6 +1092,7 @@ export const GetRequestsByUserIdDocument = gql`
  * const { data, loading, error } = useGetRequestsByUserIdQuery({
  *   variables: {
  *      userId: // value for 'userId'
+ *      termId: // value for 'termId'
  *   },
  * });
  */
@@ -1101,8 +1106,8 @@ export type GetRequestsByUserIdQueryHookResult = ReturnType<typeof useGetRequest
 export type GetRequestsByUserIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByUserIdLazyQuery>;
 export type GetRequestsByUserIdQueryResult = Apollo.QueryResult<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>;
 export const GetRequestsByCourseIdsDocument = gql`
-    query getRequestsByCourseIds($courseIds: [Int!]!) {
-  getRequestsByCourseIds(courseIds: $courseIds) {
+    query getRequestsByCourseIds($courseIds: [Int!]!, $termId: Int!) {
+  getRequestsByCourseIds(courseIds: $courseIds, termId: $termId) {
     id
     title
     status
@@ -1151,6 +1156,7 @@ export const GetRequestsByCourseIdsDocument = gql`
  * const { data, loading, error } = useGetRequestsByCourseIdsQuery({
  *   variables: {
  *      courseIds: // value for 'courseIds'
+ *      termId: // value for 'termId'
  *   },
  * });
  */

@@ -3,6 +3,7 @@ import { RequestList } from "../../components/requests/RequestList";
 import {
     RequestStatus,
     RequestType,
+    Term,
     useGetRequestsByCourseIdsQuery,
 } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -13,6 +14,7 @@ import { UserState } from "../../types/user";
 type Props = {
     filters: Array<RequestType | RequestStatus>;
     user: UserState;
+    currentTerm: Pick<Term, "id" | "startDate" | "endDate"> | null;
 };
 
 export enum TabViewType {
@@ -28,6 +30,7 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
     const { loading, data, refetch } = useQueryWithError(
         useGetRequestsByCourseIdsQuery,
         {
+            termId: 2,
             courseIds: [1, 2],
         }
     );
