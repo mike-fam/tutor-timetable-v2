@@ -45,16 +45,26 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
                 return (
                     props.filters.includes(request.type) &&
                     props.filters.includes(request.status) &&
+                    request.session.sessionStream.timetable.termId ===
+                        props.currentTerm?.id &&
                     request.requester.username === props.user.username
                 );
             } else {
                 return (
                     props.filters.includes(request.type) &&
-                    props.filters.includes(request.status)
+                    props.filters.includes(request.status) &&
+                    request.session.sessionStream.timetable.termId ===
+                        props.currentTerm?.id
                 );
             }
         });
-    }, [data, props.filters, props.user.username, tabView]);
+    }, [
+        data,
+        props.currentTerm?.id,
+        props.filters,
+        props.user.username,
+        tabView,
+    ]);
 
     const handleTabChange = (tab: TabViewType) => {
         if (tabView !== tab) {

@@ -601,6 +601,7 @@ export type GetRequestsByCourseIdsQuery = (
         & Pick<SessionStream, 'name'>
         & { timetable: (
           { __typename?: 'Timetable' }
+          & Pick<Timetable, 'termId'>
           & { course: (
             { __typename?: 'Course' }
             & Pick<Course, 'code'>
@@ -1120,6 +1121,7 @@ export const GetRequestsByCourseIdsDocument = gql`
       sessionStream {
         name
         timetable {
+          termId
           course {
             code
           }
