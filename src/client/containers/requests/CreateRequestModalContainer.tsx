@@ -12,7 +12,7 @@ type Props = {
     user: UserState;
 };
 
-export const CreateRequestModalContainer: React.FC<Props> = () => {
+export const CreateRequestModalContainer: React.FC<Props> = (props: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [submitForm, { loading }] = useMutationWithError(
@@ -41,9 +41,10 @@ export const CreateRequestModalContainer: React.FC<Props> = () => {
                         // TODO: replace when preferences are done.
                         preferences: [71, 72, 73, 74, 75, 76],
                         //TODO: replace actual userID
-                        userId: 3,
+                        userId: 4,
                         //TODO: replace actual sessionID
                         sessionId: 104,
+                        termId: 2,
                     },
                 },
             })

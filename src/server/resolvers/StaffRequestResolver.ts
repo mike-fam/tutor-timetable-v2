@@ -48,6 +48,9 @@ class RequestFormInputType {
     @Field(() => Int)
     userId: number;
 
+    @Field(() => Int)
+    termId: number;
+
     // Session user wants to switch out of.
     @Field(() => Int)
     sessionId: number;
@@ -112,6 +115,7 @@ export class StaffRequestResolver {
             description,
             userId,
             sessionId,
+            termId,
         }: RequestFormInputType
     ): Promise<StaffRequest> {
         const requester = await User.findOneOrFail({ id: userId });
@@ -120,8 +124,10 @@ export class StaffRequestResolver {
         const userSessionStream = await SessionStream.findOneOrFail({
             id: session.sessionStreamId,
         });
+        // Ensures session is for a valid timetable and session is for the current term.
         const userTimeTable = await Timetable.findOneOrFail({
             id: userSessionStream.timetableId,
+            termId: termId,
         });
 
         // Checks if user is in session.
@@ -156,17 +162,11 @@ export class StaffRequestResolver {
             const sessionStreamQuery = await SessionStream.findOneOrFail({
                 id: sessionQuery.sessionStreamId,
             });
-            if (sessionStreamQuery.timetableId !== userTimeTable.id) {
-                console.log(
-                    "sessionstreamID: ",
-                    sessionStreamQuery.id,
-                    "timetableId: ",
-                    userTimeTable.id
-                );
-                throw new Error(
-                    "One or more preferences are from a different course."
-                );
-            }
+            // Checks each preference is for a valid timetable and each preference is for the current term.
+            await Timetable.findOneOrFail({
+                id: sessionStreamQuery.timetableId,
+                termId: termId,
+            });
             swapPreference.push(sessionQuery);
         }
 

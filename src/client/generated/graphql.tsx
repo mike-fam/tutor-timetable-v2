@@ -411,6 +411,7 @@ export type RequestFormInputType = {
   duration: RequestType;
   description?: Maybe<Scalars['String']>;
   userId: Scalars['Int'];
+  termId: Scalars['Int'];
   sessionId: Scalars['Int'];
 };
 
