@@ -11,6 +11,7 @@ import {
     Thead,
     Tr,
 } from "@chakra-ui/react";
+import { request } from "express";
 import React from "react";
 import { TabViewType } from "../../containers/requests/RequestListContainer";
 import { RequestResponse } from "../../types/requests";
@@ -35,12 +36,26 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                         <Table size="lg">
                             <Thead>
                                 <Tr>
-                                    <Th>Request Title</Th>
-                                    <Th>Course</Th>
-                                    <Th>Opened By</Th>
-                                    <Th>Status</Th>
-                                    <Th>Session</Th>
-                                    <Th>Preferences</Th>
+                                    <Th minWidth={"200px"}>
+                                        <Center>Title</Center>
+                                    </Th>
+                                    <Th>
+                                        <Center>Course</Center>
+                                    </Th>
+                                    <Th>
+                                        <Center minWidth={"150px"}>
+                                            Opened By
+                                        </Center>
+                                    </Th>
+                                    <Th>
+                                        <Center>Status</Center>
+                                    </Th>
+                                    <Th minWidth={"200px"}>
+                                        <Center>Session</Center>
+                                    </Th>
+                                    <Th>
+                                        <Center>Preferences</Center>
+                                    </Th>
                                 </Tr>
                             </Thead>
 
@@ -54,26 +69,48 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                             background: "grey",
                                         }}
                                     >
-                                        <Td>{requestItem.title}</Td>
                                         <Td>
-                                            {
-                                                requestItem.session
-                                                    .sessionStream.timetable
-                                                    .course.code
-                                            }
+                                            <Center>
+                                                <Text isTruncated>
+                                                    {requestItem.title}
+                                                </Text>
+                                            </Center>
                                         </Td>
                                         <Td>
-                                            {requestItem.requester.username}
-                                        </Td>
-                                        <Td>{requestItem.status}</Td>
-                                        <Td>
-                                            {requestItem.session.sessionStream
-                                                .name +
-                                                " (Week " +
-                                                requestItem.session.week +
-                                                ")"}
+                                            <Center>
+                                                {
+                                                    requestItem.session
+                                                        .sessionStream.timetable
+                                                        .course.code
+                                                }
+                                            </Center>
                                         </Td>
                                         <Td>
+                                            <Center>
+                                                {requestItem.requester.username}
+                                            </Center>
+                                        </Td>
+                                        <Td>
+                                            <Center>
+                                                {requestItem.status}
+                                            </Center>
+                                        </Td>
+                                        <Td>
+                                            <Center>
+                                                {requestItem.session
+                                                    .sessionStream.name +
+                                                    " (Week " +
+                                                    requestItem.session.week +
+                                                    ")"}
+                                            </Center>
+                                        </Td>
+                                        <Td>
+                                            {requestItem.swapPreference
+                                                .length === 0 && (
+                                                <Text>
+                                                    No preferences we provided
+                                                </Text>
+                                            )}
                                             {requestItem.swapPreference.map(
                                                 (session, i) => (
                                                     <Text
