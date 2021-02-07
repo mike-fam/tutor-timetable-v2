@@ -23,11 +23,13 @@ export const isSessionPast = (
 
 export const getSessionsOfUser = (
     sessions: Array<SessionResponseType>,
-    username: string
+    username: string,
+    inverted: boolean = false
 ) => {
-    return sessions.filter((session) =>
-        session.sessionAllocations
-            .map((allocation) => allocation.user.username)
-            .includes(username)
+    return sessions.filter(
+        (session) =>
+            session.sessionAllocations
+                .map((allocation) => allocation.user.username)
+                .includes(username) === !inverted
     );
 };

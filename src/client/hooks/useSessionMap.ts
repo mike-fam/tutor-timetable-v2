@@ -52,7 +52,6 @@ export const useSessionMap = (
             return;
         }
         sessionsData.sessions.forEach((session) => {
-            console.log("Setting sessions", session.id);
             setSessions((prev) => prev.set(session.id, session));
         });
     }, [sessionsData]);

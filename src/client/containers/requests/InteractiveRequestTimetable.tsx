@@ -39,7 +39,7 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     chooseWeek,
 }) => {
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const { sessions, sessionsData, fetchSessions } = useSessionMap(
+    const { sessionsData, fetchSessions } = useSessionMap(
         chosenTermId,
         chosenCourseId
     );
@@ -68,20 +68,6 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
                     disabled={disabledWeeks}
                     tabSize="sm"
                 />
-                <Text>
-                    Session{chosenSessions.length > 1 && "s"} chosen:{" "}
-                    {chosenSessions
-                        .map((sessionId) => {
-                            const session = sessions.get(sessionId);
-                            if (!session) {
-                                return "";
-                            }
-                            return `${session.sessionStream.name} on ${
-                                chosenTerm?.weekNames[session.week]
-                            }`;
-                        })
-                        .join(", ")}
-                </Text>
             </>
         </Loadable>
     );
