@@ -10,6 +10,7 @@ import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
+import { RequestReviewContainer } from "./RequestReviewContainer";
 
 type Props = {};
 
@@ -105,7 +106,10 @@ export const CreateRequestButton: React.FC<Props> = () => {
                     />
                 </StepModalStep>
                 <StepModalStep step={3} header="Review Request Information">
-                    Test 3
+                    <RequestReviewContainer
+                        termId={currentTerm}
+                        {...formState}
+                    />
                 </StepModalStep>
             </StepModal>
         </>
