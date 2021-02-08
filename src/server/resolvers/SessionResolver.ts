@@ -13,7 +13,6 @@ export class SessionResolver {
         if (courseIds.length === 0) {
             return [];
         }
-        console.log("params:", courseIds, termId, week);
         return await getConnection()
             .getRepository(Session)
             .createQueryBuilder("session")

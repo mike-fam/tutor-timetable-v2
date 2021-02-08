@@ -7,7 +7,7 @@ import { ModifyTimeslotParams } from "../../types/availability";
 import {
     firstLineHeight,
     realGap,
-    timeSlotHeight,
+    timetableTimeslotHeight,
 } from "../../constants/timetable";
 import { leftFillNum, modificationTypeToTheme } from "../../utils/availability";
 import { sessionStyleFromProps } from "../../utils/timetable";
@@ -17,14 +17,15 @@ import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
 import { AvailabilityModificationType } from "../../generated/graphql";
 
-type Props = SessionProps & {
-    key?: number;
+export type AvailabilitySessionProps = {
     updateSession: (sessionId: number, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: number) => void;
     restoreSession: (sessionId: number) => void;
     editSession: (sessionId: number) => void;
     modificationType: AvailabilityModificationType;
 };
+
+type Props = SessionProps & AvailabilitySessionProps;
 
 export const AvailabilitySession: React.FC<Props> = ({
     updateSession,
@@ -67,10 +68,10 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 //  "anchor point" of the drag bar also changes as the top edge is dragged
                                 const realTop = top - firstLineHeight - realGap;
                                 const extendedTimeslotHeight =
-                                    realGap + timeSlotHeight;
+                                    realGap + timetableTimeslotHeight;
                                 const pxToWholeHour =
                                     realTop % extendedTimeslotHeight;
-                                const tenMinPx = timeSlotHeight / 6;
+                                const tenMinPx = timetableTimeslotHeight / 6;
                                 let newStartTime: number;
                                 // Snap to 5 mins to whole hour
                                 if (
@@ -83,7 +84,8 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 } else {
                                     // Drag normally
                                     newStartTime =
-                                        startTime + dragData.y / timeSlotHeight;
+                                        startTime +
+                                        dragData.y / timetableTimeslotHeight;
                                 }
                                 updateSession(props.id, {
                                     // Limit free time to less than 15 mins
@@ -141,7 +143,8 @@ export const AvailabilitySession: React.FC<Props> = ({
                             onDrag={(e, dragData) => {
                                 // Calculate relatively based on the STATIC top pixel.
                                 let newEndTime =
-                                    staticEndTime + dragData.y / timeSlotHeight;
+                                    staticEndTime +
+                                    dragData.y / timetableTimeslotHeight;
                                 const newEndTimeMins = (newEndTime % 1) * 60;
                                 if (
                                     newEndTimeMins < 10 ||

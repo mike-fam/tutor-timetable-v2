@@ -8,8 +8,6 @@ export type TimetableSessionType = {
     startTime: number;
     endTime: number;
     day: IsoDay;
-    location?: string;
-    allocation?: Array<string>;
 };
 
 export type TimetableState = {
@@ -31,8 +29,8 @@ export type TimetableSettings = {
 };
 
 export enum SessionTheme {
-    SUCCESS,
-    ERROR,
-    WARNING,
-    PRIMARY,
+    SUCCESS = "SUCCESS",
+    ERROR = "ERROR",
+    WARNING = "WARNING",
+    PRIMARY = "PRIMARY",
 }

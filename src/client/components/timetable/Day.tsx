@@ -1,34 +1,38 @@
 import { Grid, Text } from "@chakra-ui/react";
-import React, { ReactElement, useMemo } from "react";
+import React, { PropsWithChildren, ReactElement, useMemo } from "react";
 import range from "lodash/range";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-import {
-    firstLineHeight,
-    gap,
-    timeSlotHeight,
-} from "../../constants/timetable";
+import { firstLineHeight, gap } from "../../constants/timetable";
 import { Props as SessionProps } from "./Session";
 import { getClashedRanges } from "../../utils/timetable";
-import { Props as TimetableProps } from "./Timetable";
+import { TimetableSessionType } from "../../types/timetable";
 
-export type Props = {
+export type Props<T> = {
     day: IsoDay;
     startTime: number;
     endTime: number;
     renderTimeSlot: (key: number, time: number, day: number) => ReactElement;
-    sessions: TimetableProps["sessions"];
-    renderSession: (sessionProps: SessionProps, key: number) => ReactElement;
+    sessions: Array<TimetableSessionType>;
+    getSessionProps: (sessionId: number) => T;
+    renderSession: (
+        sessionProps: SessionProps,
+        key: number,
+        moreProps: T
+    ) => ReactElement<SessionProps & T>;
+    timeslotHeight: number;
 };
 
-export const Day: React.FunctionComponent<Props> = ({
+export const Day = <T,>({
     day,
     startTime,
     endTime,
     sessions,
     renderTimeSlot,
     renderSession,
-}) => {
+    getSessionProps,
+    timeslotHeight,
+}: PropsWithChildren<Props<T>>) => {
     const stackInfo = useMemo(
         () =>
             getClashedRanges(
@@ -44,7 +48,7 @@ export const Day: React.FunctionComponent<Props> = ({
         <Grid
             templateRows={`${firstLineHeight}px repeat(${
                 endTime - startTime
-            }, ${timeSlotHeight}px)`}
+            }, ${timeslotHeight}px)`}
             gap={gap}
             pos="relative"
         >
@@ -61,11 +65,11 @@ export const Day: React.FunctionComponent<Props> = ({
                         startDay: startTime,
                         endDay: endTime,
                         name: session.name,
-                        allocation: session.allocation || [],
-                        location: session.location || "",
+                        timeslotHeight,
                         ...stackInfo[session.id],
                     },
-                    key
+                    key,
+                    getSessionProps(session.id)
                 )
             )}
         </Grid>

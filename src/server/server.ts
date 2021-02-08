@@ -22,6 +22,7 @@ import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
 import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
+import { CourseResolver } from "./resolvers/CourseResolver";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -52,6 +53,7 @@ const main = async () => {
                 HelloResolver,
                 UserResolver,
                 TermResolver,
+                CourseResolver,
                 CourseStaffResolver,
                 SessionStreamResolver,
                 TimetableResolver,

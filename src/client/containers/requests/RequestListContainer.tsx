@@ -25,7 +25,7 @@ export enum TabViewType {
 export const RequestListContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [tabView, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
+    const [, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
 
     const { loading, data, refetch } = useQueryWithError(
         useGetRequestsByCourseIdsQuery,
