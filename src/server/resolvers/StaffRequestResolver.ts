@@ -108,7 +108,7 @@ export class StaffRequestResolver {
             id: session.sessionStreamId,
         });
         // Ensures session is for a valid timetable and session is for the current term.
-        const userTimeTable = await Timetable.findOneOrFail({
+        await Timetable.findOneOrFail({
             id: userSessionStream.timetableId,
             termId: termId,
         });
