@@ -6,7 +6,7 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
-import { SessionType } from "../../types/session";
+import { SessionType } from "../types/session";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseStaff } from "./CourseStaff";
 import { Field, Int, ObjectType } from "type-graphql";

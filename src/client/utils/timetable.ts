@@ -12,6 +12,7 @@ import {
     Tree,
     TreeNode,
 } from "../../utils/tree";
+import { notSet } from "../constants";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -165,7 +166,7 @@ export const getClashedRanges = (
 };
 
 export const TimetableContext = React.createContext<TimetableState>({
-    chosenWeek: -1,
+    chosenWeek: notSet,
     chosenCourses: Set<number>(),
     chosenTermId: 1,
     chooseWeek: () => {},

@@ -1,5 +1,5 @@
 import { Arg, Field, InputType, Int, Mutation, Resolver } from "type-graphql";
-import { RequestType } from "../../types/request";
+import { RequestType } from "../types/request";
 
 @InputType()
 class RequestFormInputType {

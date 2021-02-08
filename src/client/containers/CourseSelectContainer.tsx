@@ -48,7 +48,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
         }
     }, [loading, data, chosenTerm, coordinatorOnly]);
     return (
-        <Loadable isLoading={loading}>
+        <Loadable isLoading={data === undefined}>
             <Dropdown
                 isDisabled={!editable}
                 onChange={(e) => chooseCourse(Number(e.target.value))}
