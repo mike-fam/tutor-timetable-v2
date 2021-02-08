@@ -289,6 +289,7 @@ export type Mutation = {
   updatePreference: Preference;
   createRequest: StaffRequest;
   editExistingRequest: StaffRequest;
+  createOffer: Offer;
 };
 
 
@@ -368,6 +369,11 @@ export type MutationEditExistingRequestArgs = {
   requestDetails: EditRequestFormInputType;
 };
 
+
+export type MutationCreateOfferArgs = {
+  offerDetails: OfferInputType;
+};
+
 export type AllocatorOutput = {
   __typename?: 'AllocatorOutput';
   status: AllocationStatus;
@@ -441,6 +447,12 @@ export type EditRequestFormInputType = {
   description?: Maybe<Scalars['String']>;
   sessionId?: Maybe<Scalars['Int']>;
   closeRequest: Scalars['Boolean'];
+};
+
+export type OfferInputType = {
+  userId: Scalars['Int'];
+  requestId: Scalars['Int'];
+  sessionPreferences: Array<Scalars['Int']>;
 };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
