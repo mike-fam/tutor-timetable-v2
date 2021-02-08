@@ -20,17 +20,17 @@ export class Offer extends BaseEntity {
     id: number;
 
     @Field(() => StaffRequest)
-    @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.id, {
+    @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
     })
     request: Lazy<StaffRequest>;
 
     @Field(() => User)
-    @ManyToOne(() => User, (user) => user.id, { lazy: true })
+    @ManyToOne(() => User, (user) => user.offers, { lazy: true })
     user: Lazy<User>;
 
     @Field(() => [Session])
-    @ManyToMany(() => Session, (session) => session.preferredSwaps, {
+    @ManyToMany(() => Session, (session) => session.offerPreferences, {
         lazy: true,
         cascade: true,
     })
