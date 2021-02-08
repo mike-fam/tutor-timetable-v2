@@ -21,7 +21,6 @@ import {
     SessionAllocation,
     SessionStream,
     StaffRequest,
-    Term,
     Timetable,
     User,
 } from "../entities";
@@ -85,22 +84,6 @@ class EditRequestFormInputType {
 
     @Field(() => Boolean)
     closeRequest: boolean;
-}
-
-@InputType()
-class OfferInputType {
-    @Field(() => Int)
-    @IsNotEmpty()
-    userId: number;
-
-    @Field(() => Int)
-    @IsNotEmpty()
-    requestId: number;
-
-    @Field(() => [Session])
-    @ArrayUnique()
-    @ArrayNotEmpty()
-    sessionPreferences: Session[];
 }
 
 @Resolver()
