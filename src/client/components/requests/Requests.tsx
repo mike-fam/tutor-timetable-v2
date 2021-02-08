@@ -1,6 +1,5 @@
 import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
-import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestStatus, RequestType, Term } from "../../generated/graphql";
 import { UserState } from "../../types/user";
@@ -48,9 +47,6 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                <CreateRequestModalContainer
-                                    user={props.user}
-                                />
                                 <CreateRequestButton />
                             </Box>
                             <Divider></Divider>
