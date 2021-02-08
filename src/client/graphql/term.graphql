@@ -8,3 +8,14 @@ query Terms {
         weekNames
     }
 }
+
+query Term($termId: Int!) {
+    term(termId: $termId) {
+        id
+        type
+        year
+        startDate
+        endDate
+        weekNames
+    }
+}

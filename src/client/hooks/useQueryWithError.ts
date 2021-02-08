@@ -1,8 +1,10 @@
+import * as Apollo from "@apollo/client";
 import {
     MutationHookOptions,
     MutationTuple,
     QueryHookOptions,
     QueryResult,
+    QueryTuple,
 } from "@apollo/client";
 import { useContext, useEffect, useMemo } from "react";
 import { ErrorContext } from "../utils/errors";
@@ -46,4 +48,24 @@ export const useMutationWithError = <T, S>(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [error]);
     return mutationResult;
+};
+
+export const useLazyQueryWithError = <T, S>(
+    useApolloLazyQuery: (
+        baseOptions?: Apollo.LazyQueryHookOptions<T, S>
+    ) => QueryTuple<T, S>,
+    args?: S
+) => {
+    const queryResult = useApolloLazyQuery({
+        variables: args,
+        errorPolicy: "all",
+    });
+    const { addError } = useContext(ErrorContext);
+    const [, { error }] = useMemo(() => queryResult, [queryResult]);
+    useEffect(() => {
+        if (error) {
+            addError(error);
+        }
+    }, [error, addError]);
+    return queryResult;
 };

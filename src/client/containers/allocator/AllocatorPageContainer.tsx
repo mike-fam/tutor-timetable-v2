@@ -27,7 +27,8 @@ import {
     useRequestAllocationMutation,
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
-import { Set } from "immutable";
+import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
+import { Set, Map } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
 
@@ -53,6 +54,12 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
     ] = useMutationWithError(useRequestAllocationMutation);
+
+    // TODO: Maybe course code as well.
+    const [sessionsInfo, setSessionsInfo] = useState<
+        Map<number, TimetableSessionProps>
+    >(Map());
+
     const [
         applyAllocation,
         { data: applyAllocationData, loading: applyAllocationLoading },
@@ -95,14 +102,13 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         ) {
             setSessions(
                 requestAllocationData.requestAllocation.allocations.map(
-                    ({ sessionStream, staff }) => {
+                    ({ sessionStream }) => {
                         const {
                             id,
                             name,
                             startTime,
                             endTime,
                             day,
-                            location,
                         } = sessionStream;
                         return {
                             id,
@@ -110,13 +116,20 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                             startTime,
                             endTime,
                             day,
-                            location,
-                            allocation: staff.map((staff) => staff.name),
                         };
                     }
                 )
             );
-            console.log("Setting to generated");
+            requestAllocationData.requestAllocation.allocations.forEach(
+                ({ sessionStream, staff }) => {
+                    setSessionsInfo((prev) =>
+                        prev.set(sessionStream.id, {
+                            location: sessionStream.location,
+                            allocation: staff.map((staff) => staff.name),
+                        })
+                    );
+                }
+            );
             setShowing("generated");
             toast({
                 title: "Allocation generated",
@@ -151,27 +164,26 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         if (defaultSessionData?.sessionStreams) {
             setSessions(
                 defaultSessionData?.sessionStreams.map((sessionStream) => {
-                    const {
-                        id,
-                        name,
-                        startTime,
-                        endTime,
-                        day,
-                        location,
-                    } = sessionStream;
+                    const { id, name, startTime, endTime, day } = sessionStream;
                     return {
                         id,
                         name,
                         startTime,
                         endTime,
                         day,
-                        location,
-                        allocation: sessionStream.streamAllocations.map(
-                            (allocation) => allocation.user.name
-                        ),
                     };
                 }) || []
             );
+            defaultSessionData.sessionStreams.forEach((sessionStream) => {
+                setSessionsInfo((prev) =>
+                    prev.set(sessionStream.id, {
+                        location: sessionStream.location,
+                        allocation: sessionStream.streamAllocations.map(
+                            (allocation) => allocation.user.name
+                        ),
+                    })
+                );
+            });
             setShowing("default");
         }
     }, [defaultSessionData]);
@@ -279,6 +291,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                     defaultSessionData === undefined ||
                                     requestAllocationLoading
                                 }
+                                sessionsData={sessionsInfo}
                             />
                         </>
                     ) : null}

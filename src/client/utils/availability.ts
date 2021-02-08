@@ -2,7 +2,11 @@ import { createContext } from "react";
 import { AvailabilityState } from "../types/availability";
 import { Map } from "immutable";
 import { SessionTheme } from "../types/timetable";
-import { AvailabilityModificationType } from "../generated/graphql";
+import {
+    AvailabilityModificationType,
+    MyAvailabilityQuery,
+} from "../generated/graphql";
+import { SessionResponseType } from "../types/session";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
     timeslots: Map(),
@@ -27,4 +31,33 @@ export const modificationTypeToTheme = (
         case AvailabilityModificationType.Unchanged:
             return SessionTheme.PRIMARY;
     }
+};
+
+export const isAvailable = (
+    availabilities: MyAvailabilityQuery["myAvailability"],
+    session: SessionResponseType
+) => {
+    const availabilityDay = availabilities
+        .filter(
+            (availability) => availability.day === session.sessionStream.day
+        )
+        .sort((availability1, availability2) => {
+            if (availability1.startTime !== availability2.startTime) {
+                return availability1.startTime - availability2.startTime;
+            }
+            return availability1.endTime - availability2.endTime;
+        });
+    let startCheck = session.sessionStream.startTime;
+    for (const timeSlot of availabilityDay) {
+        if (timeSlot.startTime > startCheck) {
+            return false;
+        }
+        if (timeSlot.startTime <= startCheck && startCheck < timeSlot.endTime) {
+            if (session.sessionStream.endTime <= timeSlot.endTime) {
+                return true;
+            }
+        }
+        startCheck = timeSlot.endTime;
+    }
+    return false;
 };

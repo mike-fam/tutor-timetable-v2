@@ -4,8 +4,8 @@ import React from "react";
 type Props = {};
 
 export const TimeSlot: React.FC<Props> = ({ children }) => {
-    const evenStripes = useColorModeValue("lightgrey", "#1A365D");
-    const oddStripes = useColorModeValue("darkgrey", "#2A4365");
+    const evenStripes = useColorModeValue("lightgrey", "#2B6CB0");
+    const oddStripes = useColorModeValue("darkgrey", "#2C5282");
     return (
         <Box
             w="100%"

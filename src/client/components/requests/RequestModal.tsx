@@ -9,9 +9,7 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React from "react";
-import { Role } from "../../../server/types/user";
-import { CreateRequestFormContainer } from "../../containers/requests/CreateRequestFormContainer";
+import React, { ReactElement } from "react";
 
 export enum RequestModalType {
     View = "View",
@@ -19,60 +17,26 @@ export enum RequestModalType {
 }
 
 type Props = {
+    renderHeader: () => ReactElement;
+    renderBody: () => ReactElement;
+    renderFooterButton: () => ReactElement;
     isOpen: boolean;
-    toggle: (toggle: boolean) => void;
-    type: RequestModalType;
-    userType: Role;
+    onClose: () => void;
 };
 
 export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <Modal
-            size={"xl"}
-            isOpen={props.isOpen}
-            onClose={() => props.toggle(false)}
-        >
+        <Modal size={"6xl"} isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>
-                    {props.type === RequestModalType.View ? (
-                        <p>Request title here</p>
-                    ) : (
-                        <p>Create a new Request</p>
-                    )}
-                </ModalHeader>
+                <ModalHeader>{props.renderHeader()}</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody pb={6}>
-                    {props.type === RequestModalType.View ? (
-                        <div>open request body</div>
-                    ) : (
-                        <CreateRequestFormContainer />
-                    )}
-                </ModalBody>
+                <ModalBody pb={6}>{props.renderBody()}</ModalBody>
 
                 <ModalFooter>
                     <ButtonGroup>
-                        <Button onClick={() => props.toggle(false)}>
-                            Cancel
-                        </Button>
-                        {props.userType === Role.COURSE_COORDINATOR &&
-                        props.type === RequestModalType.View ? (
-                            <>
-                                <Button>Approve</Button>
-                                <Button>Revoke</Button>
-                            </>
-                        ) : null}
-                        {props.userType === Role.STAFF &&
-                        props.type === RequestModalType.View ? (
-                            <>
-                                <Button>Apply</Button>
-                            </>
-                        ) : null}
-                        {props.type === RequestModalType.Create && (
-                            <Button onClick={() => props.toggle(false)}>
-                                Create
-                            </Button>
-                        )}
+                        <Button onClick={props.onClose}>Cancel</Button>
+                        {props.renderFooterButton()}
                     </ButtonGroup>
                 </ModalFooter>
             </ModalContent>

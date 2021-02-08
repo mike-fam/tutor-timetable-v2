@@ -1,9 +1,5 @@
 import React from "react";
 import { Role } from "../../../server/types/user";
-import {
-    RequestModal,
-    RequestModalType,
-} from "../../components/requests/RequestModal";
 import { Requests } from "../../components/requests/Requests";
 
 export enum DisplayRequestType {
@@ -22,21 +18,9 @@ type Props = {
     userType: Role;
 };
 
-export const RequestContainer: React.FunctionComponent<Props> = (
-    props: Props
-) => {
-    //Modal stuff
-    const [modalToggle, setModalToggle] = React.useState<boolean>(false);
-    const [modalType, setModalType] = React.useState<RequestModalType>(
-        RequestModalType.Create
-    );
+export const RequestContainer: React.FunctionComponent<Props> = () => {
     //Filter management.
     const [filters, setFilters] = React.useState<Array<FilterType>>([]);
-
-    const openRequestModal = (type: RequestModalType) => {
-        setModalType(type);
-        setModalToggle(true);
-    };
 
     // Update list of filters.
     const updateFilters = (item: FilterType, selected: boolean) => {
@@ -53,16 +37,7 @@ export const RequestContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Requests
-                toggleModal={openRequestModal}
-                toggleFilters={updateFilters}
-            />
-            <RequestModal
-                isOpen={modalToggle}
-                toggle={setModalToggle}
-                userType={props.userType}
-                type={modalType}
-            />
+            <Requests toggleFilters={updateFilters} filters={filters} />
         </>
     );
 };
