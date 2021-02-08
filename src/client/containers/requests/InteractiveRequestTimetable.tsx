@@ -1,12 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
 import { SessionTheme } from "../../types/timetable";
 import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
 import { Loadable } from "../../components/helpers/Loadable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { Text } from "@chakra-ui/react";
-import { getWeeksNum } from "../../utils/term";
 import { SessionResponseType } from "../../types/session";
 import { useSessionMap } from "../../hooks/useSessionMap";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
@@ -30,7 +28,6 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     chosenCourseId,
     chosenTermId,
     chooseSession,
-    chosenSessions,
     disabledWeeks,
     filterSessions,
     checkSessionDisabled,

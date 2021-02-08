@@ -11,7 +11,7 @@ type Props = {};
 export const CreateRequestModalContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [submitForm, { data, loading }] = useCreateRequestMutation();
+    const [submitForm, { loading }] = useCreateRequestMutation();
 
     const formState = useRequestFormState();
     //TODO: Placeholders, replace with actual values.

@@ -1,9 +1,5 @@
 import React from "react";
-import {
-    firstLineHeight,
-    gap,
-    timetableTimeslotHeight,
-} from "../../constants/timetable";
+import { firstLineHeight, gap } from "../../constants/timetable";
 import range from "lodash/range";
 import { Box, Grid } from "@chakra-ui/react";
 

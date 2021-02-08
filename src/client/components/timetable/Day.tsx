@@ -3,11 +3,7 @@ import React, { PropsWithChildren, ReactElement, useMemo } from "react";
 import range from "lodash/range";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-import {
-    firstLineHeight,
-    gap,
-    timetableTimeslotHeight,
-} from "../../constants/timetable";
+import { firstLineHeight, gap } from "../../constants/timetable";
 import { Props as SessionProps } from "./Session";
 import { getClashedRanges } from "../../utils/timetable";
 import { TimetableSessionType } from "../../types/timetable";

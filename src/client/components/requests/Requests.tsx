@@ -1,6 +1,5 @@
 import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
-import { CreateRequestModalContainer } from "../../containers/requests/CreateRequestModalContainer";
 import { FilterType } from "../../containers/requests/RequestContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestFilter } from "./RequestFilter";

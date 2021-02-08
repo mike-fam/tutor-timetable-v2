@@ -26,7 +26,7 @@ export const RequestReviewContainer: React.FC<Props> = ({
     const [fetchCourse, { data: courseData }] = useLazyQueryWithError(
         useCourseLazyQuery
     );
-    const { sessions, fetchSessions } = useSessionMap(termId, course);
+    const { sessions } = useSessionMap(termId, course);
     useEffect(() => {
         if (course === notSet) {
             return;
