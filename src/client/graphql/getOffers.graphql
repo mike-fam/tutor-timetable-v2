@@ -1,0 +1,51 @@
+query getOfferById($offerId: Int!) {
+    getOfferById(offerId: $offerId) {
+        id
+        user {
+            id
+            username
+        }
+        preferences {
+            sessionStream {
+                id
+                name
+            }
+        }
+        request {
+            id
+            requester {
+                id
+                username
+            }
+            swapPreference {
+                sessionStream {
+                    id
+                    name
+                }
+            }
+            status
+            session {
+                sessionStream {
+                    id
+                    name
+                }
+            }
+        }
+    }
+}
+
+query getOffersByRequestId($requestId: Int!) {
+    getOffersByRequestId(requestId: $requestId) {
+        id
+        preferences {
+            sessionStream {
+                id
+                name
+            }
+        }
+        user {
+            id
+            username
+        }
+    }
+}

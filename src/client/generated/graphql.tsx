@@ -34,6 +34,8 @@ export type Query = {
   getRequestsByCourseIds: Array<StaffRequest>;
   courses: Array<Course>;
   course: Course;
+  getOfferById: Offer;
+  getOffersByRequestId: Array<Offer>;
 };
 
 
@@ -95,6 +97,16 @@ export type QueryGetRequestsByCourseIdsArgs = {
 
 export type QueryCourseArgs = {
   courseId: Scalars['Int'];
+};
+
+
+export type QueryGetOfferByIdArgs = {
+  offerId: Scalars['Int'];
+};
+
+
+export type QueryGetOffersByRequestIdArgs = {
+  requestId: Scalars['Int'];
 };
 
 export type User = {
@@ -290,6 +302,8 @@ export type Mutation = {
   createRequest: StaffRequest;
   editExistingRequest: StaffRequest;
   createOffer: Offer;
+  editExistingOffer: Offer;
+  removeOffer: Offer;
 };
 
 
@@ -374,6 +388,17 @@ export type MutationCreateOfferArgs = {
   offerDetails: OfferInputType;
 };
 
+
+export type MutationEditExistingOfferArgs = {
+  editDetails: EditOfferInputType;
+};
+
+
+export type MutationRemoveOfferArgs = {
+  userId: Scalars['Int'];
+  offerId: Scalars['Int'];
+};
+
 export type AllocatorOutput = {
   __typename?: 'AllocatorOutput';
   status: AllocationStatus;
@@ -452,6 +477,11 @@ export type EditRequestFormInputType = {
 export type OfferInputType = {
   userId: Scalars['Int'];
   requestId: Scalars['Int'];
+  sessionPreferences: Array<Scalars['Int']>;
+};
+
+export type EditOfferInputType = {
+  offerId: Scalars['Int'];
   sessionPreferences: Array<Scalars['Int']>;
 };
 
@@ -534,6 +564,29 @@ export type CourseStaffsQuery = (
   )> }
 );
 
+export type CreateOfferMutationVariables = Exact<{
+  offerDetails: OfferInputType;
+}>;
+
+
+export type CreateOfferMutation = (
+  { __typename?: 'Mutation' }
+  & { createOffer: (
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), preferences: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
+    )> }
+  ) }
+);
+
 export type CreateRequestMutationVariables = Exact<{
   requestDetails: RequestFormInputType;
 }>;
@@ -555,6 +608,71 @@ export type CreateRequestMutation = (
       & Pick<Session, 'id'>
     )> }
   ) }
+);
+
+export type GetOfferByIdQueryVariables = Exact<{
+  offerId: Scalars['Int'];
+}>;
+
+
+export type GetOfferByIdQuery = (
+  { __typename?: 'Query' }
+  & { getOfferById: (
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), preferences: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
+    )>, request: (
+      { __typename?: 'StaffRequest' }
+      & Pick<StaffRequest, 'id' | 'status'>
+      & { requester: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ), swapPreference: Array<(
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'id' | 'name'>
+        ) }
+      )>, session: (
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'id' | 'name'>
+        ) }
+      ) }
+    ) }
+  ) }
+);
+
+export type GetOffersByRequestIdQueryVariables = Exact<{
+  requestId: Scalars['Int'];
+}>;
+
+
+export type GetOffersByRequestIdQuery = (
+  { __typename?: 'Query' }
+  & { getOffersByRequestId: Array<(
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { preferences: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
+    )>, user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ) }
+  )> }
 );
 
 export type GetRequestByIdQueryVariables = Exact<{
@@ -1044,6 +1162,48 @@ export function useCourseStaffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type CourseStaffsQueryHookResult = ReturnType<typeof useCourseStaffsQuery>;
 export type CourseStaffsLazyQueryHookResult = ReturnType<typeof useCourseStaffsLazyQuery>;
 export type CourseStaffsQueryResult = Apollo.QueryResult<CourseStaffsQuery, CourseStaffsQueryVariables>;
+export const CreateOfferDocument = gql`
+    mutation CreateOffer($offerDetails: OfferInputType!) {
+  createOffer(offerDetails: $offerDetails) {
+    id
+    user {
+      id
+      username
+    }
+    preferences {
+      sessionStream {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export type CreateOfferMutationFn = Apollo.MutationFunction<CreateOfferMutation, CreateOfferMutationVariables>;
+
+/**
+ * __useCreateOfferMutation__
+ *
+ * To run a mutation, you first call `useCreateOfferMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOfferMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOfferMutation, { data, loading, error }] = useCreateOfferMutation({
+ *   variables: {
+ *      offerDetails: // value for 'offerDetails'
+ *   },
+ * });
+ */
+export function useCreateOfferMutation(baseOptions?: Apollo.MutationHookOptions<CreateOfferMutation, CreateOfferMutationVariables>) {
+        return Apollo.useMutation<CreateOfferMutation, CreateOfferMutationVariables>(CreateOfferDocument, baseOptions);
+      }
+export type CreateOfferMutationHookResult = ReturnType<typeof useCreateOfferMutation>;
+export type CreateOfferMutationResult = Apollo.MutationResult<CreateOfferMutation>;
+export type CreateOfferMutationOptions = Apollo.BaseMutationOptions<CreateOfferMutation, CreateOfferMutationVariables>;
 export const CreateRequestDocument = gql`
     mutation CreateRequest($requestDetails: RequestFormInputType!) {
   createRequest(requestDetails: $requestDetails) {
@@ -1090,6 +1250,112 @@ export function useCreateRequestMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateRequestMutationHookResult = ReturnType<typeof useCreateRequestMutation>;
 export type CreateRequestMutationResult = Apollo.MutationResult<CreateRequestMutation>;
 export type CreateRequestMutationOptions = Apollo.BaseMutationOptions<CreateRequestMutation, CreateRequestMutationVariables>;
+export const GetOfferByIdDocument = gql`
+    query getOfferById($offerId: Int!) {
+  getOfferById(offerId: $offerId) {
+    id
+    user {
+      id
+      username
+    }
+    preferences {
+      sessionStream {
+        id
+        name
+      }
+    }
+    request {
+      id
+      requester {
+        id
+        username
+      }
+      swapPreference {
+        sessionStream {
+          id
+          name
+        }
+      }
+      status
+      session {
+        sessionStream {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOfferByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOfferByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOfferByIdQuery({
+ *   variables: {
+ *      offerId: // value for 'offerId'
+ *   },
+ * });
+ */
+export function useGetOfferByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
+        return Apollo.useQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+      }
+export function useGetOfferByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+        }
+export type GetOfferByIdQueryHookResult = ReturnType<typeof useGetOfferByIdQuery>;
+export type GetOfferByIdLazyQueryHookResult = ReturnType<typeof useGetOfferByIdLazyQuery>;
+export type GetOfferByIdQueryResult = Apollo.QueryResult<GetOfferByIdQuery, GetOfferByIdQueryVariables>;
+export const GetOffersByRequestIdDocument = gql`
+    query getOffersByRequestId($requestId: Int!) {
+  getOffersByRequestId(requestId: $requestId) {
+    id
+    preferences {
+      sessionStream {
+        id
+        name
+      }
+    }
+    user {
+      id
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOffersByRequestIdQuery__
+ *
+ * To run a query within a React component, call `useGetOffersByRequestIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOffersByRequestIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOffersByRequestIdQuery({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useGetOffersByRequestIdQuery(baseOptions: Apollo.QueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
+        return Apollo.useQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+      }
+export function useGetOffersByRequestIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+        }
+export type GetOffersByRequestIdQueryHookResult = ReturnType<typeof useGetOffersByRequestIdQuery>;
+export type GetOffersByRequestIdLazyQueryHookResult = ReturnType<typeof useGetOffersByRequestIdLazyQuery>;
+export type GetOffersByRequestIdQueryResult = Apollo.QueryResult<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>;
 export const GetRequestByIdDocument = gql`
     query getRequestById($requestId: Int!) {
   getRequestById(requestId: $requestId) {
