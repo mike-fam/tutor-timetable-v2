@@ -1,16 +1,20 @@
-import React, { useCallback, useMemo } from "react";
-import { Button, Center, useDisclosure } from "@chakra-ui/react";
+import React, { useCallback, useContext, useMemo } from "react";
+import { Button, Center, useDisclosure, useToast } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { notSet } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
-import { useTermsQuery } from "../../generated/graphql";
+import {
+    useCreateRequestMutation,
+    useTermsQuery,
+} from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 import { RequestReviewContainer } from "./RequestReviewContainer";
+import { UserContext } from "../../utils/user";
 
 type Props = {};
 
@@ -47,10 +51,12 @@ export const CreateRequestButton: React.FC<Props> = () => {
         },
         [title, course, session]
     );
+    const { user } = useContext(UserContext);
 
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;
     }, [termsData]);
+    const [submitForm, { loading: submitting }] = useCreateRequestMutation();
 
     return (
         <>
@@ -58,16 +64,21 @@ export const CreateRequestButton: React.FC<Props> = () => {
                 <Button onClick={onOpen}>New Request</Button>
             </Center>
             <StepModal
-                onSubmit={() => {
-                    console.log({
-                        title,
-                        description,
-                        duration,
-                        course,
-                        preferences,
-                        session,
+                onSubmit={async () => {
+                    await submitForm({
+                        variables: {
+                            requestDetails: {
+                                title,
+                                description,
+                                preferences: preferences.toArray(),
+                                duration,
+                                userId: user.id,
+                                sessionId: session,
+                            },
+                        },
                     });
                 }}
+                isSubmitting={submitting}
                 validateStep={validateStep}
                 stepCount={4}
                 isOpen={isOpen}
