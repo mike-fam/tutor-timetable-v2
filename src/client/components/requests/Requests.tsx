@@ -1,7 +1,7 @@
 import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
-import { RequestStatus, RequestType, Term } from "../../generated/graphql";
+import { RequestStatus, RequestType } from "../../generated/graphql";
 import { UserState } from "../../types/user";
 import { RequestFilter } from "./RequestFilter";
 import { CreateRequestButton } from "../../containers/requests/CreateRequestModalContainerV3";
@@ -34,6 +34,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 minHeight: "700px",
                                 border: "1px solid black",
                             }}
+                            overflow={"scroll"}
                         >
                             <RequestListContainer
                                 filters={props.filters}
