@@ -1,5 +1,4 @@
 import {
-    Box,
     Center,
     Tab,
     Table,
@@ -12,7 +11,6 @@ import {
     Thead,
     Tr,
 } from "@chakra-ui/react";
-import { request } from "express";
 import React from "react";
 import { TabViewType } from "../../containers/requests/RequestListContainer";
 import { RequestResponse } from "../../types/requests";
