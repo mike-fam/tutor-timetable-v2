@@ -54,7 +54,6 @@ export const CreateRequestButton: React.FC<Props> = () => {
         },
         [title, course, session]
     );
-    const { user } = useContext(UserContext);
 
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;

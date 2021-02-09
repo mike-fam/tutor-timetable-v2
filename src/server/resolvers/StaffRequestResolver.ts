@@ -195,7 +195,8 @@ export class StaffRequestResolver {
         @Ctx() { req }: MyContext,
         @Arg("termId", () => Int) termId: number
     ): Promise<StaffRequest[]> {
-        return await StaffRequest.find(req.user);
+        const user = req.user!;
+        return await StaffRequest.find({ requester: user });
     }
 
     // Used for displaying requests on the main requests page.
@@ -276,8 +277,9 @@ export class StaffRequestResolver {
         @Arg("requestId", () => Int) requestId: number
     ): Promise<StaffRequest> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
+        const user = req.user!;
 
-        if ((await request.requester) !== req.user) {
+        if ((await request.requester) !== user) {
             throw new Error("User ID does not match request user ID");
         }
 
