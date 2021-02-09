@@ -13,16 +13,19 @@ export const FormikRadioGroup: React.FC<Props> = ({ name, values, label }) => {
     const [, { value }, { setValue }] = useField(name);
 
     return (
-        <FormControl>
+        <FormControl mt={3}>
             <FormLabel>{label || capitalCase(name)}</FormLabel>
             <Stack direction="row">
-                {values.map((radioValue) => (
+                {values.map((radioValue, key) => (
                     <Radio
                         onChange={(e) => {
                             setValue(e.target.value);
                         }}
                         value={radioValue}
-                        isChecked={value === radioValue}>
+                        isChecked={value === radioValue}
+                        key={key}
+                        id={`formik-radio-${name}-${key}`}
+                    >
                         {radioValue}
                     </Radio>
                 ))}

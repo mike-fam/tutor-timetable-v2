@@ -243,6 +243,8 @@ export type Mutation = {
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
+  removeCourseStaff: Scalars['Boolean'];
+  addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
   generateSessions: Array<Session>;
@@ -289,6 +291,19 @@ export type MutationAddUsersToCourseArgs = {
 };
 
 
+export type MutationRemoveCourseStaffArgs = {
+  courseStaffId: Scalars['Float'];
+};
+
+
+export type MutationAddBasedSessionStreamArgs = {
+  numberOfStaff: Scalars['Int'];
+  weeks: Array<Scalars['Int']>;
+  name: Scalars['String'];
+  sessionStreamId: Scalars['Int'];
+};
+
+
 export type MutationAddSessionStreamArgs = {
   numberOfStaff: Scalars['Int'];
   location: Scalars['String'];
@@ -309,7 +324,7 @@ export type MutationAddStreamStaffArgs = {
 
 
 export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['Float'];
+  sessionStreamId: Scalars['Int'];
 };
 
 
@@ -444,10 +459,28 @@ export type CourseStaffsQuery = (
   { __typename?: 'Query' }
   & { courseStaffs: Array<(
     { __typename?: 'CourseStaff' }
-    & Pick<CourseStaff, 'role' | 'isNew'>
+    & Pick<CourseStaff, 'id' | 'role' | 'isNew'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'name'>
+    ) }
+  )> }
+);
+
+export type AddCourseStaffMutationVariables = Exact<{
+  courseStaffInput: CourseStaffInput;
+  usernames: Array<Scalars['String']>;
+}>;
+
+
+export type AddCourseStaffMutation = (
+  { __typename?: 'Mutation' }
+  & { addUsersToCourse: Array<(
+    { __typename?: 'CourseStaff' }
+    & Pick<CourseStaff, 'id' | 'role' | 'isNew'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username'>
     ) }
   )> }
 );
@@ -727,6 +760,7 @@ export type ApplyAllocationMutationOptions = Apollo.BaseMutationOptions<ApplyAll
 export const CourseStaffsDocument = gql`
     query CourseStaffs($courseTermInput: CourseTermIdInput!) {
   courseStaffs(courseTermInput: $courseTermInput) {
+    id
     role
     user {
       id
@@ -763,6 +797,46 @@ export function useCourseStaffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type CourseStaffsQueryHookResult = ReturnType<typeof useCourseStaffsQuery>;
 export type CourseStaffsLazyQueryHookResult = ReturnType<typeof useCourseStaffsLazyQuery>;
 export type CourseStaffsQueryResult = Apollo.QueryResult<CourseStaffsQuery, CourseStaffsQueryVariables>;
+export const AddCourseStaffDocument = gql`
+    mutation AddCourseStaff($courseStaffInput: CourseStaffInput!, $usernames: [String!]!) {
+  addUsersToCourse(courseStaffInput: $courseStaffInput, usernames: $usernames) {
+    id
+    user {
+      id
+      name
+      username
+    }
+    role
+    isNew
+  }
+}
+    `;
+export type AddCourseStaffMutationFn = Apollo.MutationFunction<AddCourseStaffMutation, AddCourseStaffMutationVariables>;
+
+/**
+ * __useAddCourseStaffMutation__
+ *
+ * To run a mutation, you first call `useAddCourseStaffMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCourseStaffMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCourseStaffMutation, { data, loading, error }] = useAddCourseStaffMutation({
+ *   variables: {
+ *      courseStaffInput: // value for 'courseStaffInput'
+ *      usernames: // value for 'usernames'
+ *   },
+ * });
+ */
+export function useAddCourseStaffMutation(baseOptions?: Apollo.MutationHookOptions<AddCourseStaffMutation, AddCourseStaffMutationVariables>) {
+        return Apollo.useMutation<AddCourseStaffMutation, AddCourseStaffMutationVariables>(AddCourseStaffDocument, baseOptions);
+      }
+export type AddCourseStaffMutationHookResult = ReturnType<typeof useAddCourseStaffMutation>;
+export type AddCourseStaffMutationResult = Apollo.MutationResult<AddCourseStaffMutation>;
+export type AddCourseStaffMutationOptions = Apollo.BaseMutationOptions<AddCourseStaffMutation, AddCourseStaffMutationVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {

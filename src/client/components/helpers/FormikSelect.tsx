@@ -1,12 +1,14 @@
 import React from "react";
-import { Field, FieldProps } from "formik";
+import { Field, FieldInputProps, FieldProps } from "formik";
 import {
     FormControl,
     FormErrorMessage,
     FormLabel,
+    PseudoProps,
     Select,
+    SelectProps,
 } from "@chakra-ui/react";
-import { capitalCase } from "change-case";
+import { capitalCase, sentenceCase } from "change-case";
 
 type Props = {
     name: string;
@@ -14,14 +16,14 @@ type Props = {
     id?: string;
     options: Array<string | number>;
     optionToText?: (val: string) => string;
-};
+} & Omit<SelectProps, keyof FieldInputProps<any> | keyof PseudoProps<{}>>;
 
 export const FormikSelect: React.FC<Props> = ({
     name,
     id,
     label,
     options,
-    optionToText = (option) => option,
+    optionToText = capitalCase,
 }) => {
     return (
         <Field name={name}>

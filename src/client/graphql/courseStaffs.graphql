@@ -1,11 +1,31 @@
 query CourseStaffs($courseTermInput: CourseTermIdInput!) {
     courseStaffs(courseTermInput: $courseTermInput) {
+        id
         role
         user {
             id
             username
             name
         }
+        isNew
+    }
+}
+
+mutation AddCourseStaff(
+    $courseStaffInput: CourseStaffInput!
+    $usernames: [String!]!
+) {
+    addUsersToCourse(
+        courseStaffInput: $courseStaffInput
+        usernames: $usernames
+    ) {
+        id
+        user {
+            id
+            name
+            username
+        }
+        role
         isNew
     }
 }

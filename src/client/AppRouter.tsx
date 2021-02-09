@@ -6,7 +6,7 @@ import { TimetablePageContainer } from "./containers/timetable/TimetablePageCont
 import { AvailabilityPageContainer } from "./containers/availabilities/AvailabilityPageContainer";
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
 import { AllocatorPageContainer } from "./containers/allocator/AllocatorPageContainer";
-import { CourseStaffPageContainer } from "./containers/courseStaff/CourseStaffPageContainer";
+import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (

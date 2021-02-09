@@ -16,7 +16,7 @@ export const HelpIcon: React.FC<Props> = ({ children }) => {
     return (
         <Popover placement="right-start" trigger="hover">
             <PopoverTrigger>
-                <Box>
+                <Box d="inline-block" ml={2}>
                     <Icon as={BsFillQuestionCircleFill} />
                 </Box>
             </PopoverTrigger>

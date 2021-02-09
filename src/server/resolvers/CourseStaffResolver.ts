@@ -64,7 +64,7 @@ export class CourseStaffResolver {
 
     @Mutation(() => [CourseStaff])
     async addUsersToCourse(
-        @Arg("courseStaffInput")
+        @Arg("courseStaffInput", () => CourseStaffInput)
         { role, isNew, termId, courseId }: CourseStaffInput,
         @Arg("usernames", () => [String]) usernames: string[]
     ): Promise<CourseStaff[]> {

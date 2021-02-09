@@ -73,7 +73,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         setDayEndTime,
                     }}
                 >
-                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`}>
+                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`} mb={5}>
                         {children}
                     </Box>
                     <Footer />
