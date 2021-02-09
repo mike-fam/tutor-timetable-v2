@@ -85,7 +85,6 @@ export type QueryGetRequestByIdArgs = {
 
 export type QueryGetRequestsByUserIdArgs = {
   termId: Scalars['Int'];
-  userId: Scalars['Int'];
 };
 
 
@@ -301,6 +300,7 @@ export type Mutation = {
   updatePreference: Preference;
   createRequest: StaffRequest;
   editExistingRequest: StaffRequest;
+  deleteRequestById: StaffRequest;
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
@@ -384,6 +384,11 @@ export type MutationEditExistingRequestArgs = {
 };
 
 
+export type MutationDeleteRequestByIdArgs = {
+  requestId: Scalars['Int'];
+};
+
+
 export type MutationCreateOfferArgs = {
   offerDetails: OfferInputType;
 };
@@ -395,7 +400,6 @@ export type MutationEditExistingOfferArgs = {
 
 
 export type MutationRemoveOfferArgs = {
-  userId: Scalars['Int'];
   offerId: Scalars['Int'];
 };
 
@@ -459,7 +463,6 @@ export type RequestFormInputType = {
   preferences: Array<Scalars['Int']>;
   duration: RequestType;
   description?: Maybe<Scalars['String']>;
-  userId: Scalars['Int'];
   termId: Scalars['Int'];
   sessionId: Scalars['Int'];
 };
@@ -475,7 +478,6 @@ export type EditRequestFormInputType = {
 };
 
 export type OfferInputType = {
-  userId: Scalars['Int'];
   requestId: Scalars['Int'];
   sessionPreferences: Array<Scalars['Int']>;
 };
@@ -711,7 +713,6 @@ export type GetRequestByIdQuery = (
 );
 
 export type GetRequestsByUserIdQueryVariables = Exact<{
-  userId: Scalars['Int'];
   termId: Scalars['Int'];
 }>;
 
@@ -1415,8 +1416,8 @@ export type GetRequestByIdQueryHookResult = ReturnType<typeof useGetRequestByIdQ
 export type GetRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRequestByIdLazyQuery>;
 export type GetRequestByIdQueryResult = Apollo.QueryResult<GetRequestByIdQuery, GetRequestByIdQueryVariables>;
 export const GetRequestsByUserIdDocument = gql`
-    query getRequestsByUserId($userId: Int!, $termId: Int!) {
-  getRequestsByUserId(userId: $userId, termId: $termId) {
+    query getRequestsByUserId($termId: Int!) {
+  getRequestsByUserId(termId: $termId) {
     id
     title
     status
@@ -1449,7 +1450,6 @@ export const GetRequestsByUserIdDocument = gql`
  * @example
  * const { data, loading, error } = useGetRequestsByUserIdQuery({
  *   variables: {
- *      userId: // value for 'userId'
  *      termId: // value for 'termId'
  *   },
  * });

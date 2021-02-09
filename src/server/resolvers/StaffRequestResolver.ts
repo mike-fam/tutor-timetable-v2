@@ -6,7 +6,6 @@ import {
 } from "class-validator";
 import {
     Arg,
-    Args,
     Ctx,
     Field,
     InputType,
@@ -101,9 +100,9 @@ export class StaffRequestResolver {
         }: RequestFormInputType,
         @Ctx() { req }: MyContext
     ): Promise<StaffRequest> {
-        const requester = await User.findOneOrFail(req.user);
+        const requester = req.user!;
         const session = await Session.findOneOrFail({ id: sessionId });
-        const userSessions = await SessionAllocation.find(req.user);
+        const userSessions = await requester.sessionAllocations;
         const userSessionStream = await SessionStream.findOneOrFail({
             id: session.sessionStreamId,
         });
@@ -115,7 +114,7 @@ export class StaffRequestResolver {
 
         // Checks if user is in session.
         if (
-            (await SessionAllocation.find({ sessionId, user: req.user }))
+            (await SessionAllocation.find({ sessionId, userId: requester.id }))
                 .length === 0
         ) {
             throw new Error(
@@ -197,7 +196,7 @@ export class StaffRequestResolver {
         @Ctx() { req }: MyContext,
         @Arg("termId", () => Int) termId: number
     ): Promise<StaffRequest[]> {
-        return await StaffRequest.find({ requester: req.user });
+        return await StaffRequest.find(req.user);
     }
 
     // Used for displaying requests on the main requests page.

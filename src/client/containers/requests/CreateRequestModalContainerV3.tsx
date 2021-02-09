@@ -9,7 +9,10 @@ import {
     useCreateRequestMutation,
     useTermsQuery,
 } from "../../generated/graphql";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import {
+    useMutationWithError,
+    useQueryWithError,
+} from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
@@ -56,7 +59,9 @@ export const CreateRequestButton: React.FC<Props> = () => {
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;
     }, [termsData]);
-    const [submitForm, { loading: submitting }] = useCreateRequestMutation();
+    const [submitForm, { loading: submitting }] = useMutationWithError(
+        useCreateRequestMutation
+    );
 
     return (
         <>
@@ -72,7 +77,6 @@ export const CreateRequestButton: React.FC<Props> = () => {
                                 description,
                                 preferences: preferences.toArray(),
                                 duration,
-                                userId: user.id,
                                 sessionId: session,
                                 termId: currentTerm,
                             },

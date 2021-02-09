@@ -1,6 +1,7 @@
 import { ArrayNotEmpty, ArrayUnique, IsNotEmpty } from "class-validator";
 import {
     Arg,
+    Ctx,
     Field,
     InputType,
     Int,
@@ -9,13 +10,10 @@ import {
     Resolver,
 } from "type-graphql";
 import { Offer, Session, StaffRequest, User } from "../entities";
+import { MyContext } from "../types/context";
 
 @InputType()
 class OfferInputType {
-    @Field(() => Int)
-    @IsNotEmpty()
-    userId: number;
-
     @Field(() => Int)
     @IsNotEmpty()
     requestId: number;
@@ -40,9 +38,10 @@ export class OfferResolver {
     @Mutation(() => Offer)
     async createOffer(
         @Arg("offerDetails", () => OfferInputType)
-        { userId, requestId, sessionPreferences }: OfferInputType
+        { requestId, sessionPreferences }: OfferInputType,
+        @Ctx() { req }: MyContext
     ): Promise<Offer> {
-        const user = await User.findOneOrFail({ id: userId });
+        const user = await User.findOneOrFail(req.user);
         const request = await StaffRequest.findOneOrFail({ id: requestId });
 
         const isOfferUnique =
@@ -107,10 +106,10 @@ export class OfferResolver {
     @Mutation(() => Offer)
     async removeOffer(
         @Arg("offerId", () => Int) offerId: number,
-        @Arg("userId", () => Int) uid: number
+        @Ctx() { req }: MyContext
     ): Promise<Offer> {
         const offer = await Offer.findOneOrFail({ id: offerId });
-        const user = await User.findOneOrFail({ id: uid });
+        const user = await User.findOneOrFail(req.user);
         if (user.id !== (await offer.user).id) {
             throw new Error("You cannot remove someone else's offer.");
         }
