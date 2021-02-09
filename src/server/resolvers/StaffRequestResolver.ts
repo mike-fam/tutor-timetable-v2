@@ -23,7 +23,6 @@ import {
     SessionStream,
     StaffRequest,
     Timetable,
-    User,
 } from "../entities";
 import { MyContext } from "../types/context";
 

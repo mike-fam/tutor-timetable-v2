@@ -1,4 +1,5 @@
 import {
+    Box,
     Center,
     Tab,
     Table,
@@ -97,9 +98,13 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                         </Td>
                                         <Td>
                                             <Center>
-                                                {requestItem.session
-                                                    .sessionStream.name +
-                                                    " (Week " +
+                                                {
+                                                    requestItem.session
+                                                        .sessionStream.name
+                                                }
+                                            </Center>
+                                            <Center>
+                                                {" (Week " +
                                                     requestItem.session.week +
                                                     ")"}
                                             </Center>
@@ -111,28 +116,32 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                                     No preferences we provided
                                                 </Text>
                                             )}
-                                            {requestItem.swapPreference.map(
-                                                (session, i) => (
-                                                    <Text
-                                                        key={i}
-                                                        style={{
-                                                            display: "inline",
-                                                        }}
-                                                    >
-                                                        {session.sessionStream
-                                                            .name +
-                                                            " (Week " +
-                                                            session.week +
-                                                            ")"}
-                                                        {i + 1 ===
-                                                        requestItem
-                                                            .swapPreference
-                                                            .length
-                                                            ? ""
-                                                            : ", "}
-                                                    </Text>
-                                                )
-                                            )}
+                                            <Center isTruncated noOfLines={2}>
+                                                {requestItem.swapPreference.map(
+                                                    (session, i) => (
+                                                        <Text
+                                                            key={i}
+                                                            style={{
+                                                                display:
+                                                                    "inline",
+                                                            }}
+                                                        >
+                                                            {session
+                                                                .sessionStream
+                                                                .name +
+                                                                " (Week " +
+                                                                session.week +
+                                                                ")"}
+                                                            {i + 1 ===
+                                                            requestItem
+                                                                .swapPreference
+                                                                .length
+                                                                ? ""
+                                                                : ", "}
+                                                        </Text>
+                                                    )
+                                                )}
+                                            </Center>
                                         </Td>
                                     </Tr>
                                 ))}
