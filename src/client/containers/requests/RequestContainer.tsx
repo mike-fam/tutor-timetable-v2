@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import { Requests } from "../../components/requests/Requests";
+import { notSet } from "../../constants";
 import {
     RequestStatus,
     RequestType,
@@ -26,9 +27,9 @@ export const RequestContainer: React.FunctionComponent = () => {
     // Get Current Term
     const currentTerm = useMemo(() => {
         if (!data) {
-            return null;
+            return notSet;
         }
-        return getCurrentTerm(data.terms);
+        return getCurrentTerm(data.terms).id;
     }, [data]);
 
     // Update list of filters.

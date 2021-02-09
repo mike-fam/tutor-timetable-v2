@@ -14,7 +14,7 @@ import { UserState } from "../../types/user";
 type Props = {
     filters: Array<RequestType | RequestStatus>;
     user: UserState;
-    currentTerm: Pick<Term, "id" | "startDate" | "endDate"> | null;
+    currentTerm: number;
 };
 
 export enum TabViewType {
@@ -46,7 +46,7 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
                     props.filters.includes(request.type) &&
                     props.filters.includes(request.status) &&
                     request.session.sessionStream.timetable.termId ===
-                        props.currentTerm?.id &&
+                        props.currentTerm &&
                     request.requester.username === props.user.username
                 );
             } else {
@@ -54,17 +54,11 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
                     props.filters.includes(request.type) &&
                     props.filters.includes(request.status) &&
                     request.session.sessionStream.timetable.termId ===
-                        props.currentTerm?.id
+                        props.currentTerm
                 );
             }
         });
-    }, [
-        data,
-        props.currentTerm?.id,
-        props.filters,
-        props.user.username,
-        tabView,
-    ]);
+    }, [data, props.currentTerm, props.filters, props.user.username, tabView]);
 
     const handleTabChange = (tab: TabViewType) => {
         if (tabView !== tab) {

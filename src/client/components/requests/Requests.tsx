@@ -13,7 +13,7 @@ type Props = {
     ) => void;
     filters: Array<RequestType | RequestStatus>;
     user: UserState;
-    currentTerm: Pick<Term, "id" | "startDate" | "endDate"> | null;
+    currentTerm: number;
 };
 
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
