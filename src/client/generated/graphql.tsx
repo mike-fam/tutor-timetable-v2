@@ -829,14 +829,10 @@ export type GetSessionsQuery = (
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: "Query" } & {
-    me?: Maybe<
-        { __typename?: "User" } & Pick<
-            User,
-            "id" | "username" | "name" | "email"
-        >
-    >;
-};
+export type HelloQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'hello'>
+);
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -845,7 +841,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'username' | 'name' | 'email'>
+    & Pick<User, 'id' | 'username' | 'name' | 'email'>
   )> }
 );
 
@@ -1658,14 +1654,14 @@ export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
 export const MeDocument = gql`
     query Me {
-        me {
-            id
-            username
-            name
-            email
-        }
-    }
-`;
+  me {
+    id
+    username
+    name
+    email
+  }
+}
+    `;
 
 /**
  * __useMeQuery__

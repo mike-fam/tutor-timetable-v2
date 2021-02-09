@@ -74,6 +74,7 @@ export const CreateRequestButton: React.FC<Props> = () => {
                                 duration,
                                 userId: user.id,
                                 sessionId: session,
+                                termId: currentTerm,
                             },
                         },
                     });
