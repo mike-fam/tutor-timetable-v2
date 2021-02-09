@@ -6,6 +6,8 @@ import {
 } from "class-validator";
 import {
     Arg,
+    Args,
+    Ctx,
     Field,
     InputType,
     Int,
@@ -24,6 +26,7 @@ import {
     Timetable,
     User,
 } from "../entities";
+import { MyContext } from "../types/context";
 
 @InputType()
 class RequestFormInputType {
@@ -43,9 +46,6 @@ class RequestFormInputType {
     @Field({ nullable: true })
     @IsString()
     description: string;
-
-    @Field(() => Int)
-    userId: number;
 
     @Field(() => Int)
     termId: number;
@@ -96,14 +96,14 @@ export class StaffRequestResolver {
             preferences,
             duration,
             description,
-            userId,
             sessionId,
             termId,
-        }: RequestFormInputType
+        }: RequestFormInputType,
+        @Ctx() { req }: MyContext
     ): Promise<StaffRequest> {
-        const requester = await User.findOneOrFail({ id: userId });
+        const requester = await User.findOneOrFail(req.user);
         const session = await Session.findOneOrFail({ id: sessionId });
-        const userSessions = await SessionAllocation.find({ userId });
+        const userSessions = await SessionAllocation.find(req.user);
         const userSessionStream = await SessionStream.findOneOrFail({
             id: session.sessionStreamId,
         });
@@ -115,7 +115,8 @@ export class StaffRequestResolver {
 
         // Checks if user is in session.
         if (
-            (await SessionAllocation.find({ sessionId, userId })).length === 0
+            (await SessionAllocation.find({ sessionId, user: req.user }))
+                .length === 0
         ) {
             throw new Error(
                 "You cannot switch out of a session you are not in"
@@ -193,12 +194,10 @@ export class StaffRequestResolver {
     // Used for displaying all requests associated with the user for a given term
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
-        @Arg("userId", () => Int) userId: number,
+        @Ctx() { req }: MyContext,
         @Arg("termId", () => Int) termId: number
     ): Promise<StaffRequest[]> {
-        const user = await User.findOneOrFail({ id: userId });
-
-        return await StaffRequest.find({ requester: user });
+        return await StaffRequest.find({ requester: req.user });
     }
 
     // Used for displaying requests on the main requests page.
@@ -271,5 +270,19 @@ export class StaffRequestResolver {
             request.description = description;
         }
         return request.save();
+    }
+
+    @Mutation(() => StaffRequest)
+    async deleteRequestById(
+        @Ctx() { req }: MyContext,
+        @Arg("requestId", () => Int) requestId: number
+    ): Promise<StaffRequest> {
+        const request = await StaffRequest.findOneOrFail({ id: requestId });
+
+        if ((await request.requester) !== req.user) {
+            throw new Error("User ID does not match request user ID");
+        }
+
+        return await (await request.remove()).save();
     }
 }

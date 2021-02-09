@@ -22,6 +22,7 @@ export class Offer extends BaseEntity {
     @Field(() => StaffRequest)
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
+        cascade: true,
     })
     request: Lazy<StaffRequest>;
 
