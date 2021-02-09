@@ -521,7 +521,10 @@ export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MeQuery = { __typename?: "Query" } & {
     me?: Maybe<
-        { __typename?: "User" } & Pick<User, "username" | "name" | "email">
+        { __typename?: "User" } & Pick<
+            User,
+            "id" | "username" | "name" | "email"
+        >
     >;
 };
 
@@ -1125,6 +1128,7 @@ export type HelloQueryResult = Apollo.QueryResult<
 export const MeDocument = gql`
     query Me {
         me {
+            id
             username
             name
             email
