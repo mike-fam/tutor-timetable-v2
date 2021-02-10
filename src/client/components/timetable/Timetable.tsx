@@ -1,37 +1,46 @@
 import { Box, Grid } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React, { PropsWithChildren, ReactElement } from "react";
 import { Props as DayProps } from "./Day";
-import { gap } from "../../constants/timetable";
+import { gap, timetableTimeslotHeight } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
 import { Set } from "immutable";
 import { IsoDay } from "../../../types/date";
 import { TimetableSessionType } from "../../types/timetable";
 
-export type Props = {
+export type Props<T> = {
     displayedDays: Set<IsoDay>;
     renderDay: (
-        dayProps: Omit<DayProps, "renderTimeSlot" | "renderSession">,
+        dayProps: Omit<
+            DayProps<T>,
+            "renderTimeSlot" | "renderSession" | "getSessionProps"
+        >,
         key: number
     ) => ReactElement;
     startTime?: number;
     endTime?: number;
     sessions: Array<TimetableSessionType>;
+    timeslotHeight?: number;
 };
 
-export const Timetable: React.FC<Props> = ({
+export const Timetable = <T,>({
     displayedDays,
     startTime = 7,
     endTime = 20,
     renderDay,
     sessions,
-}) => {
+    timeslotHeight = timetableTimeslotHeight,
+}: PropsWithChildren<Props<T>>) => {
     return (
         <Box>
             <Grid
                 templateColumns={`2ch repeat(${displayedDays.size}, 1fr)`}
                 gap={gap}
             >
-                <HourColumn startTime={startTime} endTime={endTime} />
+                <HourColumn
+                    startTime={startTime}
+                    endTime={endTime}
+                    timeslotHeight={timeslotHeight}
+                />
                 {displayedDays.map((day, key) =>
                     renderDay(
                         {
@@ -41,6 +50,7 @@ export const Timetable: React.FC<Props> = ({
                             sessions: sessions.filter(
                                 (session) => session.day === day
                             ),
+                            timeslotHeight,
                         },
                         key
                     )

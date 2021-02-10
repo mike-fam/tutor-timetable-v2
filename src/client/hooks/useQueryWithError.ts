@@ -60,3 +60,23 @@ export const useLazyQueryWithError = <T, S>(
     }, [error, addError]);
     return queryResult;
 };
+
+export const useLazyQueryWithError = <T, S>(
+    useApolloLazyQuery: (
+        baseOptions?: Apollo.LazyQueryHookOptions<T, S>
+    ) => QueryTuple<T, S>,
+    args?: S
+) => {
+    const queryResult = useApolloLazyQuery({
+        variables: args,
+        errorPolicy: "all",
+    });
+    const { addError } = useContext(ErrorContext);
+    const [, { error }] = useMemo(() => queryResult, [queryResult]);
+    useEffect(() => {
+        if (error) {
+            addError(error);
+        }
+    }, [error, addError]);
+    return queryResult;
+};

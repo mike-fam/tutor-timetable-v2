@@ -1,5 +1,5 @@
 import { CourseStaffsQuery } from "../generated/graphql";
-import { ArrayElement } from "./helper";
+import { ArrayElement } from "./helpers";
 
 export enum StaffSeniority {
     NEW = "New",

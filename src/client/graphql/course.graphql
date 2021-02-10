@@ -1,0 +1,6 @@
+query Course($courseId: Int!) {
+    course(courseId: $courseId) {
+        code
+        title
+    }
+}

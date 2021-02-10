@@ -1,8 +1,4 @@
-import {
-    firstLineHeight,
-    realGap,
-    timeSlotHeight,
-} from "../constants/timetable";
+import { firstLineHeight, realGap } from "../constants/timetable";
 import { IsoDay, StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
@@ -38,6 +34,7 @@ export const sessionStyleFromProps = ({
     elemStackWidth,
     longestBranchSize,
     splitBranchSize,
+    timeslotHeight,
 }: Omit<SessionProps, "name">): {
     topPx: CSS.Property.Top<number>;
     heightPx: CSS.Property.Height<number>;
@@ -57,11 +54,11 @@ export const sessionStyleFromProps = ({
     const top =
         firstLineHeight +
         realGap +
-        relativeStart * timeSlotHeight +
+        relativeStart * timeslotHeight +
         Math.floor(relativeStart) * realGap;
     const sessionDuration = relativeEnd - relativeStart;
     const height =
-        sessionDuration * timeSlotHeight +
+        sessionDuration * timeslotHeight +
         Math.max(Math.ceil(sessionDuration - 1), 0) * realGap;
     const display = sessionDuration ? "block" : "none";
     const width = `calc((100% - ${(stackSize - 1) * realGap}px) * ${

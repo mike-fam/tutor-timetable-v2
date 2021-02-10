@@ -21,7 +21,6 @@ export const WeekNavContainer: React.FunctionComponent<Props> = () => {
     );
     useEffect(() => {
         if (loading || !data) {
-            console.log("failed");
             return;
         }
         data.terms.forEach((term) => {

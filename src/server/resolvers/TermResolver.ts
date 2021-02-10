@@ -36,9 +36,9 @@ export class TermResolver {
         return await Term.find({});
     }
 
-    @Query(() => Term, { nullable: true })
-    async term(@Arg("id") id: string): Promise<Term | undefined> {
-        return await Term.findOne(id);
+    @Query(() => Term)
+    async term(@Arg("termId", () => Int) termId: number): Promise<Term> {
+        return await Term.findOneOrFail(termId);
     }
 
     @Mutation(() => Term)
