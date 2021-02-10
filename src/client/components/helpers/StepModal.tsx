@@ -20,6 +20,7 @@ type Props = Omit<ModalProps, "isOpen" | "onClose"> & {
     isOpen: boolean;
     onClose: () => void;
     validateStep: (currentStep: number) => boolean;
+    isSubmitting: boolean;
 };
 
 export const StepModalContext = createContext<StepModalState>({
@@ -32,6 +33,7 @@ export const StepModal: React.FC<Props> = ({
     stepCount,
     validateStep,
     onClose,
+    isSubmitting,
     children,
     ...props
 }) => {

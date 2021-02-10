@@ -603,7 +603,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'username' | 'name' | 'email'>
+    & Pick<User, 'id' | 'username' | 'name' | 'email'>
   )> }
 );
 
@@ -1128,6 +1128,7 @@ export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariable
 export const MeDocument = gql`
     query Me {
   me {
+    id
     username
     name
     email

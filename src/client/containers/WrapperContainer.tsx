@@ -10,7 +10,7 @@ import { ErrorContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
 import { Footer } from "../Footer";
-import { footerHeight } from "../constants";
+import { footerHeight, notSet } from "../constants";
 
 type Props = {};
 
@@ -41,6 +41,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         ])
     );
     const [user, setUser] = useState<UserState>({
+        id: notSet,
         username: "",
         email: "",
         name: "",
