@@ -1,6 +1,6 @@
 import React from "react";
 import { IconButton, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { BsPencilSquare, BsX } from "react-icons/bs";
+import { BsX } from "react-icons/bs";
 import { Icon } from "@chakra-ui/icons";
 import { CourseStaffsQuery } from "../../generated/graphql";
 import { notSet } from "../../constants";

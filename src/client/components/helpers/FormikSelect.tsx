@@ -8,7 +8,7 @@ import {
     Select,
     SelectProps,
 } from "@chakra-ui/react";
-import { capitalCase, sentenceCase } from "change-case";
+import { capitalCase } from "change-case";
 
 type Props = {
     name: string;
