@@ -13,11 +13,13 @@ type Props = {
     term: number;
     course: number;
     courseStaffs: CourseStaffsQuery["courseStaffs"];
+    removeCourseStaff: (courseStaffId: number) => void;
 };
 
 export const CourseStaffTableContainer: React.FC<Props> = ({
     term,
     course,
+    removeCourseStaff,
     courseStaffs,
 }) => {
     if (term === notSet || course === notSet) {
@@ -65,6 +67,9 @@ export const CourseStaffTableContainer: React.FC<Props> = ({
                                 colorScheme="red"
                                 icon={<Icon boxSize="1.5em" as={BsX} />}
                                 size="md"
+                                onClick={() => {
+                                    removeCourseStaff(courseStaff.id);
+                                }}
                             />
                         </Td>
                     </Tr>

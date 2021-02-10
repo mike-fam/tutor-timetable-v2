@@ -8,6 +8,7 @@ import {
     Stack,
     Text,
     useDisclosure,
+    useToast,
 } from "@chakra-ui/react";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import {
@@ -19,6 +20,7 @@ import {
     Role,
     useAddCourseStaffMutation,
     useCourseStaffsLazyQuery,
+    useRemoveCourseStaffMutation,
     useTermsQuery,
 } from "../../generated/graphql";
 import { getCurrentTerm } from "../../utils/term";
@@ -35,13 +37,17 @@ import {
 } from "../../types/courseStaff";
 import { Map } from "immutable";
 import { Loadable } from "../../components/helpers/Loadable";
-import { HelpIcon } from "../../components/helpers/HelpIcon";
 
 type Props = {};
 
 export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
+    const toast = useToast();
+    const [
+        removeCourseStaffMutation,
+        { data: removeCourseStaffData },
+    ] = useMutationWithError(useRemoveCourseStaffMutation);
     const { termId, courseId, changeCourse, changeTerm } = useTermCourse();
     const [term, setTerm] = useState<TermResponseType>();
     const [
@@ -65,6 +71,16 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
             },
         });
     }, [termId, courseId, getCourseStaff]);
+    const removeCourseStaff = useCallback(
+        (courseStaffId: number) => {
+            removeCourseStaffMutation({
+                variables: {
+                    courseStaffId,
+                },
+            });
+        },
+        [removeCourseStaffMutation]
+    );
     const [courseStaff, setCourseStaff] = useState<
         Map<number, CourseStaffResponseType>
     >(Map());
@@ -85,6 +101,24 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
         });
     }, [getCourseStaffData]);
     useEffect(() => {
+        if (!removeCourseStaffData) {
+            return;
+        }
+        const removed = courseStaff.get(
+            removeCourseStaffData.removeCourseStaff
+        );
+        setCourseStaff((prev) =>
+            prev.remove(removeCourseStaffData.removeCourseStaff)
+        );
+        toast({
+            title: "Staff member removed",
+            description: `User ${removed?.user.username} removed from course`,
+            status: "success",
+            isClosable: true,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [removeCourseStaffData]);
+    useEffect(() => {
         if (!termsData) {
             return;
         }
@@ -98,7 +132,6 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
             role: Role;
             isNew: StaffSeniority;
         }) => {
-            console.log("Adding course staff");
             addCourseStaff({
                 variables: {
                     usernames: values.usernames,
@@ -144,6 +177,7 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
                                 term={termId}
                                 course={courseId}
                                 courseStaffs={courseStaff.valueSeq().toArray()}
+                                removeCourseStaff={removeCourseStaff}
                             />
                         </Box>
                     </Loadable>
@@ -152,7 +186,10 @@ export const CourseStaffPageContainer: React.FC<Props> = ({}) => {
             <AddCourseStaffModal
                 isOpen={isOpen}
                 onClose={onClose}
-                onSubmit={addStaff}
+                onSubmit={(values) => {
+                    addStaff(values);
+                    onClose();
+                }}
                 loading={addCourseStaffLoading}
             />
         </Wrapper>

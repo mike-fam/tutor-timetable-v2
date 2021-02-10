@@ -1,4 +1,12 @@
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+    Arg,
+    Field,
+    InputType,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from "type-graphql";
 import { CourseStaff, Timetable, User } from "../entities";
 import { Role } from "../types/user";
 import { CourseTermIdInput } from "./CourseTermId";
@@ -103,13 +111,13 @@ export class CourseStaffResolver {
     }
 
     // TODO: Validation
-    @Mutation(() => Boolean)
+    @Mutation(() => Int)
     async removeCourseStaff(
-        @Arg("courseStaffId") courseStaffId: number
-    ): Promise<boolean> {
+        @Arg("courseStaffId", () => Int) courseStaffId: number
+    ): Promise<number> {
         try {
             await CourseStaff.delete(courseStaffId);
-            return true;
+            return courseStaffId;
         } catch (e) {
             throw new Error("Could not remove this staff member");
         }

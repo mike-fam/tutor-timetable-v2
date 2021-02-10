@@ -29,3 +29,7 @@ mutation AddCourseStaff(
         isNew
     }
 }
+
+mutation RemoveCourseStaff($courseStaffId: Int!) {
+    removeCourseStaff(courseStaffId: $courseStaffId)
+}

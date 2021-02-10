@@ -243,7 +243,7 @@ export type Mutation = {
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
-  removeCourseStaff: Scalars['Boolean'];
+  removeCourseStaff: Scalars['Int'];
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
@@ -292,7 +292,7 @@ export type MutationAddUsersToCourseArgs = {
 
 
 export type MutationRemoveCourseStaffArgs = {
-  courseStaffId: Scalars['Float'];
+  courseStaffId: Scalars['Int'];
 };
 
 
@@ -483,6 +483,16 @@ export type AddCourseStaffMutation = (
       & Pick<User, 'id' | 'name' | 'username'>
     ) }
   )> }
+);
+
+export type RemoveCourseStaffMutationVariables = Exact<{
+  courseStaffId: Scalars['Int'];
+}>;
+
+
+export type RemoveCourseStaffMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeCourseStaff'>
 );
 
 export type GetSessionStreamsQueryVariables = Exact<{
@@ -837,6 +847,36 @@ export function useAddCourseStaffMutation(baseOptions?: Apollo.MutationHookOptio
 export type AddCourseStaffMutationHookResult = ReturnType<typeof useAddCourseStaffMutation>;
 export type AddCourseStaffMutationResult = Apollo.MutationResult<AddCourseStaffMutation>;
 export type AddCourseStaffMutationOptions = Apollo.BaseMutationOptions<AddCourseStaffMutation, AddCourseStaffMutationVariables>;
+export const RemoveCourseStaffDocument = gql`
+    mutation RemoveCourseStaff($courseStaffId: Int!) {
+  removeCourseStaff(courseStaffId: $courseStaffId)
+}
+    `;
+export type RemoveCourseStaffMutationFn = Apollo.MutationFunction<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>;
+
+/**
+ * __useRemoveCourseStaffMutation__
+ *
+ * To run a mutation, you first call `useRemoveCourseStaffMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveCourseStaffMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeCourseStaffMutation, { data, loading, error }] = useRemoveCourseStaffMutation({
+ *   variables: {
+ *      courseStaffId: // value for 'courseStaffId'
+ *   },
+ * });
+ */
+export function useRemoveCourseStaffMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>) {
+        return Apollo.useMutation<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>(RemoveCourseStaffDocument, baseOptions);
+      }
+export type RemoveCourseStaffMutationHookResult = ReturnType<typeof useRemoveCourseStaffMutation>;
+export type RemoveCourseStaffMutationResult = Apollo.MutationResult<RemoveCourseStaffMutation>;
+export type RemoveCourseStaffMutationOptions = Apollo.BaseMutationOptions<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {
