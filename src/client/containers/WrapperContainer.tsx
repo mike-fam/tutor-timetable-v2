@@ -36,8 +36,8 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
             IsoDay.WED,
             IsoDay.THU,
             IsoDay.FRI,
-            IsoDay.SAT,
-            IsoDay.SUN,
+            // IsoDay.SAT,
+            // IsoDay.SUN,
         ])
     );
     const [user, setUser] = useState<UserState>({
@@ -74,7 +74,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         setDayEndTime,
                     }}
                 >
-                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`}>
+                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`} mb={5}>
                         {children}
                     </Box>
                     <Footer />

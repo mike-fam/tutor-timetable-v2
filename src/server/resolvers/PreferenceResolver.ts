@@ -31,11 +31,11 @@ export class PreferenceResolver {
         return await getConnection()
             .getRepository(Preference)
             .createQueryBuilder("preference")
-            .innerJoinAndSelect("preference.courseStaff", "courseStaff")
-            .innerJoinAndSelect("courseStaff.timetable", "timetable")
+            .innerJoinAndSelect("preference.course-staff", "courseStaff")
+            .innerJoinAndSelect("course-staff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userId = :userId", {
+            .andWhere("course-staff.userId = :userId", {
                 userId: user.id,
             })
             .getOne();
@@ -70,10 +70,10 @@ export class PreferenceResolver {
         const courseStaff = await getConnection()
             .getRepository(CourseStaff)
             .createQueryBuilder("courseStaff")
-            .innerJoinAndSelect("courseStaff.timetable", "timetable")
+            .innerJoinAndSelect("course-staff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userId = :userId", {
+            .andWhere("course-staff.userId = :userId", {
                 userId: req.user!.id,
             })
             .getOne();
