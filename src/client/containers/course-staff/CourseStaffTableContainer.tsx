@@ -55,12 +55,12 @@ export const CourseStaffTableContainer: React.FC<Props> = ({
                         <Td>{capitalCase(courseStaff.role)}</Td>
                         <Td>{courseStaff.isNew ? "New" : "Experienced"}</Td>
                         <Td isNumeric>
-                            <IconButton
-                                aria-label="edit-staff"
-                                colorScheme="blue"
-                                icon={<Icon as={BsPencilSquare} />}
-                                size="md"
-                            />
+                            {/*<IconButton*/}
+                            {/*    aria-label="edit-staff"*/}
+                            {/*    colorScheme="blue"*/}
+                            {/*    icon={<Icon as={BsPencilSquare} />}*/}
+                            {/*    size="md"*/}
+                            {/*/>*/}
                             <IconButton
                                 ml={2}
                                 aria-label="remove-staff"
