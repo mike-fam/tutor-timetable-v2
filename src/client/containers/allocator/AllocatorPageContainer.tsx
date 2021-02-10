@@ -12,7 +12,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { notSet } from "../../constants";
@@ -28,9 +28,10 @@ import {
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
 import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
-import { Set, Map } from "immutable";
+import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
+import { AllocatorTable } from "../../components/allocator/AllocatorTable";
 
 type Props = {};
 
@@ -81,6 +82,25 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyAllocationData]);
 
+    const allocationTotalHours = useMemo<{ [key: string]: number }>(() => {
+        if (!requestAllocationData) {
+            return {};
+        }
+        const totalHours: { [key: string]: number } = {};
+
+        requestAllocationData.requestAllocation.allocations.forEach(
+            (allocation) => {
+                allocation.staff.forEach((staff) => {
+                    totalHours[staff.name] =
+                        (totalHours[staff.name] || 0) +
+                        (allocation.sessionStream.endTime -
+                            allocation.sessionStream.startTime) *
+                            allocation.sessionStream.weeks.length;
+                });
+            }
+        );
+        return totalHours;
+    }, [requestAllocationData]);
     // Get timetable data on term and course changing
     useEffect(() => {
         if (termId === notSet || courseId === notSet) {
@@ -209,7 +229,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                             coordinatorOnly={true}
                         />
                     </HStack>
-                    {courseId !== notSet && termId !== notSet ? (
+                    {courseId !== notSet && termId !== notSet && (
                         <>
                             <Text
                                 fontSize="2xl"
@@ -293,8 +313,14 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                 }
                                 sessionsData={sessionsInfo}
                             />
+                            {showing === "generated" &&
+                                allocationTotalHours && (
+                                    <AllocatorTable
+                                        totalHours={allocationTotalHours}
+                                    />
+                                )}
                         </>
-                    ) : null}
+                    )}
                 </Stack>
             </Wrapper>
             <AllocatorConfirmDialog
