@@ -18,10 +18,10 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { usePreferenceByUsernameLazyQuery } from "../../generated/graphql";
 import { Map } from "immutable";
-import { PreferenceResponseType } from "../../../server/types/preference";
 import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import { Loadable } from "../helpers/Loadable";
 import { capitalCase } from "change-case";
+import { PreferenceResponseType } from "../../types/preference";
 
 export type AllocatedStaffData = {
     [key: string]: {
