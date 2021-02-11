@@ -1,5 +1,8 @@
 import { createContext } from "react";
-import { AvailabilityState } from "../types/availability";
+import {
+    AvailabilityResponseType,
+    AvailabilityState,
+} from "../types/availability";
 import { Map } from "immutable";
 import { SessionTheme } from "../types/timetable";
 import {
@@ -34,7 +37,7 @@ export const modificationTypeToTheme = (
 };
 
 export const isAvailable = (
-    availabilities: MyAvailabilityQuery["myAvailability"],
+    availabilities: AvailabilityResponseType,
     session: SessionResponseType
 ) => {
     const availabilityDay = availabilities

@@ -1,33 +1,12 @@
-import {
-    createContext,
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { Map } from "immutable";
-import { SessionResponseType } from "../types/session";
+import { SessionMap, SessionUtil } from "../types/session";
 import { useLazyQueryWithError } from "./useQueryWithError";
 import {
-    GetSessionsQuery,
     useGetSessionByIdLazyQuery,
     useGetSessionsLazyQuery,
 } from "../generated/graphql";
 import { notSet } from "../constants";
-
-type SessionMap = Map<number, SessionResponseType>;
-type SessionUtil = {
-    sessions: SessionMap;
-    setSessions: Dispatch<SetStateAction<SessionMap>>;
-    sessionsData?: GetSessionsQuery;
-    fetchSessions: (
-        termId: number,
-        courseId: number,
-        chosenWeek: number
-    ) => void;
-    fetchSessionById: (sessionId: number) => void;
-};
 
 export const SessionsContext = createContext<SessionUtil>({
     sessions: Map(),

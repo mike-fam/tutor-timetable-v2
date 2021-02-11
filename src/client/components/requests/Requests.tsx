@@ -3,7 +3,7 @@ import React from "react";
 import { FilterType } from "../../containers/requests/RequestContainer";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestFilter } from "./RequestFilter";
-import { CreateRequestButton } from "../../containers/requests/CreateRequestModalContainerV3";
+import { CreateRequestButtonContainer } from "../../containers/requests/CreateRequestButtonContainer";
 
 type Props = {
     toggleFilters: (item: FilterType, selected: boolean) => void;
@@ -35,7 +35,7 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
                                 <h1>options</h1>
                             </Center>
                             <Box>
-                                <CreateRequestButton />
+                                <CreateRequestButtonContainer />
                             </Box>
                             <Divider></Divider>
                             <Box>

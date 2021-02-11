@@ -18,7 +18,7 @@ import { UserContext } from "../../utils/user";
 
 type Props = {};
 
-export const CreateRequestButton: React.FC<Props> = () => {
+export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const formState = useRequestFormState();
