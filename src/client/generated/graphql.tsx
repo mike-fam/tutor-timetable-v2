@@ -460,7 +460,7 @@ export type RequestAllocationMutation = (
       { __typename?: 'Allocation' }
       & { sessionStream: (
         { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'location'>
+        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'weeks'>
       ), staff: Array<(
         { __typename?: 'User' }
         & Pick<User, 'name'>
@@ -790,6 +790,7 @@ export const RequestAllocationDocument = gql`
         endTime
         day
         location
+        weeks
       }
       staff {
         name

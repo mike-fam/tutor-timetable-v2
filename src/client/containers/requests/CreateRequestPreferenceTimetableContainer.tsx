@@ -17,7 +17,7 @@ import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { useMyAvailabilityQuery } from "../../generated/graphql";
 import { isAvailable } from "../../utils/availability";
-import { useSessionMap } from "../../hooks/useSessionMap";
+import { SessionsContext, useSessionUtils } from "../../hooks/useSessionUtils";
 import { Text } from "@chakra-ui/react";
 
 type Props = {
@@ -43,13 +43,10 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     const { data: availabilityData } = useQueryWithError(
         useMyAvailabilityQuery
     );
-    const { sessions, fetchSessions } = useSessionMap(
-        chosenTermId,
-        chosenCourseId
-    );
+    const { sessions, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
-        fetchSessions(chosenWeek);
-    }, [chosenWeek, fetchSessions]);
+        fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
+    }, [chosenTermId, chosenCourseId, chosenWeek, fetchSessions]);
     const filterSessions = useCallback(
         (sessions: Array<SessionResponseType>) => {
             return getSessionsOfUser(sessions, user.username, true);
