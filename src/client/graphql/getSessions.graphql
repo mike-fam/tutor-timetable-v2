@@ -6,6 +6,14 @@ query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
             startTime
             endTime
             day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
         }
         location
         week
@@ -26,6 +34,14 @@ query GetSessionById($sessionId: Int!) {
             startTime
             endTime
             day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
         }
         location
         week

@@ -29,7 +29,7 @@ export const RequestSession: React.FC<Props> = ({
                     : {
                           filter:
                               colorMode === "light"
-                                  ? "brightness(2)"
+                                  ? "brightness(1.3)"
                                   : "brightness(0.7)",
                       }
             }

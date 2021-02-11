@@ -584,6 +584,16 @@ export type GetSessionsQuery = (
     & { sessionStream: (
       { __typename?: 'SessionStream' }
       & Pick<SessionStream, 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
     ), sessionAllocations: Array<(
       { __typename?: 'SessionAllocation' }
       & { user: (
@@ -607,6 +617,16 @@ export type GetSessionByIdQuery = (
     & { sessionStream: (
       { __typename?: 'SessionStream' }
       & Pick<SessionStream, 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
     ), sessionAllocations: Array<(
       { __typename?: 'SessionAllocation' }
       & { user: (
@@ -1085,6 +1105,14 @@ export const GetSessionsDocument = gql`
       startTime
       endTime
       day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
     }
     location
     week
@@ -1134,6 +1162,14 @@ export const GetSessionByIdDocument = gql`
       startTime
       endTime
       day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
     }
     location
     week
