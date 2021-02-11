@@ -31,7 +31,10 @@ import { TimetableSessionProps } from "../../components/timetable/TimetableSessi
 import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
-import { AllocatorTable } from "../../components/allocator/AllocatorTable";
+import {
+    AllocatedStaffData,
+    AllocatorTable,
+} from "../../components/allocator/AllocatorTable";
 
 type Props = {};
 
@@ -82,24 +85,32 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyAllocationData]);
 
-    const allocationTotalHours = useMemo<{ [key: string]: number }>(() => {
+    const allocatorUserData = useMemo<AllocatedStaffData>(() => {
         if (!requestAllocationData) {
             return {};
         }
-        const totalHours: { [key: string]: number } = {};
+        const staffData: AllocatedStaffData = {};
 
         requestAllocationData.requestAllocation.allocations.forEach(
             (allocation) => {
                 allocation.staff.forEach((staff) => {
-                    totalHours[staff.name] =
-                        (totalHours[staff.name] || 0) +
-                        (allocation.sessionStream.endTime -
-                            allocation.sessionStream.startTime) *
-                            allocation.sessionStream.weeks.length;
+                    staffData[staff.username] = {
+                        totalHours:
+                            (staffData[staff.username]?.totalHours || 0) +
+                            (allocation.sessionStream.endTime -
+                                allocation.sessionStream.startTime) *
+                                allocation.sessionStream.weeks.length,
+                        sessionsAssigned: [
+                            ...(staffData[staff.username]?.sessionsAssigned ||
+                                []),
+                            allocation.sessionStream.name,
+                        ],
+                        name: staff.name,
+                    };
                 });
             }
         );
-        return totalHours;
+        return staffData;
     }, [requestAllocationData]);
     // Get timetable data on term and course changing
     useEffect(() => {
@@ -313,12 +324,23 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                 }
                                 sessionsData={sessionsInfo}
                             />
-                            {showing === "generated" &&
-                                allocationTotalHours && (
+                            {showing === "generated" && allocatorUserData && (
+                                <>
+                                    <Text
+                                        fontSize="2xl"
+                                        fontWeight="light"
+                                        as="h2"
+                                        pt={6}
+                                    >
+                                        Allocation stats
+                                    </Text>
                                     <AllocatorTable
-                                        totalHours={allocationTotalHours}
+                                        staffMetadata={allocatorUserData}
+                                        courseId={courseId}
+                                        termId={termId}
                                     />
-                                )}
+                                </>
+                            )}
                         </>
                     )}
                 </Stack>

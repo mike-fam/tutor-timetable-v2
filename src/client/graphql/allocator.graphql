@@ -23,6 +23,7 @@ mutation RequestAllocation(
                 weeks
             }
             staff {
+                username
                 name
             }
         }

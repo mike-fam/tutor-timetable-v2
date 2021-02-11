@@ -34,6 +34,7 @@ export type Query = {
     sessionById: Session;
     myAvailability: Array<Timeslot>;
     myPreference?: Maybe<Preference>;
+    preferenceByUsername: Preference;
     courses: Array<Course>;
     course: Course;
 };
@@ -72,6 +73,11 @@ export type QuerySessionByIdArgs = {
 
 export type QueryMyPreferenceArgs = {
     preferenceFindInput: CourseTermIdInput;
+};
+
+export type QueryPreferenceByUsernameArgs = {
+    courseTermId: CourseTermIdInput;
+    username: Scalars["String"];
 };
 
 export type QueryCourseArgs = {
@@ -447,7 +453,12 @@ export type RequestAllocationMutation = { __typename?: "Mutation" } & {
                         | "location"
                         | "weeks"
                     >;
-                    staff: Array<{ __typename?: "User" } & Pick<User, "name">>;
+                    staff: Array<
+                        { __typename?: "User" } & Pick<
+                            User,
+                            "username" | "name"
+                        >
+                    >;
                 }
             >;
         };
@@ -672,8 +683,28 @@ export type MyPreferenceQuery = { __typename?: "Query" } & {
         { __typename?: "Preference" } & Pick<
             Preference,
             "maxContigHours" | "maxWeeklyHours" | "sessionType"
-        >
+        > & {
+                courseStaff: { __typename?: "CourseStaff" } & {
+                    user: { __typename?: "User" } & Pick<User, "username">;
+                };
+            }
     >;
+};
+
+export type PreferenceByUsernameQueryVariables = Exact<{
+    courseTermId: CourseTermIdInput;
+    username: Scalars["String"];
+}>;
+
+export type PreferenceByUsernameQuery = { __typename?: "Query" } & {
+    preferenceByUsername: { __typename?: "Preference" } & Pick<
+        Preference,
+        "maxContigHours" | "maxWeeklyHours" | "sessionType"
+    > & {
+            courseStaff: { __typename?: "CourseStaff" } & {
+                user: { __typename?: "User" } & Pick<User, "username">;
+            };
+        };
 };
 
 export type TermsQueryVariables = Exact<{ [key: string]: never }>;
@@ -800,6 +831,7 @@ export const RequestAllocationDocument = gql`
                     weeks
                 }
                 staff {
+                    username
                     name
                 }
             }
@@ -1598,6 +1630,11 @@ export const MyPreferenceDocument = gql`
             maxContigHours
             maxWeeklyHours
             sessionType
+            courseStaff {
+                user {
+                    username
+                }
+            }
         }
     }
 `;
@@ -1649,6 +1686,73 @@ export type MyPreferenceLazyQueryHookResult = ReturnType<
 export type MyPreferenceQueryResult = Apollo.QueryResult<
     MyPreferenceQuery,
     MyPreferenceQueryVariables
+>;
+export const PreferenceByUsernameDocument = gql`
+    query PreferenceByUsername(
+        $courseTermId: CourseTermIdInput!
+        $username: String!
+    ) {
+        preferenceByUsername(courseTermId: $courseTermId, username: $username) {
+            maxContigHours
+            maxWeeklyHours
+            sessionType
+            courseStaff {
+                user {
+                    username
+                }
+            }
+        }
+    }
+`;
+
+/**
+ * __usePreferenceByUsernameQuery__
+ *
+ * To run a query within a React component, call `usePreferenceByUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePreferenceByUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePreferenceByUsernameQuery({
+ *   variables: {
+ *      courseTermId: // value for 'courseTermId'
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function usePreferenceByUsernameQuery(
+    baseOptions: Apollo.QueryHookOptions<
+        PreferenceByUsernameQuery,
+        PreferenceByUsernameQueryVariables
+    >
+) {
+    return Apollo.useQuery<
+        PreferenceByUsernameQuery,
+        PreferenceByUsernameQueryVariables
+    >(PreferenceByUsernameDocument, baseOptions);
+}
+export function usePreferenceByUsernameLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<
+        PreferenceByUsernameQuery,
+        PreferenceByUsernameQueryVariables
+    >
+) {
+    return Apollo.useLazyQuery<
+        PreferenceByUsernameQuery,
+        PreferenceByUsernameQueryVariables
+    >(PreferenceByUsernameDocument, baseOptions);
+}
+export type PreferenceByUsernameQueryHookResult = ReturnType<
+    typeof usePreferenceByUsernameQuery
+>;
+export type PreferenceByUsernameLazyQueryHookResult = ReturnType<
+    typeof usePreferenceByUsernameLazyQuery
+>;
+export type PreferenceByUsernameQueryResult = Apollo.QueryResult<
+    PreferenceByUsernameQuery,
+    PreferenceByUsernameQueryVariables
 >;
 export const TermsDocument = gql`
     query Terms {

@@ -1,47 +1,176 @@
 import {
+    Button,
+    Grid,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+    Portal,
     Table,
-    TableCaption,
     Tbody,
     Td,
+    Text,
     Th,
     Thead,
     Tr,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { usePreferenceByUsernameLazyQuery } from "../../generated/graphql";
+import { Map } from "immutable";
+import { PreferenceResponseType } from "../../../server/types/preference";
+import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
+import { Loadable } from "../helpers/Loadable";
+import { capitalCase } from "change-case";
 
-type Props = {
-    totalHours: { [key: string]: number };
+export type AllocatedStaffData = {
+    [key: string]: {
+        name: string;
+        totalHours: number;
+        sessionsAssigned: string[];
+    };
 };
 
-export const AllocatorTable: React.FC<Props> = ({ totalHours }) => {
-    const totalHoursSorted = useMemo(
+type Props = {
+    staffMetadata: AllocatedStaffData;
+    courseId: number;
+    termId: number;
+};
+
+export const AllocatorTable: React.FC<Props> = ({
+    staffMetadata,
+    courseId,
+    termId,
+}) => {
+    const staffDataSorted = useMemo(
         () =>
-            Object.entries(totalHours).sort(
-                ([, num1], [, num2]) => num2 - num1
+            Object.entries(staffMetadata).sort(
+                (
+                    [, { totalHours: totalHours1 }],
+                    [, { totalHours: totalHours2 }]
+                ) => totalHours2 - totalHours1
             ),
-        [totalHours]
+        [staffMetadata]
     );
+    const [
+        getStaffPreference,
+        { data: staffPreferenceData },
+    ] = useLazyQueryWithError(usePreferenceByUsernameLazyQuery);
+    const [staffPreferencesMap, setStaffPreferenceMap] = useState<
+        Map<string, PreferenceResponseType>
+    >(Map());
+    useEffect(() => {
+        if (!staffPreferenceData) {
+            return;
+        }
+        setStaffPreferenceMap((prev) =>
+            prev.set(
+                staffPreferenceData.preferenceByUsername.courseStaff.user
+                    .username,
+                staffPreferenceData.preferenceByUsername
+            )
+        );
+    }, [staffPreferenceData]);
 
     return (
-        <Table w="50%" alignSelf="center">
-            <TableCaption>
-                Total allocation hours for every staff member
-            </TableCaption>
+        <Table w="80%" alignSelf="center" variant="striped">
             <Thead>
                 <Tr>
                     <Th>Staff</Th>
                     <Th isNumeric>Total Hours</Th>
+                    <Th>Assigned to</Th>
                     <Th isNumeric>Rank</Th>
                 </Tr>
             </Thead>
             <Tbody>
-                {totalHoursSorted.map(([user, hours], index) => (
-                    <Tr key={index}>
-                        <Td>{user}</Td>
-                        <Td isNumeric>{hours}</Td>
-                        <Td isNumeric>{index + 1}</Td>
-                    </Tr>
-                ))}
+                {staffDataSorted.map(
+                    (
+                        [username, { totalHours, sessionsAssigned, name }],
+                        index
+                    ) => (
+                        <Tr size="lg">
+                            <Td>{name}</Td>
+                            <Td isNumeric>{totalHours}</Td>
+                            <Td>{sessionsAssigned.join(", ")}</Td>
+                            <Td isNumeric>{index + 1}</Td>
+                            <Td>
+                                <Popover key={index}>
+                                    <PopoverTrigger>
+                                        <Button
+                                            onClick={() => {
+                                                getStaffPreference({
+                                                    variables: {
+                                                        courseTermId: {
+                                                            courseId,
+                                                            termId,
+                                                        },
+                                                        username,
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            View Preferences
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <Portal>
+                                        <PopoverContent>
+                                            <PopoverHeader>
+                                                Staff preferences
+                                            </PopoverHeader>
+                                            <PopoverBody>
+                                                <Loadable
+                                                    isLoading={
+                                                        !staffPreferencesMap.get(
+                                                            username
+                                                        )
+                                                    }
+                                                >
+                                                    <Grid templateColumns="1fr 1fr">
+                                                        <Text>
+                                                            Max Contiguous
+                                                            Hours:
+                                                        </Text>
+                                                        <Text>
+                                                            {
+                                                                staffPreferencesMap.get(
+                                                                    username
+                                                                )
+                                                                    ?.maxContigHours
+                                                            }
+                                                        </Text>
+                                                        <Text>
+                                                            Max Weekly Hours:
+                                                        </Text>
+                                                        <Text>
+                                                            {
+                                                                staffPreferencesMap.get(
+                                                                    username
+                                                                )
+                                                                    ?.maxWeeklyHours
+                                                            }
+                                                        </Text>
+                                                        <Text>
+                                                            Session Type:
+                                                        </Text>
+                                                        <Text>
+                                                            {capitalCase(
+                                                                staffPreferencesMap.get(
+                                                                    username
+                                                                )
+                                                                    ?.sessionType ||
+                                                                    "No Preferences"
+                                                            )}
+                                                        </Text>
+                                                    </Grid>
+                                                </Loadable>
+                                            </PopoverBody>
+                                        </PopoverContent>
+                                    </Portal>
+                                </Popover>
+                            </Td>
+                        </Tr>
+                    )
+                )}
             </Tbody>
         </Table>
     );
