@@ -59,6 +59,10 @@ export class OfferResolver {
         const user = await User.findOneOrFail(req.user);
         const request = await StaffRequest.findOneOrFail({ id: requestId });
 
+        if ((await request.requester).id === user.id) {
+            throw new Error("You cannot create an offer for a request you own");
+        }
+
         const isOfferUnique =
             (await Offer.find({ user, request })).length > 0 ? false : true;
 
@@ -177,7 +181,7 @@ export class OfferResolver {
             // Switch offerer into requester session.
             const requesterSessionAlloc = await SessionAllocation.findOneOrFail(
                 {
-                    id: requestedSession.id,
+                    sessionId: requestedSession.id,
                     userId: user.id,
                 }
             );
