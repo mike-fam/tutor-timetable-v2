@@ -207,10 +207,9 @@ export class OfferResolver {
             // Change stream allocation for offerer.
             const requesterStreamAlloc = await StreamAllocation.findOneOrFail({
                 userId: user.id,
-                sessionStreamId: requestedSession.id,
+                sessionStreamId: requestedSession.sessionStreamId,
             });
             requesterStreamAlloc.userId = offerUser.id;
-            await requesterStreamAlloc.save();
 
             // Change all session allocations from specified week onwards.
             const startWeek = requestedSession.week;
@@ -234,16 +233,16 @@ export class OfferResolver {
                 alloc.userId = offerUser.id;
                 await alloc.save();
             }
+            await requesterStreamAlloc.save();
 
             // For swaps
             if (offerPrefs.length > 0 && offerSession) {
                 // Change stream allocation for requester
                 const offerStreamAlloc = await StreamAllocation.findOneOrFail({
                     userId: offerUser.id,
-                    sessionStreamId: offerSession.id,
+                    sessionStreamId: offerSession.sessionStreamId,
                 });
                 offerStreamAlloc.userId = user.id;
-                offerStreamAlloc.save();
 
                 // Get week of the starting session
                 const startWeek = offerSession.week;
@@ -267,6 +266,7 @@ export class OfferResolver {
                     alloc.userId = user.id;
                     await alloc.save();
                 }
+                await offerStreamAlloc.save();
             }
             request.acceptor = offerUser;
             request.status = RequestStatus.CLOSED;
