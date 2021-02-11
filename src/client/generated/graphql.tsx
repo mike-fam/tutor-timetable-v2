@@ -304,6 +304,7 @@ export type Mutation = {
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
+  acceptOffer: Offer;
 };
 
 
@@ -400,6 +401,13 @@ export type MutationEditExistingOfferArgs = {
 
 
 export type MutationRemoveOfferArgs = {
+  offerId: Scalars['Int'];
+};
+
+
+export type MutationAcceptOfferArgs = {
+  offerSessionSwapId: Scalars['Int'];
+  requestId: Scalars['Int'];
   offerId: Scalars['Int'];
 };
 
