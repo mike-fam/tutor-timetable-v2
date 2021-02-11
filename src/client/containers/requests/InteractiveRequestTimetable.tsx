@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
 import { SessionTheme } from "../../types/timetable";
 import { useTermsQuery } from "../../generated/graphql";
@@ -6,7 +6,7 @@ import { WeekNav } from "../../components/WeekNav";
 import { Loadable } from "../../components/helpers/Loadable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { SessionResponseType } from "../../types/session";
-import { useSessionMap } from "../../hooks/useSessionMap";
+import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
@@ -36,13 +36,10 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     chooseWeek,
 }) => {
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const { sessionsData, fetchSessions } = useSessionMap(
-        chosenTermId,
-        chosenCourseId
-    );
+    const { sessionsData, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
-        fetchSessions(chosenWeek);
-    }, [fetchSessions, chosenWeek]);
+        fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
+    }, [fetchSessions, chosenTermId, chosenCourseId, chosenWeek]);
     const { weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     return (
         <Loadable isLoading={!termsData || !sessionsData}>

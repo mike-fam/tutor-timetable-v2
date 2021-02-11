@@ -7,10 +7,7 @@ import {
     TimetableSettingsContext,
 } from "../../utils/timetable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import {
-    useGetSessionsQuery,
-    useGetSessionStreamsQuery,
-} from "../../generated/graphql";
+import { useGetSessionStreamsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import {
@@ -19,6 +16,7 @@ import {
 } from "../../components/timetable/TimetableSession";
 import { Map } from "immutable";
 import { notSet } from "../../constants";
+import { SessionsContext } from "../../hooks/useSessionUtils";
 
 type Props = {};
 
@@ -33,14 +31,7 @@ export const TimetableContainer: React.FC<Props> = () => {
         TimetableContext
     );
     // TODO: Use lazy query
-    const { data: sessionsData, loading: sessionsLoading } = useQueryWithError(
-        useGetSessionsQuery,
-        {
-            termId: chosenTermId,
-            courseIds: chosenCourses.toArray(),
-            week: chosenWeek,
-        }
-    );
+    const { fetchSessions, sessionsData } = useContext(SessionsContext);
     const {
         data: sessionStreamsData,
         loading: sessionStreamsLoading,
@@ -65,7 +56,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                 ),
             }));
         } else {
-            if (sessionsLoading || !sessionsData) {
+            if (!sessionsData) {
                 return [];
             }
             return sessionsData.sessions.map((session) => ({
@@ -80,13 +71,19 @@ export const TimetableContainer: React.FC<Props> = () => {
                 ),
             }));
         }
-    }, [
-        chosenWeek,
-        sessionsLoading,
-        sessionsData,
-        sessionStreamsData,
-        sessionStreamsLoading,
-    ]);
+    }, [chosenWeek, sessionsData, sessionStreamsData, sessionStreamsLoading]);
+    useEffect(() => {
+        if (
+            chosenTermId === notSet ||
+            chosenCourses.size === 0 ||
+            chosenWeek === notSet
+        ) {
+            return;
+        }
+        chosenCourses.forEach((courseId) => {
+            fetchSessions(chosenTermId, courseId, chosenWeek);
+        });
+    }, [chosenTermId, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
         if (chosenWeek === notSet) {
             sessionStreamsData?.sessionStreams.forEach((sessionStream) => {

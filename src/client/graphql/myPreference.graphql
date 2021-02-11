@@ -1,7 +1,0 @@
-query MyPreference($preferenceFind: CourseTermIdInput!) {
-    myPreference(preferenceFindInput: $preferenceFind) {
-        maxContigHours
-        maxWeeklyHours
-        sessionType
-    }
-}

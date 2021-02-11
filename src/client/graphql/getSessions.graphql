@@ -6,6 +6,42 @@ query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
             startTime
             endTime
             day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
+        }
+        location
+        week
+        sessionAllocations {
+            user {
+                username
+                name
+            }
+        }
+    }
+}
+
+query GetSessionById($sessionId: Int!) {
+    sessionById(sessionId: $sessionId) {
+        id
+        sessionStream {
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
         }
         location
         week

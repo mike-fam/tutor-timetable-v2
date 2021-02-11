@@ -31,11 +31,11 @@ export class PreferenceResolver {
         return await getConnection()
             .getRepository(Preference)
             .createQueryBuilder("preference")
-            .innerJoinAndSelect("preference.course-staff", "courseStaff")
-            .innerJoinAndSelect("course-staff.timetable", "timetable")
+            .innerJoinAndSelect("preference.courseStaff", "courseStaff")
+            .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("course-staff.userId = :userId", {
+            .andWhere("courseStaff.userId = :userId", {
                 userId: user.id,
             })
             .getOne();
@@ -54,6 +54,19 @@ export class PreferenceResolver {
         );
     }
 
+    // TODO: Only course coordinators can do this
+    @Query(() => Preference)
+    async preferenceByUsername(
+        @Arg("username") username: string,
+        @Arg("courseTermId", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput
+    ): Promise<Preference | undefined> {
+        const user = await User.findOneOrFail({
+            username,
+        });
+        return await PreferenceResolver.getPreference(user, courseId, termId);
+    }
+
     @Mutation(() => Preference)
     async updatePreference(
         @Arg("preferenceFind", () => CourseTermIdInput)
@@ -70,10 +83,10 @@ export class PreferenceResolver {
         const courseStaff = await getConnection()
             .getRepository(CourseStaff)
             .createQueryBuilder("courseStaff")
-            .innerJoinAndSelect("course-staff.timetable", "timetable")
+            .innerJoinAndSelect("courseStaff.timetable", "timetable")
             .where("timetable.courseId = :courseId", { courseId })
             .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("course-staff.userId = :userId", {
+            .andWhere("courseStaff.userId = :userId", {
                 userId: req.user!.id,
             })
             .getOne();

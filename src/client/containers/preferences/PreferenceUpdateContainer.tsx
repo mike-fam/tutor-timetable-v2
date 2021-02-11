@@ -8,6 +8,7 @@ import {
     useUpdatePreferenceMutation,
 } from "../../generated/graphql";
 import {
+    useLazyQueryWithError,
     useMutationWithError,
     useQueryWithError,
 } from "../../hooks/useQueryWithError";
@@ -52,7 +53,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
             called: preferenceQueryCalled,
             refetch: refetchMyPreference,
         },
-    ] = useMyPreferenceLazyQuery();
+    ] = useLazyQueryWithError(useMyPreferenceLazyQuery);
     const [
         updatePreference,
         { loading: updatePreferenceLoading },

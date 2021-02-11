@@ -23,4 +23,11 @@ export class SessionResolver {
             .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
             .getMany();
     }
+
+    @Query(() => Session)
+    async sessionById(
+        @Arg("sessionId", () => Int) sessionId: number
+    ): Promise<Session> {
+        return await Session.findOneOrFail({ id: sessionId });
+    }
 }

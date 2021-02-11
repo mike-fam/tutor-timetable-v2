@@ -11,6 +11,7 @@ import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
 import { Footer } from "../Footer";
 import { footerHeight, notSet } from "../constants";
+import { SessionsContext, useSessionUtils } from "../hooks/useSessionUtils";
 
 type Props = {};
 
@@ -49,6 +50,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
     const [dayStartTime, setDayStartTime] = useState(7);
     const [dayEndTime, setDayEndTime] = useState(20);
     const { data } = useQueryWithError(useMeQuery);
+    const sessionsUtil = useSessionUtils();
 
     useEffect(() => {
         if (!data?.me) {
@@ -74,10 +76,15 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         setDayEndTime,
                     }}
                 >
-                    <Box minH={`calc(100vh - ${footerHeight * 4}px)`} mb={5}>
-                        {children}
-                    </Box>
-                    <Footer />
+                    <SessionsContext.Provider value={sessionsUtil}>
+                        <Box
+                            minH={`calc(100vh - ${footerHeight * 4}px)`}
+                            mb={5}
+                        >
+                            {children}
+                        </Box>
+                        <Footer />
+                    </SessionsContext.Provider>
                 </TimetableSettingsContext.Provider>
             </ErrorContext.Provider>
         </UserContext.Provider>
