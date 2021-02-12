@@ -54,6 +54,19 @@ export class PreferenceResolver {
         );
     }
 
+    // TODO: Only course coordinators can do this
+    @Query(() => Preference)
+    async preferenceByUsername(
+        @Arg("username") username: string,
+        @Arg("courseTermId", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput
+    ): Promise<Preference | undefined> {
+        const user = await User.findOneOrFail({
+            username,
+        });
+        return await PreferenceResolver.getPreference(user, courseId, termId);
+    }
+
     @Mutation(() => Preference)
     async updatePreference(
         @Arg("preferenceFind", () => CourseTermIdInput)

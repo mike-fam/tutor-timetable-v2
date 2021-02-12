@@ -20,8 +20,10 @@ mutation RequestAllocation(
                 endTime
                 day
                 location
+                weeks
             }
             staff {
+                username
                 name
             }
         }

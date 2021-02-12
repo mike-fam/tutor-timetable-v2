@@ -17,7 +17,7 @@ import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { useMyAvailabilityQuery } from "../../generated/graphql";
 import { isAvailable } from "../../utils/availability";
-import { useSessionMap } from "../../hooks/useSessionMap";
+import { SessionsContext } from "../../hooks/useSessionUtils";
 import { Text } from "@chakra-ui/react";
 
 type Props = {
@@ -43,13 +43,10 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     const { data: availabilityData } = useQueryWithError(
         useMyAvailabilityQuery
     );
-    const { sessions, fetchSessions } = useSessionMap(
-        chosenTermId,
-        chosenCourseId
-    );
+    const { sessions, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
-        fetchSessions(chosenWeek);
-    }, [chosenWeek, fetchSessions]);
+        fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
+    }, [chosenTermId, chosenCourseId, chosenWeek, fetchSessions]);
     const filterSessions = useCallback(
         (sessions: Array<SessionResponseType>) => {
             return getSessionsOfUser(sessions, user.username, true);
@@ -79,26 +76,29 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
             if (!preferences.includes(session.id)) {
                 return SessionTheme.PRIMARY;
             }
-            for (const [, sessionToCompare] of sessions) {
-                if (session.week !== sessionToCompare.week) {
-                    continue;
-                } else if (
-                    session.sessionStream.day !==
-                    sessionToCompare.sessionStream.day
-                ) {
-                    continue;
-                }
+            const sessionsOfWeek = getSessionsOfUser(
+                sessions
+                    .filter(
+                        (otherSession) =>
+                            session.week === otherSession.week &&
+                            session.sessionStream.day ===
+                                otherSession.sessionStream.day &&
+                            session.sessionStream.timetable.term.id ===
+                                otherSession.sessionStream.timetable.term.id
+                    )
+                    .valueSeq()
+                    .toArray(),
+                user.username
+            );
+            for (const otherSession of sessionsOfWeek) {
                 const { startTime, endTime } = session.sessionStream;
                 const {
-                    startTime: startToCompare,
-                    endTime: endToCompare,
-                } = sessionToCompare.sessionStream;
-                if (startTime <= startToCompare && startToCompare < endTime) {
+                    startTime: otherStart,
+                    endTime: otherEnd,
+                } = otherSession.sessionStream;
+                if (startTime <= otherStart && otherStart < endTime) {
                     return SessionTheme.ERROR;
-                } else if (
-                    startToCompare <= startTime &&
-                    startTime < endToCompare
-                ) {
+                } else if (otherStart <= startTime && startTime < otherEnd) {
                     return SessionTheme.ERROR;
                 }
             }
@@ -112,7 +112,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
                 return SessionTheme.PRIMARY;
             }
         },
-        [preferences, availabilityData, sessions]
+        [preferences, availabilityData, sessions, user.username]
     );
     useEffect(() => {
         if (chosenWeek !== notSet) {
@@ -148,6 +148,17 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
                         }`;
                     })
                     .join(", ")}
+            </Text>
+            <Text color="red.500" fontWeight="bold">
+                Red means that session clashes with your current timetable
+            </Text>
+            <Text color="yellow.500" fontWeight="bold">
+                Yellow means that session doesn't clash with your timetable, but
+                you are not available on that time
+            </Text>
+            <Text color="green.500" fontWeight="bold">
+                Green means that session doesn't clash and you are available on
+                that time
             </Text>
         </>
     );

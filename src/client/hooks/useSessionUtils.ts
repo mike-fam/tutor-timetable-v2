@@ -1,4 +1,5 @@
 import {
+    createContext,
     Dispatch,
     SetStateAction,
     useCallback,
@@ -10,26 +11,41 @@ import { SessionResponseType } from "../types/session";
 import { useLazyQueryWithError } from "./useQueryWithError";
 import {
     GetSessionsQuery,
+    useGetSessionByIdLazyQuery,
     useGetSessionsLazyQuery,
 } from "../generated/graphql";
 import { notSet } from "../constants";
 
 type SessionMap = Map<number, SessionResponseType>;
-export const useSessionMap = (
-    termId: number,
-    courseId: number
-): {
+type SessionUtil = {
     sessions: SessionMap;
     setSessions: Dispatch<SetStateAction<SessionMap>>;
     sessionsData?: GetSessionsQuery;
-    fetchSessions: (chosenWeek: number) => void;
-} => {
+    fetchSessions: (
+        termId: number,
+        courseId: number,
+        chosenWeek: number
+    ) => void;
+    fetchSessionById: (sessionId: number) => void;
+};
+
+export const SessionsContext = createContext<SessionUtil>({
+    sessions: Map(),
+    setSessions: () => {},
+    fetchSessions: () => {},
+    fetchSessionById: () => {},
+});
+
+export const useSessionUtils = (): SessionUtil => {
     const [sessions, setSessions] = useState<SessionMap>(Map());
     const [getSession, { data: sessionsData }] = useLazyQueryWithError(
         useGetSessionsLazyQuery
     );
+    const [getSessionById, { data: sessionData }] = useLazyQueryWithError(
+        useGetSessionByIdLazyQuery
+    );
     const fetchSessions = useCallback(
-        (chosenWeek: number) => {
+        (termId: number, courseId: number, chosenWeek: number) => {
             if (
                 termId === notSet ||
                 courseId === notSet ||
@@ -45,7 +61,17 @@ export const useSessionMap = (
                 },
             });
         },
-        [termId, courseId, getSession]
+        [getSession]
+    );
+    const fetchSessionById = useCallback(
+        (sessionId: number) => {
+            getSessionById({
+                variables: {
+                    sessionId,
+                },
+            });
+        },
+        [getSessionById]
     );
     useEffect(() => {
         if (!sessionsData) {
@@ -55,5 +81,19 @@ export const useSessionMap = (
             setSessions((prev) => prev.set(session.id, session));
         });
     }, [sessionsData]);
-    return { sessions, setSessions, sessionsData, fetchSessions };
+    useEffect(() => {
+        if (!sessionData) {
+            return;
+        }
+        setSessions((prev) =>
+            prev.set(sessionData.sessionById.id, sessionData.sessionById)
+        );
+    }, [sessionData]);
+    return {
+        sessions,
+        setSessions,
+        sessionsData,
+        fetchSessions,
+        fetchSessionById,
+    };
 };

@@ -41,9 +41,12 @@ const main = async () => {
     );
     app.use("/", express.static("build/client"));
 
-    app.get("/hello", (_, res) => {
-        res.json({ test: "Hello world" });
-    });
+    // Catch-all route
+    // app.use("*", (_, res: Response) => {
+    //     res.sendFile("index.html", {
+    //         root: "build",
+    //     });
+    // });
 
     app.use(asyncHandler(uqAuthMiddleware));
 

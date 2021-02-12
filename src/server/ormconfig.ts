@@ -39,7 +39,7 @@ export default {
             ? "build/server/migrations/*.js"
             : "src/server/migrations/*.ts",
     ],
-    logging: !__prod__ && ["error", "schema", "warn", "query"],
+    logging: false && !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
         migrationsDir: __prod__
             ? "build/server/migrations/*.js"

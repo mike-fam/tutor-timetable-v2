@@ -12,7 +12,7 @@ import {
     useDisclosure,
     useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { notSet } from "../../constants";
@@ -28,9 +28,13 @@ import {
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
 import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
-import { Set, Map } from "immutable";
+import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
+import {
+    AllocatedStaffData,
+    AllocatorTable,
+} from "../../components/allocator/AllocatorTable";
 
 type Props = {};
 
@@ -81,6 +85,33 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [applyAllocationData]);
 
+    const allocatorUserData = useMemo<AllocatedStaffData>(() => {
+        if (!requestAllocationData) {
+            return {};
+        }
+        const staffData: AllocatedStaffData = {};
+
+        requestAllocationData.requestAllocation.allocations.forEach(
+            (allocation) => {
+                allocation.staff.forEach((staff) => {
+                    staffData[staff.username] = {
+                        totalHours:
+                            (staffData[staff.username]?.totalHours || 0) +
+                            (allocation.sessionStream.endTime -
+                                allocation.sessionStream.startTime) *
+                                allocation.sessionStream.weeks.length,
+                        sessionsAssigned: [
+                            ...(staffData[staff.username]?.sessionsAssigned ||
+                                []),
+                            allocation.sessionStream.name,
+                        ],
+                        name: staff.name,
+                    };
+                });
+            }
+        );
+        return staffData;
+    }, [requestAllocationData]);
     // Get timetable data on term and course changing
     useEffect(() => {
         if (termId === notSet || courseId === notSet) {
@@ -209,7 +240,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                             coordinatorOnly={true}
                         />
                     </HStack>
-                    {courseId !== notSet && termId !== notSet ? (
+                    {courseId !== notSet && termId !== notSet && (
                         <>
                             <Text
                                 fontSize="2xl"
@@ -293,8 +324,25 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                 }
                                 sessionsData={sessionsInfo}
                             />
+                            {showing === "generated" && allocatorUserData && (
+                                <>
+                                    <Text
+                                        fontSize="2xl"
+                                        fontWeight="light"
+                                        as="h2"
+                                        pt={6}
+                                    >
+                                        Allocation stats
+                                    </Text>
+                                    <AllocatorTable
+                                        staffMetadata={allocatorUserData}
+                                        courseId={courseId}
+                                        termId={termId}
+                                    />
+                                </>
+                            )}
                         </>
-                    ) : null}
+                    )}
                 </Stack>
             </Wrapper>
             <AllocatorConfirmDialog

@@ -1,4 +1,3 @@
-import { Term } from "../generated/graphql";
 import isBefore from "date-fns/isBefore";
 import { parseISO } from "date-fns";
 import isAfter from "date-fns/isAfter";
@@ -6,9 +5,7 @@ import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
 import { TermResponseType } from "../types/term";
 
-export const getCurrentTerm = (
-    terms: Array<Pick<Term, "id" | "startDate" | "endDate">>
-) => {
+export const getCurrentTerm = (terms: Array<TermResponseType>) => {
     const today = new Date();
     // Choose current term by default
     for (const term of terms) {
