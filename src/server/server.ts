@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import "./config";
-import express, { Express, Response } from "express";
+import express, { Express } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
