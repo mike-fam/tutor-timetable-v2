@@ -7,11 +7,10 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { SessionTheme } from "../../types/timetable";
 import { notSet } from "../../constants";
 import range from "lodash/range";
 import { UserContext } from "../../utils/user";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 import { getSessionsOfUser, isSessionPast } from "../../utils/session";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import { useTermMetadata } from "../../hooks/useTermMetadata";

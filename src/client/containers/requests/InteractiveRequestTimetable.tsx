@@ -1,11 +1,10 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
-import { SessionTheme } from "../../types/timetable";
 import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
 import { Loadable } from "../../components/helpers/Loadable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 

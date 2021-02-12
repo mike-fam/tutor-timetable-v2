@@ -20,8 +20,8 @@ export type TimetableState = {
 };
 
 export type TimetableSettings = {
-    displayedDays: Set<IsoDay>;
-    setDisplayedDays: Dispatch<SetStateAction<Set<IsoDay>>>;
+    displayedDays: Array<IsoDay>;
+    setDisplayedDays: Dispatch<SetStateAction<Array<IsoDay>>>;
     dayStartTime: number;
     setDayStartTime: Dispatch<SetStateAction<number>>;
     dayEndTime: number;
@@ -30,9 +30,7 @@ export type TimetableSettings = {
     setDisplayMySessionsOnly: Dispatch<SetStateAction<boolean>>;
 };
 
-export enum SessionTheme {
-    SUCCESS = "SUCCESS",
-    ERROR = "ERROR",
-    WARNING = "WARNING",
-    PRIMARY = "PRIMARY",
+export enum TimetableDisplayMode {
+    ME = "Me",
+    ALL = "All",
 }

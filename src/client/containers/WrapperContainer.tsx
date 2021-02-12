@@ -37,7 +37,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
     );
     const [displayedDays, setDisplayedDays] = useLocalStorage(
         displayedDaysKey,
-        Set([
+        [
             IsoDay.MON,
             IsoDay.TUE,
             IsoDay.WED,
@@ -45,7 +45,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
             IsoDay.FRI,
             IsoDay.SAT,
             IsoDay.SUN,
-        ])
+        ]
     );
     const [user, setUser] = useState<UserState>({
         id: notSet,
