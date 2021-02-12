@@ -189,4 +189,6 @@ export const TimetableSettingsContext = React.createContext<TimetableSettings>({
     dayEndTime: 20,
     setDayStartTime: () => {},
     setDayEndTime: () => {},
+    displayMySessionsOnly: false,
+    setDisplayMySessionsOnly: () => {},
 });
