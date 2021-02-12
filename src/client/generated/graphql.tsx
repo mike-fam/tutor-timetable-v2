@@ -304,7 +304,7 @@ export type Mutation = {
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
-  acceptOffer: Offer;
+  acceptOffer: StaffRequest;
 };
 
 
@@ -406,7 +406,7 @@ export type MutationRemoveOfferArgs = {
 
 
 export type MutationAcceptOfferArgs = {
-  offerSessionSwapId: Scalars['Int'];
+  offerSessionSwapId?: Maybe<Scalars['Int']>;
   requestId: Scalars['Int'];
   offerId: Scalars['Int'];
 };
@@ -487,13 +487,47 @@ export type EditRequestFormInputType = {
 
 export type OfferInputType = {
   requestId: Scalars['Int'];
-  sessionPreferences: Array<Scalars['Int']>;
+  sessionPreferences?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type EditOfferInputType = {
   offerId: Scalars['Int'];
   sessionPreferences: Array<Scalars['Int']>;
 };
+
+export type AcceptOfferMutationVariables = Exact<{
+  offerId: Scalars['Int'];
+  requestId: Scalars['Int'];
+  offerSessionSwapId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type AcceptOfferMutation = (
+  { __typename?: 'Mutation' }
+  & { acceptOffer: (
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'id' | 'status'>
+    & { requester: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), acceptor: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), session: (
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
+      ) }
+    )> }
+  ) }
+);
 
 export type AddAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput>;
@@ -980,6 +1014,63 @@ export type EditRequestMutation = (
 );
 
 
+export const AcceptOfferDocument = gql`
+    mutation AcceptOffer($offerId: Int!, $requestId: Int!, $offerSessionSwapId: Int) {
+  acceptOffer(
+    offerId: $offerId
+    requestId: $requestId
+    offerSessionSwapId: $offerSessionSwapId
+  ) {
+    id
+    status
+    requester {
+      id
+      username
+    }
+    acceptor {
+      id
+      username
+    }
+    session {
+      sessionStream {
+        name
+      }
+    }
+    swapPreference {
+      sessionStream {
+        name
+      }
+    }
+  }
+}
+    `;
+export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation, AcceptOfferMutationVariables>;
+
+/**
+ * __useAcceptOfferMutation__
+ *
+ * To run a mutation, you first call `useAcceptOfferMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptOfferMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptOfferMutation, { data, loading, error }] = useAcceptOfferMutation({
+ *   variables: {
+ *      offerId: // value for 'offerId'
+ *      requestId: // value for 'requestId'
+ *      offerSessionSwapId: // value for 'offerSessionSwapId'
+ *   },
+ * });
+ */
+export function useAcceptOfferMutation(baseOptions?: Apollo.MutationHookOptions<AcceptOfferMutation, AcceptOfferMutationVariables>) {
+        return Apollo.useMutation<AcceptOfferMutation, AcceptOfferMutationVariables>(AcceptOfferDocument, baseOptions);
+      }
+export type AcceptOfferMutationHookResult = ReturnType<typeof useAcceptOfferMutation>;
+export type AcceptOfferMutationResult = Apollo.MutationResult<AcceptOfferMutation>;
+export type AcceptOfferMutationOptions = Apollo.BaseMutationOptions<AcceptOfferMutation, AcceptOfferMutationVariables>;
 export const AddAvailabilitiesDocument = gql`
     mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {

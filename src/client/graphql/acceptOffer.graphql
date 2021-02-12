@@ -1,0 +1,32 @@
+mutation AcceptOffer(
+    $offerId: Int!
+    $requestId: Int!
+    $offerSessionSwapId: Int
+) {
+    acceptOffer(
+        offerId: $offerId
+        requestId: $requestId
+        offerSessionSwapId: $offerSessionSwapId
+    ) {
+        id
+        status
+        requester {
+            id
+            username
+        }
+        acceptor {
+            id
+            username
+        }
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}
