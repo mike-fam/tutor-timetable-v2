@@ -1,7 +1,16 @@
-import { Box, Heading, Tab, TabList, Tabs } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Heading,
+    Tab,
+    TabList,
+    Tabs,
+    useDisclosure,
+} from "@chakra-ui/react";
 import React from "react";
 import { EditRequestModalContainer } from "../../containers/requests/EditRequestModalContainer";
 import { TabViewType } from "../../containers/requests/RequestListContainer";
+import { OfferRequestModalContainer } from "../../containers/requests/OfferRequestModalContainer";
 
 type Props = {
     // TODO: Replace when data is figured out.
@@ -10,6 +19,7 @@ type Props = {
 };
 
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
+    const { isOpen, onClose, onOpen } = useDisclosure();
     return (
         <>
             <Tabs isFitted onChange={(e) => props.setTabListView(e)}>
@@ -21,10 +31,22 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                     <Box key={index}>
                         <Heading size="md">Request Title</Heading>
                         <p>Requestor name, status, session</p>
+                        <Button
+                            onClick={() => {
+                                onOpen();
+                            }}
+                        >
+                            Make an offer
+                        </Button>
                     </Box>
                 ))}
             </Tabs>
             <EditRequestModalContainer />
+            <OfferRequestModalContainer
+                requestId={51}
+                isOpen={isOpen}
+                onClose={onClose}
+            />
         </>
     );
 };
