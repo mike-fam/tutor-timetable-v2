@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import "./config";
-import express, { Express, Request, NextFunction, Response } from "express";
+import express, { Express, Response } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
@@ -41,7 +41,7 @@ const main = async () => {
     app.use("/", express.static("build/client"));
 
     // Catch-all route
-    app.use("*", (req: Request, res: Response, next: NextFunction) => {
+    app.use("*", (_, res: Response) => {
         res.sendFile("index.html", {
             root: "build",
         });
