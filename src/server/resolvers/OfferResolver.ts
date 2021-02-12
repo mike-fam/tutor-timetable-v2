@@ -148,14 +148,14 @@ export class OfferResolver {
         return await offer.remove();
     }
 
-    @Mutation(() => StaffRequest)
+    @Mutation(() => Boolean)
     async acceptOffer(
         @Arg("offerId", () => Int) offerId: number,
         @Arg("requestId", () => Int) requestId: number,
         @Arg("offerSessionSwapId", () => Int, { nullable: true })
         offerSessionSwapId: number,
         @Ctx() { req }: MyContext
-    ): Promise<StaffRequest> {
+    ): Promise<boolean> {
         // User
         const user = req.user!;
         // Request
@@ -207,7 +207,8 @@ export class OfferResolver {
                     offerUser
                 );
             }
-            return await acceptOfferCleanUp(request, offerUser);
+            acceptOfferCleanUp(request, offerUser);
+            return true;
         } else if (request.type === RequestType.PERMANENT) {
             // Change stream allocation for offerer.
             const requesterStreamAlloc = await StreamAllocation.findOneOrFail({
@@ -261,7 +262,8 @@ export class OfferResolver {
                 await offerStreamAlloc.save();
             }
             await requesterStreamAlloc.save();
-            return await acceptOfferCleanUp(request, offerUser);
+            await acceptOfferCleanUp(request, offerUser);
+            return true;
         }
 
         throw new Error("Something went wrong.");

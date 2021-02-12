@@ -7,26 +7,5 @@ mutation AcceptOffer(
         offerId: $offerId
         requestId: $requestId
         offerSessionSwapId: $offerSessionSwapId
-    ) {
-        id
-        status
-        requester {
-            id
-            username
-        }
-        acceptor {
-            id
-            username
-        }
-        session {
-            sessionStream {
-                name
-            }
-        }
-        swapPreference {
-            sessionStream {
-                name
-            }
-        }
-    }
+    )
 }
