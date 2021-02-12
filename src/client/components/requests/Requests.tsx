@@ -27,21 +27,11 @@ export const Requests: React.FunctionComponent<Props> = (props: Props) => {
             <Box>
                 <Center>
                     <HStack spacing={8} w="75%">
-                        <Box
-                            w="100%"
-                            h="100%"
-                            style={{
-                                minHeight: "700px",
-                                border: "1px solid black",
-                            }}
-                            overflow={"scroll"}
-                        >
-                            <RequestListContainer
-                                filters={props.filters}
-                                user={props.user}
-                                currentTerm={props.currentTerm}
-                            />
-                        </Box>
+                        <RequestListContainer
+                            filters={props.filters}
+                            user={props.user}
+                            currentTerm={props.currentTerm}
+                        />
 
                         <Stack>
                             <Center>

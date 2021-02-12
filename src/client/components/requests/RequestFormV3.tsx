@@ -53,7 +53,7 @@ export const RequestFormV3: React.FC<Props> = ({
                 isDisabled={!editable}
             />
             <InputWithError
-                label="Description"
+                label="Description (optional)"
                 validate={() => ""}
                 as={Textarea}
                 value={description}

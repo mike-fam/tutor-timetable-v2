@@ -1,4 +1,5 @@
 import {
+    Box,
     Center,
     Tab,
     Table,
@@ -24,14 +25,22 @@ type Props = {
 
 export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <>
-            <Tabs isFitted onChange={(e) => props.setTabListView(e)}>
-                <TabList>
-                    <Tab value={TabViewType.ALL}>All Requests</Tab>
-                    <Tab value={TabViewType.PERSONAL}>Your Requests</Tab>
-                </TabList>
-                <Loadable isLoading={props.loading}>
-                    {props.requestList.length > 0 ? (
+        <Tabs isFitted onChange={(e) => props.setTabListView(e)}>
+            <TabList>
+                <Tab value={TabViewType.ALL}>All Requests</Tab>
+                <Tab value={TabViewType.PERSONAL}>Your Requests</Tab>
+            </TabList>
+            <Loadable isLoading={props.loading}>
+                {props.requestList.length > 0 ? (
+                    <Box
+                        w="100%"
+                        h="100%"
+                        style={{
+                            height: "700px",
+                            border: "1px solid black",
+                        }}
+                        overflow={"scroll"}
+                    >
                         <Table size="lg">
                             <Thead>
                                 <Tr>
@@ -68,7 +77,7 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                             background: "grey",
                                         }}
                                     >
-                                        <Td>
+                                        <Td maxWidth={"200"}>
                                             <Center>
                                                 <Text isTruncated>
                                                     {requestItem.title}
@@ -145,14 +154,13 @@ export const RequestList: React.FunctionComponent<Props> = (props: Props) => {
                                 ))}
                             </Tbody>
                         </Table>
-                    ) : (
-                        <Center mt={2}>
-                            <Text>No requests available</Text>
-                        </Center>
-                    )}
-                </Loadable>
-            </Tabs>
-            {/* <EditRequestModalContainer /> */}
-        </>
+                    </Box>
+                ) : (
+                    <Center mt={2}>
+                        <Text>No requests available</Text>
+                    </Center>
+                )}
+            </Loadable>
+        </Tabs>
     );
 };
