@@ -17,15 +17,14 @@ import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
+import { EditUserInfoContainer } from "../containers/EditUserInfoContainer";
 
 type Props = {};
 
 export const NavBar: React.FunctionComponent<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
-    const {
-        user: { username },
-    } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
@@ -77,9 +76,10 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             leftIcon={<Icon as={BsPersonFill} mr={1} />}
                             rightIcon={<ChevronDownIcon ml={1} />}
                         >
-                            {username}
+                            {user.username}
                         </MenuButton>
                         <MenuList>
+                            <EditUserInfoContainer user={user} />
                             <MenuItem>Logout</MenuItem>
                         </MenuList>
                     </Menu>
