@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import "./config";
-import express, { Express } from "express";
+import express, { Express, Request, NextFunction, Response } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
@@ -40,8 +40,11 @@ const main = async () => {
     );
     app.use("/", express.static("build/client"));
 
-    app.get("/hello", (_, res) => {
-        res.json({ test: "Hello world" });
+    // Catch-all route
+    app.use("*", (req: Request, res: Response, next: NextFunction) => {
+        res.sendFile("index.html", {
+            root: "build",
+        });
     });
 
     app.use(asyncHandler(uqAuthMiddleware));
