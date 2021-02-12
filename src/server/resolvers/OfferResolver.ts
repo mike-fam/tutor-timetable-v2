@@ -181,12 +181,15 @@ export class OfferResolver {
             throw new Error("This request is closed");
         }
 
-        if (offerPrefs.length > 0 && offerSessionSwapId === null) {
-            throw new Error("You must provide a session preference");
-        }
-
-        if (!offerPrefs.map((item) => item.id).includes(offerSessionSwapId)) {
-            throw new Error("session provided must be in the preferences");
+        if (offerPrefs.length > 0) {
+            if (offerSessionSwapId === null) {
+                throw new Error("You must provide a session preference");
+            }
+            if (
+                !offerPrefs.map((item) => item.id).includes(offerSessionSwapId)
+            ) {
+                throw new Error("session provided must be in the preferences");
+            }
         }
 
         if (request.type === RequestType.TEMPORARY) {
