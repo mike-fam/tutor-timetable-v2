@@ -148,14 +148,14 @@ export class OfferResolver {
         return await offer.remove();
     }
 
-    @Mutation(() => Offer)
+    @Mutation(() => StaffRequest)
     async acceptOffer(
         @Arg("offerId", () => Int) offerId: number,
         @Arg("requestId", () => Int) requestId: number,
         @Arg("offerSessionSwapId", () => Int, { nullable: true })
         offerSessionSwapId: number,
         @Ctx() { req }: MyContext
-    ): Promise<Offer> {
+    ): Promise<StaffRequest> {
         // User
         const user = req.user!;
         // Request
@@ -181,6 +181,14 @@ export class OfferResolver {
             throw new Error("This request is closed");
         }
 
+        if (offerPrefs.length > 0 && offerSessionSwapId === null) {
+            throw new Error("You must provide a session preference");
+        }
+
+        if (!offerPrefs.map((item) => item.id).includes(offerSessionSwapId)) {
+            throw new Error("session provided must be in the preferences");
+        }
+
         if (request.type === RequestType.TEMPORARY) {
             switchUserIntoSessionAllocation(
                 offerUser,
@@ -196,9 +204,7 @@ export class OfferResolver {
                     offerUser
                 );
             }
-            request.acceptor = offerUser;
-            request.status = RequestStatus.CLOSED;
-            await request.save();
+            return await acceptOfferCleanUp(request, offerUser);
         } else if (request.type === RequestType.PERMANENT) {
             // Change stream allocation for offerer.
             const requesterStreamAlloc = await StreamAllocation.findOneOrFail({
@@ -223,7 +229,6 @@ export class OfferResolver {
                 sessionsToSwitchInto,
                 user
             );
-            await requesterStreamAlloc.save();
 
             // For swaps
             if (offerPrefs.length > 0 && offerSession) {
@@ -252,9 +257,8 @@ export class OfferResolver {
                 );
                 await offerStreamAlloc.save();
             }
-            request.acceptor = offerUser;
-            request.status = RequestStatus.CLOSED;
-            await request.save();
+            await requesterStreamAlloc.save();
+            return await acceptOfferCleanUp(request, offerUser);
         }
 
         throw new Error("Something went wrong.");
@@ -283,4 +287,18 @@ const switchUserIntoSessionAllocation = async (
     }
 
     return sessionAllocs;
+};
+
+const acceptOfferCleanUp = async (
+    request: StaffRequest,
+    acceptor: User
+): Promise<StaffRequest> => {
+    request.acceptor = acceptor;
+    request.status = RequestStatus.CLOSED;
+    await request.save();
+
+    const offers = await Offer.find({ request: request });
+    offers.forEach(async (item) => await item.remove());
+
+    return request;
 };
