@@ -17,7 +17,6 @@ import {
 import { Map } from "immutable";
 import { notSet } from "../../constants";
 import { SessionsContext } from "../../hooks/useSessionUtils";
-import { TimetableSessionType } from "../../types/timetable";
 import { UserContext } from "../../utils/user";
 
 type Props = {};

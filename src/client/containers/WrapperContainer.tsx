@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
-import { Set } from "immutable";
 import { IsoDay } from "../../types/date";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import { useMeQuery } from "../generated/graphql";
