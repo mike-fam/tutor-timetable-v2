@@ -177,6 +177,10 @@ export class OfferResolver {
             throw new Error("User ID does not match with request user ID");
         }
 
+        if (request.status === RequestStatus.CLOSED) {
+            throw new Error("This request is closed");
+        }
+
         if (request.type === RequestType.TEMPORARY) {
             // Switch offerer into requester session.
             const requesterSessionAlloc = await SessionAllocation.findOneOrFail(
