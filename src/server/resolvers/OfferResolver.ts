@@ -74,10 +74,10 @@ export class OfferResolver {
 
         let preferredSessions: Array<Session> = [];
         if (sessionPreferences) {
-            const requestPreferenceIds = (await request.swapPreference).filter(
-                (session) => !sessionPreferences.includes(session.id)
-            );
-            if (requestPreferenceIds.length > 0) {
+            const requestPreferenceIds = (
+                await request.swapPreference
+            ).filter((session) => sessionPreferences.includes(session.id));
+            if (requestPreferenceIds.length === 0) {
                 throw new Error(
                     "One or more preferences are not in the requested sessions."
                 );
@@ -182,27 +182,19 @@ export class OfferResolver {
         }
 
         if (request.type === RequestType.TEMPORARY) {
-            // Switch offerer into requester session.
-            const requesterSessionAlloc = await SessionAllocation.findOneOrFail(
-                {
-                    sessionId: requestedSession.id,
-                    userId: user.id,
-                }
+            switchUserIntoSessionAllocation(
+                offerUser,
+                [requestedSession.id],
+                user
             );
-            requesterSessionAlloc.userId = offerUser.id;
-            await requesterSessionAlloc.save();
 
             // If swap preferences were provided in the offer.
             if (offerPrefs.length > 0 && offerSession) {
-                // Switch requester into offered session.
-                const offererSessionAlloc = await SessionAllocation.findOneOrFail(
-                    {
-                        sessionId: offerSession.id,
-                        userId: offerUser.id,
-                    }
+                switchUserIntoSessionAllocation(
+                    user,
+                    [offerSession.id],
+                    offerUser
                 );
-                offererSessionAlloc.userId = user.id;
-                await offererSessionAlloc.save();
             }
             request.acceptor = offerUser;
             request.status = RequestStatus.CLOSED;
@@ -226,17 +218,11 @@ export class OfferResolver {
                 })
             ).map((item) => item.id);
 
-            // Get all session allocations of requester.
-            const sessionAllocs = await SessionAllocation.find({
-                userId: user.id,
-                sessionId: In(sessionsToSwitchInto),
-            });
-
-            // Change all session allocations from requester to accepter.
-            for (let alloc of sessionAllocs) {
-                alloc.userId = offerUser.id;
-                await alloc.save();
-            }
+            switchUserIntoSessionAllocation(
+                offerUser,
+                sessionsToSwitchInto,
+                user
+            );
             await requesterStreamAlloc.save();
 
             // For swaps
@@ -259,17 +245,11 @@ export class OfferResolver {
                     })
                 ).map((item) => item.id);
 
-                // Get all session allocations of offerer.
-                const sessionAllocs = await SessionAllocation.find({
-                    userId: offerUser.id,
-                    sessionId: In(sessionsToSwitchInto),
-                });
-
-                // Change all session allocations from requester to accepter.
-                for (let alloc of sessionAllocs) {
-                    alloc.userId = user.id;
-                    await alloc.save();
-                }
+                switchUserIntoSessionAllocation(
+                    user,
+                    sessionsToSwitchInto,
+                    offerUser
+                );
                 await offerStreamAlloc.save();
             }
             request.acceptor = offerUser;
@@ -280,3 +260,27 @@ export class OfferResolver {
         throw new Error("Something went wrong.");
     }
 }
+
+// User refers to the person switching into the session.
+// sessionUser refers to the user that is having their session switched into.
+const switchUserIntoSessionAllocation = async (
+    user: User,
+    sessionsToSwitchInto: Array<number>,
+    sessionUser: User
+): Promise<SessionAllocation[]> => {
+    const sessionAllocs = await SessionAllocation.find({
+        userId: sessionUser.id,
+        sessionId: In(sessionsToSwitchInto),
+    });
+
+    if (sessionAllocs.length === 0) {
+        throw new Error("No sessions were found for " + sessionUser.username);
+    }
+
+    for (let alloc of sessionAllocs) {
+        alloc.userId = user.id;
+        await alloc.save();
+    }
+
+    return sessionAllocs;
+};
