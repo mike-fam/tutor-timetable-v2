@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Center, useDisclosure } from "@chakra-ui/react";
 import { RequestModal } from "../../components/requests/RequestModal";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
-import { RequestForm } from "../../components/requests/RequestForm";
 import { RequestType } from "../../generated/graphql";
 
 type Props = {};
@@ -23,24 +22,7 @@ export const EditRequestModalContainer: React.FC<Props> = () => {
 
     return (
         <>
-            <Center>
-                <Button onClick={onOpen}>Edit Request</Button>
-            </Center>
-            <RequestModal
-                renderHeader={() => (
-                    <p>Edit An Existing Request - {semester}</p>
-                )}
-                renderBody={() => (
-                    <RequestForm
-                        {...formState}
-                        courseList={courseList}
-                        sessionList={sessionList}
-                    />
-                )}
-                renderFooterButton={() => <Button>Submit</Button>}
-                isOpen={isOpen}
-                onClose={onClose}
-            />
+            <div>test</div>
         </>
     );
 };

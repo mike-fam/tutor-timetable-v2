@@ -1,43 +1,57 @@
-import React from "react";
-import { Role } from "../../../server/types/user";
+import React, { useCallback, useContext, useMemo } from "react";
 import { Requests } from "../../components/requests/Requests";
+import { notSet } from "../../constants";
+import {
+    RequestStatus,
+    RequestType,
+    useTermsQuery,
+} from "../../generated/graphql";
+import { getCurrentTerm } from "../../utils/term";
+import { UserContext } from "../../utils/user";
 
 export enum DisplayRequestType {
     All = "All",
     Personal = "Personal",
 }
 
-export enum FilterType {
-    Temporary = "Temporary",
-    Permanent = "Permanent",
-    Cover = "Cover",
-    Swap = "Swap",
-}
-
-type Props = {
-    userType: Role;
-};
-
-export const RequestContainer: React.FunctionComponent<Props> = () => {
+export const RequestContainer: React.FunctionComponent = () => {
     //Filter management.
-    const [filters, setFilters] = React.useState<Array<FilterType>>([]);
+    const [filters, setFilters] = React.useState<
+        Array<RequestType | RequestStatus>
+    >([]);
+
+    const { data } = useTermsQuery();
+
+    const { user } = useContext(UserContext);
+
+    // Get Current Term
+    const currentTerm = useMemo(() => {
+        if (!data) {
+            return notSet;
+        }
+        return getCurrentTerm(data.terms).id;
+    }, [data]);
 
     // Update list of filters.
-    const updateFilters = (item: FilterType, selected: boolean) => {
-        let tempArr: Array<FilterType> = [...filters];
-
-        if (filters.indexOf(item) > -1 && !selected) {
-            tempArr.splice(filters.indexOf(item), 1);
-            setFilters(tempArr);
-        } else if (filters.indexOf(item) === -1 && selected) {
-            tempArr.push(item);
-            setFilters(tempArr);
-        }
-    };
+    const updateFilters = useCallback(
+        (item: RequestType | RequestStatus, selected: boolean) => {
+            if (selected && !filters.includes(item)) {
+                setFilters((prev) => [...prev, item]);
+            } else if (!selected && filters.includes(item)) {
+                setFilters((prev) => prev.filter((value) => value !== item));
+            }
+        },
+        [filters]
+    );
 
     return (
         <>
-            <Requests toggleFilters={updateFilters} filters={filters} />
+            <Requests
+                toggleFilters={updateFilters}
+                filters={filters}
+                user={user}
+                currentTerm={currentTerm}
+            />
         </>
     );
 };

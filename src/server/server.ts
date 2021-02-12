@@ -23,6 +23,7 @@ import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 import { CourseResolver } from "./resolvers/CourseResolver";
+import { OfferResolver } from "./resolvers/OfferResolver";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -40,9 +41,12 @@ const main = async () => {
     );
     app.use("/", express.static("build/client"));
 
-    app.get("/hello", (_, res) => {
-        res.json({ test: "Hello world" });
-    });
+    // Catch-all route
+    // app.use("*", (_, res: Response) => {
+    //     res.sendFile("index.html", {
+    //         root: "build",
+    //     });
+    // });
 
     app.use(asyncHandler(uqAuthMiddleware));
 
@@ -61,6 +65,7 @@ const main = async () => {
                 PreferenceResolver,
                 StaffRequestResolver,
                 AllocatorResolver,
+                OfferResolver,
             ],
             dateScalarMode: "isoDate",
         }),

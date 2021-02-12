@@ -1,10 +1,10 @@
 import { Box, Center, Stack } from "@chakra-ui/react";
 import React from "react";
-import { FilterType } from "../../containers/requests/RequestContainer";
+import { RequestStatus, RequestType } from "../../generated/graphql";
 import { SimpleCheckboxList } from "../helpers/SimpleCheckboxList";
 
 type Props = {
-    setFilters: (item: FilterType, selected: boolean) => void;
+    setFilters: (item: RequestType | RequestStatus, selected: boolean) => void;
 };
 
 export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
@@ -14,20 +14,25 @@ export const RequestFilter: React.FunctionComponent<Props> = (props: Props) => {
             <Center>
                 <Stack>
                     <SimpleCheckboxList
-                        elements={[FilterType.Permanent, FilterType.Temporary]}
+                        elements={[
+                            RequestType.Permanent,
+                            RequestType.Temporary,
+                        ]}
                         selectFunc={props.setFilters}
                         helpTexts={[
                             "Display permanent requests",
                             "Display temporary requests",
                         ]}
+                        defaultSelectedAll={true}
                     />
                     <SimpleCheckboxList
-                        elements={[FilterType.Cover, FilterType.Swap]}
+                        elements={[RequestStatus.Open, RequestStatus.Closed]}
                         selectFunc={props.setFilters}
                         helpTexts={[
-                            "Display cover requests",
-                            "Display swap requests",
+                            "Display open requests",
+                            "Display closed requests",
                         ]}
+                        defaultSelectedAll={true}
                     />
                 </Stack>
             </Center>

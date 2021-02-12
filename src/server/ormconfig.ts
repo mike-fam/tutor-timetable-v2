@@ -3,6 +3,7 @@ import { __prod__ } from "../constants";
 import {
     Course,
     CourseStaff,
+    Offer,
     Preference,
     Session,
     SessionAllocation,
@@ -21,6 +22,7 @@ export default {
     entities: [
         Course,
         CourseStaff,
+        Offer,
         Preference,
         Session,
         SessionAllocation,

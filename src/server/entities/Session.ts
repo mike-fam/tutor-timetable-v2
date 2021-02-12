@@ -13,6 +13,7 @@ import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
+import { Offer } from "./Offer";
 
 @ObjectType()
 @Entity()
@@ -56,4 +57,8 @@ export class Session extends BaseEntity {
         lazy: true,
     })
     preferredSwaps: Lazy<StaffRequest[]>;
+
+    @Field(() => [Offer])
+    @ManyToMany(() => Offer, (offer) => offer.preferences, { lazy: true })
+    offerPreferences: Lazy<Offer[]>;
 }

@@ -1,0 +1,86 @@
+query getRequestById($requestId: Int!) {
+    getRequestById(requestId: $requestId) {
+        id
+        type
+        title
+        description
+        status
+        requester {
+            username
+        }
+        acceptor {
+            username
+        }
+        finaliser {
+            username
+        }
+        session {
+            sessionStream {
+                id
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                id
+                name
+            }
+        }
+    }
+}
+
+query getRequestsByUserId($termId: Int!) {
+    getRequestsByUserId(termId: $termId) {
+        id
+        title
+        status
+        requester {
+            name
+        }
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}
+
+query getRequestsByCourseIds($courseIds: [Int!]!, $termId: Int!) {
+    getRequestsByCourseIds(courseIds: $courseIds, termId: $termId) {
+        id
+        title
+        status
+        requester {
+            id
+            username
+        }
+        session {
+            sessionStream {
+                name
+                timetable {
+                    termId
+                    course {
+                        code
+                    }
+                }
+            }
+        }
+        session {
+            week
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            week
+        }
+        type
+    }
+}
