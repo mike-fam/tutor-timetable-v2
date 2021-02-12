@@ -35,7 +35,7 @@ export const FormikNumberInput: React.FC<Props> = ({
     min,
     ...props
 }) => {
-    const [, meta, { setValue }] = useField(name);
+    const [, meta, { setValue, setTouched }] = useField(name);
     return (
         <FormControl
             id={id || camelCase(name)}
@@ -50,6 +50,13 @@ export const FormikNumberInput: React.FC<Props> = ({
                 }}
                 max={max}
                 min={min}
+                onFocus={() => {
+                    setTouched(true);
+                }}
+                onBlur={() => {
+                    setTouched(false);
+                }}
+                errorBorderColor="red.500"
             >
                 <NumberInputField {...props} />
                 <NumberInputStepper>
