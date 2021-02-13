@@ -1,8 +1,11 @@
-import { GetRequestsByCourseIdsQuery } from "../generated/graphql";
 import { ArrayElement } from "./helpers";
+import { GetRequestsByTermIdQuery } from "../generated/graphql";
 
 export type RequestResponse = ArrayElement<
-    GetRequestsByCourseIdsQuery["getRequestsByCourseIds"]
+    GetRequestsByTermIdQuery["getRequestsByTermId"]
 >;
 
-export const requestTimeslotHeight = 41;
+export type RequestFilterFunction<T> = (
+    request: RequestResponse,
+    arg: T
+) => boolean;

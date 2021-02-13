@@ -15,8 +15,8 @@ import {
     useGetSessionsLazyQuery,
 } from "../../generated/graphql";
 import { notSet } from "../../constants";
-import { requestTimeslotHeight } from "../../types/requests";
 import { SessionResponseType } from "../../types/session";
+import { requestTimeslotHeight } from "../../constants/requests";
 
 type Props = {
     chosenCourse: number;

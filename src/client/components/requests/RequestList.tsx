@@ -1,9 +1,10 @@
 import { Center, Text, useDisclosure } from "@chakra-ui/react";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { OfferRequestModalContainer } from "../../containers/requests/OfferRequestModalContainer";
 import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 import { RequestTable } from "./RequestTable";
+import { notSet } from "../../constants";
 
 type Props = {
     requestList: Array<RequestResponse>;
@@ -15,13 +16,21 @@ export const RequestList: React.FunctionComponent<Props> = ({
     loading,
 }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
+    const [selectedRequest, setSelectedRequest] = useState(notSet);
+    const openModal = useCallback(
+        (requestId: number) => {
+            setSelectedRequest(requestId);
+            onOpen();
+        },
+        [setSelectedRequest, onOpen]
+    );
     return (
         <>
             <Loadable isLoading={loading}>
                 {requestList.length > 0 ? (
                     <RequestTable
                         requestList={requestList}
-                        openModal={onOpen}
+                        openModal={openModal}
                     />
                 ) : (
                     <Center mt={2}>
@@ -30,7 +39,7 @@ export const RequestList: React.FunctionComponent<Props> = ({
                 )}
             </Loadable>
             <OfferRequestModalContainer
-                requestId={51}
+                requestId={selectedRequest}
                 isOpen={isOpen}
                 onClose={onClose}
             />

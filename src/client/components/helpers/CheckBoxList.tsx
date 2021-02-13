@@ -1,14 +1,14 @@
 import React from "react";
 import { Box, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import { Map, Set } from "immutable";
-import { capitalCase } from "change-case";
 
 type Props<T extends string> = {
     selectAllLabel?: string;
     elements: Map<number, T>;
-    helpTexts?: Map<number, T | undefined>;
+    helpTexts?: Map<number, string | undefined>;
     selectedElements: Set<number>;
     selectElement: (elementId: number, selected: boolean) => void;
+    textDisplayed?: (element: T) => string;
 };
 
 export const CheckboxList = <T extends string>({
@@ -17,6 +17,7 @@ export const CheckboxList = <T extends string>({
     selectElement,
     selectedElements,
     helpTexts,
+    textDisplayed,
 }: Props<T>) => {
     return (
         <Box>
@@ -51,7 +52,7 @@ export const CheckboxList = <T extends string>({
                                     : `Select ${element}`
                             }
                         >
-                            {capitalCase(element)}
+                            {textDisplayed?.(element) || element}
                         </Tooltip>
                     </Checkbox>
                 ))}

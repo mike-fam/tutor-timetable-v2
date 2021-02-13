@@ -1,37 +1,42 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
-import {
-    RequestStatus,
-    RequestType,
-    useGetRequestsByCourseIdsQuery,
-} from "../../generated/graphql";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useGetRequestsByTermIdLazyQuery } from "../../generated/graphql";
+import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import { RequestResponse } from "../../types/requests";
-import { UserState } from "../../types/user";
+import { notSet } from "../../constants";
 
 // TODO: Needs user data and update filter function.
 type Props = {
     filters: Array<(request: RequestResponse) => boolean>;
-    user: UserState;
     termId: number;
 };
-
-export enum TabViewType {
-    ALL = 0,
-    PERSONAL = 1,
-}
 
 export const RequestListContainer: React.FunctionComponent<Props> = ({
     filters,
     termId,
 }) => {
-    const { loading, data, refetch } = useQueryWithError(
-        useGetRequestsByCourseIdsQuery,
-        {
-            termId: 2,
-            courseIds: [1, 2],
-        }
+    const [getRequests, { data, loading }] = useLazyQueryWithError(
+        useGetRequestsByTermIdLazyQuery
     );
+    useEffect(() => {
+        if (termId === notSet) {
+            return;
+        }
+        getRequests({
+            variables: {
+                termId,
+            },
+        });
+    }, [termId, getRequests]);
+    const filteredRequestData = useMemo<RequestResponse[]>(() => {
+        if (!data) {
+            return [];
+        }
+        return filters.reduce(
+            (data, filter) => data.filter(filter),
+            data.getRequestsByTermId
+        );
+    }, [data, filters]);
 
     return <RequestList requestList={filteredRequestData} loading={loading} />;
 };

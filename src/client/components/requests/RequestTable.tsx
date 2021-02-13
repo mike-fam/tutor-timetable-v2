@@ -5,29 +5,22 @@ import {
     Table,
     Tbody,
     Td,
-    Text,
     Th,
     Thead,
     Tr,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import { RequestResponse } from "../../types/requests";
 
 type Props = {
     requestList: Array<RequestResponse>;
-    openModal: () => void;
+    openModal: (requestId: number) => void;
 };
 
 export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
+    const tableBorder = useColorModeValue("gray.400", "gray.600");
     return (
-        <Box
-            w="100%"
-            h="100%"
-            style={{
-                height: "700px",
-                border: "1px solid black",
-            }}
-            overflow="scroll"
-        >
+        <Box borderRadius={5} border="1px" borderColor={tableBorder}>
             <Table variant="striped">
                 <Thead>
                     <Tr>
@@ -75,7 +68,11 @@ export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
                                 {/*        </Text>*/}
                                 {/*    )*/}
                                 {/*)}*/}
-                                <Button onClick={openModal}>
+                                <Button
+                                    onClick={() => {
+                                        openModal(requestItem.id);
+                                    }}
+                                >
                                     Make an Offer
                                 </Button>
                             </Td>

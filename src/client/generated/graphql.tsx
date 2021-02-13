@@ -788,15 +788,25 @@ export type GetRequestByIdQuery = (
       & Pick<User, 'username'>
     ), session: (
       { __typename?: 'Session' }
+      & Pick<Session, 'week'>
       & { sessionStream: (
         { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name'>
+        & Pick<SessionStream, 'name'>
+        & { timetable: (
+          { __typename?: 'Timetable' }
+          & Pick<Timetable, 'termId'>
+          & { course: (
+            { __typename?: 'Course' }
+            & Pick<Course, 'code' | 'id'>
+          ) }
+        ) }
       ) }
     ), swapPreference: Array<(
       { __typename?: 'Session' }
+      & Pick<Session, 'week'>
       & { sessionStream: (
         { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name'>
+        & Pick<SessionStream, 'name'>
       ) }
     )> }
   ) }
@@ -811,18 +821,28 @@ export type GetRequestsByUserIdQuery = (
   { __typename?: 'Query' }
   & { getRequestsByUserId: Array<(
     { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status'>
+    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type'>
     & { requester: (
       { __typename?: 'User' }
-      & Pick<User, 'name'>
+      & Pick<User, 'id' | 'username'>
     ), session: (
       { __typename?: 'Session' }
+      & Pick<Session, 'week'>
       & { sessionStream: (
         { __typename?: 'SessionStream' }
         & Pick<SessionStream, 'name'>
+        & { timetable: (
+          { __typename?: 'Timetable' }
+          & Pick<Timetable, 'termId'>
+          & { course: (
+            { __typename?: 'Course' }
+            & Pick<Course, 'code' | 'id'>
+          ) }
+        ) }
       ) }
     ), swapPreference: Array<(
       { __typename?: 'Session' }
+      & Pick<Session, 'week'>
       & { sessionStream: (
         { __typename?: 'SessionStream' }
         & Pick<SessionStream, 'name'>
@@ -855,7 +875,7 @@ export type GetRequestsByTermIdQuery = (
           & Pick<Timetable, 'termId'>
           & { course: (
             { __typename?: 'Course' }
-            & Pick<Course, 'code'>
+            & Pick<Course, 'code' | 'id'>
           ) }
         ) }
       ) }
@@ -1647,15 +1667,22 @@ export const GetRequestByIdDocument = gql`
     }
     session {
       sessionStream {
-        id
         name
+        timetable {
+          termId
+          course {
+            code
+            id
+          }
+        }
       }
+      week
     }
     swapPreference {
       sessionStream {
-        id
         name
       }
+      week
     }
   }
 }
@@ -1693,18 +1720,29 @@ export const GetRequestsByUserIdDocument = gql`
     title
     status
     requester {
-      name
+      id
+      username
     }
     session {
       sessionStream {
         name
+        timetable {
+          termId
+          course {
+            code
+            id
+          }
+        }
       }
+      week
     }
     swapPreference {
       sessionStream {
         name
       }
+      week
     }
+    type
   }
 }
     `;
@@ -1751,6 +1789,7 @@ export const GetRequestsByTermIdDocument = gql`
           termId
           course {
             code
+            id
           }
         }
       }

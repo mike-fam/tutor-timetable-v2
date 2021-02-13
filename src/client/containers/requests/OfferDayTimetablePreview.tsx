@@ -7,9 +7,9 @@ import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { TimetableSessionType } from "../../types/timetable";
 import { Set } from "immutable";
 import { Timetable } from "../../components/timetable/Timetable";
-import { requestTimeslotHeight } from "../../types/requests";
 import { SimpleSession } from "../../components/timetable/SimpleSession";
 import { UserContext } from "../../utils/user";
+import { requestTimeslotHeight } from "../../constants/requests";
 
 type Props = {
     sessionId: number;
