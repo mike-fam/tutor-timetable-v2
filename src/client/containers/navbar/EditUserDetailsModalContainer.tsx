@@ -26,18 +26,20 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
 
-    const [submitName, { loading: nameLoading }] = useMutationWithError(
-        useUpdateNameMutation
-    );
-    const [submitEmail, { loading: emailLoading }] = useMutationWithError(
-        useUpdateEmailMutation
-    );
+    const [
+        submitName,
+        { loading: nameLoading },
+    ] = useMutationWithError(useUpdateNameMutation, { newName: name });
+    const [
+        submitEmail,
+        { loading: emailLoading },
+    ] = useMutationWithError(useUpdateEmailMutation, { newEmail: email });
 
     const handleSubmit = async (type: formType) => {
         if (type === formType.NAME) {
-            await submitName({ variables: { newName: name } });
+            await submitName();
         } else if (type === formType.EMAIL) {
-            await submitEmail({ variables: { newEmail: email } });
+            await submitEmail();
         }
     };
 
