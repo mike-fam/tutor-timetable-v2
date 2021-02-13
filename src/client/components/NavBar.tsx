@@ -11,13 +11,14 @@ import {
     Spacer,
     useColorMode,
     useColorModeValue,
+    useDisclosure,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
-import { EditUserInfoContainer } from "../containers/navbar/EditUserInfoContainer";
+import { EditUserDetailsModalContainer } from "../containers/navbar/EditUserDetailsModalContainer";
 
 type Props = {};
 
@@ -25,6 +26,8 @@ export const NavBar: React.FunctionComponent<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
     const { user } = useContext(UserContext);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
@@ -79,7 +82,9 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             {user.username}
                         </MenuButton>
                         <MenuList>
-                            <EditUserInfoContainer user={user} />
+                            <MenuItem onClick={onOpen}>
+                                Edit Personal Details
+                            </MenuItem>
                             <MenuItem>Logout</MenuItem>
                         </MenuList>
                     </Menu>
@@ -88,6 +93,12 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                     </NavBarMenuButton>
                 </Flex>
             </Box>
+            <EditUserDetailsModalContainer
+                isOpen={isOpen}
+                openModal={onOpen}
+                closeModal={onClose}
+                user={user}
+            />
             <Divider />
         </>
     );
