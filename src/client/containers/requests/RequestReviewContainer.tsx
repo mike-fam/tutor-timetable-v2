@@ -1,12 +1,12 @@
 import { Grid, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import React, { useContext, useEffect } from "react";
-import { RequestFormState } from "../../hooks/useRequestFormState";
 import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import { useCourseLazyQuery } from "../../generated/graphql";
 import { capitalCase } from "change-case";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { notSet } from "../../constants";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
+import { RequestFormState } from "../../types/requests";
 
 type Props = Pick<
     RequestFormState,

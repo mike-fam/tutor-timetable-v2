@@ -2,18 +2,37 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
     createRequest(requestDetails: $requestDetails) {
         id
         title
-        description
+        status
         type
         requester {
-            name
-            email
-        }
-        status
-        session {
             id
+            username
+            name
+        }
+        session {
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                    }
+                }
+            }
+            week
         }
         swapPreference {
-            id
+            sessionStream {
+                name
+                startTime
+                endTime
+            }
+            week
         }
     }
 }

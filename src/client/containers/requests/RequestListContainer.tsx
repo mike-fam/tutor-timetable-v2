@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
-import { useGetRequestsByTermIdLazyQuery } from "../../generated/graphql";
-import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import { RequestResponse } from "../../types/requests";
 import { notSet } from "../../constants";
+import { RequestContext } from "../../hooks/useRequestUtils";
 
 // TODO: Needs user data and update filter function.
 type Props = {
@@ -15,28 +14,19 @@ export const RequestListContainer: React.FunctionComponent<Props> = ({
     filters,
     termId,
 }) => {
-    const [getRequests, { data, loading }] = useLazyQueryWithError(
-        useGetRequestsByTermIdLazyQuery
-    );
+    const { requests, fetchRequests, loading } = useContext(RequestContext);
     useEffect(() => {
         if (termId === notSet) {
             return;
         }
-        getRequests({
-            variables: {
-                termId,
-            },
-        });
-    }, [termId, getRequests]);
+        fetchRequests(termId);
+    }, [termId, fetchRequests]);
     const filteredRequestData = useMemo<RequestResponse[]>(() => {
-        if (!data) {
-            return [];
-        }
         return filters.reduce(
             (data, filter) => data.filter(filter),
-            data.getRequestsByTermId
+            requests.valueSeq().toArray()
         );
-    }, [data, filters]);
+    }, [requests, filters]);
 
     return <RequestList requestList={filteredRequestData} loading={loading} />;
 };

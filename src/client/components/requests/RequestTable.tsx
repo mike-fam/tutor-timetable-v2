@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { RequestResponse } from "../../types/requests";
 import { UserContext } from "../../utils/user";
+import { RequestStatus } from "../../generated/graphql";
 
 type Props = {
     requestList: Array<RequestResponse>;
@@ -51,16 +52,18 @@ export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
                             </Td>
                             <Td>
                                 {requestItem.requester.username !==
-                                    user.username && (
-                                    <Button
-                                        colorScheme="teal"
-                                        onClick={() => {
-                                            openModal(requestItem.id);
-                                        }}
-                                    >
-                                        Make an Offer
-                                    </Button>
-                                )}
+                                    user.username &&
+                                    requestItem.status ===
+                                        RequestStatus.Open && (
+                                        <Button
+                                            colorScheme="teal"
+                                            onClick={() => {
+                                                openModal(requestItem.id);
+                                            }}
+                                        >
+                                            Make an Offer
+                                        </Button>
+                                    )}
                             </Td>
                         </Tr>
                     ))}

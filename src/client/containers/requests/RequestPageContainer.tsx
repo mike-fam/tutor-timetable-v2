@@ -22,6 +22,7 @@ import {
     requestTypeFilter,
 } from "../../utils/requests";
 import { UserContext } from "../../utils/user";
+import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
 
 export const RequestPageContainer: React.FunctionComponent = () => {
     // Get Current Term
@@ -30,6 +31,7 @@ export const RequestPageContainer: React.FunctionComponent = () => {
     const [termIsSet, setTermIsSet] = useState(false);
     const [chosenCourses, setChosenCourses] = useState<Set<number>>(Set());
     const { user } = useContext(UserContext);
+    const requestUtils = useRequestUtils();
     const {
         selected: selectedTypes,
         selectElem: selectType,
@@ -49,6 +51,15 @@ export const RequestPageContainer: React.FunctionComponent = () => {
         setChosenTerm(getCurrentTerm(termsData.terms).id);
         setTermIsSet(true);
     }, [termsData, termIsSet]);
+
+    const filterByTerm = useCallback(
+        (request: RequestResponse) => {
+            return (
+                request.session.sessionStream.timetable.term.id === chosenTerm
+            );
+        },
+        [chosenCourses, whoseSelected, user.username]
+    );
 
     //Filter management.
     const filterByStatus = useCallback(
@@ -80,42 +91,45 @@ export const RequestPageContainer: React.FunctionComponent = () => {
     );
 
     return (
-        <Wrapper>
-            <Grid templateColumns="1fr 5fr" templateRows="auto" gap={6}>
-                <Box spacing={8} gridRow="4 / 6" gridColumn={1}>
-                    <RequestFilter
-                        chosenCourses={chosenCourses}
-                        setChosenCourses={setChosenCourses}
-                        selectType={selectType}
-                        selectStatus={selectStatus}
-                        chosenTerm={chosenTerm}
-                        selectWhoseRequest={selectWhose}
-                    />
-                </Box>
-                <Heading gridRow={1} gridColumn={2}>
-                    Requests
-                </Heading>
-                <Flex gridRow={2} gridColumn={2} justifyContent="flex-end">
-                    <TermSelectContainer
-                        chooseTerm={setChosenTerm}
-                        chosenTerm={chosenTerm}
-                    />
-                </Flex>
-                <Flex gridRow={3} gridColumn={2} justifyContent="flex-end">
-                    <CreateRequestButtonContainer />
-                </Flex>
-                <Box gridRow={4} gridColumn={2}>
-                    <RequestListContainer
-                        filters={[
-                            filterByCourse,
-                            filterByType,
-                            filterByStatus,
-                            filterByRequester,
-                        ]}
-                        termId={chosenTerm}
-                    />
-                </Box>
-            </Grid>
-        </Wrapper>
+        <RequestContext.Provider value={requestUtils}>
+            <Wrapper>
+                <Grid templateColumns="1fr 5fr" templateRows="auto" gap={6}>
+                    <Box spacing={8} gridRow="4 / 6" gridColumn={1}>
+                        <RequestFilter
+                            chosenCourses={chosenCourses}
+                            setChosenCourses={setChosenCourses}
+                            selectType={selectType}
+                            selectStatus={selectStatus}
+                            chosenTerm={chosenTerm}
+                            selectWhoseRequest={selectWhose}
+                        />
+                    </Box>
+                    <Heading gridRow={1} gridColumn={2}>
+                        Requests
+                    </Heading>
+                    <Flex gridRow={2} gridColumn={2} justifyContent="flex-end">
+                        <TermSelectContainer
+                            chooseTerm={setChosenTerm}
+                            chosenTerm={chosenTerm}
+                        />
+                    </Flex>
+                    <Flex gridRow={3} gridColumn={2} justifyContent="flex-end">
+                        <CreateRequestButtonContainer />
+                    </Flex>
+                    <Box gridRow={4} gridColumn={2}>
+                        <RequestListContainer
+                            filters={[
+                                filterByTerm,
+                                filterByCourse,
+                                filterByType,
+                                filterByStatus,
+                                filterByRequester,
+                            ]}
+                            termId={chosenTerm}
+                        />
+                    </Box>
+                </Grid>
+            </Wrapper>
+        </RequestContext.Provider>
     );
 };

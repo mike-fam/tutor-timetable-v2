@@ -1,26 +1,25 @@
 query getRequestById($requestId: Int!) {
     getRequestById(requestId: $requestId) {
         id
-        type
         title
-        description
         status
+        type
         requester {
+            id
             username
-        }
-        acceptor {
-            username
-        }
-        finaliser {
-            username
+            name
         }
         session {
             sessionStream {
                 name
+                startTime
+                endTime
                 timetable {
-                    termId
                     course {
+                        id
                         code
+                    }
+                    term {
                         id
                     }
                 }
@@ -30,6 +29,8 @@ query getRequestById($requestId: Int!) {
         swapPreference {
             sessionStream {
                 name
+                startTime
+                endTime
             }
             week
         }
@@ -41,17 +42,23 @@ query getRequestsByUserId($termId: Int!) {
         id
         title
         status
+        type
         requester {
             id
             username
+            name
         }
         session {
             sessionStream {
                 name
+                startTime
+                endTime
                 timetable {
-                    termId
                     course {
+                        id
                         code
+                    }
+                    term {
                         id
                     }
                 }
@@ -61,10 +68,11 @@ query getRequestsByUserId($termId: Int!) {
         swapPreference {
             sessionStream {
                 name
+                startTime
+                endTime
             }
             week
         }
-        type
     }
 }
 
@@ -73,17 +81,23 @@ query getRequestsByTermId($termId: Int!) {
         id
         title
         status
+        type
         requester {
             id
             username
+            name
         }
         session {
             sessionStream {
                 name
+                startTime
+                endTime
                 timetable {
-                    termId
                     course {
+                        id
                         code
+                    }
+                    term {
                         id
                     }
                 }
@@ -93,9 +107,10 @@ query getRequestsByTermId($termId: Int!) {
         swapPreference {
             sessionStream {
                 name
+                startTime
+                endTime
             }
             week
         }
-        type
     }
 }
