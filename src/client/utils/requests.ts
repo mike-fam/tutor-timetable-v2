@@ -1,4 +1,8 @@
-import { RequestFilterFunction, RequestResponse } from "../types/requests";
+import {
+    RequestFilterFunction,
+    RequestResponse,
+    WhoseRequest,
+} from "../types/requests";
 import { RequestStatus, RequestType } from "../generated/graphql";
 import { Set } from "immutable";
 
@@ -23,4 +27,16 @@ export const requestStatusFilter: RequestFilterFunction<Set<RequestStatus>> = (
     statuses: Set<RequestStatus>
 ) => {
     return statuses.includes(request.status);
+};
+
+export const requestOfPersonFilter = (
+    request: RequestResponse,
+    whose: Set<WhoseRequest>,
+    myUsername: string
+) => {
+    const requester = request.requester.username;
+    return (
+        (whose.includes(WhoseRequest.ME) && requester === myUsername) ||
+        (whose.includes(WhoseRequest.EVERYONE_ELSE) && requester !== myUsername)
+    );
 };

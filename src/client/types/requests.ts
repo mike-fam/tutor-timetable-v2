@@ -9,3 +9,8 @@ export type RequestFilterFunction<T> = (
     request: RequestResponse,
     arg: T
 ) => boolean;
+
+export enum WhoseRequest {
+    ME = "Me",
+    EVERYONE_ELSE = "Everyone else",
+}

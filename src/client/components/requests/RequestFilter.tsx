@@ -5,6 +5,7 @@ import { SimpleCheckboxList } from "../helpers/SimpleCheckboxList";
 import { CourseCheckboxListContainer } from "../../containers/timetable/CourseCheckboxListContainer";
 import { Set } from "immutable";
 import { capitalCase } from "change-case";
+import { WhoseRequest } from "../../types/requests";
 
 type Props = {
     chosenTerm: number;
@@ -12,6 +13,7 @@ type Props = {
     setChosenCourses: Dispatch<SetStateAction<Set<number>>>;
     selectType: (type: RequestType, selected: boolean) => void;
     selectStatus: (status: RequestStatus, selected: boolean) => void;
+    selectWhoseRequest: (whose: WhoseRequest, selected: boolean) => void;
 };
 
 export const RequestFilter: React.FunctionComponent<Props> = ({
@@ -20,6 +22,7 @@ export const RequestFilter: React.FunctionComponent<Props> = ({
     setChosenCourses,
     selectStatus,
     selectType,
+    selectWhoseRequest,
 }) => {
     const filterBorder = useColorModeValue("gray.300", "gray.600");
     const filterHeadingBg = useColorModeValue("gray.200", "gray.700");
@@ -57,6 +60,18 @@ export const RequestFilter: React.FunctionComponent<Props> = ({
                     chosenCourses={chosenCourses}
                     setChosenCourses={setChosenCourses}
                     chosenTermId={chosenTerm}
+                />
+                <Divider />
+                <SimpleCheckboxList
+                    elements={[WhoseRequest.ME, WhoseRequest.EVERYONE_ELSE]}
+                    selectFunc={selectWhoseRequest}
+                    helpTexts={[
+                        "Show my requests",
+                        "Show everyone else's requests",
+                    ]}
+                    selectAllLabel="Show requests of"
+                    defaultSelectedAll={true}
+                    textDisplayed={capitalCase}
                 />
             </Stack>
         </Box>

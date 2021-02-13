@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { notSet } from "../../constants";
 import {
     RequestStatus,
@@ -12,14 +12,16 @@ import { RequestFilter } from "../../components/requests/RequestFilter";
 import { CreateRequestButtonContainer } from "./CreateRequestButtonContainer";
 import { RequestListContainer } from "./RequestListContainer";
 import { TermSelectContainer } from "../TermSelectContainer";
-import { RequestResponse } from "../../types/requests";
+import { RequestResponse, WhoseRequest } from "../../types/requests";
 import { Set } from "immutable";
 import { useSelectableList } from "../../hooks/useSelectableList";
 import {
     requestCourseFilter,
+    requestOfPersonFilter,
     requestStatusFilter,
     requestTypeFilter,
 } from "../../utils/requests";
+import { UserContext } from "../../utils/user";
 
 export const RequestPageContainer: React.FunctionComponent = () => {
     // Get Current Term
@@ -27,6 +29,7 @@ export const RequestPageContainer: React.FunctionComponent = () => {
     const [chosenTerm, setChosenTerm] = useState(notSet);
     const [termIsSet, setTermIsSet] = useState(false);
     const [chosenCourses, setChosenCourses] = useState<Set<number>>(Set());
+    const { user } = useContext(UserContext);
     const {
         selected: selectedTypes,
         selectElem: selectType,
@@ -35,7 +38,10 @@ export const RequestPageContainer: React.FunctionComponent = () => {
         selected: selectedStatuses,
         selectElem: selectStatus,
     } = useSelectableList([RequestStatus.Open, RequestStatus.Closed]);
-
+    const {
+        selected: whoseSelected,
+        selectElem: selectWhose,
+    } = useSelectableList([WhoseRequest.ME, WhoseRequest.EVERYONE_ELSE]);
     useEffect(() => {
         if (!termsData || termIsSet) {
             return;
@@ -66,6 +72,13 @@ export const RequestPageContainer: React.FunctionComponent = () => {
         [chosenCourses]
     );
 
+    const filterByRequester = useCallback(
+        (request: RequestResponse) => {
+            return requestOfPersonFilter(request, whoseSelected, user.username);
+        },
+        [chosenCourses, whoseSelected, user.username]
+    );
+
     return (
         <Wrapper>
             <Grid templateColumns="1fr 5fr" templateRows="auto" gap={6}>
@@ -76,6 +89,7 @@ export const RequestPageContainer: React.FunctionComponent = () => {
                         selectType={selectType}
                         selectStatus={selectStatus}
                         chosenTerm={chosenTerm}
+                        selectWhoseRequest={selectWhose}
                     />
                 </Box>
                 <Heading gridRow={1} gridColumn={2}>
@@ -92,7 +106,12 @@ export const RequestPageContainer: React.FunctionComponent = () => {
                 </Flex>
                 <Box gridRow={4} gridColumn={2}>
                     <RequestListContainer
-                        filters={[filterByCourse, filterByType, filterByStatus]}
+                        filters={[
+                            filterByCourse,
+                            filterByType,
+                            filterByStatus,
+                            filterByRequester,
+                        ]}
                         termId={chosenTerm}
                     />
                 </Box>
