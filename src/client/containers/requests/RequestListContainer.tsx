@@ -3,7 +3,6 @@ import { RequestList } from "../../components/requests/RequestList";
 import {
     RequestStatus,
     RequestType,
-    Term,
     useGetRequestsByCourseIdsQuery,
 } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -68,12 +67,10 @@ export const RequestListContainer: React.FunctionComponent<Props> = (
     };
 
     return (
-        <>
-            <RequestList
-                requestList={filteredRequestData}
-                loading={loading}
-                setTabListView={handleTabChange}
-            />
-        </>
+        <RequestList
+            requestList={filteredRequestData}
+            loading={loading}
+            setTabListView={handleTabChange}
+        />
     );
 };

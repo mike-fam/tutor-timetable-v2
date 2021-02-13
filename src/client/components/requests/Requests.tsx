@@ -19,14 +19,10 @@ type Props = {
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <Box>
-            <Center>
-                <Heading>Request a swap</Heading>
-            </Center>
-            <br></br>
-
+            <Heading>Request a swap</Heading>
             <Box>
                 <Center>
-                    <HStack spacing={8} w="75%">
+                    <HStack spacing={8}>
                         <RequestListContainer
                             filters={props.filters}
                             user={props.user}

@@ -8,13 +8,14 @@ import {
 } from "../../generated/graphql";
 import { getCurrentTerm } from "../../utils/term";
 import { UserContext } from "../../utils/user";
+import { Wrapper } from "../../components/helpers/Wrapper";
 
 export enum DisplayRequestType {
     All = "All",
     Personal = "Personal",
 }
 
-export const RequestContainer: React.FunctionComponent = () => {
+export const RequestPageContainer: React.FunctionComponent = () => {
     //Filter management.
     const [filters, setFilters] = React.useState<
         Array<RequestType | RequestStatus>
@@ -45,13 +46,13 @@ export const RequestContainer: React.FunctionComponent = () => {
     );
 
     return (
-        <>
+        <Wrapper>
             <Requests
                 toggleFilters={updateFilters}
                 filters={filters}
                 user={user}
                 currentTerm={currentTerm}
             />
-        </>
+        </Wrapper>
     );
 };
