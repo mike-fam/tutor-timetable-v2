@@ -4,12 +4,14 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
         title
         status
         type
+        description
         requester {
             id
             username
             name
         }
         session {
+            id
             sessionStream {
                 name
                 startTime
@@ -21,6 +23,7 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
                     }
                     term {
                         id
+                        weekNames
                     }
                 }
             }

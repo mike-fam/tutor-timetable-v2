@@ -11,6 +11,7 @@ type Props = {
 export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
     isOpen,
     onClose,
+    requestId,
 }) => {
     // TODO: Replace this with actual data from server
     // const formState = useRequestFormState({
@@ -32,7 +33,7 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
             size="6xl"
         >
             <StepModalStep step={0} header="Request Information">
-                <ViewRequestContainer requestId={53} />
+                <ViewRequestContainer requestId={requestId} />
             </StepModalStep>
             <StepModalStep step={1} header="Make an offer">
                 Test

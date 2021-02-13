@@ -45,7 +45,7 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
         <Loadable isLoading={!termsData || !sessionsData}>
             <>
                 <RequestTimetableContainer
-                    chosenCourse={chosenCourseId}
+                    chosenCourses={[chosenCourseId]}
                     chosenTerm={chosenTermId}
                     chosenWeek={chosenWeek}
                     checkDisabled={checkSessionDisabled}

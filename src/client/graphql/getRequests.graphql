@@ -4,12 +4,14 @@ query getRequestById($requestId: Int!) {
         title
         status
         type
+        description
         requester {
             id
             username
             name
         }
         session {
+            id
             sessionStream {
                 name
                 startTime
@@ -21,6 +23,7 @@ query getRequestById($requestId: Int!) {
                     }
                     term {
                         id
+                        weekNames
                     }
                 }
             }
@@ -43,12 +46,14 @@ query getRequestsByUserId($termId: Int!) {
         title
         status
         type
+        description
         requester {
             id
             username
             name
         }
         session {
+            id
             sessionStream {
                 name
                 startTime
@@ -60,6 +65,7 @@ query getRequestsByUserId($termId: Int!) {
                     }
                     term {
                         id
+                        weekNames
                     }
                 }
             }
@@ -82,12 +88,14 @@ query getRequestsByTermId($termId: Int!) {
         title
         status
         type
+        description
         requester {
             id
             username
             name
         }
         session {
+            id
             sessionStream {
                 name
                 startTime
@@ -99,6 +107,7 @@ query getRequestsByTermId($termId: Int!) {
                     }
                     term {
                         id
+                        weekNames
                     }
                 }
             }

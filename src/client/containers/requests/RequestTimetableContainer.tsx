@@ -3,7 +3,7 @@ import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
-import { Map } from "immutable";
+import { Map, Set } from "immutable";
 import {
     RequestSession,
     RequestSessionProps,
@@ -17,9 +17,10 @@ import {
 import { notSet } from "../../constants";
 import { SessionResponseType } from "../../types/session";
 import { requestTimeslotHeight } from "../../constants/requests";
+import { IsoDay } from "../../../types/date";
 
 type Props = {
-    chosenCourse: number;
+    chosenCourses: number[];
     chosenTerm: number;
     chosenWeek: number;
     checkDisabled: (session: SessionResponseType) => boolean;
@@ -28,20 +29,27 @@ type Props = {
     filterSessions?: (
         sessions: GetSessionsQuery["sessions"]
     ) => GetSessionsQuery["sessions"];
+    displayedDays?: IsoDay[];
 };
 
 export const RequestTimetableContainer: React.FC<Props> = ({
     chosenTerm,
-    chosenCourse,
+    chosenCourses,
     chosenWeek,
     checkDisabled,
     getSessionTheme,
     chooseSession,
     filterSessions = (sessions) => sessions,
+    displayedDays: displayedDayProps,
 }) => {
-    const { displayedDays, dayStartTime, dayEndTime } = useContext(
-        TimetableSettingsContext
-    );
+    const {
+        displayedDays: displayedDaysContext,
+        dayStartTime,
+        dayEndTime,
+    } = useContext(TimetableSettingsContext);
+    const displayedDays = displayedDayProps
+        ? Set(displayedDayProps)
+        : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
         Map<number, RequestSessionProps>
     >(Map());
@@ -55,19 +63,19 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     useEffect(() => {
         if (
             chosenTerm === notSet ||
-            chosenCourse === notSet ||
+            chosenCourses.length === 0 ||
             chosenWeek === notSet
         ) {
             return;
         }
         getSessions({
             variables: {
-                courseIds: [chosenCourse],
+                courseIds: chosenCourses,
                 termId: chosenTerm,
                 week: chosenWeek,
             },
         });
-    }, [chosenTerm, chosenCourse, chosenWeek, getSessions]);
+    }, [chosenTerm, chosenCourses, chosenWeek, getSessions]);
     useEffect(() => {
         if (!sessionData) {
             return;
