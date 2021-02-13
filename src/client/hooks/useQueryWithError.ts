@@ -30,7 +30,10 @@ export const useMutationWithError = <T, S>(
     ) => MutationTuple<T, S>,
     args?: S
 ) => {
-    const mutationResult = useApolloMutation({ variables: args });
+    const mutationResult = useApolloMutation({
+        variables: args,
+        errorPolicy: "all",
+    });
     const { addError } = useContext(ErrorContext);
     const [, { error }] = useMemo(() => mutationResult, [mutationResult]);
     useEffect(() => {
