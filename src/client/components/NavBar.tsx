@@ -17,7 +17,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
-import { EditUserInfoContainer } from "../containers/EditUserInfoContainer";
+import { EditUserInfoContainer } from "../containers/navbar/EditUserInfoContainer";
 
 type Props = {};
 
