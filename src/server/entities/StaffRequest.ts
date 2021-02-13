@@ -40,6 +40,9 @@ export class StaffRequest extends BaseEntity {
     @Column("varchar")
     status: RequestStatus;
 
+    @Column()
+    sessionId: number;
+
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })
     requester: Lazy<User>;

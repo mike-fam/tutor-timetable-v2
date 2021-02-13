@@ -14,10 +14,9 @@ import {
     Query,
     Resolver,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
 import {
-    Course,
     Session,
     SessionAllocation,
     SessionStream,
@@ -199,30 +198,31 @@ export class StaffRequestResolver {
         return await StaffRequest.find({ requester: user });
     }
 
-    // Used for displaying requests on the main requests page.
+    // Get all requests related to user given term
     // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
-    async getRequestsByCourseIds(
-        @Arg("courseIds", () => [Int]) courseIds: number[],
-        @Arg("termId", () => Int) termId: number
+    async getRequestsByTermId(
+        @Arg("termId", () => Int) termId: number,
+        @Ctx() { req }: MyContext
     ): Promise<StaffRequest[]> {
-        // Checks each courseId exists and the term provided is correct.
-        for (let id of courseIds) {
-            await Course.findOneOrFail(id);
-            await Timetable.findOneOrFail({ courseId: id, termId: termId });
-        }
-
-        return await getConnection()
-            .getRepository(StaffRequest)
-            .createQueryBuilder("staffRequest")
-            .innerJoinAndSelect("staffRequest.session", "session")
-            .innerJoinAndSelect("session.sessionStream", "sessionStream")
-            .innerJoinAndSelect("sessionStream.timetable", "timetable")
-            .where(
-                "timetable.courseId IN (:...courseIds) AND timetable.termId =:termId",
-                { courseIds, termId }
-            )
-            .getMany();
+        const myCourseStaffs = await req.user!.courseStaffs;
+        const myTimetables = await Timetable.find({
+            id: In(
+                myCourseStaffs.map((courseStaff) => courseStaff.timetableId)
+            ),
+            termId,
+        });
+        const sessionStreams = await SessionStream.find({
+            timetableId: In(myTimetables.map((timetable) => timetable.id)),
+        });
+        const sessions = await Session.find({
+            sessionStreamId: In(
+                sessionStreams.map((sessionStream) => sessionStream.id)
+            ),
+        });
+        return await StaffRequest.find({
+            sessionId: In(sessions.map(session => session.id)),
+        });
     }
 
     // Needs testing. Only pass in values that needs changing.

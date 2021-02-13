@@ -50,8 +50,8 @@ query getRequestsByUserId($termId: Int!) {
     }
 }
 
-query getRequestsByCourseIds($courseIds: [Int!]!, $termId: Int!) {
-    getRequestsByCourseIds(courseIds: $courseIds, termId: $termId) {
+query getRequestsByTermId($termId: Int!) {
+    getRequestsByTermId(termId: $termId) {
         id
         title
         status
@@ -69,16 +69,12 @@ query getRequestsByCourseIds($courseIds: [Int!]!, $termId: Int!) {
                     }
                 }
             }
-        }
-        session {
             week
         }
         swapPreference {
             sessionStream {
                 name
             }
-        }
-        swapPreference {
             week
         }
         type

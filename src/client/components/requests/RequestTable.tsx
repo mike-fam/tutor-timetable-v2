@@ -1,12 +1,23 @@
 import React from "react";
-import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Table,
+    Tbody,
+    Td,
+    Text,
+    Th,
+    Thead,
+    Tr,
+} from "@chakra-ui/react";
 import { RequestResponse } from "../../types/requests";
 
 type Props = {
     requestList: Array<RequestResponse>;
+    openModal: () => void;
 };
 
-export const RequestTable: React.FC<Props> = ({ requestList }) => {
+export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
     return (
         <Box
             w="100%"
@@ -46,24 +57,27 @@ export const RequestTable: React.FC<Props> = ({ requestList }) => {
                                 {`${requestItem.session.sessionStream.name} (Week ${requestItem.session.week})`}
                             </Td>
                             <Td>
-                                {requestItem.swapPreference.length === 0 && (
-                                    <Text>No preferences we provided</Text>
-                                )}
-                                {requestItem.swapPreference.map(
-                                    (session, i) => (
-                                        <Text
-                                            key={i}
-                                            style={{
-                                                display: "inline",
-                                            }}
-                                        >
-                                            {`${session.sessionStream.name} (Week ${session.week})`}
-                                            {i + 1 !==
-                                                requestItem.swapPreference
-                                                    .length && ", "}
-                                        </Text>
-                                    )
-                                )}
+                                {/*{requestItem.swapPreference.length === 0 && (*/}
+                                {/*    <Text>No preferences we provided</Text>*/}
+                                {/*)}*/}
+                                {/*{requestItem.swapPreference.map(*/}
+                                {/*    (session, i) => (*/}
+                                {/*        <Text*/}
+                                {/*            key={i}*/}
+                                {/*            style={{*/}
+                                {/*                display: "inline",*/}
+                                {/*            }}*/}
+                                {/*        >*/}
+                                {/*            {`${session.sessionStream.name} (Week ${session.week})`}*/}
+                                {/*            {i + 1 !==*/}
+                                {/*                requestItem.swapPreference*/}
+                                {/*                    .length && ", "}*/}
+                                {/*        </Text>*/}
+                                {/*    )*/}
+                                {/*)}*/}
+                                <Button onClick={openModal}>
+                                    Make an Offer
+                                </Button>
                             </Td>
                         </Tr>
                     ))}
