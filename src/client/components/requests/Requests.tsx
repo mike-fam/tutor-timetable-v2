@@ -1,4 +1,12 @@
-import { Box, Center, Divider, Heading, HStack, Stack } from "@chakra-ui/react";
+import {
+    Box,
+    Center,
+    Flex,
+    Grid,
+    Heading,
+    HStack,
+    Stack,
+} from "@chakra-ui/react";
 import React from "react";
 import { RequestListContainer } from "../../containers/requests/RequestListContainer";
 import { RequestStatus, RequestType } from "../../generated/graphql";
@@ -19,33 +27,24 @@ type Props = {
 export const Requests: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <Box>
-            <Heading>Request a swap</Heading>
-            <Box>
-                <Center>
-                    <HStack spacing={8}>
-                        <RequestListContainer
-                            filters={props.filters}
-                            user={props.user}
-                            currentTerm={props.currentTerm}
-                        />
-
-                        <Stack>
-                            <Center>
-                                <h1>options</h1>
-                            </Center>
-                            <Box>
-                                <CreateRequestButtonContainer />
-                            </Box>
-                            <Divider></Divider>
-                            <Box>
-                                <RequestFilter
-                                    setFilters={props.toggleFilters}
-                                />
-                            </Box>
-                        </Stack>
-                    </HStack>
-                </Center>
-            </Box>
+            <Grid templateColumns="1fr 5fr" templateRows="auto" gap={6}>
+                <Box spacing={8} gridRow="3 / 5" gridColumn={1}>
+                    <RequestFilter setFilters={props.toggleFilters} />
+                </Box>
+                <Heading gridRow={1} gridColumn={2}>
+                    Requests
+                </Heading>
+                <Flex gridRow={2} gridColumn={2} justifyContent="flex-end">
+                    <CreateRequestButtonContainer />
+                </Flex>
+                <Box gridRow={3} gridColumn={2}>
+                    <RequestListContainer
+                        filters={props.filters}
+                        user={props.user}
+                        currentTerm={props.currentTerm}
+                    />
+                </Box>
+            </Grid>
         </Box>
     );
 };

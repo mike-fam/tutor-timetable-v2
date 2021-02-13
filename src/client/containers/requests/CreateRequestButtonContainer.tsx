@@ -64,9 +64,9 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
 
     return (
         <>
-            <Center>
-                <Button onClick={onOpen}>New Request</Button>
-            </Center>
+            <Button onClick={onOpen} colorScheme="green">
+                New Request
+            </Button>
             <StepModal
                 onSubmit={async () => {
                     await submitForm({
