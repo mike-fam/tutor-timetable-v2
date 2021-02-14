@@ -125,7 +125,6 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
                 chosenCourseIds={chosenCourseIds}
                 chosenTermId={chosenTermId}
                 chosenWeek={chosenWeek}
-                chosenSessions={preferences.toArray()}
                 chooseSession={chooseSession}
                 chooseWeek={chooseWeek}
                 disabledWeeks={disabledWeeks}

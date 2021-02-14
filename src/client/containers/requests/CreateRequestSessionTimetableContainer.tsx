@@ -73,7 +73,6 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
         <InteractiveRequestTimetable
             chosenCourseIds={chosenCourseIds}
             chosenTermId={chosenTermId}
-            chosenSessions={[chosenSession]}
             chooseSession={chooseSession}
             disabledWeeks={disabledWeeks}
             sessionFilter={sessionFilter}

@@ -16,10 +16,15 @@ import { RequestStatus } from "../../generated/graphql";
 
 type Props = {
     requestList: Array<RequestResponse>;
-    openModal: (requestId: number) => void;
+    openOfferModal: (requestId: number) => void;
+    openViewRequestModal: (requestId: number) => void;
 };
 
-export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
+export const RequestTable: React.FC<Props> = ({
+    requestList,
+    openOfferModal,
+    openViewRequestModal,
+}) => {
     const tableBorder = useColorModeValue("gray.400", "gray.600");
     const { user } = useContext(UserContext);
     return (
@@ -58,12 +63,25 @@ export const RequestTable: React.FC<Props> = ({ requestList, openModal }) => {
                                         <Button
                                             colorScheme="teal"
                                             onClick={() => {
-                                                openModal(requestItem.id);
+                                                openOfferModal(requestItem.id);
                                             }}
                                         >
                                             Make an Offer
                                         </Button>
                                     )}
+                                {requestItem.requester.username ===
+                                    user.username && (
+                                    <Button
+                                        colorScheme="pink"
+                                        onClick={() => {
+                                            openViewRequestModal(
+                                                requestItem.id
+                                            );
+                                        }}
+                                    >
+                                        View
+                                    </Button>
+                                )}
                             </Td>
                         </Tr>
                     ))}

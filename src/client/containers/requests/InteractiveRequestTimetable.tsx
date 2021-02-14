@@ -12,7 +12,6 @@ type Props = {
     chosenCourseIds: number[];
     chosenTermId: number;
     chosenWeek: number;
-    chosenSessions: number[];
     chooseSession: (sessionId: number) => void;
     chooseWeek: Dispatch<SetStateAction<number>>;
     disabledWeeks: number[];
@@ -36,9 +35,13 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     const { sessionsData, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
         for (const courseId of chosenCourseIds) {
+            console.log("Fetching", chosenTermId, courseId, chosenWeek);
             fetchSessions(chosenTermId, courseId, chosenWeek);
         }
     }, [fetchSessions, chosenTermId, chosenCourseIds, chosenWeek]);
+    useEffect(() => {
+        console.log(termsData, sessionsData);
+    }, [termsData, sessionsData]);
     const { weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     return (
         <Loadable isLoading={!termsData || !sessionsData}>

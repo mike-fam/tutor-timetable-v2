@@ -5,6 +5,7 @@ import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 import { RequestTable } from "./RequestTable";
 import { notSet } from "../../constants";
+import { ViewMyRequestModalContainer } from "../../containers/requests/ViewMyRequestModalContainer";
 
 type Props = {
     requestList: Array<RequestResponse>;
@@ -15,14 +16,30 @@ export const RequestList: React.FunctionComponent<Props> = ({
     requestList,
     loading,
 }) => {
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const {
+        isOpen: isOpenOffer,
+        onClose: onCloseOffer,
+        onOpen: onOpenOffer,
+    } = useDisclosure();
+    const {
+        isOpen: isOpenRequestView,
+        onClose: onCloseRequestView,
+        onOpen: onOpenRequestView,
+    } = useDisclosure();
     const [selectedRequest, setSelectedRequest] = useState(notSet);
-    const openModal = useCallback(
+    const openOfferModal = useCallback(
         (requestId: number) => {
             setSelectedRequest(requestId);
-            onOpen();
+            onOpenOffer();
         },
-        [setSelectedRequest, onOpen]
+        [setSelectedRequest, onOpenOffer]
+    );
+    const openRequestView = useCallback(
+        (requestId: number) => {
+            setSelectedRequest(requestId);
+            onOpenRequestView();
+        },
+        [setSelectedRequest, onOpenRequestView]
     );
     return (
         <>
@@ -30,7 +47,8 @@ export const RequestList: React.FunctionComponent<Props> = ({
                 {requestList.length > 0 ? (
                     <RequestTable
                         requestList={requestList}
-                        openModal={openModal}
+                        openOfferModal={openOfferModal}
+                        openViewRequestModal={openRequestView}
                     />
                 ) : (
                     <Center mt={2}>
@@ -40,8 +58,13 @@ export const RequestList: React.FunctionComponent<Props> = ({
             </Loadable>
             <OfferRequestModalContainer
                 requestId={selectedRequest}
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={isOpenOffer}
+                onClose={onCloseOffer}
+            />
+            <ViewMyRequestModalContainer
+                requestId={selectedRequest}
+                isOpen={isOpenRequestView}
+                onClose={onCloseRequestView}
             />
         </>
     );

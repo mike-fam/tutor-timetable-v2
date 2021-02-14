@@ -41,11 +41,16 @@ query getOffersByRequestId($requestId: Int!) {
             sessionStream {
                 id
                 name
+                startTime
+                endTime
+                day
             }
+            week
         }
         user {
             id
             username
+            name
         }
     }
 }

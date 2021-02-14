@@ -223,7 +223,6 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
                 chosenCourseIds={myCourseIds}
                 chosenTermId={termId}
                 chosenWeek={week}
-                chosenSessions={chosenSessions}
                 chooseSession={chooseSession}
                 chooseWeek={setWeek}
                 disabledWeeks={disabledWeeks}
