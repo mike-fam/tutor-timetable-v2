@@ -442,7 +442,6 @@ export type MutationRemoveOfferArgs = {
 
 export type MutationAcceptOfferArgs = {
   offerSessionSwapId?: Maybe<Scalars['Int']>;
-  requestId: Scalars['Int'];
   offerId: Scalars['Int'];
 };
 
@@ -540,7 +539,6 @@ export type EditOfferInputType = {
 
 export type AcceptOfferMutationVariables = Exact<{
   offerId: Scalars['Int'];
-  requestId: Scalars['Int'];
   offerSessionSwapId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -1135,12 +1133,8 @@ export type EditRequestMutation = (
 
 
 export const AcceptOfferDocument = gql`
-    mutation AcceptOffer($offerId: Int!, $requestId: Int!, $offerSessionSwapId: Int) {
-  acceptOffer(
-    offerId: $offerId
-    requestId: $requestId
-    offerSessionSwapId: $offerSessionSwapId
-  )
+    mutation AcceptOffer($offerId: Int!, $offerSessionSwapId: Int) {
+  acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId)
 }
     `;
 export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation, AcceptOfferMutationVariables>;
@@ -1159,7 +1153,6 @@ export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation,
  * const [acceptOfferMutation, { data, loading, error }] = useAcceptOfferMutation({
  *   variables: {
  *      offerId: // value for 'offerId'
- *      requestId: // value for 'requestId'
  *      offerSessionSwapId: // value for 'offerSessionSwapId'
  *   },
  * });
