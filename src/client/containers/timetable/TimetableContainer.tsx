@@ -17,6 +17,7 @@ import {
 import { Map } from "immutable";
 import { notSet } from "../../constants";
 import { SessionsContext } from "../../hooks/useSessionUtils";
+import { UserContext } from "../../utils/user";
 
 type Props = {};
 
@@ -24,12 +25,16 @@ export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
         Map<number, TimetableSessionProps>
     >(Map());
-    const { displayedDays, dayStartTime, dayEndTime } = useContext(
-        TimetableSettingsContext
-    );
+    const {
+        displayedDays,
+        dayStartTime,
+        dayEndTime,
+        displayMySessionsOnly,
+    } = useContext(TimetableSettingsContext);
     const { chosenTermId, chosenWeek, chosenCourses } = useContext(
         TimetableContext
     );
+    const { user } = useContext(UserContext);
     // TODO: Use lazy query
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
     const {
@@ -44,34 +49,49 @@ export const TimetableContainer: React.FC<Props> = () => {
             if (sessionStreamsLoading || !sessionStreamsData) {
                 return [];
             }
-            return sessionStreamsData.sessionStreams.map((sessionStream) => ({
-                id: sessionStream.id,
-                name: sessionStream.name,
-                startTime: sessionStream.startTime,
-                endTime: sessionStream.endTime,
-                day: sessionStream.day,
-                location: sessionStream.location,
-                allocation: sessionStream.streamAllocations.map(
-                    (allocation) => allocation.user.name
-                ),
-            }));
+            return sessionStreamsData.sessionStreams
+                .filter(
+                    (stream) =>
+                        stream.streamAllocations.some(
+                            (allocation) =>
+                                allocation.user.username === user.username
+                        ) || !displayMySessionsOnly
+                )
+                .map((sessionStream) => ({
+                    id: sessionStream.id,
+                    name: sessionStream.name,
+                    startTime: sessionStream.startTime,
+                    endTime: sessionStream.endTime,
+                    day: sessionStream.day,
+                }));
         } else {
             if (!sessionsData) {
                 return [];
             }
-            return sessionsData.sessions.map((session) => ({
-                id: session.id,
-                name: session.sessionStream.name,
-                startTime: session.sessionStream.startTime,
-                endTime: session.sessionStream.endTime,
-                day: session.sessionStream.day as IsoDay,
-                location: session.location,
-                allocation: session.sessionAllocations.map(
-                    (allocation) => allocation.user.name
-                ),
-            }));
+            return sessionsData.sessions
+                .filter(
+                    (session) =>
+                        session.sessionAllocations.some(
+                            (allocation) =>
+                                allocation.user.username === user.username
+                        ) || !displayMySessionsOnly
+                )
+                .map((session) => ({
+                    id: session.id,
+                    name: session.sessionStream.name,
+                    startTime: session.sessionStream.startTime,
+                    endTime: session.sessionStream.endTime,
+                    day: session.sessionStream.day as IsoDay,
+                }));
         }
-    }, [chosenWeek, sessionsData, sessionStreamsData, sessionStreamsLoading]);
+    }, [
+        chosenWeek,
+        sessionsData,
+        sessionStreamsData,
+        sessionStreamsLoading,
+        displayMySessionsOnly,
+        user.username,
+    ]);
     useEffect(() => {
         if (
             chosenTermId === notSet ||

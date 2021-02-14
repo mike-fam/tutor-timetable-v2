@@ -175,7 +175,7 @@ export const TimetableContext = React.createContext<TimetableState>({
 });
 
 export const TimetableSettingsContext = React.createContext<TimetableSettings>({
-    displayedDays: Set([
+    displayedDays: [
         IsoDay.MON,
         IsoDay.TUE,
         IsoDay.WED,
@@ -183,10 +183,12 @@ export const TimetableSettingsContext = React.createContext<TimetableSettings>({
         IsoDay.FRI,
         IsoDay.SAT,
         IsoDay.SUN,
-    ]),
+    ],
     setDisplayedDays: () => {},
     dayStartTime: 7,
     dayEndTime: 20,
     setDayStartTime: () => {},
     setDayEndTime: () => {},
+    displayMySessionsOnly: false,
+    setDisplayMySessionsOnly: () => {},
 });

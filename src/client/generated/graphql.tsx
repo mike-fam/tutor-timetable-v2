@@ -877,6 +877,29 @@ export type GetSessionStreamsQueryVariables = Exact<{
   courseIds: Array<Scalars['Int']>;
 }>;
 
+export type GetSessionStreamsQuery = { __typename?: "Query" } & {
+    sessionStreams: Array<
+        { __typename?: "SessionStream" } & Pick<
+            SessionStream,
+            | "id"
+            | "type"
+            | "name"
+            | "startTime"
+            | "endTime"
+            | "day"
+            | "location"
+        > & {
+                streamAllocations: Array<
+                    { __typename?: "StreamAllocation" } & {
+                        user: { __typename?: "User" } & Pick<
+                            User,
+                            "name" | "username"
+                        >;
+                    }
+                >;
+            }
+    >;
+};
 
 export type GetSessionStreamsQuery = (
   { __typename?: 'Query' }
@@ -1803,18 +1826,21 @@ export type GetRequestsByCourseIdsLazyQueryHookResult = ReturnType<typeof useGet
 export type GetRequestsByCourseIdsQueryResult = Apollo.QueryResult<GetRequestsByCourseIdsQuery, GetRequestsByCourseIdsQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
-  sessionStreams(courseIds: $courseIds, termId: $termId) {
-    id
-    type
-    name
-    startTime
-    endTime
-    day
-    location
-    streamAllocations {
-      user {
-        name
-      }
+        sessionStreams(courseIds: $courseIds, termId: $termId) {
+            id
+            type
+            name
+            startTime
+            endTime
+            day
+            location
+            streamAllocations {
+                user {
+                    name
+                    username
+                }
+            }
+        }
     }
   }
 }
