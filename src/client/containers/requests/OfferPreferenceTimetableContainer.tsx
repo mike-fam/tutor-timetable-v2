@@ -209,7 +209,6 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             sessionFilter={sessionFilter}
             checkSessionDisabled={checkDisabled}
             getSessionTheme={getSessionTheme}
-            parent="OfferPrefenceTimetableContainer"
         />
     );
 };

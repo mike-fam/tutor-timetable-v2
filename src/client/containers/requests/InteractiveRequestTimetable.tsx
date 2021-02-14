@@ -20,7 +20,6 @@ type Props = {
     sessionFilter: (sessions: SessionResponseType) => boolean;
     checkSessionDisabled: (session: SessionResponseType) => boolean;
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
-    parent: string;
 };
 
 export const InteractiveRequestTimetable: React.FC<Props> = ({
@@ -33,7 +32,6 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     getSessionTheme,
     chosenWeek,
     chooseWeek,
-    parent,
 }) => {
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const { sessionsData, fetchSessions } = useContext(SessionsContext);

@@ -79,7 +79,6 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
             getSessionTheme={getSessionTheme}
             chosenWeek={chosenWeek}
             chooseWeek={chooseWeek}
-            parent="CreateRequestSessionTimetableContainer"
         />
     );
 };

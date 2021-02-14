@@ -132,7 +132,6 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
                 sessionFilter={sessionFilter}
                 checkSessionDisabled={checkSessionDisabled}
                 getSessionTheme={getSessionTheme}
-                parent="CreateRequestPreferenceTimetableContainer"
             />
             <Text>
                 Session{preferences.size > 1 && "s"} chosen:{" "}
