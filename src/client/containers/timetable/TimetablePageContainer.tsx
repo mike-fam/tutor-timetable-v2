@@ -26,6 +26,7 @@ import {
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
+    document.title = "Tutor Timetable";
     const [chosenTerm, setChosenTerm] = useState(notSet);
     const [chosenWeek, setChosenWeek] = useState(notSet);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
