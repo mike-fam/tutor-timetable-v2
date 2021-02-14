@@ -13,7 +13,7 @@ import {
     SessionAvailabilityStatus,
     SessionResponseType,
 } from "../../types/session";
-import { getAvailabilityStatus, getSessionsOfUser } from "../../utils/session";
+import { getAvailabilityStatus } from "../../utils/session";
 import range from "lodash/range";
 import { SessionTheme } from "../../types/timetable";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
@@ -50,11 +50,16 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     useEffect(() => {
         fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
     }, [chosenTermId, chosenCourseId, chosenWeek, fetchSessions]);
-    const filterSessions = useCallback(
-        (sessions: Array<SessionResponseType>) => {
-            return getSessionsOfUser(sessions, user.username, true);
-        },
-        [user.username]
+
+    // Do not filter any sessions
+    const sessionFilter = useCallback(
+        () => true,
+        []
+        // (session: SessionResponseType) =>
+        // !session.sessionAllocations
+        //     .map((allocation) => allocation.user.username)
+        //     .includes(user.username),
+        // [user.username]
     );
     const chooseSession = useCallback(
         (sessionId: number) => {
@@ -68,14 +73,22 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         () => (currentWeek > 0 ? range(0, currentWeek) : []),
         [currentWeek]
     );
+    // Disable my sessions
     const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {
-            return session.id === chosenSession;
+            // return session.id === chosenSession;
+            return session.sessionAllocations.some(
+                (allocation) => allocation.user.username === user.username
+            );
         },
-        [chosenSession]
+        // [chosenSession]
+        [user.username]
     );
     const getSessionTheme = useCallback(
         (session: SessionResponseType) => {
+            if (session.id === chosenSession) {
+                return SessionTheme.OTHER;
+            }
             if (!preferences.includes(session.id)) {
                 return SessionTheme.PRIMARY;
             }
@@ -97,7 +110,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
                     return SessionTheme.PRIMARY;
             }
         },
-        [preferences, availabilityData, sessions, user.username]
+        [preferences, availabilityData, sessions, user.username, chosenSession]
     );
     useEffect(() => {
         if (chosenWeek !== notSet) {
@@ -105,19 +118,21 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         }
         chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));
     }, [currentWeek, weekNum, chosenWeek]);
+    const chosenCourseIds = useMemo(() => [chosenCourseId], [chosenCourseId]);
     return (
         <>
             <InteractiveRequestTimetable
-                chosenCourseId={chosenCourseId}
+                chosenCourseIds={chosenCourseIds}
                 chosenTermId={chosenTermId}
                 chosenWeek={chosenWeek}
                 chosenSessions={preferences.toArray()}
                 chooseSession={chooseSession}
                 chooseWeek={chooseWeek}
                 disabledWeeks={disabledWeeks}
-                filterSessions={filterSessions}
+                sessionFilter={sessionFilter}
                 checkSessionDisabled={checkSessionDisabled}
                 getSessionTheme={getSessionTheme}
+                parent="CreateRequestPreferenceTimetableContainer"
             />
             <Text>
                 Session{preferences.size > 1 && "s"} chosen:{" "}

@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { ViewRequestContainer } from "./ViewRequestContainer";
+import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useCreateOfferMutation } from "../../generated/graphql";
+import { OfferPreferenceTimetableContainer } from "./OfferPreferenceTimetableContainer";
 
 type Props = {
     requestId: number;
@@ -13,15 +16,25 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
     onClose,
     requestId,
 }) => {
-    // TODO: Replace this with actual data from server
-    // const formState = useRequestFormState({
-    //     title: "Test",
-    //     description: "Test",
-    //     course: 1,
-    //     session: 1,
-    //     preferences: Set([1, 2, 3]),
-    //     duration: RequestType.Temporary,
-    // });
+    const [createOffer, { data }] = useMutationWithError(
+        useCreateOfferMutation
+    );
+    const [chosenSessions, setChosenSessions] = useState<Array<number>>([]);
+    const chooseSession = useCallback(
+        (sessionId) => {
+            console.log("Choosing", sessionId);
+            console.log("Current chosen:", chosenSessions);
+            if (chosenSessions.includes(sessionId)) {
+                setChosenSessions((prev) =>
+                    prev.filter((id) => id !== sessionId)
+                );
+            } else {
+                setChosenSessions((prev) => [...prev, sessionId]);
+            }
+        },
+        [chosenSessions]
+    );
+
     return (
         <StepModal
             stepCount={2}
@@ -36,7 +49,11 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
                 <ViewRequestContainer requestId={requestId} />
             </StepModalStep>
             <StepModalStep step={1} header="Make an offer">
-                Test
+                <OfferPreferenceTimetableContainer
+                    requestId={requestId}
+                    chosenSessions={chosenSessions}
+                    chooseSession={chooseSession}
+                />
             </StepModalStep>
         </StepModal>
     );

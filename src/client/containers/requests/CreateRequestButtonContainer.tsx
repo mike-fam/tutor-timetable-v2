@@ -18,6 +18,7 @@ import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 import { RequestReviewContainer } from "./RequestReviewContainer";
 import { UserContext } from "../../utils/user";
+import { useRequestUtils } from "../../hooks/useRequestUtils";
 
 type Props = {};
 
@@ -58,9 +59,7 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;
     }, [termsData]);
-    const [submitForm, { loading: submitting }] = useMutationWithError(
-        useCreateRequestMutation
-    );
+    const { createNewRequest, loading } = useRequestUtils();
 
     return (
         <>
@@ -69,20 +68,16 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
             </Button>
             <StepModal
                 onSubmit={async () => {
-                    await submitForm({
-                        variables: {
-                            requestDetails: {
-                                title,
-                                description,
-                                preferences: preferences.toArray(),
-                                duration,
-                                sessionId: session,
-                                termId: currentTerm,
-                            },
-                        },
+                    await createNewRequest({
+                        title,
+                        description,
+                        duration,
+                        preferences: preferences.toArray(),
+                        termId: currentTerm,
+                        sessionId: session,
                     });
                 }}
-                isSubmitting={submitting}
+                isSubmitting={loading}
                 validateStep={validateStep}
                 stepCount={4}
                 isOpen={isOpen}

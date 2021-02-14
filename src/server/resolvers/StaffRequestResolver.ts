@@ -221,7 +221,7 @@ export class StaffRequestResolver {
             ),
         });
         return await StaffRequest.find({
-            sessionId: In(sessions.map(session => session.id)),
+            sessionId: In(sessions.map((session) => session.id)),
         });
     }
 

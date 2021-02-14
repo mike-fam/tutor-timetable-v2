@@ -10,10 +10,7 @@ import {
 } from "../../components/requests/RequestSession";
 import { SessionTheme, TimetableSessionType } from "../../types/timetable";
 import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
-import {
-    GetSessionsQuery,
-    useGetSessionsLazyQuery,
-} from "../../generated/graphql";
+import { useGetSessionsLazyQuery } from "../../generated/graphql";
 import { notSet } from "../../constants";
 import { SessionResponseType } from "../../types/session";
 import { requestTimeslotHeight } from "../../constants/requests";
@@ -26,9 +23,7 @@ type Props = {
     checkDisabled: (session: SessionResponseType) => boolean;
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
     chooseSession: (sessionId: number) => void;
-    filterSessions?: (
-        sessions: GetSessionsQuery["sessions"]
-    ) => GetSessionsQuery["sessions"];
+    sessionFilter?: (sessions: SessionResponseType) => boolean;
     displayedDays?: IsoDay[];
 };
 
@@ -39,7 +34,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     checkDisabled,
     getSessionTheme,
     chooseSession,
-    filterSessions = (sessions) => sessions,
+    sessionFilter = (sessions) => sessions,
     displayedDays: displayedDayProps,
 }) => {
     const {
@@ -80,7 +75,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         if (!sessionData) {
             return;
         }
-        const sessions = filterSessions(sessionData.sessions);
+        const sessions = sessionData.sessions.filter(sessionFilter);
         sessions.forEach((session) => {
             setSessionInfo((prev) =>
                 prev.set(session.id, {
@@ -107,7 +102,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         sessionData,
         checkDisabled,
         getSessionTheme,
-        filterSessions,
+        sessionFilter,
         chooseSession,
     ]);
     return (

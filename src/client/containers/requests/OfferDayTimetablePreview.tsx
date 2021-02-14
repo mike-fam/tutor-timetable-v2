@@ -100,6 +100,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
         return false;
     }, [session, sessionsOnDay]);
 
+    // TODO: Use interactive timetable component
     return (
         <>
             <Timetable
@@ -119,7 +120,11 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                                     : SessionTheme.SUCCESS,
                         })}
                         renderSession={(sessionProps, key, moreProps) => (
-                            <SimpleSession {...sessionProps} {...moreProps} />
+                            <SimpleSession
+                                {...sessionProps}
+                                {...moreProps}
+                                key={key}
+                            />
                         )}
                     />
                 )}

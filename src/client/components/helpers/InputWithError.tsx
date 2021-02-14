@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     FormControl,
     FormErrorMessage,
@@ -22,9 +22,6 @@ export const InputWithError: React.FC<Props> = ({
     ...props
 }) => {
     const [error, setError] = useState("");
-    useEffect(() => {
-        console.log(error);
-    }, [error]);
     return (
         <FormControl
             isInvalid={!!error}
