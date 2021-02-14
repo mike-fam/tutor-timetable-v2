@@ -12,6 +12,7 @@ import {
     Th,
     Thead,
     Tr,
+    useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
@@ -20,6 +21,7 @@ import {
     useQueryWithError,
 } from "../../hooks/useQueryWithError";
 import {
+    RequestStatus,
     useAcceptOfferMutation,
     useGetOffersByRequestIdLazyQuery,
     useTermsQuery,
@@ -33,6 +35,7 @@ import { getCurrentTerm } from "../../utils/term";
 
 type Props = {
     requestId: number;
+    closeModal: () => void;
 };
 
 const hourToTime = (hour: number) => {
@@ -42,10 +45,14 @@ const hourToTime = (hour: number) => {
         .padStart(2, "0")}`;
 };
 
-export const OfferListContainer: React.FC<Props> = ({ requestId }) => {
+export const OfferListContainer: React.FC<Props> = ({
+    requestId,
+    closeModal,
+}) => {
     const [getOffers, { data: offerData }] = useLazyQueryWithError(
         useGetOffersByRequestIdLazyQuery
     );
+    const toast = useToast();
     const [
         acceptOffer,
         { data: acceptOfferData, loading: acceptOfferLoading },
@@ -79,6 +86,24 @@ export const OfferListContainer: React.FC<Props> = ({ requestId }) => {
         setTermId(getCurrentTerm(termsData.terms).id);
     }, [termsData]);
     const { chosenTerm } = useTermMetadata(termId);
+    useEffect(() => {
+        if (acceptOfferData?.acceptOffer) {
+            toast({
+                title: "Offer Accepted",
+                description:
+                    "You've accepted the offer and the timetable has been updated",
+                status: "success",
+                duration: 9000,
+                isClosable: true,
+            });
+            if (request) {
+                requests.set(requestId, {
+                    ...request,
+                    status: RequestStatus.Closed
+                });
+            }
+        }
+    }, [acceptOfferData?.acceptOffer, toast]);
     return (
         <Accordion>
             {offerData?.getOffersByRequestId.map((offer, key) => (
@@ -123,7 +148,24 @@ export const OfferListContainer: React.FC<Props> = ({ requestId }) => {
                                                 ]}
                                         </Td>
                                         <Td isNumeric>
-                                            <Button colorScheme="pink">
+                                            <Button
+                                                colorScheme="pink"
+                                                isLoading={acceptOfferLoading}
+                                                isDisabled={
+                                                    request?.status ===
+                                                    RequestStatus.Closed
+                                                }
+                                                onClick={async () => {
+                                                    await acceptOffer({
+                                                        variables: {
+                                                            offerId: offer.id,
+                                                            offerSessionSwapId:
+                                                                session.id,
+                                                        },
+                                                    });
+                                                    closeModal();
+                                                }}
+                                            >
                                                 Accept
                                             </Button>
                                         </Td>

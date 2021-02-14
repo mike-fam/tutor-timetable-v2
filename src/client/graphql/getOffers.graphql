@@ -38,6 +38,7 @@ query getOffersByRequestId($requestId: Int!) {
     getOffersByRequestId(requestId: $requestId) {
         id
         preferences {
+            id
             sessionStream {
                 id
                 name
