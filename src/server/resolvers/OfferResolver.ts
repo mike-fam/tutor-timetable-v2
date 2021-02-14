@@ -151,17 +151,16 @@ export class OfferResolver {
     @Mutation(() => Boolean)
     async acceptOffer(
         @Arg("offerId", () => Int) offerId: number,
-        @Arg("requestId", () => Int) requestId: number,
         @Arg("offerSessionSwapId", () => Int, { nullable: true })
         offerSessionSwapId: number,
         @Ctx() { req }: MyContext
     ): Promise<boolean> {
         // User
         const user = req.user!;
-        // Request
-        const request = await StaffRequest.findOneOrFail({ id: requestId });
         // Offer
         const offer = await Offer.findOneOrFail({ id: offerId });
+        // Request
+        const request = await offer.request;
         // Use who made the offer
         const offerUser = await offer.user;
         // Preferences of the offer made. Empty array if no preferences
