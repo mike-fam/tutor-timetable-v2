@@ -1,4 +1,4 @@
-import { IsEmail } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
 import {
     Arg,
     Ctx,
@@ -12,10 +12,14 @@ import { User } from "../entities";
 import { MyContext } from "../types/context";
 
 @InputType()
-export class UpdateEmailInputType {
+export class UpdateDetailsInputType {
     @Field()
     @IsEmail()
     email: string;
+
+    @Field()
+    @IsNotEmpty()
+    name: string;
 }
 
 @Resolver()
@@ -26,21 +30,12 @@ export class UserResolver {
     }
 
     @Mutation(() => User)
-    async updateName(
+    async updateDetails(
         @Ctx() { req }: MyContext,
-        @Arg("newName") newName: string
+        @Arg("details") { name, email }: UpdateDetailsInputType
     ): Promise<User> {
         const user = req.user!;
-        user.name = newName;
-        return await user.save();
-    }
-
-    @Mutation(() => User)
-    async updateEmail(
-        @Ctx() { req }: MyContext,
-        @Arg("newEmail") { email }: UpdateEmailInputType
-    ): Promise<User> {
-        const user = req.user!;
+        user.name = name;
         user.email = email;
         return await user.save();
     }

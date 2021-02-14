@@ -1,10 +1,7 @@
 import React from "react";
 import { EditUserDetailsModal } from "../../components/navbar/EditUserDetailsModal";
 import { EditUserForm } from "../../components/navbar/EditUserForm";
-import {
-    useUpdateEmailMutation,
-    useUpdateNameMutation,
-} from "../../generated/graphql";
+import { useUpdateDetailsMutation } from "../../generated/graphql";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { UserState } from "../../types/user";
 
@@ -15,33 +12,16 @@ type Props = {
     isOpen: boolean;
 };
 
-export enum formType {
-    NAME = "Name",
-    EMAIL = "Email",
-}
-
 export const EditUserDetailsModalContainer: React.FC<Props> = (
     props: Props
 ) => {
-    const [name, setName] = React.useState<string>("");
-    const [email, setEmail] = React.useState<string>("");
+    const [name, setName] = React.useState<string>(props.user.name);
+    const [email, setEmail] = React.useState<string>(props.user.email);
 
-    const [
-        submitName,
-        { loading: nameLoading },
-    ] = useMutationWithError(useUpdateNameMutation, { newName: name });
-    const [
-        submitEmail,
-        { loading: emailLoading },
-    ] = useMutationWithError(useUpdateEmailMutation, { newEmail: email });
-
-    const handleSubmit = async (type: formType) => {
-        if (type === formType.NAME) {
-            await submitName();
-        } else if (type === formType.EMAIL) {
-            await submitEmail();
-        }
-    };
+    const [submit, { loading }] = useMutationWithError(
+        useUpdateDetailsMutation,
+        { details: { name: name, email: email } }
+    );
 
     return (
         <EditUserDetailsModal
@@ -52,9 +32,9 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
                     setName={setName}
                     email={email}
                     setEmail={setEmail}
-                    submit={handleSubmit}
-                    nameLoading={nameLoading}
-                    emailLoading={emailLoading}
+                    submit={submit}
+                    loading={loading}
+                    user={props.user}
                 />
             )}
         />

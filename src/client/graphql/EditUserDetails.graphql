@@ -1,13 +1,5 @@
-mutation updateName($newName: String!) {
-    updateName(newName: $newName) {
-        id
-        name
-        email
-    }
-}
-
-mutation updateEmail($newEmail: String!) {
-    updateEmail(newEmail: { email: $newEmail }) {
+mutation updateDetails($details: UpdateDetailsInputType!) {
+    updateDetails(details: $details) {
         id
         name
         email

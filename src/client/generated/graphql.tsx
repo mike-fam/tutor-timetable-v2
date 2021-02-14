@@ -261,8 +261,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   requestAllocation: AllocatorOutput;
   applyAllocation: Scalars['Boolean'];
-  updateName: User;
-  updateEmail: User;
+  updateDetails: User;
   addTerm: Term;
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
@@ -291,13 +290,8 @@ export type MutationApplyAllocationArgs = {
 };
 
 
-export type MutationUpdateNameArgs = {
-  newName: Scalars['String'];
-};
-
-
-export type MutationUpdateEmailArgs = {
-  newEmail: UpdateEmailInputType;
+export type MutationUpdateDetailsArgs = {
+  details: UpdateDetailsInputType;
 };
 
 
@@ -404,8 +398,9 @@ export type Allocation = {
   staff: Array<User>;
 };
 
-export type UpdateEmailInputType = {
+export type UpdateDetailsInputType = {
   email: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type CourseStaffUserInput = {
@@ -454,27 +449,14 @@ export type RequestFormInputType = {
   sessionId: Scalars['Int'];
 };
 
-export type UpdateNameMutationVariables = Exact<{
-  newName: Scalars['String'];
+export type UpdateDetailsMutationVariables = Exact<{
+  details: UpdateDetailsInputType;
 }>;
 
 
-export type UpdateNameMutation = (
+export type UpdateDetailsMutation = (
   { __typename?: 'Mutation' }
-  & { updateName: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email'>
-  ) }
-);
-
-export type UpdateEmailMutationVariables = Exact<{
-  newEmail: Scalars['String'];
-}>;
-
-
-export type UpdateEmailMutation = (
-  { __typename?: 'Mutation' }
-  & { updateEmail: (
+  & { updateDetails: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'email'>
   ) }
@@ -833,74 +815,40 @@ export type UpdatePreferenceMutation = (
 );
 
 
-export const UpdateNameDocument = gql`
-    mutation updateName($newName: String!) {
-  updateName(newName: $newName) {
+export const UpdateDetailsDocument = gql`
+    mutation updateDetails($details: UpdateDetailsInputType!) {
+  updateDetails(details: $details) {
     id
     name
     email
   }
 }
     `;
-export type UpdateNameMutationFn = Apollo.MutationFunction<UpdateNameMutation, UpdateNameMutationVariables>;
+export type UpdateDetailsMutationFn = Apollo.MutationFunction<UpdateDetailsMutation, UpdateDetailsMutationVariables>;
 
 /**
- * __useUpdateNameMutation__
+ * __useUpdateDetailsMutation__
  *
- * To run a mutation, you first call `useUpdateNameMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateNameMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateDetailsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDetailsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateNameMutation, { data, loading, error }] = useUpdateNameMutation({
+ * const [updateDetailsMutation, { data, loading, error }] = useUpdateDetailsMutation({
  *   variables: {
- *      newName: // value for 'newName'
+ *      details: // value for 'details'
  *   },
  * });
  */
-export function useUpdateNameMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNameMutation, UpdateNameMutationVariables>) {
-        return Apollo.useMutation<UpdateNameMutation, UpdateNameMutationVariables>(UpdateNameDocument, baseOptions);
+export function useUpdateDetailsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDetailsMutation, UpdateDetailsMutationVariables>) {
+        return Apollo.useMutation<UpdateDetailsMutation, UpdateDetailsMutationVariables>(UpdateDetailsDocument, baseOptions);
       }
-export type UpdateNameMutationHookResult = ReturnType<typeof useUpdateNameMutation>;
-export type UpdateNameMutationResult = Apollo.MutationResult<UpdateNameMutation>;
-export type UpdateNameMutationOptions = Apollo.BaseMutationOptions<UpdateNameMutation, UpdateNameMutationVariables>;
-export const UpdateEmailDocument = gql`
-    mutation updateEmail($newEmail: String!) {
-  updateEmail(newEmail: {email: $newEmail}) {
-    id
-    name
-    email
-  }
-}
-    `;
-export type UpdateEmailMutationFn = Apollo.MutationFunction<UpdateEmailMutation, UpdateEmailMutationVariables>;
-
-/**
- * __useUpdateEmailMutation__
- *
- * To run a mutation, you first call `useUpdateEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateEmailMutation, { data, loading, error }] = useUpdateEmailMutation({
- *   variables: {
- *      newEmail: // value for 'newEmail'
- *   },
- * });
- */
-export function useUpdateEmailMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEmailMutation, UpdateEmailMutationVariables>) {
-        return Apollo.useMutation<UpdateEmailMutation, UpdateEmailMutationVariables>(UpdateEmailDocument, baseOptions);
-      }
-export type UpdateEmailMutationHookResult = ReturnType<typeof useUpdateEmailMutation>;
-export type UpdateEmailMutationResult = Apollo.MutationResult<UpdateEmailMutation>;
-export type UpdateEmailMutationOptions = Apollo.BaseMutationOptions<UpdateEmailMutation, UpdateEmailMutationVariables>;
+export type UpdateDetailsMutationHookResult = ReturnType<typeof useUpdateDetailsMutation>;
+export type UpdateDetailsMutationResult = Apollo.MutationResult<UpdateDetailsMutation>;
+export type UpdateDetailsMutationOptions = Apollo.BaseMutationOptions<UpdateDetailsMutation, UpdateDetailsMutationVariables>;
 export const AddAvailabilitiesDocument = gql`
     mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {

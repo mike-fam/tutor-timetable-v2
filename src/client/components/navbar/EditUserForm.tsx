@@ -1,6 +1,12 @@
-import { Button, Divider, FormControl, FormHelperText } from "@chakra-ui/react";
+import {
+    Button,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    Input,
+} from "@chakra-ui/react";
 import React from "react";
-import { formType } from "../../containers/navbar/EditUserDetailsModalContainer";
+import { UserState } from "../../types/user";
 import { InputWithError } from "../helpers/InputWithError";
 import { Loadable } from "../helpers/Loadable";
 
@@ -9,14 +15,16 @@ type Props = {
     setName: (name: string) => void;
     email: string;
     setEmail: (email: string) => void;
-    submit: (type: formType) => void;
-    nameLoading: boolean;
-    emailLoading: boolean;
+    submit: () => void;
+    loading: boolean;
+    user: UserState;
 };
 
 export const EditUserForm: React.FC<Props> = (props: Props) => {
     return (
         <FormControl>
+            <FormLabel>Username:</FormLabel>
+            <Input disabled={true} defaultValue={props.user.username} />
             <InputWithError
                 label="Edit Your name"
                 validate={(value) =>
@@ -27,18 +35,6 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                     props.setName(e.target.value);
                 }}
             />
-            <Loadable isLoading={props.nameLoading}>
-                <Button
-                    mt={3}
-                    onClick={() => props.submit(formType.NAME)}
-                    disabled={
-                        props.name.length === 0 || props.name.trim() === ""
-                    }
-                >
-                    Update Name
-                </Button>
-            </Loadable>
-            <Divider mt={3} mb={3}></Divider>
             <InputWithError
                 label="Edit Your email"
                 validate={(value) =>
@@ -50,17 +46,19 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                 }}
             />
             <FormHelperText>
-                If input is not an email, you will get an error.
+                If input is not in email format, you will get an error.
             </FormHelperText>
-            <Loadable isLoading={props.emailLoading}>
+            <Loadable isLoading={props.loading}>
                 <Button
                     mt={3}
-                    onClick={() => props.submit(formType.EMAIL)}
+                    onClick={() => props.submit()}
                     disabled={
-                        props.email.length === 0 || props.email.trim() === ""
+                        (props.email.length === 0 ||
+                            props.email.trim() === "") &&
+                        (props.name.length === 0 || props.name.trim() === "")
                     }
                 >
-                    Update Email
+                    Submit
                 </Button>
             </Loadable>
         </FormControl>
