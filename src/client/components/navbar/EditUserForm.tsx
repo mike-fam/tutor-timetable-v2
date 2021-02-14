@@ -1,4 +1,4 @@
-import { Button, Divider, FormControl } from "@chakra-ui/react";
+import { Button, Divider, FormControl, FormHelperText } from "@chakra-ui/react";
 import React from "react";
 import { formType } from "../../containers/navbar/EditUserDetailsModalContainer";
 import { InputWithError } from "../helpers/InputWithError";
@@ -49,6 +49,9 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                     props.setEmail(e.target.value);
                 }}
             />
+            <FormHelperText>
+                If input is not an email, you will get an error.
+            </FormHelperText>
             <Loadable isLoading={props.emailLoading}>
                 <Button
                     mt={3}
