@@ -5,7 +5,6 @@ import { useSessionUtils } from "../../hooks/useSessionUtils";
 import { IsoDay } from "../../../types/date";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { TimetableSessionType } from "../../types/timetable";
-import { Set } from "immutable";
 import { Timetable } from "../../components/timetable/Timetable";
 import { SimpleSession } from "../../components/timetable/SimpleSession";
 import { UserContext } from "../../utils/user";

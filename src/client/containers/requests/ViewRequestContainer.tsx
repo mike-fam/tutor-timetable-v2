@@ -1,8 +1,7 @@
-import { Box, Grid, HStack, Stack, Text } from "@chakra-ui/react";
+import { Box, Grid, Stack, Text } from "@chakra-ui/react";
 import React, { useContext, useEffect, useMemo } from "react";
 import { OfferDayTimetablePreview } from "./OfferDayTimetablePreview";
 import { RequestContext } from "../../hooks/useRequestUtils";
-import { SessionsContext } from "../../hooks/useSessionUtils";
 
 type Props = {
     requestId: number;

@@ -58,7 +58,7 @@ export const RequestPageContainer: React.FunctionComponent = () => {
                 request.session.sessionStream.timetable.term.id === chosenTerm
             );
         },
-        [chosenCourses, whoseSelected, user.username]
+        [chosenTerm]
     );
 
     //Filter management.
@@ -87,7 +87,7 @@ export const RequestPageContainer: React.FunctionComponent = () => {
         (request: RequestResponse) => {
             return requestOfPersonFilter(request, whoseSelected, user.username);
         },
-        [chosenCourses, whoseSelected, user.username]
+        [whoseSelected, user.username]
     );
 
     return (

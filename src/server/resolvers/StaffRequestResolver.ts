@@ -14,7 +14,7 @@ import {
     Query,
     Resolver,
 } from "type-graphql";
-import { getConnection, In } from "typeorm";
+import { In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
 import {
     Session,

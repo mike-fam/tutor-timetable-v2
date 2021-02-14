@@ -1,24 +1,17 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { Button, Center, useDisclosure } from "@chakra-ui/react";
+import { Button, useDisclosure } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { notSet } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
-import {
-    useCreateRequestMutation,
-    useTermsQuery,
-} from "../../generated/graphql";
-import {
-    useMutationWithError,
-    useQueryWithError,
-} from "../../hooks/useQueryWithError";
+import { useTermsQuery } from "../../generated/graphql";
+import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 import { RequestReviewContainer } from "./RequestReviewContainer";
-import { UserContext } from "../../utils/user";
-import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
+import { RequestContext } from "../../hooks/useRequestUtils";
 
 type Props = {};
 

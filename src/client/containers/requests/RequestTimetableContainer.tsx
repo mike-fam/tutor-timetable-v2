@@ -3,7 +3,7 @@ import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
-import { Map, Set } from "immutable";
+import { Map } from "immutable";
 import {
     RequestSession,
     RequestSessionProps,

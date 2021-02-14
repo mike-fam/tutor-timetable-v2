@@ -3,7 +3,7 @@ import { Text } from "@chakra-ui/react";
 
 type Props = {};
 
-export const RequestTimetableLegends: React.FC<Props> = ({}) => {
+export const RequestTimetableLegends: React.FC<Props> = () => {
     return (
         <>
             <Text color="red.500" fontWeight="bold">

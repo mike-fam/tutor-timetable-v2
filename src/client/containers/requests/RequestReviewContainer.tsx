@@ -52,7 +52,7 @@ export const RequestReviewContainer: React.FC<Props> = ({
             }
             fetchSessionById(sessionId);
         });
-    }, [preferences, fetchSessionById, sessions]);
+    }, [preferences, fetchSessionById, sessions, session]);
 
     return (
         <Grid templateColumns="1fr 3fr" w="80%" mx="auto">
