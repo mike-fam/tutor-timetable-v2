@@ -20,6 +20,7 @@ import parseISO from "date-fns/parseISO";
 import { addDays, addWeeks, startOfISOWeek } from "date-fns";
 import { IsoDay } from "../../../types/date";
 import { SessionTheme } from "../../types/timetable";
+import uniq from "lodash/uniq";
 
 type Props = {
     requestId: number;
@@ -37,9 +38,6 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
         requests,
         requestId,
     ]);
-    const { currentWeek } = useTermMetadata(
-        request?.session.sessionStream.timetable.term.id
-    );
     const { data: myCoursesData } = useQueryWithError(useMyCoursesQuery);
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const [week, setWeek] = useState(notSet);
@@ -54,6 +52,7 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
         );
     }, [myCoursesData]);
     const [termId, setTermId] = useState(notSet);
+    const { currentWeek, weekNum } = useTermMetadata(termId);
     useEffect(() => {
         if (!termsData) {
             return;
@@ -71,6 +70,9 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
     const sessionFilter = useCallback(
         (session: SessionResponseType) => {
             if (!request) {
+                return false;
+            }
+            if (session.week !== week) {
                 return false;
             }
             // Display session that I'll take
@@ -95,7 +97,7 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             // }
             return false;
         },
-        [request, user.username]
+        [request, week]
     );
 
     const checkDisabled = useCallback(
@@ -148,10 +150,25 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
     );
 
     // Disable weeks before current weeks
-    const disabledWeeks = useMemo(
-        () => (currentWeek > 0 ? range(0, currentWeek) : []),
-        [currentWeek]
-    );
+    const disabledWeeks = useMemo(() => {
+        if (!request) {
+            return [];
+        }
+        const disabled = [];
+        if (currentWeek > 0) {
+            disabled.push(...range(0, currentWeek));
+        }
+        const weeksWithPref = request.swapPreference.map(
+            (session) => session.week
+        );
+        const enabledSessions = uniq([...weeksWithPref, request.session.week]);
+        const remainingWeeks = range(currentWeek, weekNum);
+        const disabledRemainings = remainingWeeks.filter(
+            (week) => !enabledSessions.includes(week)
+        );
+        disabled.push(...disabledRemainings);
+        return disabled;
+    }, [currentWeek, request, weekNum]);
 
     // session theme
     const getSessionTheme = useCallback(
@@ -159,7 +176,10 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             if (!request) {
                 return SessionTheme.PRIMARY;
             }
-
+            if (chosenSessions.includes(session.id)) {
+                console.log("Found", session.id, chosenSessions);
+                return SessionTheme.SECONDARY;
+            }
             // The session I will switch into is in success and is disabled.
             if (request.session.id === session.id) {
                 return SessionTheme.SUCCESS;
@@ -177,7 +197,7 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             // and in primary
             return SessionTheme.PRIMARY;
         },
-        [request]
+        [request, chosenSessions]
     );
 
     // Set week to the earliest week of the preferences
@@ -198,17 +218,19 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
     // theme based on clashing and avail.
 
     return (
-        <InteractiveRequestTimetable
-            chosenCourseIds={myCourseIds}
-            chosenTermId={termId}
-            chosenWeek={week}
-            chosenSessions={chosenSessions}
-            chooseSession={chooseSession}
-            chooseWeek={setWeek}
-            disabledWeeks={disabledWeeks}
-            sessionFilter={sessionFilter}
-            checkSessionDisabled={checkDisabled}
-            getSessionTheme={getSessionTheme}
-        />
+        <>
+            <InteractiveRequestTimetable
+                chosenCourseIds={myCourseIds}
+                chosenTermId={termId}
+                chosenWeek={week}
+                chosenSessions={chosenSessions}
+                chooseSession={chooseSession}
+                chooseWeek={setWeek}
+                disabledWeeks={disabledWeeks}
+                sessionFilter={sessionFilter}
+                checkSessionDisabled={checkDisabled}
+                getSessionTheme={getSessionTheme}
+            />
+        </>
     );
 };

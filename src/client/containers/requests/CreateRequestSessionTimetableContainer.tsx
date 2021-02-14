@@ -40,11 +40,14 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
     // Show only my sessions
     const sessionFilter = useCallback(
         (session: SessionResponseType) => {
+            if (session.week !== chosenWeek) {
+                return false;
+            }
             return session.sessionAllocations.some(
                 (allocation) => allocation.user.username === user.username
             );
         },
-        [user.username]
+        [chosenWeek, user.username]
     );
     const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {

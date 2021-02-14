@@ -15,6 +15,8 @@ import { notSet } from "../../constants";
 import { SessionResponseType } from "../../types/session";
 import { requestTimeslotHeight } from "../../constants/requests";
 import { IsoDay } from "../../../types/date";
+import { RequestContext } from "../../hooks/useRequestUtils";
+import { SessionsContext } from "../../hooks/useSessionUtils";
 
 type Props = {
     chosenCourses: number[];
@@ -48,34 +50,18 @@ export const RequestTimetableContainer: React.FC<Props> = ({
     const [sessionInfo, setSessionInfo] = useState<
         Map<number, RequestSessionProps>
     >(Map());
-    const [getSessions, { data: sessionData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
-    );
+    const { fetchSessions, sessions: sessionMap } = useContext(SessionsContext);
     const [timetableSessions, setTimetableSessions] = useState<
         TimetableSessionType[]
     >([]);
 
     useEffect(() => {
-        if (
-            chosenTerm === notSet ||
-            chosenCourses.length === 0 ||
-            chosenWeek === notSet
-        ) {
-            return;
+        for (const courseId of chosenCourses) {
+            fetchSessions(chosenTerm, courseId, chosenWeek);
         }
-        getSessions({
-            variables: {
-                courseIds: chosenCourses,
-                termId: chosenTerm,
-                week: chosenWeek,
-            },
-        });
-    }, [chosenTerm, chosenCourses, chosenWeek, getSessions]);
+    }, [chosenTerm, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
-        if (!sessionData) {
-            return;
-        }
-        const sessions = sessionData.sessions.filter(sessionFilter);
+        const sessions = sessionMap.filter(sessionFilter).valueSeq().toArray();
         sessions.forEach((session) => {
             setSessionInfo((prev) =>
                 prev.set(session.id, {
@@ -99,7 +85,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
             }))
         );
     }, [
-        sessionData,
+        sessionMap,
         checkDisabled,
         getSessionTheme,
         sessionFilter,

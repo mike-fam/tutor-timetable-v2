@@ -33,7 +33,6 @@ class RequestFormInputType {
 
     // Sessions the user wants to switch into.
     @Field(() => [Int])
-    @ArrayNotEmpty()
     @ArrayUnique()
     preferences: number[];
 
@@ -101,9 +100,7 @@ export class StaffRequestResolver {
         const requester = req.user!;
         const session = await Session.findOneOrFail({ id: sessionId });
         const userSessions = await requester.sessionAllocations;
-        const userSessionStream = await SessionStream.findOneOrFail({
-            id: session.sessionStreamId,
-        });
+        const userSessionStream = await session.sessionStream;
         // Ensures session is for a valid timetable and session is for the current term.
         await Timetable.findOneOrFail({
             id: userSessionStream.timetableId,
@@ -136,6 +133,7 @@ export class StaffRequestResolver {
             );
         }
 
+        // TODO: optimise db calls
         // Checks session preferences exist and if they are part of the correct timetable.
         let swapPreference: Array<Session> = [];
         for (let sid of preferences) {
@@ -155,16 +153,13 @@ export class StaffRequestResolver {
         if (
             (
                 await StaffRequest.find({
-                    requester: requester,
-                    session: session,
+                    requesterId: requester.id,
+                    sessionId: session.id,
                 })
             ).length > 0
         ) {
-            const sessionStream = await SessionStream.findOne({
-                id: (await Session.findOne({ id: sessionId }))?.sessionStreamId,
-            });
             throw new Error(
-                "You have already made a request for " + sessionStream?.name
+                `You have already made a request for ${userSessionStream.name} on that week`
             );
         }
 
@@ -172,11 +167,11 @@ export class StaffRequestResolver {
             title,
             description,
             type: duration,
-            requester,
             status: RequestStatus.OPEN,
-            session,
         });
-        request.swapPreference = swapPreference;
+        request.requester = Promise.resolve(requester);
+        request.session = Promise.resolve(session);
+        request.swapPreference = Promise.resolve(swapPreference);
         return await request.save();
     }
 

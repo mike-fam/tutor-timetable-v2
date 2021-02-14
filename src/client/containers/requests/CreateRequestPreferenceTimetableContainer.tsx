@@ -53,8 +53,8 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
 
     // Do not filter any sessions
     const sessionFilter = useCallback(
-        () => true,
-        []
+        (session: SessionResponseType) => session.week === chosenWeek,
+        [chosenWeek]
         // (session: SessionResponseType) =>
         // !session.sessionAllocations
         //     .map((allocation) => allocation.user.username)

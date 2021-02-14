@@ -107,7 +107,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                 displayedDays={Set([
                     (session?.sessionStream.day || IsoDay.MON) as IsoDay,
                 ])}
-                renderDay={(dayProps) => (
+                renderDay={(dayProps, key) => (
                     <Day<{ theme: SessionTheme }>
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
@@ -126,6 +126,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                                 key={key}
                             />
                         )}
+                        key={key}
                     />
                 )}
                 sessions={[

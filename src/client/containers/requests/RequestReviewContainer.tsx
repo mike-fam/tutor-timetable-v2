@@ -40,13 +40,19 @@ export const RequestReviewContainer: React.FC<Props> = ({
         });
     }, [course, fetchCourse]);
     useEffect(() => {
+        if (sessions.has(session)) {
+            return;
+        }
         fetchSessionById(session);
-    }, [session, fetchSessionById]);
+    }, [session, fetchSessionById, sessions]);
     useEffect(() => {
         preferences.forEach((sessionId) => {
+            if (sessions.has(session)) {
+                return;
+            }
             fetchSessionById(sessionId);
         });
-    }, [preferences, fetchSessionById]);
+    }, [preferences, fetchSessionById, sessions]);
 
     return (
         <Grid templateColumns="1fr 3fr" w="80%" mx="auto">

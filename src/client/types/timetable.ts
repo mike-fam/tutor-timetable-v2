@@ -33,5 +33,6 @@ export enum SessionTheme {
     ERROR = "ERROR",
     WARNING = "WARNING",
     PRIMARY = "PRIMARY",
+    SECONDARY = "SECONDARY",
     OTHER = "OTHER",
 }

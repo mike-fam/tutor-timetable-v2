@@ -18,7 +18,7 @@ import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 import { RequestReviewContainer } from "./RequestReviewContainer";
 import { UserContext } from "../../utils/user";
-import { useRequestUtils } from "../../hooks/useRequestUtils";
+import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
 
 type Props = {};
 
@@ -59,7 +59,7 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;
     }, [termsData]);
-    const { createNewRequest, loading } = useRequestUtils();
+    const { createNewRequest, loading } = useContext(RequestContext);
 
     return (
         <>

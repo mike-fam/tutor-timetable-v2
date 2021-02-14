@@ -41,6 +41,9 @@ export class StaffRequest extends BaseEntity {
     status: RequestStatus;
 
     @Column()
+    requesterId: number;
+
+    @Column()
     sessionId: number;
 
     @Field(() => User)

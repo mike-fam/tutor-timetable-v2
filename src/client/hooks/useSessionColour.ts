@@ -16,7 +16,9 @@ export const useSessionColour = (theme: SessionTheme) => {
             case SessionTheme.WARNING:
                 return { light: "yellow.600", dark: "yellow.500" };
             case SessionTheme.OTHER: // TODO: check
-                return { light: "teal.700", dark: "teal.500" };
+                return { light: "teal.600", dark: "teal.500" };
+            case SessionTheme.SECONDARY: // TODO: check
+                return { light: "gray.400", dark: "gray.400" };
             case SessionTheme.PRIMARY:
             default:
                 return { light: "gray.800", dark: "blue.500" };

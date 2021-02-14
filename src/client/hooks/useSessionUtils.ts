@@ -44,6 +44,9 @@ export const useSessionUtils = (): SessionUtil => {
     );
     const fetchSessionById = useCallback(
         (sessionId: number) => {
+            if (sessionId === notSet) {
+                return;
+            }
             getSessionById({
                 variables: {
                     sessionId,
