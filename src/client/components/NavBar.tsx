@@ -1,7 +1,6 @@
 import { ChevronDownIcon, Icon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
     Box,
-    Button,
     Divider,
     Flex,
     Heading,
