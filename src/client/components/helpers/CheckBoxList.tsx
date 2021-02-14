@@ -52,7 +52,7 @@ export const CheckboxList = <T extends string>({
                                         : `Select ${element}`
                                 }
                             >
-                                {element}
+                                {capitalCase(element)}
                             </Tooltip>
                         </Checkbox>
                     ))
