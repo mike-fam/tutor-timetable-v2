@@ -23,9 +23,16 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
         { details: { name: name, email: email } }
     );
 
+    const handleOnClose = () => {
+        setName(props.user.name);
+        setEmail(props.user.email);
+        props.closeModal();
+    };
+
     return (
         <EditUserDetailsModal
             {...props}
+            closeModal={handleOnClose}
             modalBody={() => (
                 <EditUserForm
                     name={name}
