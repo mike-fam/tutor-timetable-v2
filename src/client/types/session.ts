@@ -24,3 +24,12 @@ export type SessionUtil = {
     ) => void;
     fetchSessionById: (sessionId: number) => void;
 };
+
+export enum SessionTheme {
+    SUCCESS = "SUCCESS",
+    ERROR = "ERROR",
+    WARNING = "WARNING",
+    PRIMARY = "PRIMARY",
+    SECONDARY = "SECONDARY",
+    OTHER = "OTHER",
+}

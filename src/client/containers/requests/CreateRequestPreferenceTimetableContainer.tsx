@@ -12,10 +12,10 @@ import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import {
     SessionAvailabilityStatus,
     SessionResponseType,
+    SessionTheme,
 } from "../../types/session";
 import { getAvailabilityStatus } from "../../utils/session";
 import range from "lodash/range";
-import { SessionTheme } from "../../types/timetable";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { useMyAvailabilityQuery } from "../../generated/graphql";

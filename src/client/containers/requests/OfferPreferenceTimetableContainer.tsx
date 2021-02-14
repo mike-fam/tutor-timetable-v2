@@ -19,7 +19,7 @@ import range from "lodash/range";
 import parseISO from "date-fns/parseISO";
 import { addDays, addWeeks, startOfISOWeek } from "date-fns";
 import { IsoDay } from "../../../types/date";
-import { SessionTheme } from "../../types/timetable";
+import { SessionTheme } from "../../types/session";
 import uniq from "lodash/uniq";
 
 type Props = {

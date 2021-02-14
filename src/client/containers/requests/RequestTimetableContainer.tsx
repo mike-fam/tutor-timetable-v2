@@ -8,15 +8,11 @@ import {
     RequestSession,
     RequestSessionProps,
 } from "../../components/requests/RequestSession";
-import { SessionTheme, TimetableSessionType } from "../../types/timetable";
-import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
-import { useGetSessionsLazyQuery } from "../../generated/graphql";
-import { notSet } from "../../constants";
-import { SessionResponseType } from "../../types/session";
+import { TimetableSessionType } from "../../types/timetable";
 import { requestTimeslotHeight } from "../../constants/requests";
 import { IsoDay } from "../../../types/date";
-import { RequestContext } from "../../hooks/useRequestUtils";
 import { SessionsContext } from "../../hooks/useSessionUtils";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 
 type Props = {
     chosenCourses: number[];
@@ -45,7 +41,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         dayEndTime,
     } = useContext(TimetableSettingsContext);
     const displayedDays = displayedDayProps
-        ? Set(displayedDayProps)
+        ? displayedDayProps
         : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
         Map<number, RequestSessionProps>

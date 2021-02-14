@@ -4,13 +4,14 @@ import { TimetableSettingsContext } from "../../utils/timetable";
 import { useSessionUtils } from "../../hooks/useSessionUtils";
 import { IsoDay } from "../../../types/date";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
-import { SessionTheme, TimetableSessionType } from "../../types/timetable";
+import { TimetableSessionType } from "../../types/timetable";
 import { Set } from "immutable";
 import { Timetable } from "../../components/timetable/Timetable";
 import { SimpleSession } from "../../components/timetable/SimpleSession";
 import { UserContext } from "../../utils/user";
 import { requestTimeslotHeight } from "../../constants/requests";
 import { notSet } from "../../constants";
+import { SessionTheme } from "../../types/session";
 
 type Props = {
     sessionId: number;
@@ -104,9 +105,9 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
     return (
         <>
             <Timetable
-                displayedDays={Set([
+                displayedDays={[
                     (session?.sessionStream.day || IsoDay.MON) as IsoDay,
-                ])}
+                ]}
                 renderDay={(dayProps, key) => (
                     <Day<{ theme: SessionTheme }>
                         {...dayProps}

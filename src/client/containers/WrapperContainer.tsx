@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
-import { Set } from "immutable";
 import { IsoDay } from "../../types/date";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 import { useMeQuery } from "../generated/graphql";
@@ -12,6 +11,11 @@ import { UserState } from "../types/user";
 import { Footer } from "../Footer";
 import { footerHeight, notSet } from "../constants";
 import { SessionsContext, useSessionUtils } from "../hooks/useSessionUtils";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import {
+    displayedDaysKey,
+    showMySessionsKeys,
+} from "../constants/localStorageKeys";
 
 type Props = {};
 
@@ -30,16 +34,17 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         },
         [toast]
     );
-    const [displayedDays, setDisplayedDays] = useState(
-        Set([
+    const [displayedDays, setDisplayedDays] = useLocalStorage(
+        displayedDaysKey,
+        [
             IsoDay.MON,
             IsoDay.TUE,
             IsoDay.WED,
             IsoDay.THU,
             IsoDay.FRI,
-            // IsoDay.SAT,
-            // IsoDay.SUN,
-        ])
+            IsoDay.SAT,
+            IsoDay.SUN,
+        ]
     );
     const [user, setUser] = useState<UserState>({
         id: notSet,
@@ -47,6 +52,10 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         email: "",
         name: "",
     });
+    const [showMySessionsOnly, setShowMySessionsOnly] = useLocalStorage(
+        showMySessionsKeys,
+        false
+    );
     const [dayStartTime, setDayStartTime] = useState(7);
     const [dayEndTime, setDayEndTime] = useState(20);
     const { data } = useQueryWithError(useMeQuery);
@@ -74,6 +83,8 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         setDayStartTime,
                         dayEndTime,
                         setDayEndTime,
+                        displayMySessionsOnly: showMySessionsOnly,
+                        setDisplayMySessionsOnly: setShowMySessionsOnly,
                     }}
                 >
                     <SessionsContext.Provider value={sessionsUtil}>

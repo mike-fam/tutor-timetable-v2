@@ -4,12 +4,11 @@ import {
     AvailabilityState,
 } from "../types/availability";
 import { Map } from "immutable";
-import { SessionTheme } from "../types/timetable";
 import {
     AvailabilityModificationType,
     MyAvailabilityQuery,
 } from "../generated/graphql";
-import { SessionResponseType } from "../types/session";
+import { SessionResponseType, SessionTheme } from "../types/session";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
     timeslots: Map(),

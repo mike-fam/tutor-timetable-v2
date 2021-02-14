@@ -36,26 +36,29 @@ export const CheckboxList = <T extends string>({
                 {selectAllLabel ? selectAllLabel : "Select All"}
             </Checkbox>
             <Stack pl={6} mt={1} spacing={1}>
-                {elements.map((element, id) => (
-                    <Checkbox
-                        // https://github.com/chakra-ui/chakra-ui/issues/2428#issuecomment-724002563
-                        isChecked={selectedElements.contains(id)}
-                        onChange={(e) => {
-                            selectElement(id, e.target.checked);
-                        }}
-                        key={id}
-                    >
-                        <Tooltip
-                            label={
-                                helpTexts?.get(id)
-                                    ? helpTexts.get(id)
-                                    : `Select ${element}`
-                            }
+                {elements
+                    .map((element, id) => (
+                        <Checkbox
+                            // https://github.com/chakra-ui/chakra-ui/issues/2428#issuecomment-724002563
+                            isChecked={selectedElements.contains(id)}
+                            onChange={(e) => {
+                                selectElement(id, e.target.checked);
+                            }}
+                            key={id}
                         >
-                            {textDisplayed?.(element) || element}
-                        </Tooltip>
-                    </Checkbox>
-                ))}
+                            <Tooltip
+                                label={
+                                    helpTexts?.get(id)
+                                        ? helpTexts.get(id)
+                                        : `Select ${element}`
+                                }
+                            >
+                                {textDisplayed?.(element) || element}
+                            </Tooltip>
+                        </Checkbox>
+                    ))
+                    .valueSeq()
+                    .toArray()}
             </Stack>
         </Box>
     );

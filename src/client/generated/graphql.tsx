@@ -988,7 +988,10 @@ export type GetSessionStreamsQuery = { __typename?: "Query" } & {
         > & {
                 streamAllocations: Array<
                     { __typename?: "StreamAllocation" } & {
-                        user: { __typename?: "User" } & Pick<User, "name">;
+                        user: { __typename?: "User" } & Pick<
+                            User,
+                            "name" | "username"
+                        >;
                     }
                 >;
             }
@@ -2315,6 +2318,7 @@ export const GetSessionStreamsDocument = gql`
             streamAllocations {
                 user {
                     name
+                    username
                 }
             }
         }

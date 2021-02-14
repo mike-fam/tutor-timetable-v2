@@ -6,17 +6,20 @@ import {
     Heading,
     Menu,
     MenuButton,
+    MenuDivider,
     MenuItem,
     MenuList,
     Spacer,
     useColorMode,
     useColorModeValue,
+    useDisclosure,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
+import { TimetableSettingsModal } from "../containers/TimetableSettingsModal";
 
 type Props = {};
 
@@ -26,6 +29,11 @@ export const NavBar: React.FunctionComponent<Props> = () => {
     const {
         user: { username },
     } = useContext(UserContext);
+    const {
+        isOpen: isTimetableSettingsModalOpen,
+        onOpen: openTimetableSettingsModal,
+        onClose: closeTimetableSettingsModal,
+    } = useDisclosure();
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
@@ -80,6 +88,10 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             {username}
                         </MenuButton>
                         <MenuList>
+                            <MenuItem onClick={openTimetableSettingsModal}>
+                                Timetable Settings
+                            </MenuItem>
+                            <MenuDivider />
                             <MenuItem>Logout</MenuItem>
                         </MenuList>
                     </Menu>
@@ -89,6 +101,10 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                 </Flex>
             </Box>
             <Divider />
+            <TimetableSettingsModal
+                isOpen={isTimetableSettingsModalOpen}
+                onClose={closeTimetableSettingsModal}
+            />
         </>
     );
 };
