@@ -1,10 +1,10 @@
 import { Box, BoxProps } from "@chakra-ui/react";
 import React, { forwardRef, useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
-import { SessionTheme } from "../../types/timetable";
 import { useSessionColour } from "../../hooks/useSessionColour";
 import omit from "lodash/omit";
 import { StackInfo } from "../../../types/date";
+import { SessionTheme } from "../../types/session";
 
 type SessionProps = {
     id: number;

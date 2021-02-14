@@ -78,7 +78,6 @@ export class CourseStaffResolver {
     ): Promise<CourseStaff[]> {
         const timetable = await Timetable.findOneOrFail({ courseId, termId });
         const users = await getOrCreateUsersByUsernames(usernames);
-        console.log("users:", users);
         const existingCourseStaff = await CourseStaff.find({
             where: users.map((user) => ({
                 timetableId: timetable.id,

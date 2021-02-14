@@ -1,6 +1,6 @@
-import { SessionTheme } from "../types/timetable";
 import { useColorModeValue } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { SessionTheme } from "../types/session";
 
 type ColourTheme = {
     light: string;

@@ -8,7 +8,7 @@ import {
     RequestSession,
     RequestSessionProps,
 } from "../../components/requests/RequestSession";
-import { SessionTheme, TimetableSessionType } from "../../types/timetable";
+import { TimetableSessionType } from "../../types/timetable";
 import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import {
     GetSessionsQuery,
@@ -16,7 +16,7 @@ import {
 } from "../../generated/graphql";
 import { notSet } from "../../constants";
 import { requestTimeslotHeight } from "../../types/requests";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 
 type Props = {
     chosenCourse: number;
