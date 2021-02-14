@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { ViewRequestContainer } from "./ViewRequestContainer";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { useCreateOfferMutation } from "../../generated/graphql";
 import { OfferPreferenceTimetableContainer } from "./OfferPreferenceTimetableContainer";
+import { useToast } from "@chakra-ui/react";
 
 type Props = {
     requestId: number;
@@ -16,14 +17,13 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
     onClose,
     requestId,
 }) => {
-    const [createOffer, { data }] = useMutationWithError(
+    const [createOffer, { data, loading }] = useMutationWithError(
         useCreateOfferMutation
     );
+    const toast = useToast();
     const [chosenSessions, setChosenSessions] = useState<Array<number>>([]);
     const chooseSession = useCallback(
         (sessionId) => {
-            console.log("Choosing", sessionId);
-            console.log("Current chosen:", chosenSessions);
             if (chosenSessions.includes(sessionId)) {
                 setChosenSessions((prev) =>
                     prev.filter((id) => id !== sessionId)
@@ -34,12 +34,32 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
         },
         [chosenSessions]
     );
+    useEffect(() => {
+        if (data?.createOffer) {
+            toast({
+                title: "Offer created",
+                status: "success",
+                description: "Offer successfully created",
+                isClosable: true,
+                duration: 5000,
+            });
+        }
+    }, [toast, data?.createOffer]);
 
     return (
         <StepModal
             stepCount={2}
-            onSubmit={() => {}}
-            isSubmitting={false}
+            onSubmit={async () => {
+                await createOffer({
+                    variables: {
+                        offerDetails: {
+                            requestId,
+                            sessionPreferences: chosenSessions,
+                        },
+                    },
+                });
+            }}
+            isSubmitting={loading}
             validateStep={() => true}
             isOpen={isOpen}
             onClose={onClose}
