@@ -27,8 +27,6 @@ import {
     useTermsQuery,
 } from "../../generated/graphql";
 import { notSet } from "../../constants";
-import { isoNumberToDay } from "../../../utils/date";
-import { IsoDay } from "../../../types/date";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { getCurrentTerm } from "../../utils/term";
@@ -99,7 +97,7 @@ export const OfferListContainer: React.FC<Props> = ({
             if (request) {
                 requests.set(requestId, {
                     ...request,
-                    status: RequestStatus.Closed
+                    status: RequestStatus.Closed,
                 });
             }
         }
@@ -125,27 +123,46 @@ export const OfferListContainer: React.FC<Props> = ({
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {offer.preferences.map((session, key) => (
-                                    <Tr key={key}>
-                                        <Td>{session.sessionStream.name}</Td>
+                                {offer.preferences.length > 0 ? (
+                                    offer.preferences.map((session, key) => (
+                                        <Tr key={key}>
+                                            <Td>
+                                                {session.sessionStream.name}
+                                            </Td>
+                                            <Td></Td>
+                                            <Td isNumeric>
+                                                <Button
+                                                    colorScheme="pink"
+                                                    isLoading={
+                                                        acceptOfferLoading
+                                                    }
+                                                    isDisabled={
+                                                        request?.status ===
+                                                        RequestStatus.Closed
+                                                    }
+                                                    onClick={async () => {
+                                                        await acceptOffer({
+                                                            variables: {
+                                                                offerId:
+                                                                    offer.id,
+                                                                offerSessionSwapId:
+                                                                    session.id,
+                                                            },
+                                                        });
+                                                        closeModal();
+                                                    }}
+                                                >
+                                                    Accept
+                                                </Button>
+                                            </Td>
+                                        </Tr>
+                                    ))
+                                ) : (
+                                    <Tr>
+                                        <Td>No sessions</Td>
                                         <Td>
-                                            {hourToTime(
-                                                session.sessionStream.startTime
-                                            )}{" "}
-                                            to{" "}
-                                            {hourToTime(
-                                                session.sessionStream.endTime
-                                            )}{" "}
-                                            on{" "}
-                                            {isoNumberToDay(
-                                                session.sessionStream
-                                                    .day as IsoDay
-                                            )}
-                                            ,{" "}
-                                            {chosenTerm &&
-                                                chosenTerm.weekNames[
-                                                    session.week
-                                                ]}
+                                            {offer.user.name} wants to cover{" "}
+                                            this session.
                                         </Td>
                                         <Td isNumeric>
                                             <Button
@@ -159,8 +176,7 @@ export const OfferListContainer: React.FC<Props> = ({
                                                     await acceptOffer({
                                                         variables: {
                                                             offerId: offer.id,
-                                                            offerSessionSwapId:
-                                                                session.id,
+                                                            offerSessionSwapId: undefined,
                                                         },
                                                     });
                                                     closeModal();
@@ -170,7 +186,7 @@ export const OfferListContainer: React.FC<Props> = ({
                                             </Button>
                                         </Td>
                                     </Tr>
-                                ))}
+                                )}
                             </Tbody>
                         </Table>
                     </AccordionPanel>
