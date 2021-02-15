@@ -4,8 +4,8 @@ import { MyContext } from "../types/context";
 
 @Resolver()
 export class UserResolver {
-    @Query(() => User, { nullable: true })
-    async me(@Ctx() { req }: MyContext): Promise<User | undefined> {
-        return req.user;
+    @Query(() => User)
+    async me(@Ctx() { req }: MyContext): Promise<User> {
+        return req.user!;
     }
 }

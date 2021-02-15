@@ -1,24 +1,21 @@
 import React, { useCallback, useContext, useMemo } from "react";
-import { Button, Center, useDisclosure } from "@chakra-ui/react";
+import { Button, useDisclosure } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { notSet } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
-import {
-    useCreateRequestMutation,
-    useTermsQuery,
-} from "../../generated/graphql";
+import { useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
 import { RequestReviewContainer } from "./RequestReviewContainer";
-import { UserContext } from "../../utils/user";
+import { RequestContext } from "../../hooks/useRequestUtils";
 
 type Props = {};
 
-export const CreateRequestButton: React.FC<Props> = () => {
+export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const formState = useRequestFormState();
@@ -51,34 +48,29 @@ export const CreateRequestButton: React.FC<Props> = () => {
         },
         [title, course, session]
     );
-    const { user } = useContext(UserContext);
 
     const currentTerm = useMemo(() => {
         return termsData ? getCurrentTerm(termsData.terms).id : notSet;
     }, [termsData]);
-    const [submitForm, { loading: submitting }] = useCreateRequestMutation();
+    const { createNewRequest, loading } = useContext(RequestContext);
 
     return (
         <>
-            <Center>
-                <Button onClick={onOpen}>New Request</Button>
-            </Center>
+            <Button onClick={onOpen} colorScheme="green">
+                New Request
+            </Button>
             <StepModal
                 onSubmit={async () => {
-                    await submitForm({
-                        variables: {
-                            requestDetails: {
-                                title,
-                                description,
-                                preferences: preferences.toArray(),
-                                duration,
-                                userId: user.id,
-                                sessionId: session,
-                            },
-                        },
+                    await createNewRequest({
+                        title,
+                        description,
+                        duration,
+                        preferences: preferences.toArray(),
+                        termId: currentTerm,
+                        sessionId: session,
                     });
                 }}
-                isSubmitting={submitting}
+                isSubmitting={loading}
                 validateStep={validateStep}
                 stepCount={4}
                 isOpen={isOpen}

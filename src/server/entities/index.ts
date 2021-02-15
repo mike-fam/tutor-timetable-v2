@@ -38,6 +38,7 @@ registerEnumType(AllocationStatus, {
 
 export { Course } from "./Course";
 export { CourseStaff } from "./CourseStaff";
+export { Offer } from "./Offer";
 export { Preference } from "./Preference";
 export { Session } from "./Session";
 export { SessionAllocation } from "./SessionAllocation";

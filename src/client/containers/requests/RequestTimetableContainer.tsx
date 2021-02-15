@@ -9,70 +9,55 @@ import {
     RequestSessionProps,
 } from "../../components/requests/RequestSession";
 import { TimetableSessionType } from "../../types/timetable";
-import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
-import {
-    GetSessionsQuery,
-    useGetSessionsLazyQuery,
-} from "../../generated/graphql";
-import { notSet } from "../../constants";
-import { requestTimeslotHeight } from "../../types/requests";
+import { requestTimeslotHeight } from "../../constants/requests";
+import { IsoDay } from "../../../types/date";
+import { SessionsContext } from "../../hooks/useSessionUtils";
 import { SessionResponseType, SessionTheme } from "../../types/session";
 
 type Props = {
-    chosenCourse: number;
+    chosenCourses: number[];
     chosenTerm: number;
     chosenWeek: number;
     checkDisabled: (session: SessionResponseType) => boolean;
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
     chooseSession: (sessionId: number) => void;
-    filterSessions?: (
-        sessions: GetSessionsQuery["sessions"]
-    ) => GetSessionsQuery["sessions"];
+    sessionFilter?: (sessions: SessionResponseType) => boolean;
+    displayedDays?: IsoDay[];
 };
 
 export const RequestTimetableContainer: React.FC<Props> = ({
     chosenTerm,
-    chosenCourse,
+    chosenCourses,
     chosenWeek,
     checkDisabled,
     getSessionTheme,
     chooseSession,
-    filterSessions = (sessions) => sessions,
+    sessionFilter = (sessions) => sessions,
+    displayedDays: displayedDayProps,
 }) => {
-    const { displayedDays, dayStartTime, dayEndTime } = useContext(
-        TimetableSettingsContext
-    );
+    const {
+        displayedDays: displayedDaysContext,
+        dayStartTime,
+        dayEndTime,
+    } = useContext(TimetableSettingsContext);
+    const displayedDays = displayedDayProps
+        ? displayedDayProps
+        : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
         Map<number, RequestSessionProps>
     >(Map());
-    const [getSessions, { data: sessionData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
-    );
+    const { fetchSessions, sessions: sessionMap } = useContext(SessionsContext);
     const [timetableSessions, setTimetableSessions] = useState<
         TimetableSessionType[]
     >([]);
 
     useEffect(() => {
-        if (
-            chosenTerm === notSet ||
-            chosenCourse === notSet ||
-            chosenWeek === notSet
-        ) {
-            return;
+        for (const courseId of chosenCourses) {
+            fetchSessions(chosenTerm, courseId, chosenWeek);
         }
-        getSessions({
-            variables: {
-                courseIds: [chosenCourse],
-                termId: chosenTerm,
-                week: chosenWeek,
-            },
-        });
-    }, [chosenTerm, chosenCourse, chosenWeek, getSessions]);
+    }, [chosenTerm, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
-        if (!sessionData) {
-            return;
-        }
-        const sessions = filterSessions(sessionData.sessions);
+        const sessions = sessionMap.filter(sessionFilter).valueSeq().toArray();
         sessions.forEach((session) => {
             setSessionInfo((prev) =>
                 prev.set(session.id, {
@@ -96,10 +81,10 @@ export const RequestTimetableContainer: React.FC<Props> = ({
             }))
         );
     }, [
-        sessionData,
+        sessionMap,
         checkDisabled,
         getSessionTheme,
-        filterSessions,
+        sessionFilter,
         chooseSession,
     ]);
     return (

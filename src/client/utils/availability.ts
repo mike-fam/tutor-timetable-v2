@@ -1,10 +1,10 @@
 import { createContext } from "react";
-import { AvailabilityState } from "../types/availability";
-import { Map } from "immutable";
 import {
-    AvailabilityModificationType,
-    MyAvailabilityQuery,
-} from "../generated/graphql";
+    AvailabilityResponseType,
+    AvailabilityState,
+} from "../types/availability";
+import { Map } from "immutable";
+import { AvailabilityModificationType } from "../generated/graphql";
 import { SessionResponseType, SessionTheme } from "../types/session";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
@@ -33,7 +33,7 @@ export const modificationTypeToTheme = (
 };
 
 export const isAvailable = (
-    availabilities: MyAvailabilityQuery["myAvailability"],
+    availabilities: AvailabilityResponseType,
     session: SessionResponseType
 ) => {
     const availabilityDay = availabilities

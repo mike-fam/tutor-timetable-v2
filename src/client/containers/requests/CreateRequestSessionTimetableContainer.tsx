@@ -11,7 +11,7 @@ import { notSet } from "../../constants";
 import range from "lodash/range";
 import { UserContext } from "../../utils/user";
 import { SessionResponseType, SessionTheme } from "../../types/session";
-import { getSessionsOfUser, isSessionPast } from "../../utils/session";
+import { isSessionPast } from "../../utils/session";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
@@ -21,9 +21,6 @@ type Props = {
     chosenSession: number;
     chooseSession: Dispatch<SetStateAction<number>>;
 };
-
-// TODO: display sessions that user can choose
-//		warning on sessions that user is not available on
 
 export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
     chosenCourseId,
@@ -38,11 +35,18 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
         () => (currentWeek > 0 ? range(0, currentWeek) : []),
         [currentWeek]
     );
-    const filterSessions = useCallback(
-        (sessions: Array<SessionResponseType>) => {
-            return getSessionsOfUser(sessions, user.username);
+
+    // Show only my sessions
+    const sessionFilter = useCallback(
+        (session: SessionResponseType) => {
+            if (session.week !== chosenWeek) {
+                return false;
+            }
+            return session.sessionAllocations.some(
+                (allocation) => allocation.user.username === user.username
+            );
         },
-        [user.username]
+        [chosenWeek, user.username]
     );
     const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {
@@ -64,14 +68,14 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
         }
         chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));
     }, [currentWeek, weekNum, chosenWeek]);
+    const chosenCourseIds = useMemo(() => [chosenCourseId], [chosenCourseId]);
     return (
         <InteractiveRequestTimetable
-            chosenCourseId={chosenCourseId}
+            chosenCourseIds={chosenCourseIds}
             chosenTermId={chosenTermId}
-            chosenSessions={[chosenSession]}
             chooseSession={chooseSession}
             disabledWeeks={disabledWeeks}
-            filterSessions={filterSessions}
+            sessionFilter={sessionFilter}
             checkSessionDisabled={checkSessionDisabled}
             getSessionTheme={getSessionTheme}
             chosenWeek={chosenWeek}

@@ -12,6 +12,7 @@ import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Lazy } from "../utils/query";
 import { Timeslot } from "./Timeslot";
+import { Offer } from "./Offer";
 
 @ObjectType()
 @Entity()
@@ -69,4 +70,8 @@ export class User extends BaseEntity {
     @Field(() => [Timeslot])
     @OneToMany(() => Timeslot, (timeslot) => timeslot.user, { lazy: true })
     availabilities: Lazy<Timeslot[]>;
+
+    @Field(() => [Offer])
+    @OneToMany(() => Offer, (offer) => offer.user, { lazy: true })
+    offers: Lazy<Offer[]>;
 }

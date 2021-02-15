@@ -23,6 +23,7 @@ import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 import { CourseResolver } from "./resolvers/CourseResolver";
+import { OfferResolver } from "./resolvers/OfferResolver";
 import * as path from "path";
 
 const main = async () => {
@@ -58,6 +59,7 @@ const main = async () => {
                 PreferenceResolver,
                 StaffRequestResolver,
                 AllocatorResolver,
+                OfferResolver,
             ],
             dateScalarMode: "isoDate",
         }),

@@ -1,0 +1,182 @@
+query getRequestById($requestId: Int!) {
+    getRequestById(requestId: $requestId) {
+        id
+        title
+        status
+        type
+        description
+        requester {
+            id
+            username
+            name
+        }
+        session {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+            sessionAllocations {
+                user {
+                    username
+                    name
+                }
+            }
+        }
+        swapPreference {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+        }
+    }
+}
+
+query getRequestsByUserId {
+    getRequestsByUserId {
+        id
+        title
+        status
+        type
+        description
+        requester {
+            id
+            username
+            name
+        }
+        session {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+            sessionAllocations {
+                user {
+                    username
+                    name
+                }
+            }
+        }
+        swapPreference {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+        }
+    }
+}
+
+query getRequestsByTermId($termId: Int!) {
+    getRequestsByTermId(termId: $termId) {
+        id
+        title
+        status
+        type
+        description
+        requester {
+            id
+            username
+            name
+        }
+        session {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+            sessionAllocations {
+                user {
+                    username
+                    name
+                }
+            }
+        }
+        swapPreference {
+            id
+            sessionStream {
+                name
+                startTime
+                endTime
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+        }
+    }
+}

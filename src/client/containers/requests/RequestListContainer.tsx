@@ -1,26 +1,32 @@
-import React from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
-import { FilterType } from "./RequestContainer";
+import { RequestResponse } from "../../types/requests";
+import { notSet } from "../../constants";
+import { RequestContext } from "../../hooks/useRequestUtils";
 
+// TODO: Needs user data and update filter function.
 type Props = {
-    filters: Array<FilterType>;
+    filters: Array<(request: RequestResponse) => boolean>;
+    termId: number;
 };
 
-export enum TabViewType {
-    ALL = 0,
-    PERSONAL = 1,
-}
+export const RequestListContainer: React.FunctionComponent<Props> = ({
+    filters,
+    termId,
+}) => {
+    const { requests, fetchRequests, loading } = useContext(RequestContext);
+    useEffect(() => {
+        if (termId === notSet) {
+            return;
+        }
+        fetchRequests(termId);
+    }, [termId, fetchRequests]);
+    const filteredRequestData = useMemo<RequestResponse[]>(() => {
+        return filters.reduce(
+            (data, filter) => data.filter(filter),
+            requests.valueSeq().toArray()
+        );
+    }, [requests, filters]);
 
-export const RequestListContainer: React.FunctionComponent<Props> = (
-    props: Props
-) => {
-    const [, setTabView] = React.useState<TabViewType>(TabViewType.ALL);
-
-    const testList = [0, 1, 2, 3, 4, 5];
-
-    return (
-        <>
-            <RequestList requestList={testList} setTabListView={setTabView} />
-        </>
-    );
+    return <RequestList requestList={filteredRequestData} loading={loading} />;
 };
