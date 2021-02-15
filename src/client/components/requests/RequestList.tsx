@@ -1,11 +1,14 @@
-import { Center, Text, useDisclosure } from "@chakra-ui/react";
-import React, { useCallback, useState } from "react";
+import { Center, Text, useDisclosure, useToast } from "@chakra-ui/react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { OfferRequestModalContainer } from "../../containers/requests/OfferRequestModalContainer";
 import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 import { RequestTable } from "./RequestTable";
 import { notSet } from "../../constants";
 import { ViewMyRequestModalContainer } from "../../containers/requests/ViewMyRequestModalContainer";
+import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useDeleteRequestMutation } from "../../generated/graphql";
+import { RequestContext } from "../../hooks/useRequestUtils";
 
 type Props = {
     requestList: Array<RequestResponse>;
@@ -26,6 +29,8 @@ export const RequestList: React.FunctionComponent<Props> = ({
         onClose: onCloseRequestView,
         onOpen: onOpenRequestView,
     } = useDisclosure();
+    const toast = useToast();
+    const { requests, setRequests } = useContext(RequestContext);
     const [selectedRequest, setSelectedRequest] = useState(notSet);
     const openOfferModal = useCallback(
         (requestId: number) => {
@@ -41,6 +46,34 @@ export const RequestList: React.FunctionComponent<Props> = ({
         },
         [setSelectedRequest, onOpenRequestView]
     );
+    const [
+        deleteRequestMutation,
+        { data: deleteRequestData, loading: deleteLoading },
+    ] = useMutationWithError(useDeleteRequestMutation);
+    const deleteRequest = useCallback(
+        (requestId: number) => {
+            deleteRequestMutation({
+                variables: {
+                    requestId,
+                },
+            });
+        },
+        [deleteRequestMutation]
+    );
+    useEffect(() => {
+        if (deleteRequestData?.deleteRequestById) {
+            toast({
+                title: "Request Deleted",
+                description: "Your request was successfully deleted",
+                status: "success",
+                duration: 9000,
+                isClosable: true,
+            });
+            setRequests((prev) =>
+                prev.remove(deleteRequestData.deleteRequestById)
+            );
+        }
+    }, [deleteRequestData?.deleteRequestById, toast, requests, setRequests]);
     return (
         <>
             <Loadable isLoading={loading}>
@@ -49,6 +82,8 @@ export const RequestList: React.FunctionComponent<Props> = ({
                         requestList={requestList}
                         openOfferModal={openOfferModal}
                         openViewRequestModal={openRequestView}
+                        deleteLoading={deleteLoading}
+                        deleteRequest={deleteRequest}
                     />
                 ) : (
                     <Center mt={2}>

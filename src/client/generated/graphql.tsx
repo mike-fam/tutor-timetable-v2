@@ -315,7 +315,7 @@ export type Mutation = {
   updatePreference: Preference;
   createRequest: StaffRequest;
   editExistingRequest: StaffRequest;
-  deleteRequestById: Scalars['Boolean'];
+  deleteRequestById: Scalars['Int'];
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
@@ -732,6 +732,16 @@ export type CreateRequestMutation = (
       ) }
     )> }
   ) }
+);
+
+export type DeleteRequestMutationVariables = Exact<{
+  requestId: Scalars['Int'];
+}>;
+
+
+export type DeleteRequestMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteRequestById'>
 );
 
 export type GetOfferByIdQueryVariables = Exact<{
@@ -1659,6 +1669,36 @@ export function useCreateRequestMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateRequestMutationHookResult = ReturnType<typeof useCreateRequestMutation>;
 export type CreateRequestMutationResult = Apollo.MutationResult<CreateRequestMutation>;
 export type CreateRequestMutationOptions = Apollo.BaseMutationOptions<CreateRequestMutation, CreateRequestMutationVariables>;
+export const DeleteRequestDocument = gql`
+    mutation DeleteRequest($requestId: Int!) {
+  deleteRequestById(requestId: $requestId)
+}
+    `;
+export type DeleteRequestMutationFn = Apollo.MutationFunction<DeleteRequestMutation, DeleteRequestMutationVariables>;
+
+/**
+ * __useDeleteRequestMutation__
+ *
+ * To run a mutation, you first call `useDeleteRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRequestMutation, { data, loading, error }] = useDeleteRequestMutation({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useDeleteRequestMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRequestMutation, DeleteRequestMutationVariables>) {
+        return Apollo.useMutation<DeleteRequestMutation, DeleteRequestMutationVariables>(DeleteRequestDocument, baseOptions);
+      }
+export type DeleteRequestMutationHookResult = ReturnType<typeof useDeleteRequestMutation>;
+export type DeleteRequestMutationResult = Apollo.MutationResult<DeleteRequestMutation>;
+export type DeleteRequestMutationOptions = Apollo.BaseMutationOptions<DeleteRequestMutation, DeleteRequestMutationVariables>;
 export const GetOfferByIdDocument = gql`
     query getOfferById($offerId: Int!) {
   getOfferById(offerId: $offerId) {

@@ -15,6 +15,7 @@ import { notSet } from "../constants";
 
 export const RequestContext = createContext<RequestUtil>({
     requests: Map(),
+    setRequests: () => {},
     fetchRequests: () => {},
     fetchRequestById: () => {},
     createNewRequest: () => {},
@@ -91,6 +92,7 @@ export const useRequestUtils = (): RequestUtil => {
         setRequests((prev) => prev.set(newRequest.id, newRequest));
     }, [newRequestData]);
     return {
+        setRequests,
         requests,
         createNewRequest,
         fetchRequests,
