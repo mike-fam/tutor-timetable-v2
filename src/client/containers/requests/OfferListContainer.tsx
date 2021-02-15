@@ -30,6 +30,8 @@ import { notSet } from "../../constants";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { getCurrentTerm } from "../../utils/term";
+import { isoNumberToDay } from "../../../utils/date";
+import { IsoDay } from "../../../types/date";
 
 type Props = {
     requestId: number;
@@ -129,7 +131,27 @@ export const OfferListContainer: React.FC<Props> = ({
                                             <Td>
                                                 {session.sessionStream.name}
                                             </Td>
-                                            <Td></Td>
+                                            <Td>
+                                                {hourToTime(
+                                                    session.sessionStream
+                                                        .startTime
+                                                )}{" "}
+                                                to{" "}
+                                                {hourToTime(
+                                                    session.sessionStream
+                                                        .endTime
+                                                )}{" "}
+                                                on{" "}
+                                                {isoNumberToDay(
+                                                    session.sessionStream
+                                                        .day as IsoDay
+                                                )}
+                                                ,{" "}
+                                                {chosenTerm &&
+                                                    chosenTerm.weekNames[
+                                                        session.week
+                                                    ]}
+                                            </Td>
                                             <Td isNumeric>
                                                 <Button
                                                     colorScheme="pink"
