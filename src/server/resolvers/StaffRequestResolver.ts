@@ -274,7 +274,7 @@ export class StaffRequestResolver {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         const user = req.user!;
 
-        if ((await request.requester) !== user) {
+        if ((await request.requester).id !== user.id) {
             throw new Error("User ID does not match request user ID");
         }
         const id = request.id;
