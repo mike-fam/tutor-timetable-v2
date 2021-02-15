@@ -266,18 +266,18 @@ export class StaffRequestResolver {
         return request.save();
     }
 
-    @Mutation(() => StaffRequest)
+    @Mutation(() => Boolean)
     async deleteRequestById(
         @Ctx() { req }: MyContext,
         @Arg("requestId", () => Int) requestId: number
-    ): Promise<StaffRequest> {
+    ): Promise<boolean> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         const user = req.user!;
 
         if ((await request.requester) !== user) {
             throw new Error("User ID does not match request user ID");
         }
-
-        return await (await request.remove()).save();
+        await request.remove();
+        return true;
     }
 }

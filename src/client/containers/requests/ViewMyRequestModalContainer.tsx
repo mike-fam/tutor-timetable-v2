@@ -107,7 +107,10 @@ export const ViewMyRequestModalContainer: React.FC<Props> = ({
                                 />
                             </TabPanel>
                             <TabPanel>
-                                <OfferListContainer requestId={requestId} />
+                                <OfferListContainer
+                                    requestId={requestId}
+                                    closeModal={onClose}
+                                />
                             </TabPanel>
                         </TabPanels>
                     </Tabs>
