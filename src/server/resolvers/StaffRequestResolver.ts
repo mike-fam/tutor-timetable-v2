@@ -186,8 +186,7 @@ export class StaffRequestResolver {
     // Used for displaying all requests associated with the user for a given term
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
-        @Ctx() { req }: MyContext,
-        @Arg("termId", () => Int) termId: number
+        @Ctx() { req }: MyContext
     ): Promise<StaffRequest[]> {
         const user = req.user!;
         return await StaffRequest.find({ requester: user });
