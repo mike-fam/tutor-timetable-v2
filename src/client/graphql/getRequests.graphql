@@ -59,8 +59,8 @@ query getRequestById($requestId: Int!) {
     }
 }
 
-query getRequestsByUserId($termId: Int!) {
-    getRequestsByUserId(termId: $termId) {
+query getRequestsByUserId {
+    getRequestsByUserId {
         id
         title
         status
