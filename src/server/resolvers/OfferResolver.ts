@@ -34,8 +34,6 @@ class OfferInputType {
 
     @Field(() => [Int], { nullable: true })
     @ArrayUnique()
-    @IsOptional()
-    @ArrayNotEmpty()
     sessionPreferences: number[];
 }
 
@@ -73,7 +71,7 @@ export class OfferResolver {
         }
 
         let preferredSessions: Array<Session> = [];
-        if (sessionPreferences) {
+        if (sessionPreferences.length > 0) {
             const requestPreferenceIds = (
                 await request.swapPreference
             ).filter((session) => sessionPreferences.includes(session.id));
