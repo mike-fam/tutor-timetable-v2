@@ -97,7 +97,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         }
         setPreference({
             maxContigHours: preferenceData.myPreference.maxContigHours,
-            maxWeeklyHours: preferenceData.myPreference.maxContigHours,
+            maxWeeklyHours: preferenceData.myPreference.maxWeeklyHours,
             sessionType:
                 preferenceData.myPreference.sessionType || NO_PREFERENCE,
         });
