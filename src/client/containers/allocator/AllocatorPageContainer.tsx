@@ -35,6 +35,7 @@ import {
     AllocatedStaffData,
     AllocatorTable,
 } from "../../components/allocator/AllocatorTable";
+import { SessionTheme } from "../../types/session";
 
 type Props = {};
 
@@ -157,6 +158,11 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,
                             allocation: staff.map((staff) => staff.name),
+                            theme: staff.some(
+                                (staffMember) => staffMember.id < 0
+                            )
+                                ? SessionTheme.ERROR
+                                : SessionTheme.PRIMARY,
                         })
                     );
                 }
@@ -344,6 +350,15 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                         </>
                     )}
                 </Stack>
+                {showing === "generated" && requestAllocationData && (
+                    <pre>
+                        {JSON.stringify(
+                            requestAllocationData.requestAllocation,
+                            null,
+                            4
+                        )}
+                    </pre>
+                )}
             </Wrapper>
             <AllocatorConfirmDialog
                 isOpen={isConfirmOpen}

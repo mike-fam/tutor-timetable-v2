@@ -10,6 +10,7 @@ import {
 } from "../../components/timetable/TimetableSession";
 import { TimetableSessionType } from "../../types/timetable";
 import { Map } from "immutable";
+import { SessionTheme } from "../../types/session";
 
 type Props = {
     sessions: TimetableSessionType[];
@@ -48,6 +49,7 @@ export const AllocatorTimetableContainer: React.FC<Props> = ({
                             sessionsData.get(sessionId) || {
                                 allocation: [],
                                 location: "",
+                                theme: SessionTheme.PRIMARY,
                             }
                         }
                     />
