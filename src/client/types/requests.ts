@@ -46,7 +46,7 @@ export type RequestFormState = RequestInfo & {
 
 export type RequestUtil = {
     requests: RequestMap;
-    setRequests: Dispatch<SetStateAction<RequestMap>>
+    setRequests: Dispatch<SetStateAction<RequestMap>>;
     createNewRequest: (request: RequestFormInputType) => void;
     fetchRequests: (termId: number) => void;
     fetchRequestById: (requestId: number) => void;

@@ -103,7 +103,7 @@ export const OfferListContainer: React.FC<Props> = ({
                 });
             }
         }
-    }, [acceptOfferData?.acceptOffer, toast]);
+    }, [acceptOfferData?.acceptOffer, toast, request, requestId, requests]);
     return (
         <Accordion>
             {offerData?.getOffersByRequestId.map((offer, key) => (

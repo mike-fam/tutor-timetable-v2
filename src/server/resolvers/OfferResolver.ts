@@ -1,9 +1,4 @@
-import {
-    ArrayNotEmpty,
-    ArrayUnique,
-    IsNotEmpty,
-    IsOptional,
-} from "class-validator";
+import { ArrayUnique, IsNotEmpty } from "class-validator";
 import {
     Arg,
     Ctx,
