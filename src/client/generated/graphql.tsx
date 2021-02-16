@@ -549,7 +549,7 @@ export type RequestAllocationMutation = { __typename?: "Mutation" } & {
                     staff: Array<
                         { __typename?: "User" } & Pick<
                             User,
-                            "username" | "name"
+                            "id" | "username" | "name"
                         >
                     >;
                 }
@@ -1344,6 +1344,7 @@ export const RequestAllocationDocument = gql`
                     weeks
                 }
                 staff {
+                    id
                     username
                     name
                 }

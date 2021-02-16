@@ -27,6 +27,7 @@ import { CourseTermIdInput } from "./CourseTermId";
 import { Role } from "../types/user";
 import { getSessionTime } from "../utils/session";
 import asyncFilter from "node-filter-async";
+import { asyncMap } from "../../utils/array";
 
 type WeekId = number;
 type SessionStreamId = number;
@@ -94,6 +95,7 @@ type SessionStreamInput = {
     start_time: number;
     end_time: number;
     number_of_tutors: number;
+    location: string;
     day: IsoDay;
     weeks: Array<WeekId>;
 };
@@ -167,6 +169,7 @@ export class AllocatorResolver {
                 number_of_tutors: sessionStream.numberOfStaff,
                 day: sessionStream.day,
                 weeks: sessionStream.weeks,
+                location: sessionStream.location,
             })
         );
         const staffInput: StaffInput[] = (
@@ -223,15 +226,28 @@ export class AllocatorResolver {
             allocatorOutput.data,
         ]);
         const output = new AllocatorOutput();
-        output.allocations = await Promise.all(
-            Object.entries(allocatorOutput.data.allocations).map(
-                async ([streamId, staffIds]) => ({
+        output.allocations = await asyncMap(
+            Object.entries(allocatorOutput.data.allocations),
+            async ([streamId, staffIds]) => {
+                const dummyIds = staffIds.filter((staffId) => staffId < 0);
+                const realIds = staffIds.filter((staffId) => staffId > 0);
+                return {
                     sessionStream: await SessionStream.findOneOrFail(
                         parseInt(streamId)
                     ),
-                    staff: await User.findByIds(staffIds),
-                })
-            )
+                    staff: [
+                        ...(await User.findByIds(realIds)),
+                        ...User.create(
+                            dummyIds.map((staffId) => ({
+                                id: staffId,
+                                username: `dummy${-staffId}`,
+                                name: `Dummy Guy ${-staffId}`,
+                                email: "dummy.guy@email.com",
+                            }))
+                        ),
+                    ],
+                };
+            }
         );
         output.status = allocatorOutput.data.status;
         output.detail = allocatorOutput.data.detail;
@@ -307,6 +323,9 @@ export class AllocatorResolver {
             allocationOutput.allocations
         )) {
             for (const userId of staffIds) {
+                if (userId < 0) {
+                    continue;
+                }
                 streamAllocationsToBeSaved.push(
                     StreamAllocation.create({
                         sessionStreamId: parseInt(sessionStreamId),
@@ -351,6 +370,9 @@ export class AllocatorResolver {
             const staffIds =
                 allocationOutput.allocations[session.sessionStreamId];
             for (const userId of staffIds) {
+                if (userId < 0) {
+                    continue;
+                }
                 sessionAllocationsToBeSaved.push(
                     SessionAllocation.create({
                         sessionId: session.id,
