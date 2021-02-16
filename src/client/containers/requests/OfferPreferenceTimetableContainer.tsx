@@ -177,7 +177,6 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
                 return SessionTheme.PRIMARY;
             }
             if (chosenSessions.includes(session.id)) {
-                console.log("Found", session.id, chosenSessions);
                 return SessionTheme.SECONDARY;
             }
             // The session I will switch into is in success and is disabled.
