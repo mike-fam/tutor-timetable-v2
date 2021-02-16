@@ -95,6 +95,7 @@ type SessionStreamInput = {
     start_time: number;
     end_time: number;
     number_of_tutors: number;
+    location: string;
     day: IsoDay;
     weeks: Array<WeekId>;
 };
@@ -168,6 +169,7 @@ export class AllocatorResolver {
                 number_of_tutors: sessionStream.numberOfStaff,
                 day: sessionStream.day,
                 weeks: sessionStream.weeks,
+                location: sessionStream.location,
             })
         );
         const staffInput: StaffInput[] = (
