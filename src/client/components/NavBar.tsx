@@ -92,7 +92,12 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                                 Timetable Settings
                             </MenuItem>
                             <MenuDivider />
-                            <MenuItem>Logout</MenuItem>
+                            <MenuItem
+                                as="a"
+                                href={`https://api.uqcloud.net/logout/${window.location.href}`}
+                            >
+                                Log out
+                            </MenuItem>
                         </MenuList>
                     </Menu>
                     <Tooltip
