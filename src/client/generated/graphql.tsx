@@ -994,6 +994,7 @@ export type GetSessionStreamsQuery = { __typename?: "Query" } & {
             | "endTime"
             | "day"
             | "location"
+            | "numberOfStaff"
         > & {
                 streamAllocations: Array<
                     { __typename?: "StreamAllocation" } & {
@@ -2367,6 +2368,7 @@ export const GetSessionStreamsDocument = gql`
             endTime
             day
             location
+            numberOfStaff
             streamAllocations {
                 user {
                     name
