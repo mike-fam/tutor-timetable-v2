@@ -94,7 +94,7 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             <MenuDivider />
                             <MenuItem
                                 as="a"
-                                href={`https://api.uqcloud.net/logout/`}
+                                href="https://api.uqcloud.net/logout/"
                             >
                                 Log out
                             </MenuItem>
