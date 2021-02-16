@@ -362,6 +362,7 @@ export type MutationAddSessionStreamArgs = {
 };
 
 export type MutationAddStreamStaffArgs = {
+    updateSessions: Scalars["Boolean"];
     newStaffs: Array<Scalars["Int"]>;
     streamId: Scalars["Float"];
 };
