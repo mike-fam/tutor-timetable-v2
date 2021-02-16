@@ -29,4 +29,4 @@ jobs:
           eval $(ssh-agent)
           printf '%s\n' 'Host *.eait.uq.edu.au' '  StrictHostKeyChecking no' 'Host *.zones.eait.uq.edu.au' '  ProxyJump ${{ secrets.USER }}@moss.labs.eait.uq.edu.au' > "$SSH_PATH/config"
           ssh-add "$SSH_PATH/deploy_key"
-          ssh -i "$SSH_PATH/deploy_key" ${{ secrets.USER }}@${{ secrets.HOST }} "cd /var/www/nodejs/tutor-timetable-v2 && git reset HEAD --hard && git checkout main && git pull && yarn && rm -rf build && yarn build && yarn migration-run && echo "${{ secrets.PW }}" | sudo -S systemctl restart nodejs && history -c"
+          ssh -i "$SSH_PATH/deploy_key" ${{ secrets.USER }}@${{ secrets.HOST }} "cd /var/www/nodejs/tutor-timetable-v2 && git reset HEAD --hard && git checkout main && git pull && yarn && rm -rf build && yarn build && echo "${{ secrets.PW }}" | sudo -S yarn migration-run && echo "${{ secrets.PW }}" | sudo -S systemctl restart nodejs && history -c"
