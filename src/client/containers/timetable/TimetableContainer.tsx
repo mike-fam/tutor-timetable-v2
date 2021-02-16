@@ -18,6 +18,7 @@ import { Map } from "immutable";
 import { notSet } from "../../constants";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { UserContext } from "../../utils/user";
+import { SessionTheme } from "../../types/session";
 
 type Props = {};
 
@@ -113,6 +114,11 @@ export const TimetableContainer: React.FC<Props> = () => {
                         allocation: sessionStream.streamAllocations.map(
                             (allocation) => allocation.user.name
                         ),
+                        theme:
+                            sessionStream.streamAllocations.length <
+                            sessionStream.numberOfStaff
+                                ? SessionTheme.WARNING
+                                : SessionTheme.PRIMARY,
                     })
                 );
             });
