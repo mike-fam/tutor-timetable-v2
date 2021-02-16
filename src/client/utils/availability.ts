@@ -55,8 +55,8 @@ export const isAvailable = (
             if (session.sessionStream.endTime <= timeSlot.endTime) {
                 return true;
             }
+            startCheck = timeSlot.endTime;
         }
-        startCheck = timeSlot.endTime;
     }
     return false;
 };

@@ -62,7 +62,6 @@ export const TimetableSettingsModal: React.FC<Props> = ({
                         return errors;
                     }}
                     onSubmit={(values) => {
-                        console.log(values);
                         setDisplayedDays(
                             values.displayedDays
                                 .map(
