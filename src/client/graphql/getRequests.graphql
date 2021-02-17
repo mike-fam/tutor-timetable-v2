@@ -13,9 +13,11 @@ query getRequestById($requestId: Int!) {
         session {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -39,9 +41,11 @@ query getRequestById($requestId: Int!) {
         swapPreference {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -74,9 +78,11 @@ query getRequestsByUserId {
         session {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -100,9 +106,11 @@ query getRequestsByUserId {
         swapPreference {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -135,9 +143,11 @@ query getRequestsByTermId($termId: Int!) {
         session {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -161,9 +171,11 @@ query getRequestsByTermId($termId: Int!) {
         swapPreference {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
