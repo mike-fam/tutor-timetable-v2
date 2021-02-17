@@ -5,8 +5,8 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import React from "react";
-import { UserState } from "../../types/user";
+import React, { useContext } from "react";
+import { UserContext } from "../../utils/user";
 import { InputWithError } from "../helpers/InputWithError";
 
 type Props = {
@@ -14,16 +14,15 @@ type Props = {
     setName: (name: string) => void;
     email: string;
     setEmail: (email: string) => void;
-    submit: () => void;
-    loading: boolean;
-    user: UserState;
 };
 
 export const EditUserForm: React.FC<Props> = (props: Props) => {
+    const { user } = useContext(UserContext);
+
     return (
         <FormControl>
             <FormLabel>Username:</FormLabel>
-            <Input disabled={true} defaultValue={props.user.username} />
+            <Input disabled={true} defaultValue={user.username} />
             <FormHelperText>
                 This is your UQ account username and cannot be changed from
                 here.
@@ -48,20 +47,6 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                     props.setEmail(e.target.value);
                 }}
             />
-            <Button
-                mt={3}
-                onClick={() => props.submit()}
-                disabled={
-                    props.email.length === 0 ||
-                    props.email.trim() === "" ||
-                    props.name.length === 0 ||
-                    props.name.trim() === ""
-                }
-                isLoading={props.loading}
-                loadingText="Submitting..."
-            >
-                Submit
-            </Button>
             <FormHelperText>
                 You may need to refresh the page to see changes.
             </FormHelperText>

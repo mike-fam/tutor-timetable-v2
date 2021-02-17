@@ -9,13 +9,12 @@ import {
     Button,
 } from "@chakra-ui/react";
 import React, { ReactElement } from "react";
-import { UserState } from "../../types/user";
 
 type Props = {
-    user: UserState;
     isOpen: boolean;
     closeModal: () => void;
     modalBody: () => ReactElement;
+    submitButton: () => ReactElement;
 };
 
 export const EditUserDetailsModal: React.FC<Props> = (props: Props) => {
@@ -29,7 +28,10 @@ export const EditUserDetailsModal: React.FC<Props> = (props: Props) => {
                     <ModalBody>{props.modalBody()}</ModalBody>
 
                     <ModalFooter>
-                        <Button onClick={props.closeModal}>Close</Button>
+                        <Button onClick={props.closeModal} variant="ghost">
+                            Cancel
+                        </Button>
+                        {props.submitButton()}
                     </ModalFooter>
                 </ModalContent>
             </Modal>

@@ -1,12 +1,11 @@
-import { createStandaloneToast } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { Button, createStandaloneToast } from "@chakra-ui/react";
+import React, { useContext, useEffect } from "react";
 import { EditUserDetailsModal } from "../../components/navbar/EditUserDetailsModal";
 import { EditUserForm } from "../../components/navbar/EditUserForm";
 import { useUpdateDetailsMutation } from "../../generated/graphql";
-import { UserState } from "../../types/user";
+import { UserContext } from "../../utils/user";
 
 type Props = {
-    user: UserState;
     openModal: () => void;
     closeModal: () => void;
     isOpen: boolean;
@@ -16,29 +15,36 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
     props: Props
 ) => {
     const toast = createStandaloneToast();
+    const { user } = useContext(UserContext);
 
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
 
-    const [submit, { loading }] = useUpdateDetailsMutation({
+    const [submit, { loading, data }] = useUpdateDetailsMutation({
         variables: { details: { name: name, email: email } },
         errorPolicy: "all",
     });
 
     useEffect(() => {
-        setName(props.user.name);
-        setEmail(props.user.email);
-    }, [props.user.email, props.user.name]);
+        setName(user.name);
+        setEmail(user.email);
+    }, [user.email, user.name]);
 
     const handleOnClose = () => {
-        setName(props.user.name);
-        setEmail(props.user.email);
+        if (data) {
+            setName(data.updateDetails.name);
+            setEmail(data.updateDetails.email);
+        } else {
+            setName(user.name);
+            setEmail(user.email);
+        }
+
         props.closeModal();
     };
 
     const handleSubmit = async () => {
         const result = await submit();
-        if (!result.errors) {
+        if (!result.errors && result.data) {
             toast({
                 title: "User Details",
                 description: "Your details have been successfully updated",
@@ -46,6 +52,8 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
                 duration: 3000,
                 isClosable: true,
             });
+            setName(result.data.updateDetails.name);
+            setEmail(result.data.updateDetails.email);
         } else if (result.errors) {
             if (result.errors[0].message === "Argument Validation Error") {
                 toast({
@@ -69,10 +77,23 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
                     setName={setName}
                     email={email}
                     setEmail={setEmail}
-                    submit={handleSubmit}
-                    loading={loading}
-                    user={props.user}
                 />
+            )}
+            submitButton={() => (
+                <Button
+                    onClick={() => handleSubmit()}
+                    disabled={
+                        email.length === 0 ||
+                        email.trim() === "" ||
+                        name.length === 0 ||
+                        name.trim() === ""
+                    }
+                    isLoading={loading}
+                    loadingText="Submitting..."
+                    colorScheme="blue"
+                >
+                    Submit
+                </Button>
             )}
         />
     );

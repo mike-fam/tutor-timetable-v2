@@ -124,7 +124,6 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                 isOpen={isOpen}
                 openModal={onOpen}
                 closeModal={onClose}
-                user={user}
             />
             <Divider />
             <TimetableSettingsModal
