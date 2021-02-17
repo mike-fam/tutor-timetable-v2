@@ -32,7 +32,7 @@ export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
         requestId,
         requests,
     ]);
-    const { chosenTerm, weekNum } = useTermMetadata(
+    const { chosenTerm } = useTermMetadata(
         request?.session.sessionStream.timetable.term.id
     );
     useEffect(() => {
