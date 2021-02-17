@@ -1,10 +1,9 @@
 import { createStandaloneToast } from "@chakra-ui/react";
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { EditUserDetailsModal } from "../../components/navbar/EditUserDetailsModal";
 import { EditUserForm } from "../../components/navbar/EditUserForm";
 import { useUpdateDetailsMutation } from "../../generated/graphql";
 import { UserState } from "../../types/user";
-import { UserContext } from "../../utils/user";
 
 type Props = {
     user: UserState;
@@ -16,7 +15,6 @@ type Props = {
 export const EditUserDetailsModalContainer: React.FC<Props> = (
     props: Props
 ) => {
-    const { user } = useContext(UserContext);
     const toast = createStandaloneToast();
 
     const [name, setName] = React.useState<string>("");
@@ -28,9 +26,9 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
     });
 
     useEffect(() => {
-        setName(user.name);
-        setEmail(user.email);
-    }, [user.email, user.name]);
+        setName(props.user.name);
+        setEmail(props.user.email);
+    }, [props.user.email, props.user.name]);
 
     const handleOnClose = () => {
         setName(props.user.name);

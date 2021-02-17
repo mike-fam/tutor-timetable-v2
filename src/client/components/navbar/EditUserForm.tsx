@@ -1,9 +1,9 @@
 import {
     Button,
     FormControl,
+    FormHelperText,
     FormLabel,
     Input,
-    useToast,
 } from "@chakra-ui/react";
 import React from "react";
 import { UserState } from "../../types/user";
@@ -25,7 +25,7 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
             <FormLabel>Username:</FormLabel>
             <Input disabled={true} defaultValue={props.user.username} />
             <InputWithError
-                label="Edit Your name"
+                label="Name"
                 validate={(value) =>
                     value.length === 0 ? "Name cannot be empty" : ""
                 }
@@ -35,7 +35,7 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                 }}
             />
             <InputWithError
-                label="Edit Your email"
+                label="Email"
                 validate={(value) =>
                     value.length === 0 ? "Email cannot be empty" : ""
                 }
@@ -58,6 +58,9 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
             >
                 Submit
             </Button>
+            <FormHelperText>
+                You may need to refresh the page to see the changes.
+            </FormHelperText>
         </FormControl>
     );
 };
