@@ -23,6 +23,7 @@ export type SessionUtil = {
         chosenWeek: number
     ) => void;
     fetchSessionById: (sessionId: number) => void;
+    loading: boolean;
 };
 
 export enum SessionTheme {

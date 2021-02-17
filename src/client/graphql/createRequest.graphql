@@ -13,9 +13,11 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
         session {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id
@@ -39,9 +41,11 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
         swapPreference {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
+                weeks
                 timetable {
                     course {
                         id

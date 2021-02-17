@@ -13,16 +13,19 @@ export const SessionsContext = createContext<SessionUtil>({
     setSessions: () => {},
     fetchSessions: () => {},
     fetchSessionById: () => {},
+    loading: false,
 });
 
 export const useSessionUtils = (): SessionUtil => {
     const [sessions, setSessions] = useState<SessionMap>(Map());
-    const [getSession, { data: sessionsData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
-    );
-    const [getSessionById, { data: sessionData }] = useLazyQueryWithError(
-        useGetSessionByIdLazyQuery
-    );
+    const [
+        getSession,
+        { data: sessionsData, loading: getSessionsLoading },
+    ] = useLazyQueryWithError(useGetSessionsLazyQuery);
+    const [
+        getSessionById,
+        { data: sessionData, loading: getSessionByIdLoading },
+    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery);
     const fetchSessions = useCallback(
         (termId: number, courseId: number, chosenWeek: number) => {
             if (
@@ -77,5 +80,6 @@ export const useSessionUtils = (): SessionUtil => {
         sessionsData,
         fetchSessions,
         fetchSessionById,
+        loading: getSessionByIdLoading || getSessionsLoading,
     };
 };

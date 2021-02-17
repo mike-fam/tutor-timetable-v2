@@ -659,7 +659,7 @@ export type CreateRequestMutation = { __typename?: "Mutation" } & {
             > & {
                     sessionStream: { __typename?: "SessionStream" } & Pick<
                         SessionStream,
-                        "name" | "startTime" | "endTime"
+                        "id" | "name" | "startTime" | "endTime" | "weeks"
                     > & {
                             timetable: { __typename?: "Timetable" } & {
                                 course: { __typename?: "Course" } & Pick<
@@ -685,7 +685,7 @@ export type CreateRequestMutation = { __typename?: "Mutation" } & {
                 { __typename?: "Session" } & Pick<Session, "id" | "week"> & {
                         sessionStream: { __typename?: "SessionStream" } & Pick<
                             SessionStream,
-                            "name" | "startTime" | "endTime"
+                            "id" | "name" | "startTime" | "endTime" | "weeks"
                         > & {
                                 timetable: { __typename?: "Timetable" } & {
                                     course: { __typename?: "Course" } & Pick<
@@ -799,7 +799,7 @@ export type GetRequestByIdQuery = { __typename?: "Query" } & {
             > & {
                     sessionStream: { __typename?: "SessionStream" } & Pick<
                         SessionStream,
-                        "name" | "startTime" | "endTime"
+                        "id" | "name" | "startTime" | "endTime" | "weeks"
                     > & {
                             timetable: { __typename?: "Timetable" } & {
                                 course: { __typename?: "Course" } & Pick<
@@ -825,7 +825,7 @@ export type GetRequestByIdQuery = { __typename?: "Query" } & {
                 { __typename?: "Session" } & Pick<Session, "id" | "week"> & {
                         sessionStream: { __typename?: "SessionStream" } & Pick<
                             SessionStream,
-                            "name" | "startTime" | "endTime"
+                            "id" | "name" | "startTime" | "endTime" | "weeks"
                         > & {
                                 timetable: { __typename?: "Timetable" } & {
                                     course: { __typename?: "Course" } & Pick<
@@ -861,7 +861,7 @@ export type GetRequestsByUserIdQuery = { __typename?: "Query" } & {
                 > & {
                         sessionStream: { __typename?: "SessionStream" } & Pick<
                             SessionStream,
-                            "name" | "startTime" | "endTime"
+                            "id" | "name" | "startTime" | "endTime" | "weeks"
                         > & {
                                 timetable: { __typename?: "Timetable" } & {
                                     course: { __typename?: "Course" } & Pick<
@@ -892,7 +892,11 @@ export type GetRequestsByUserIdQuery = { __typename?: "Query" } & {
                                 __typename?: "SessionStream";
                             } & Pick<
                                 SessionStream,
-                                "name" | "startTime" | "endTime"
+                                | "id"
+                                | "name"
+                                | "startTime"
+                                | "endTime"
+                                | "weeks"
                             > & {
                                     timetable: { __typename?: "Timetable" } & {
                                         course: {
@@ -930,7 +934,7 @@ export type GetRequestsByTermIdQuery = { __typename?: "Query" } & {
                 > & {
                         sessionStream: { __typename?: "SessionStream" } & Pick<
                             SessionStream,
-                            "name" | "startTime" | "endTime"
+                            "id" | "name" | "startTime" | "endTime" | "weeks"
                         > & {
                                 timetable: { __typename?: "Timetable" } & {
                                     course: { __typename?: "Course" } & Pick<
@@ -961,7 +965,11 @@ export type GetRequestsByTermIdQuery = { __typename?: "Query" } & {
                                 __typename?: "SessionStream";
                             } & Pick<
                                 SessionStream,
-                                "name" | "startTime" | "endTime"
+                                | "id"
+                                | "name"
+                                | "startTime"
+                                | "endTime"
+                                | "weeks"
                             > & {
                                     timetable: { __typename?: "Timetable" } & {
                                         course: {
@@ -1023,7 +1031,7 @@ export type GetSessionsQuery = { __typename?: "Query" } & {
         > & {
                 sessionStream: { __typename?: "SessionStream" } & Pick<
                     SessionStream,
-                    "name" | "startTime" | "endTime" | "day"
+                    "id" | "name" | "startTime" | "endTime" | "day"
                 > & {
                         timetable: { __typename?: "Timetable" } & {
                             term: { __typename?: "Term" } & Pick<Term, "id">;
@@ -1056,7 +1064,7 @@ export type GetSessionByIdQuery = { __typename?: "Query" } & {
     > & {
             sessionStream: { __typename?: "SessionStream" } & Pick<
                 SessionStream,
-                "name" | "startTime" | "endTime" | "day"
+                "id" | "name" | "startTime" | "endTime" | "day"
             > & {
                     timetable: { __typename?: "Timetable" } & {
                         term: { __typename?: "Term" } & Pick<Term, "id">;
@@ -1736,9 +1744,11 @@ export const CreateRequestDocument = gql`
             session {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -1762,9 +1772,11 @@ export const CreateRequestDocument = gql`
             swapPreference {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2043,9 +2055,11 @@ export const GetRequestByIdDocument = gql`
             session {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2069,9 +2083,11 @@ export const GetRequestByIdDocument = gql`
             swapPreference {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2154,9 +2170,11 @@ export const GetRequestsByUserIdDocument = gql`
             session {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2180,9 +2198,11 @@ export const GetRequestsByUserIdDocument = gql`
             swapPreference {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2264,9 +2284,11 @@ export const GetRequestsByTermIdDocument = gql`
             session {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2290,9 +2312,11 @@ export const GetRequestsByTermIdDocument = gql`
             swapPreference {
                 id
                 sessionStream {
+                    id
                     name
                     startTime
                     endTime
+                    weeks
                     timetable {
                         course {
                             id
@@ -2434,6 +2458,7 @@ export const GetSessionsDocument = gql`
         sessions(termId: $termId, courseIds: $courseIds, week: $week) {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime
@@ -2512,6 +2537,7 @@ export const GetSessionByIdDocument = gql`
         sessionById(sessionId: $sessionId) {
             id
             sessionStream {
+                id
                 name
                 startTime
                 endTime

@@ -11,6 +11,7 @@ import { UserContext } from "../../utils/user";
 import { requestTimeslotHeight } from "../../constants/requests";
 import { notSet } from "../../constants";
 import { SessionTheme } from "../../types/session";
+import { Loadable } from "../../components/helpers/Loadable";
 
 type Props = {
     sessionId: number;
@@ -18,9 +19,17 @@ type Props = {
 
 export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
-    const { sessions, fetchSessions, fetchSessionById } = useSessionUtils();
+    const {
+        sessions,
+        fetchSessions,
+        fetchSessionById,
+        loading,
+    } = useSessionUtils();
     const { user } = useContext(UserContext);
     useEffect(() => {
+        if (sessionId === notSet) {
+            return;
+        }
         if (!sessions.get(sessionId)) {
             fetchSessionById(sessionId);
         }
@@ -102,7 +111,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
 
     // TODO: Use interactive timetable component
     return (
-        <>
+        <Loadable isLoading={loading}>
             <Timetable
                 displayedDays={[
                     (session?.sessionStream.day || IsoDay.MON) as IsoDay,
@@ -145,6 +154,6 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                 endTime={dayEndTime}
                 timeslotHeight={requestTimeslotHeight}
             />
-        </>
+        </Loadable>
     );
 };
