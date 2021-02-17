@@ -22,11 +22,6 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
 
-    // const [submit, { loading }] = useMutationWithError(
-    //     useUpdateDetailsMutation,
-    //     { details: { name: name, email: email } }
-    // );
-
     const [submit, { loading }] = useUpdateDetailsMutation({
         variables: { details: { name: name, email: email } },
         errorPolicy: "all",
@@ -45,7 +40,6 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
 
     const handleSubmit = async () => {
         const result = await submit();
-        console.log(result.errors, result.data);
         if (result.errors) {
             if (result.errors[0].message === "Argument Validation Error") {
                 toast({

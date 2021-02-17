@@ -1,7 +1,6 @@
 import {
     Button,
     FormControl,
-    FormHelperText,
     FormLabel,
     Input,
     useToast,
@@ -21,7 +20,6 @@ type Props = {
 };
 
 export const EditUserForm: React.FC<Props> = (props: Props) => {
-    const toast = useToast();
     return (
         <FormControl>
             <FormLabel>Username:</FormLabel>
