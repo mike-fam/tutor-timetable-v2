@@ -90,7 +90,9 @@ export class SessionStreamResolver {
             ) {
                 continue;
             }
-            allocations.push(StreamAllocation.create({ userId }));
+            allocations.push(
+                StreamAllocation.create({ userId, sessionStreamId: streamId })
+            );
         }
         stream.streamAllocations = Promise.resolve(allocations);
         await stream.save();
@@ -107,7 +109,10 @@ export class SessionStreamResolver {
                         continue;
                     }
                     sessionAllocations.push(
-                        SessionAllocation.create({ userId })
+                        SessionAllocation.create({
+                            userId,
+                            sessionId: session.id,
+                        })
                     );
                 }
                 session.sessionAllocations = Promise.resolve(
