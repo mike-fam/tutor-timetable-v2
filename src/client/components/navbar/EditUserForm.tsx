@@ -4,11 +4,11 @@ import {
     FormHelperText,
     FormLabel,
     Input,
+    useToast,
 } from "@chakra-ui/react";
 import React from "react";
 import { UserState } from "../../types/user";
 import { InputWithError } from "../helpers/InputWithError";
-import { Loadable } from "../helpers/Loadable";
 
 type Props = {
     name: string;
@@ -21,6 +21,7 @@ type Props = {
 };
 
 export const EditUserForm: React.FC<Props> = (props: Props) => {
+    const toast = useToast();
     return (
         <FormControl>
             <FormLabel>Username:</FormLabel>
@@ -45,22 +46,20 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                     props.setEmail(e.target.value);
                 }}
             />
-            <FormHelperText>
-                If input is not in email format, you will get an error.
-            </FormHelperText>
-            <Loadable isLoading={props.loading}>
-                <Button
-                    mt={3}
-                    onClick={() => props.submit()}
-                    disabled={
-                        (props.email.length === 0 ||
-                            props.email.trim() === "") &&
-                        (props.name.length === 0 || props.name.trim() === "")
-                    }
-                >
-                    Submit
-                </Button>
-            </Loadable>
+            <Button
+                mt={3}
+                onClick={() => props.submit()}
+                disabled={
+                    props.email.length === 0 ||
+                    props.email.trim() === "" ||
+                    props.name.length === 0 ||
+                    props.name.trim() === ""
+                }
+                isLoading={props.loading}
+                loadingText="Submitting..."
+            >
+                Submit
+            </Button>
         </FormControl>
     );
 };
