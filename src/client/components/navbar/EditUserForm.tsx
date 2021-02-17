@@ -24,6 +24,10 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
         <FormControl>
             <FormLabel>Username:</FormLabel>
             <Input disabled={true} defaultValue={props.user.username} />
+            <FormHelperText>
+                This is your UQ account username and cannot be changed from
+                here.
+            </FormHelperText>
             <InputWithError
                 label="Name"
                 validate={(value) =>
@@ -59,7 +63,7 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
                 Submit
             </Button>
             <FormHelperText>
-                You may need to refresh the page to see the changes.
+                You may need to refresh the page to see changes.
             </FormHelperText>
         </FormControl>
     );
