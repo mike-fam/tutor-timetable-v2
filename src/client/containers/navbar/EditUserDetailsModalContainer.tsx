@@ -38,7 +38,15 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
 
     const handleSubmit = async () => {
         const result = await submit();
-        if (result.errors) {
+        if (!result.errors) {
+            toast({
+                title: "User Details",
+                description: "Your details have been successfully updated",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+        } else if (result.errors) {
             if (result.errors[0].message === "Argument Validation Error") {
                 toast({
                     title: "An error occurred",
@@ -48,15 +56,6 @@ export const EditUserDetailsModalContainer: React.FC<Props> = (
                     isClosable: true,
                 });
             }
-        }
-        if (result.errors === undefined) {
-            toast({
-                title: "User Details",
-                description: "Your details have been successfully updated",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
         }
     };
 
