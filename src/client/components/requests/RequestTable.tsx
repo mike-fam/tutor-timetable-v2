@@ -8,6 +8,7 @@ import {
     AlertDialogOverlay,
     Box,
     Button,
+    Center,
     Table,
     Tbody,
     Td,
@@ -52,6 +53,9 @@ export const RequestTable: React.FC<Props> = ({
                         <Th>Opened By</Th>
                         <Th>Status</Th>
                         <Th>Session</Th>
+                        <Th>
+                            <Center>Actions</Center>
+                        </Th>
                     </Tr>
                 </Thead>
 
@@ -75,37 +79,45 @@ export const RequestTable: React.FC<Props> = ({
                                     user.username &&
                                     requestItem.status ===
                                         RequestStatus.Open && (
-                                        <Button
-                                            colorScheme="teal"
-                                            onClick={() => {
-                                                openOfferModal(requestItem.id);
-                                            }}
-                                        >
-                                            Make an Offer
-                                        </Button>
+                                        <Center>
+                                            <Button
+                                                colorScheme="teal"
+                                                onClick={() => {
+                                                    openOfferModal(
+                                                        requestItem.id
+                                                    );
+                                                }}
+                                            >
+                                                Make an Offer
+                                            </Button>
+                                        </Center>
                                     )}
                                 {requestItem.requester.username ===
                                     user.username && (
                                     <>
-                                        <Button
-                                            colorScheme="pink"
-                                            onClick={() => {
-                                                openViewRequestModal(
-                                                    requestItem.id
-                                                );
-                                            }}
-                                        >
-                                            View
-                                        </Button>
-                                        <Button
-                                            colorScheme="red"
-                                            onClick={() => {
-                                                setRequestId(requestItem.id);
-                                                onOpen();
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
+                                        <Center>
+                                            <Button
+                                                colorScheme="pink"
+                                                onClick={() => {
+                                                    openViewRequestModal(
+                                                        requestItem.id
+                                                    );
+                                                }}
+                                            >
+                                                View
+                                            </Button>
+                                            <Button
+                                                colorScheme="red"
+                                                onClick={() => {
+                                                    setRequestId(
+                                                        requestItem.id
+                                                    );
+                                                    onOpen();
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Center>
                                     </>
                                 )}
                             </Td>
