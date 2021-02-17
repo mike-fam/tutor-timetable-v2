@@ -1,49 +1,31 @@
-import {
-    createContext,
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { Map } from "immutable";
-import { SessionResponseType } from "../types/session";
+import { SessionMap, SessionUtil } from "../types/session";
 import { useLazyQueryWithError } from "./useQueryWithError";
 import {
-    GetSessionsQuery,
     useGetSessionByIdLazyQuery,
     useGetSessionsLazyQuery,
 } from "../generated/graphql";
 import { notSet } from "../constants";
-
-type SessionMap = Map<number, SessionResponseType>;
-type SessionUtil = {
-    sessions: SessionMap;
-    setSessions: Dispatch<SetStateAction<SessionMap>>;
-    sessionsData?: GetSessionsQuery;
-    fetchSessions: (
-        termId: number,
-        courseId: number,
-        chosenWeek: number
-    ) => void;
-    fetchSessionById: (sessionId: number) => void;
-};
 
 export const SessionsContext = createContext<SessionUtil>({
     sessions: Map(),
     setSessions: () => {},
     fetchSessions: () => {},
     fetchSessionById: () => {},
+    loading: false,
 });
 
 export const useSessionUtils = (): SessionUtil => {
     const [sessions, setSessions] = useState<SessionMap>(Map());
-    const [getSession, { data: sessionsData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
-    );
-    const [getSessionById, { data: sessionData }] = useLazyQueryWithError(
-        useGetSessionByIdLazyQuery
-    );
+    const [
+        getSession,
+        { data: sessionsData, loading: getSessionsLoading },
+    ] = useLazyQueryWithError(useGetSessionsLazyQuery);
+    const [
+        getSessionById,
+        { data: sessionData, loading: getSessionByIdLoading },
+    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery);
     const fetchSessions = useCallback(
         (termId: number, courseId: number, chosenWeek: number) => {
             if (
@@ -65,6 +47,9 @@ export const useSessionUtils = (): SessionUtil => {
     );
     const fetchSessionById = useCallback(
         (sessionId: number) => {
+            if (sessionId === notSet) {
+                return;
+            }
             getSessionById({
                 variables: {
                     sessionId,
@@ -95,5 +80,6 @@ export const useSessionUtils = (): SessionUtil => {
         sessionsData,
         fetchSessions,
         fetchSessionById,
+        loading: getSessionByIdLoading || getSessionsLoading,
     };
 };

@@ -1,23 +1,30 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Map } from "immutable";
+import React, {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
+import { Map, Set } from "immutable";
 import { useMyCoursesQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { TimetableContext } from "../../utils/timetable";
 import { Loadable } from "../../components/helpers/Loadable";
 import { CheckboxList } from "../../components/helpers/CheckBoxList";
 
-type Props = {};
+type Props = {
+    chosenCourses: Set<number>;
+    setChosenCourses: Dispatch<SetStateAction<Set<number>>>;
+    chosenTermId: number;
+};
 
-export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () => {
-    const { data, loading } = useQueryWithError(useMyCoursesQuery, {});
+export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
+    chosenCourses,
+    setChosenCourses,
+    chosenTermId,
+}) => {
+    const { data } = useQueryWithError(useMyCoursesQuery, {});
     const [courses, setCourses] = useState(Map<number, string>());
-    const { chosenCourses, setChosenCourses, chosenTermId } = useContext(
-        TimetableContext
-    );
     useEffect(() => {
-        if (loading) {
-            return;
-        }
         if (!data?.me?.courseStaffs || data.me.courseStaffs.length === 0) {
             return;
         }
@@ -25,11 +32,17 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = () =>
             const { id, code } = courseStaff.timetable.course;
             if (courseStaff.timetable.term.id !== chosenTermId) {
                 setCourses((prev) => prev.remove(id));
+                setChosenCourses((prev) =>
+                    prev.remove(courseStaff.timetable.course.id)
+                );
             } else {
                 setCourses((prev) => prev.set(id, code));
+                setChosenCourses((prev) =>
+                    prev.add(courseStaff.timetable.course.id)
+                );
             }
         }
-    }, [loading, data, chosenTermId]);
+    }, [data, chosenTermId, setChosenCourses]);
     const selectCourse = useCallback(
         (courseId: number, selected: boolean) => {
             setChosenCourses((prev) =>

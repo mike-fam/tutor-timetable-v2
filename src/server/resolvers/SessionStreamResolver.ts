@@ -79,20 +79,46 @@ export class SessionStreamResolver {
     @Mutation(() => SessionStream)
     async addStreamStaff(
         @Arg("streamId") streamId: number,
-        @Arg("newStaffs", () => [Int]) newStaffs: number[]
+        @Arg("newStaffs", () => [Int]) newStaffs: number[],
+        @Arg("updateSessions", () => Boolean) updateSessions: boolean
     ): Promise<SessionStream> {
         const stream = await SessionStream.findOneOrFail({ id: streamId });
         const allocations = [...(await stream.streamAllocations)];
+        const newAllocations = [];
         for (const userId of newStaffs) {
             if (
                 allocations.some((allocation) => allocation.userId === userId)
             ) {
                 continue;
             }
-            allocations.push(StreamAllocation.create({ userId }));
+            newAllocations.push(
+                StreamAllocation.create({ userId, sessionStreamId: streamId })
+            );
         }
-        stream.streamAllocations = Promise.resolve(allocations);
-        await stream.save();
+        await StreamAllocation.save(newAllocations);
+        if (updateSessions) {
+            const sessions = await stream.sessions;
+            const newSessionAllocations = [];
+            for (const session of sessions) {
+                const sessionAllocations = await session.sessionAllocations;
+                for (const userId of newStaffs) {
+                    if (
+                        sessionAllocations.some(
+                            (allocation) => allocation.userId === userId
+                        )
+                    ) {
+                        continue;
+                    }
+                    newSessionAllocations.push(
+                        SessionAllocation.create({
+                            userId,
+                            sessionId: session.id,
+                        })
+                    );
+                }
+            }
+            await SessionAllocation.save(newSessionAllocations);
+        }
         return stream;
     }
 

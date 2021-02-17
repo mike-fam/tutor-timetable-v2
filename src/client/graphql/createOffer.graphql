@@ -1,0 +1,15 @@
+mutation CreateOffer($offerDetails: OfferInputType!) {
+    createOffer(offerDetails: $offerDetails) {
+        id
+        user {
+            id
+            username
+        }
+        preferences {
+            sessionStream {
+                id
+                name
+            }
+        }
+    }
+}

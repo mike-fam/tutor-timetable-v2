@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { CourseSelectContainer } from "../../containers/CourseSelectContainer";
 import { RequestType } from "../../generated/graphql";
-import { RequestFormState } from "../../hooks/useRequestFormState";
+import { RequestFormState } from "../../types/requests";
 
 type Props = Pick<
     RequestFormState,
@@ -53,7 +53,7 @@ export const RequestFormV3: React.FC<Props> = ({
                 isDisabled={!editable}
             />
             <InputWithError
-                label="Description"
+                label="Description (optional)"
                 validate={() => ""}
                 as={Textarea}
                 value={description}

@@ -7,6 +7,8 @@ type Props<T extends string> = {
     helpTexts?: string[];
     selectFunc: (elem: T, selected: boolean) => void;
     selectAllLabel?: string;
+    defaultSelectedAll?: boolean;
+    textDisplayed?: (element: T) => string;
 };
 
 export const SimpleCheckboxList = <T extends string>({
@@ -14,7 +16,10 @@ export const SimpleCheckboxList = <T extends string>({
     helpTexts,
     selectFunc,
     selectAllLabel,
+    defaultSelectedAll,
+    textDisplayed,
 }: Props<T>) => {
+    const [setupDefault, setSetupDefault] = useState(true);
     const [elementMap, setElementMap] = useState(Map<number, T>());
     const [helpTextMap, setHelpTextMap] = useState(
         Map<number, string | undefined>()
@@ -37,16 +42,22 @@ export const SimpleCheckboxList = <T extends string>({
         elements.forEach((element, key) => {
             setElementMap((prev) => prev.set(key, element));
             setHelpTextMap((prev) => prev.set(key, helpTexts?.[key]));
+            if (defaultSelectedAll && setupDefault) {
+                selectFunc(element, true);
+                setSelectedElements((prev) => prev.add(key));
+            }
         });
-    }, [elements, helpTexts]);
+        setSetupDefault(false);
+    }, [elements, helpTexts, defaultSelectedAll, setupDefault, selectFunc]);
 
     return (
-        <CheckboxList
+        <CheckboxList<T>
             elements={elementMap}
             selectedElements={selectedElements}
             selectElement={selectElement}
             helpTexts={helpTextMap}
             selectAllLabel={selectAllLabel}
+            textDisplayed={textDisplayed}
         />
     );
 };

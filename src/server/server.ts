@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import "./config";
-import express, { Express } from "express";
+import express, { Express, Response } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
@@ -23,6 +23,8 @@ import { PreferenceResolver } from "./resolvers/PreferenceResolver";
 import { AllocatorResolver } from "./resolvers/AllocatorResolver";
 import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 import { CourseResolver } from "./resolvers/CourseResolver";
+import { OfferResolver } from "./resolvers/OfferResolver";
+import * as path from "path";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -39,13 +41,6 @@ const main = async () => {
         })
     );
     app.use("/", express.static("build/client"));
-
-    // Catch-all route
-    // app.use("*", (_, res: Response) => {
-    //     res.sendFile("index.html", {
-    //         root: "build",
-    //     });
-    // });
 
     app.use(asyncHandler(uqAuthMiddleware));
 
@@ -64,6 +59,7 @@ const main = async () => {
                 PreferenceResolver,
                 StaffRequestResolver,
                 AllocatorResolver,
+                OfferResolver,
             ],
             dateScalarMode: "isoDate",
         }),
@@ -71,6 +67,14 @@ const main = async () => {
     });
 
     apolloServer.applyMiddleware({ app });
+
+    // Catch-all route
+    app.use("*", (_, res: Response) => {
+        res.sendFile("index.html", {
+            root: path.resolve("./build", "client"),
+        });
+    });
+
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });

@@ -1,24 +1,7 @@
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { RequestType } from "../generated/graphql";
 import { Set } from "immutable";
-
-export type RequestFormState = {
-    title: string;
-    setTitle: Dispatch<SetStateAction<string>>;
-    description: string;
-    setDescription: Dispatch<SetStateAction<string>>;
-    course: number;
-    setCourse: Dispatch<SetStateAction<number>>;
-    session: number;
-    setSession: Dispatch<SetStateAction<number>>;
-    preferences: Set<number>;
-    setPreferences: Dispatch<SetStateAction<Set<number>>>;
-    addPreference: (sessionId: number) => void;
-    removePreference: (sessionId: number) => void;
-    duration: RequestType;
-    setDuration: Dispatch<SetStateAction<RequestType>>;
-    resetFormState: () => void;
-};
+import { RequestFormState } from "../types/requests";
 
 /**
  * Note: This might not be the best way to store data

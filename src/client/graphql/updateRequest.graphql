@@ -1,0 +1,19 @@
+mutation EditRequest($requestDetails: EditRequestFormInputType!) {
+    editExistingRequest(requestDetails: $requestDetails) {
+        id
+        title
+        description
+        status
+        type
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}

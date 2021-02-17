@@ -26,6 +26,7 @@ import {
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
+    document.title = "Tutor Timetable";
     const [chosenTerm, setChosenTerm] = useState(notSet);
     const [chosenWeek, setChosenWeek] = useState(notSet);
     const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
@@ -65,29 +66,6 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         );
     }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
 
-    useEffect(() => {
-        if (myCoursesLoading) {
-            return;
-        }
-        if (!myCoursesData) {
-            return;
-        }
-        // No courses data
-        if (!myCoursesData.me || myCoursesData.me.courseStaffs.length === 0) {
-            return;
-        }
-        for (const courseStaff of myCoursesData.me.courseStaffs) {
-            if (courseStaff.timetable.term.id !== chosenTerm) {
-                setChosenCourses((prev) =>
-                    prev.remove(courseStaff.timetable.course.id)
-                );
-            } else {
-                setChosenCourses((prev) =>
-                    prev.add(courseStaff.timetable.course.id)
-                );
-            }
-        }
-    }, [chosenTerm, myCoursesData, myCoursesLoading]);
     return (
         <Wrapper>
             {myCoursesLoading || termsLoading ? (
@@ -110,7 +88,11 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                         templateRows="repeat(3, auto)"
                     >
                         <Box gridRow="3 / -1">
-                            <CourseCheckboxListContainer />
+                            <CourseCheckboxListContainer
+                                chosenCourses={chosenCourses}
+                                setChosenCourses={setChosenCourses}
+                                chosenTermId={chosenTerm}
+                            />
                         </Box>
                         <Box gridColumn={2} gridRow={1} mb={7}>
                             <Heading>Timetable</Heading>

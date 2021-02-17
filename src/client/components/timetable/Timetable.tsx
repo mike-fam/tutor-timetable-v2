@@ -3,12 +3,11 @@ import React, { PropsWithChildren, ReactElement } from "react";
 import { Props as DayProps } from "./Day";
 import { gap, timetableTimeslotHeight } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
-import { Set } from "immutable";
 import { IsoDay } from "../../../types/date";
 import { TimetableSessionType } from "../../types/timetable";
 
 export type Props<T> = {
-    displayedDays: Set<IsoDay>;
+    displayedDays: Array<IsoDay>;
     renderDay: (
         dayProps: Omit<
             DayProps<T>,
@@ -33,7 +32,7 @@ export const Timetable = <T,>({
     return (
         <Box>
             <Grid
-                templateColumns={`2ch repeat(${displayedDays.size}, 1fr)`}
+                templateColumns={`2ch repeat(${displayedDays.length}, 1fr)`}
                 gap={gap}
             >
                 <HourColumn

@@ -1,0 +1,3 @@
+mutation AcceptOffer($offerId: Int!, $offerSessionSwapId: Int) {
+    acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId)
+}

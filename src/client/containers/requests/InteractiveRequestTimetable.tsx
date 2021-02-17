@@ -1,35 +1,31 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
-import { SessionTheme } from "../../types/timetable";
 import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
 import { Loadable } from "../../components/helpers/Loadable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourseId: number;
+    chosenCourseIds: number[];
     chosenTermId: number;
     chosenWeek: number;
-    chosenSessions: number[];
     chooseSession: (sessionId: number) => void;
     chooseWeek: Dispatch<SetStateAction<number>>;
     disabledWeeks: number[];
-    filterSessions: (
-        sessions: Array<SessionResponseType>
-    ) => Array<SessionResponseType>;
+    sessionFilter: (sessions: SessionResponseType) => boolean;
     checkSessionDisabled: (session: SessionResponseType) => boolean;
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
 };
 
 export const InteractiveRequestTimetable: React.FC<Props> = ({
-    chosenCourseId,
+    chosenCourseIds,
     chosenTermId,
     chooseSession,
     disabledWeeks,
-    filterSessions,
+    sessionFilter,
     checkSessionDisabled,
     getSessionTheme,
     chosenWeek,
@@ -38,19 +34,21 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const { sessionsData, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
-        fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
-    }, [fetchSessions, chosenTermId, chosenCourseId, chosenWeek]);
+        for (const courseId of chosenCourseIds) {
+            fetchSessions(chosenTermId, courseId, chosenWeek);
+        }
+    }, [fetchSessions, chosenTermId, chosenCourseIds, chosenWeek]);
     const { weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     return (
         <Loadable isLoading={!termsData || !sessionsData}>
             <>
                 <RequestTimetableContainer
-                    chosenCourse={chosenCourseId}
+                    chosenCourses={chosenCourseIds}
                     chosenTerm={chosenTermId}
                     chosenWeek={chosenWeek}
                     checkDisabled={checkSessionDisabled}
                     getSessionTheme={getSessionTheme}
-                    filterSessions={filterSessions}
+                    sessionFilter={sessionFilter}
                     chooseSession={chooseSession}
                 />
                 <WeekNav

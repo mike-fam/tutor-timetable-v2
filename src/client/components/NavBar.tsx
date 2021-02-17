@@ -1,4 +1,4 @@
-import { ChevronDownIcon, Icon } from "@chakra-ui/icons";
+import { ChevronDownIcon, Icon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
     Box,
     Divider,
@@ -6,9 +6,11 @@ import {
     Heading,
     Menu,
     MenuButton,
+    MenuDivider,
     MenuItem,
     MenuList,
     Spacer,
+    Tooltip,
     useColorMode,
     useColorModeValue,
     useDisclosure,
@@ -19,6 +21,7 @@ import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
 import { EditUserDetailsModalContainer } from "../containers/navbar/EditUserDetailsModalContainer";
+import { TimetableSettingsModal } from "../containers/TimetableSettingsModal";
 
 type Props = {};
 
@@ -28,6 +31,11 @@ export const NavBar: React.FunctionComponent<Props> = () => {
     const { user } = useContext(UserContext);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const {
+        isOpen: isTimetableSettingsModalOpen,
+        onOpen: openTimetableSettingsModal,
+        onClose: closeTimetableSettingsModal,
+    } = useDisclosure();
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
@@ -38,25 +46,23 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                         </Heading>
                     </Box>
                     <Spacer />
-                    <NavBarMenuButton>
-                        <RouterLink to="/">Home</RouterLink>
-                    </NavBarMenuButton>
-                    <NavBarMenuButton>
-                        <RouterLink to="/requests">Requests</RouterLink>
-                    </NavBarMenuButton>
-                    <NavBarMenuButton>
-                        <RouterLink to="/availabilities">
-                            Availability
-                        </RouterLink>
-                    </NavBarMenuButton>
-                    <NavBarMenuButton>
-                        <RouterLink to="/preferences">Preferences</RouterLink>
-                    </NavBarMenuButton>
-                    {/*Dropdown menu. Update with proper items when ready.*/}
+                    <RouterLink to="/" style={{ height: "100%" }}>
+                        <NavBarMenuButton>Home</NavBarMenuButton>
+                    </RouterLink>
+                    <RouterLink to="/requests" style={{ height: "100%" }}>
+                        <NavBarMenuButton>Requests</NavBarMenuButton>
+                    </RouterLink>
+                    <RouterLink to="/availabilities" style={{ height: "100%" }}>
+                        <NavBarMenuButton>Availability</NavBarMenuButton>
+                    </RouterLink>
+                    <RouterLink to="/preferences" style={{ height: "100%" }}>
+                        <NavBarMenuButton>Preferences</NavBarMenuButton>
+                    </RouterLink>
                     <Menu>
                         <MenuButton
                             as={NavBarMenuButton}
                             rightIcon={<ChevronDownIcon />}
+                            style={{ cursor: "pointer" }}
                         >
                             Tools
                         </MenuButton>
@@ -78,6 +84,7 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             as={NavBarMenuButton}
                             leftIcon={<Icon as={BsPersonFill} mr={1} />}
                             rightIcon={<ChevronDownIcon ml={1} />}
+                            style={{ cursor: "pointer" }}
                         >
                             {user.username}
                         </MenuButton>
@@ -85,12 +92,32 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             <MenuItem onClick={onOpen}>
                                 Edit Personal Details
                             </MenuItem>
-                            <MenuItem>Logout</MenuItem>
+                            <MenuItem onClick={openTimetableSettingsModal}>
+                                Timetable Settings
+                            </MenuItem>
+                            <MenuDivider />
+                            <MenuItem
+                                as="a"
+                                href="https://api.uqcloud.net/logout/"
+                            >
+                                Log out
+                            </MenuItem>
                         </MenuList>
                     </Menu>
-                    <NavBarMenuButton onClick={toggleColorMode}>
-                        Toggle {colorMode === "light" ? "Dark" : "Light"}
-                    </NavBarMenuButton>
+                    <Tooltip
+                        label={
+                            colorMode === "light"
+                                ? "Toggle Dark Mode"
+                                : "Toggle Light Mode"
+                        }
+                    >
+                        <NavBarMenuButton
+                            onClick={toggleColorMode}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                        </NavBarMenuButton>
+                    </Tooltip>
                 </Flex>
             </Box>
             <EditUserDetailsModalContainer
@@ -100,6 +127,10 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                 user={user}
             />
             <Divider />
+            <TimetableSettingsModal
+                isOpen={isTimetableSettingsModalOpen}
+                onClose={closeTimetableSettingsModal}
+            />
         </>
     );
 };

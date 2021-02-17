@@ -56,22 +56,26 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
     ] = useLazyQueryWithError(useMyPreferenceLazyQuery);
     const [
         updatePreference,
-        { loading: updatePreferenceLoading },
-    ] = useMutationWithError(useUpdatePreferenceMutation, {
-        preferenceFind: { courseId, termId },
-        preference: {
-            ...preference,
+        { loading: updatePreferenceLoading, data: updatePreferenceData },
+    ] = useMutationWithError(useUpdatePreferenceMutation);
+    useEffect(() => {
+        if (!updatePreferenceData) {
+            return;
+        }
+        setPreference({
+            maxContigHours:
+                updatePreferenceData.updatePreference.maxContigHours,
+            maxWeeklyHours:
+                updatePreferenceData.updatePreference.maxWeeklyHours,
             sessionType:
-                preference.sessionType === NO_PREFERENCE
-                    ? null
-                    : preference.sessionType,
-        },
-    });
+                updatePreferenceData.updatePreference.sessionType ||
+                NO_PREFERENCE,
+        });
+    }, [updatePreferenceData]);
     useEffect(() => {
         if (courseId === notSet || termId === notSet) {
             return;
         }
-
         const variables = {
             preferenceFind: { termId, courseId },
         };
@@ -92,7 +96,8 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
             return;
         }
         setPreference({
-            ...preferenceData.myPreference,
+            maxContigHours: preferenceData.myPreference.maxContigHours,
+            maxWeeklyHours: preferenceData.myPreference.maxWeeklyHours,
             sessionType:
                 preferenceData.myPreference.sessionType || NO_PREFERENCE,
         });
@@ -110,7 +115,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                 enableReinitialize={true}
                 initialValues={preference}
                 onSubmit={async (values) => {
-                    const { data } = await updatePreference({
+                    await updatePreference({
                         variables: {
                             preference: {
                                 ...values,
@@ -124,11 +129,6 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                                 termId,
                             },
                         },
-                    });
-                    setPreference({
-                        ...data!.updatePreference,
-                        sessionType:
-                            data!.updatePreference.sessionType || NO_PREFERENCE,
                     });
                 }}
             >

@@ -12,10 +12,12 @@ import {
     Text,
     UnorderedList,
 } from "@chakra-ui/react";
+import { SessionTheme } from "../../types/session";
 
 export type TimetableSessionProps = {
     allocation: string[];
     location: string;
+    theme?: SessionTheme;
 };
 
 export type Props = SessionProps & TimetableSessionProps;

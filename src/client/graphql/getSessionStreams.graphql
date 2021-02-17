@@ -7,9 +7,11 @@ query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
         endTime
         day
         location
+        numberOfStaff
         streamAllocations {
             user {
                 name
+                username
             }
         }
     }

@@ -13,14 +13,15 @@ export const useQueryWithError = <T, S>(
     useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
     args?: S
 ) => {
-    const queryResult = useApolloQuery({ variables: args });
+    const queryResult = useApolloQuery({ variables: args, errorPolicy: "all" });
     const { addError } = useContext(ErrorContext);
     const { error } = useMemo(() => queryResult, [queryResult]);
     useEffect(() => {
         if (error) {
             addError(error);
         }
-    }, [error, addError]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
     return queryResult;
 };
 
@@ -40,7 +41,8 @@ export const useMutationWithError = <T, S>(
         if (error) {
             addError(error);
         }
-    }, [error, addError]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
     return mutationResult;
 };
 
@@ -60,6 +62,7 @@ export const useLazyQueryWithError = <T, S>(
         if (error) {
             addError(error);
         }
-    }, [error, addError]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
     return queryResult;
 };

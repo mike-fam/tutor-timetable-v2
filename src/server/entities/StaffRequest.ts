@@ -5,6 +5,7 @@ import {
     JoinTable,
     ManyToMany,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     Unique,
 } from "typeorm";
@@ -13,6 +14,7 @@ import { Session } from "./Session";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { RequestStatus, RequestType } from "../types/request";
+import { Offer } from "./Offer";
 
 @ObjectType()
 @Entity()
@@ -38,6 +40,12 @@ export class StaffRequest extends BaseEntity {
     @Column("varchar")
     status: RequestStatus;
 
+    @Column()
+    requesterId: number;
+
+    @Column()
+    sessionId: number;
+
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })
     requester: Lazy<User>;
@@ -57,7 +65,12 @@ export class StaffRequest extends BaseEntity {
     @Field(() => [Session])
     @ManyToMany(() => Session, (session) => session.preferredSwaps, {
         lazy: true,
+        cascade: true,
     })
     @JoinTable()
     swapPreference: Lazy<Session[]>;
+
+    @Field(() => [Offer])
+    @OneToMany(() => Offer, (offer) => offer.request, { lazy: true })
+    offers: Lazy<Offer[]>;
 }
