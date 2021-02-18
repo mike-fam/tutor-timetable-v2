@@ -1,5 +1,4 @@
 import {
-    Button,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -23,10 +22,7 @@ export const EditUserForm: React.FC<Props> = (props: Props) => {
         <FormControl>
             <FormLabel>Username:</FormLabel>
             <Input disabled={true} defaultValue={user.username} />
-            <FormHelperText>
-                This is your UQ account username and cannot be changed from
-                here.
-            </FormHelperText>
+            <FormHelperText>You cannot change your UQ username.</FormHelperText>
             <InputWithError
                 label="Name"
                 validate={(value) =>
