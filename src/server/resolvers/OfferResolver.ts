@@ -52,6 +52,11 @@ export class OfferResolver {
         const user = await User.findOneOrFail(req.user);
         const request = await StaffRequest.findOneOrFail({ id: requestId });
 
+        // Freeze permanent requests.
+        if (request.type === RequestType.PERMANENT) {
+            throw new Error("Permanent requests are currently frozen.");
+        }
+
         if ((await request.requester).id === user.id) {
             throw new Error("You cannot create an offer for a request you own");
         }
@@ -164,6 +169,11 @@ export class OfferResolver {
         const offerSession = await Session.findOne({
             id: offerSessionSwapId,
         });
+
+        // Freeze permanent requests.
+        if (request.type === RequestType.PERMANENT) {
+            throw new Error("Permanent requests are currently frozen.");
+        }
 
         if (user.id !== (await request.requester).id) {
             throw new Error("User ID does not match with request user ID");
