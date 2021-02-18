@@ -107,6 +107,11 @@ export class StaffRequestResolver {
             termId: termId,
         });
 
+        // Temporary freeze on permanent requests.
+        if (duration === RequestType.PERMANENT) {
+            throw new Error("Permanent requests are currently frozen.");
+        }
+
         // Checks if user is in session.
         if (
             (await SessionAllocation.find({ sessionId, userId: requester.id }))
