@@ -65,7 +65,7 @@ export const RequestTable: React.FC<Props> = ({
                                         .course.code
                                 }
                             </Td>
-                            <Td>{requestItem.requester.username}</Td>
+                            <Td>{requestItem.requester.name}</Td>
                             <Td>{requestItem.status}</Td>
                             <Td>
                                 {`${requestItem.session.sessionStream.name} (Week ${requestItem.session.week})`}

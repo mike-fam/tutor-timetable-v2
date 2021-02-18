@@ -6,6 +6,7 @@ type ColourTheme = {
     light: string;
     dark: string;
 };
+
 export const useSessionColour = (theme: SessionTheme) => {
     const colour = useMemo((): ColourTheme => {
         switch (theme) {
