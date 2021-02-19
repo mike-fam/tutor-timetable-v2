@@ -286,6 +286,7 @@ export type Mutation = {
     __typename?: "Mutation";
     requestAllocation: AllocatorOutput;
     applyAllocation: Scalars["Boolean"];
+    updateDetails: User;
     addTerm: Term;
     deleteTerms: Array<Term>;
     addCourseStaff: CourseStaff;
@@ -315,6 +316,10 @@ export type MutationRequestAllocationArgs = {
 export type MutationApplyAllocationArgs = {
     override: Scalars["Boolean"];
     allocationToken: Scalars["String"];
+};
+
+export type MutationUpdateDetailsArgs = {
+    details: UpdateDetailsInputType;
 };
 
 export type MutationAddTermArgs = {
@@ -435,6 +440,11 @@ export type Allocation = {
     staff: Array<User>;
 };
 
+export type UpdateDetailsInputType = {
+    email: Scalars["String"];
+    name: Scalars["String"];
+};
+
 export type CourseStaffUserInput = {
     courseId: Scalars["Int"];
     termId: Scalars["Int"];
@@ -499,6 +509,17 @@ export type OfferInputType = {
 export type EditOfferInputType = {
     offerId: Scalars["Int"];
     sessionPreferences: Array<Scalars["Int"]>;
+};
+
+export type UpdateDetailsMutationVariables = Exact<{
+    details: UpdateDetailsInputType;
+}>;
+
+export type UpdateDetailsMutation = { __typename?: "Mutation" } & {
+    updateDetails: { __typename?: "User" } & Pick<
+        User,
+        "id" | "name" | "email"
+    >;
 };
 
 export type AcceptOfferMutationVariables = Exact<{
@@ -1230,6 +1251,56 @@ export type EditRequestMutation = { __typename?: "Mutation" } & {
         };
 };
 
+export const UpdateDetailsDocument = gql`
+    mutation updateDetails($details: UpdateDetailsInputType!) {
+        updateDetails(details: $details) {
+            id
+            name
+            email
+        }
+    }
+`;
+export type UpdateDetailsMutationFn = Apollo.MutationFunction<
+    UpdateDetailsMutation,
+    UpdateDetailsMutationVariables
+>;
+
+/**
+ * __useUpdateDetailsMutation__
+ *
+ * To run a mutation, you first call `useUpdateDetailsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDetailsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDetailsMutation, { data, loading, error }] = useUpdateDetailsMutation({
+ *   variables: {
+ *      details: // value for 'details'
+ *   },
+ * });
+ */
+export function useUpdateDetailsMutation(
+    baseOptions?: Apollo.MutationHookOptions<
+        UpdateDetailsMutation,
+        UpdateDetailsMutationVariables
+    >
+) {
+    return Apollo.useMutation<
+        UpdateDetailsMutation,
+        UpdateDetailsMutationVariables
+    >(UpdateDetailsDocument, baseOptions);
+}
+export type UpdateDetailsMutationHookResult = ReturnType<
+    typeof useUpdateDetailsMutation
+>;
+export type UpdateDetailsMutationResult = Apollo.MutationResult<UpdateDetailsMutation>;
+export type UpdateDetailsMutationOptions = Apollo.BaseMutationOptions<
+    UpdateDetailsMutation,
+    UpdateDetailsMutationVariables
+>;
 export const AcceptOfferDocument = gql`
     mutation AcceptOffer($offerId: Int!, $offerSessionSwapId: Int) {
         acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId)

@@ -20,6 +20,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { UserContext } from "../utils/user";
 import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
+import { EditUserDetailsModalContainer } from "../containers/navbar/EditUserDetailsModalContainer";
 import { TimetableSettingsModal } from "../containers/TimetableSettingsModal";
 
 type Props = {};
@@ -27,9 +28,9 @@ type Props = {};
 export const NavBar: React.FunctionComponent<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
-    const {
-        user: { username },
-    } = useContext(UserContext);
+    const { user } = useContext(UserContext);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const {
         isOpen: isTimetableSettingsModalOpen,
         onOpen: openTimetableSettingsModal,
@@ -85,9 +86,12 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             rightIcon={<ChevronDownIcon ml={1} />}
                             style={{ cursor: "pointer" }}
                         >
-                            {username}
+                            {user.username}
                         </MenuButton>
                         <MenuList>
+                            <MenuItem onClick={onOpen}>
+                                Edit Personal Details
+                            </MenuItem>
                             <MenuItem onClick={openTimetableSettingsModal}>
                                 Timetable Settings
                             </MenuItem>
@@ -116,6 +120,11 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                     </Tooltip>
                 </Flex>
             </Box>
+            <EditUserDetailsModalContainer
+                isOpen={isOpen}
+                openModal={onOpen}
+                closeModal={onClose}
+            />
             <Divider />
             <TimetableSettingsModal
                 isOpen={isTimetableSettingsModalOpen}

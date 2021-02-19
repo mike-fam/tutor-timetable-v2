@@ -1,0 +1,7 @@
+mutation updateDetails($details: UpdateDetailsInputType!) {
+    updateDetails(details: $details) {
+        id
+        name
+        email
+    }
+}
