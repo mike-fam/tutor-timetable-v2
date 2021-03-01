@@ -109,6 +109,12 @@ export class OfferResolver {
         return await Offer.find({ request });
     }
 
+    @Query(() => [Offer])
+    async getOffersByUserId(@Ctx() { req }: MyContext): Promise<Offer[]> {
+        const user = req.user!;
+        return await Offer.find({ user });
+    }
+
     @Mutation(() => Offer)
     async editExistingOffer(
         @Arg("editDetails", () => EditOfferInputType)

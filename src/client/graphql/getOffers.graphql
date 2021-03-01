@@ -55,3 +55,25 @@ query getOffersByRequestId($requestId: Int!) {
         }
     }
 }
+
+query getOffersByUserId {
+    getOffersByUserId {
+        id
+        preferences {
+            id
+            sessionStream {
+                id
+                name
+                startTime
+                endTime
+                day
+            }
+            week
+        }
+        user {
+            id
+            username
+            name
+        }
+    }
+}
