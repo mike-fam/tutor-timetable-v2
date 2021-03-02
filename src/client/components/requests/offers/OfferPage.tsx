@@ -14,10 +14,10 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
     return (
         <Wrapper>
             <Grid mt={10} templateColumns="repeat(9, 1fr)" rowGap={5}>
-                <GridItem colStart={1} colSpan={2} rowStart={1}>
+                <GridItem colStart={3} colSpan={2} rowStart={1}>
                     <Heading>Your Offers</Heading>
                 </GridItem>
-                <GridItem rowStart={2} colStart={1} colSpan={7} bg="tomato">
+                <GridItem rowStart={2} colStart={3} colSpan={7} bg="tomato">
                     term selector placeholder
                 </GridItem>
                 <GridItem rowStart={3} colStart={9}>
