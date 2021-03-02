@@ -1,5 +1,13 @@
 import { ArrowRightIcon } from "@chakra-ui/icons";
-import { Box, Button, Center, Grid, GridItem, Heading } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Center,
+    Grid,
+    GridItem,
+    Heading,
+    Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { OfferResponse } from "../../../types/requests";
@@ -34,7 +42,11 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                 >
                     <Center h="100%">offer filter placeholer</Center>
                 </GridItem>
-                {props.offers.length > 0 &&
+                {props.offers.length === 0 ? (
+                    <GridItem colStart={6} rowStart={4}>
+                        No offers found
+                    </GridItem>
+                ) : (
                     props.offers.map((offer, index) => (
                         <>
                             <GridItem
@@ -69,7 +81,8 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                                 </Center>
                             </GridItem>
                         </>
-                    ))}
+                    ))
+                )}
             </Grid>
         </Wrapper>
     );
