@@ -1,14 +1,6 @@
 import { ArrowRightIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Center,
-    Divider,
-    Grid,
-    GridItem,
-    Heading,
-} from "@chakra-ui/react";
+import { Box, Center, Grid, GridItem, Heading } from "@chakra-ui/react";
 import React from "react";
-import { TermSelectContainer } from "../../../containers/TermSelectContainer";
 import { OfferResponse } from "../../../types/requests";
 import { OfferItem } from "./OfferItem";
 
@@ -23,7 +15,7 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                 <GridItem colStart={2} rowStart={1}>
                     <Heading>Your Offers</Heading>
                 </GridItem>
-                <GridItem rowStart={2} colStart={2} colSpan={5} bg="tomato">
+                <GridItem rowStart={2} colStart={2} colSpan={4} bg="tomato">
                     term selector placeholder
                 </GridItem>
                 <GridItem
