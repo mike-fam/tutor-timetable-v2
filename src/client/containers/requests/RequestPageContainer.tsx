@@ -7,7 +7,7 @@ import {
 } from "../../generated/graphql";
 import { getCurrentTerm } from "../../utils/term";
 import { Wrapper } from "../../components/helpers/Wrapper";
-import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Heading } from "@chakra-ui/react";
 import { RequestFilter } from "../../components/requests/RequestFilter";
 import { CreateRequestButtonContainer } from "./CreateRequestButtonContainer";
 import { RequestListContainer } from "./RequestListContainer";
@@ -23,6 +23,7 @@ import {
 } from "../../utils/requests";
 import { UserContext } from "../../utils/user";
 import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
+import { Link } from "react-router-dom";
 
 export const RequestPageContainer: React.FunctionComponent = () => {
     // Get Current Term
@@ -114,6 +115,9 @@ export const RequestPageContainer: React.FunctionComponent = () => {
                         />
                     </Flex>
                     <Flex gridRow={3} gridColumn={2} justifyContent="flex-end">
+                        <Link to="/offers">
+                            <Button mr={5}>View Created Offers</Button>
+                        </Link>
                         <CreateRequestButtonContainer />
                     </Flex>
                     <Box gridRow={4} gridColumn={2}>

@@ -103,6 +103,7 @@ export const RequestTable: React.FC<Props> = ({
                                                         requestItem.id
                                                     );
                                                 }}
+                                                mr={1}
                                             >
                                                 View
                                             </Button>

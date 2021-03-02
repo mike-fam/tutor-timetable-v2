@@ -7,7 +7,7 @@ import { AvailabilityPageContainer } from "./containers/availabilities/Availabil
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
 import { AllocatorPageContainer } from "./containers/allocator/AllocatorPageContainer";
 import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffPageContainer";
-import { OfferPage } from "./components/requests/offers/OfferPage";
+import { OfferPageContainer } from "./containers/requests/offers/OfferPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -29,7 +29,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     path="/course-staff"
                     component={CourseStaffPageContainer}
                 />
-                <Route path="/your-offers" component={OfferPage} />
+                <Route path="/offers" component={OfferPageContainer} />
             </Switch>
         </BrowserRouter>
     );

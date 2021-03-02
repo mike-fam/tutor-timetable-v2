@@ -825,6 +825,13 @@ export type GetOffersByUserIdQuery = (
     )>, user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username' | 'name'>
+    ), request: (
+      { __typename?: 'StaffRequest' }
+      & Pick<StaffRequest, 'id'>
+      & { requester: (
+        { __typename?: 'User' }
+        & Pick<User, 'username' | 'name'>
+      ) }
     ) }
   )> }
 );
@@ -1852,6 +1859,13 @@ export const GetOffersByUserIdDocument = gql`
       id
       username
       name
+    }
+    request {
+      id
+      requester {
+        username
+        name
+      }
     }
   }
 }

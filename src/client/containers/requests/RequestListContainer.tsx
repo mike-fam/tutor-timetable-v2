@@ -4,7 +4,6 @@ import { RequestResponse } from "../../types/requests";
 import { notSet } from "../../constants";
 import { RequestContext } from "../../hooks/useRequestUtils";
 
-// TODO: Needs user data and update filter function.
 type Props = {
     filters: Array<(request: RequestResponse) => boolean>;
     termId: number;

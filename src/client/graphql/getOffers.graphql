@@ -75,5 +75,12 @@ query getOffersByUserId {
             username
             name
         }
+        request {
+            id
+            requester {
+                username
+                name
+            }
+        }
     }
 }

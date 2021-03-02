@@ -1,5 +1,6 @@
 import { ArrayElement } from "./helpers";
 import {
+    GetOffersByUserIdQuery,
     GetRequestsByTermIdQuery,
     RequestFormInputType,
     RequestType,
@@ -9,6 +10,10 @@ import { Dispatch, SetStateAction } from "react";
 
 export type RequestResponse = ArrayElement<
     GetRequestsByTermIdQuery["getRequestsByTermId"]
+>;
+
+export type OfferResponse = ArrayElement<
+    GetOffersByUserIdQuery["getOffersByUserId"]
 >;
 
 export type RequestFilterFunction<T> = (
