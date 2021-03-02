@@ -5,12 +5,10 @@ import {
     Divider,
     Grid,
     GridItem,
-    HStack,
-    Stack,
+    Heading,
 } from "@chakra-ui/react";
 import React from "react";
-import { CgArrowLongRight } from "react-icons/cg";
-import { HiOutlineArrowNarrowRight } from "react-icons/hi";
+import { TermSelectContainer } from "../../../containers/TermSelectContainer";
 import { OfferResponse } from "../../../types/requests";
 import { OfferItem } from "./OfferItem";
 
@@ -21,27 +19,39 @@ type Props = {
 export const OfferPage: React.FC<Props> = (props: Props) => {
     return (
         <Box>
-            <Grid templateColumns="repeat(5, 1fr)" mt={5} mb={15}>
-                <GridItem colSpan={2}>
-                    <Center>Your Offer</Center>
+            <Grid mt={10} templateColumns="repeat(7, 1fr)" rowGap={5}>
+                <GridItem colStart={2} rowStart={1}>
+                    <Heading>Your Offers</Heading>
                 </GridItem>
-                <GridItem colSpan={1}></GridItem>
-                <GridItem colSpan={2}>
-                    <Center>Request</Center>
+                <GridItem rowStart={2} colStart={2} colSpan={5} bg="tomato">
+                    term selector placeholder
                 </GridItem>
-            </Grid>
-            <Divider></Divider>
-
-            <Grid mt={5} templateColumns="repeat(5, 1fr)" rowGap="10">
+                <GridItem
+                    colStart={1}
+                    colSpan={2}
+                    rowStart={3}
+                    rowSpan={4}
+                    bg="tomato"
+                >
+                    <Center h="100%">offer filter placeholer</Center>
+                </GridItem>
                 {props.offers.length > 0 &&
                     props.offers.map((offer, index) => (
                         <>
-                            <GridItem colSpan={2}>
+                            <GridItem
+                                colStart={3}
+                                colSpan={2}
+                                rowStart={index + 3}
+                            >
                                 <Center h="100%">
                                     <OfferItem key={index} offer={offer} />
                                 </Center>
                             </GridItem>
-                            <GridItem colSpan={1}>
+                            <GridItem
+                                colStart={5}
+                                colSpan={1}
+                                rowStart={index + 3}
+                            >
                                 <Center h="100%">
                                     <ArrowRightIcon />
                                     <ArrowRightIcon />
@@ -49,8 +59,15 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                                 </Center>
                             </GridItem>
 
-                            <GridItem colSpan={2} bg="tomato">
-                                <Center h="100%">test</Center>
+                            <GridItem
+                                bg="tomato"
+                                colStart={6}
+                                colSpan={2}
+                                rowStart={index + 3}
+                            >
+                                <Center h="100%">
+                                    request item placeholder
+                                </Center>
                             </GridItem>
                         </>
                     ))}
