@@ -50,7 +50,10 @@ export const OfferItem: React.FC<Props> = (props: Props) => {
                                 props.offer.preferences.map(
                                     (session, index) => (
                                         <React.Fragment key={index}>
-                                            {session.sessionStream.name},{" "}
+                                            {session.sessionStream.name}
+                                            {index >
+                                                props.offer.preferences
+                                                    .length && ", "}
                                         </React.Fragment>
                                     )
                                 )
