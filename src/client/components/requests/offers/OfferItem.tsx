@@ -3,6 +3,7 @@ import {
     Button,
     Center,
     Container,
+    Heading,
     Stack,
     StackDivider,
     Text,
@@ -16,7 +17,6 @@ type Props = {
 };
 
 export const OfferItem: React.FC<Props> = (props: Props) => {
-    console.log(props.offer);
     return (
         <Box
             maxW="md"
@@ -27,9 +27,11 @@ export const OfferItem: React.FC<Props> = (props: Props) => {
             height="100%"
             bg="#5c8a8a"
         >
-            <Text mb={2} mt={2}>
-                <Center>Offer Details</Center>
-            </Text>
+            <Center>
+                <Heading mb={2} mt={2} size="md">
+                    Offer Title
+                </Heading>
+            </Center>
             <Stack
                 direction={["column", "row"]}
                 divider={<StackDivider />}
@@ -40,16 +42,20 @@ export const OfferItem: React.FC<Props> = (props: Props) => {
                         <Text>Time Created: "placeholder"</Text>
                         <Text>description: "placeholder"</Text>
                         <Text>Offer Status: "placeholder"</Text>
-                        {props.offer.preferences.length === 0 ? (
-                            <Text>No sessions were provided</Text>
-                        ) : (
-                            props.offer.preferences.map((session, index) => (
-                                <Box key={index}>
-                                    Offered sessions:{" "}
-                                    {session.sessionStream.name}
-                                </Box>
-                            ))
-                        )}
+                        <Text>
+                            Offered Sessions:{" "}
+                            {props.offer.preferences.length === 0 ? (
+                                <>no sessions were provided</>
+                            ) : (
+                                props.offer.preferences.map(
+                                    (session, index) => (
+                                        <React.Fragment key={index}>
+                                            {session.sessionStream.name},{" "}
+                                        </React.Fragment>
+                                    )
+                                )
+                            )}
+                        </Text>
                     </Container>
                 </Box>
                 <Box>

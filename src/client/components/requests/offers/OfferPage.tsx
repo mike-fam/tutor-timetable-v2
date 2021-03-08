@@ -49,17 +49,14 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                     </GridItem>
                 ) : (
                     props.offers.map((offer, index) => (
-                        <>
+                        <React.Fragment key={index}>
                             <GridItem
                                 colStart={3}
                                 colSpan={3}
                                 rowStart={index + 4}
                             >
                                 <Center h="100%">
-                                    <OfferItemContainer
-                                        key={index}
-                                        offer={offer}
-                                    />
+                                    <OfferItemContainer offer={offer} />
                                 </Center>
                             </GridItem>
                             <GridItem
@@ -84,7 +81,7 @@ export const OfferPage: React.FC<Props> = (props: Props) => {
                                     <RequestItem />
                                 </Center>
                             </GridItem>
-                        </>
+                        </React.Fragment>
                     ))
                 )}
             </Grid>
