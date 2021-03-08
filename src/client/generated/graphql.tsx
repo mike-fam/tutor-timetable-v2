@@ -827,11 +827,23 @@ export type GetOffersByUserIdQuery = (
       & Pick<User, 'id' | 'username' | 'name'>
     ), request: (
       { __typename?: 'StaffRequest' }
-      & Pick<StaffRequest, 'id'>
+      & Pick<StaffRequest, 'id' | 'type' | 'title' | 'description' | 'status'>
       & { requester: (
         { __typename?: 'User' }
         & Pick<User, 'username' | 'name'>
-      ) }
+      ), session: (
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'name'>
+        ) }
+      ), swapPreference: Array<(
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'name'>
+        ) }
+      )> }
     ) }
   )> }
 );
@@ -1865,6 +1877,20 @@ export const GetOffersByUserIdDocument = gql`
       requester {
         username
         name
+      }
+      type
+      title
+      description
+      status
+      session {
+        sessionStream {
+          name
+        }
+      }
+      swapPreference {
+        sessionStream {
+          name
+        }
       }
     }
   }

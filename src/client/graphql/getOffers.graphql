@@ -81,6 +81,20 @@ query getOffersByUserId {
                 username
                 name
             }
+            type
+            title
+            description
+            status
+            session {
+                sessionStream {
+                    name
+                }
+            }
+            swapPreference {
+                sessionStream {
+                    name
+                }
+            }
         }
     }
 }
