@@ -4,6 +4,6 @@ export const transporter = createTransport({
     service: "gmail",
     auth: {
         user: "noreply.tutortimetable@gmail.com",
-        pass: process.env.MAIL_PASS,
+        pass: process.env.EMAIL_PW,
     },
 });
