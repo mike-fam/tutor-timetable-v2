@@ -1,5 +1,5 @@
 import isBefore from "date-fns/isBefore";
-import { parseISO } from "date-fns";
+import { parseISO, startOfISOWeek } from "date-fns";
 import isAfter from "date-fns/isAfter";
 import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
@@ -31,5 +31,8 @@ export const getCurrentWeek = (term?: TermResponseType) => {
     if (!term) {
         return 0;
     }
-    return differenceInWeeks(new Date(), parseISO(term.startDate));
+    return differenceInWeeks(
+        startOfISOWeek(new Date()),
+        startOfISOWeek(parseISO(term.startDate))
+    );
 };
