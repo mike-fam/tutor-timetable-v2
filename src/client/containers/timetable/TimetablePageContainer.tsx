@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
-import startOfISOWeek from "date-fns/startOfISOWeek";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
 import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
@@ -14,9 +13,9 @@ import {
     TimetableSettingsContext,
 } from "../../utils/timetable";
 import { Set } from "immutable";
-import { differenceInWeeks, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import { notSet } from "../../constants";
-import { getCurrentTerm } from "../../utils/term";
+import { getCurrentTerm, getCurrentWeek } from "../../utils/term";
 import {
     firstLineHeight,
     realGap,
@@ -61,7 +60,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         // Choose current week if possible, otherwise choose "All weeks"
         setChosenWeek(
             startDate < today && today < endDate
-                ? differenceInWeeks(startOfISOWeek(today), startDate)
+                ? getCurrentWeek(chosenTerm)
                 : notSet
         );
     }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
