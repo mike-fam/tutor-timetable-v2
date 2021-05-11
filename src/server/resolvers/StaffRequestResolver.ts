@@ -24,6 +24,7 @@ import {
     Timetable,
 } from "../entities";
 import { MyContext } from "../types/context";
+import { sendMail } from "../mailer";
 
 @InputType()
 class RequestFormInputType {
@@ -172,7 +173,9 @@ export class StaffRequestResolver {
         request.requester = Promise.resolve(requester);
         request.session = Promise.resolve(session);
         request.swapPreference = Promise.resolve(swapPreference);
-        return await request.save();
+        const savedRequest = await request.save();
+        sendMail(requester.email);
+        return savedRequest;
     }
 
     // Used for displaying requests in modal.
