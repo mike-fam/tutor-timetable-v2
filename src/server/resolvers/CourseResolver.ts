@@ -1,4 +1,4 @@
-import { Arg, Int, Query, Resolver } from "type-graphql";
+import { Arg, Query, Resolver } from "type-graphql";
 import { Course } from "../entities";
 
 @Resolver()
@@ -9,9 +9,7 @@ export class CourseResolver {
     }
 
     @Query(() => Course)
-    async course(
-        @Arg("courseId", () => Int) courseId: number
-    ): Promise<Course> {
+    async course(@Arg("courseId") courseId: string): Promise<Course> {
         return await Course.findOneOrFail(courseId);
     }
 }

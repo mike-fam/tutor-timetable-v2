@@ -5,7 +5,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
 } from "typeorm";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
 import { SessionAllocation } from "./SessionAllocation";
@@ -17,9 +17,9 @@ import { Offer } from "./Offer";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field()
     @Column({ length: 9, unique: true })

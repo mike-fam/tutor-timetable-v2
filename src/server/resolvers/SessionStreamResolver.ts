@@ -13,8 +13,8 @@ import { IsoDay } from "../../types/date";
 export class SessionStreamResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
-        @Arg("termId", () => Int) termId: number,
-        @Arg("courseIds", () => [Int]) courseIds: number[]
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [Int]) courseIds: string[]
     ): Promise<SessionStream[]> {
         if (courseIds.length === 0) {
             return [];
@@ -30,7 +30,7 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addBasedSessionStream(
-        @Arg("sessionStreamId", () => Int) sessionStreamId: number,
+        @Arg("sessionStreamId") sessionStreamId: number,
         @Arg("name") name: string,
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("numberOfStaff", () => Int) numberOfStaff: number
@@ -53,7 +53,7 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addSessionStream(
-        @Arg("timetableId", () => Int) timetableId: number,
+        @Arg("timetableId") timetableId: string,
         @Arg("name") name: string,
         @Arg("type", () => SessionType) type: SessionType,
         @Arg("day", () => Int) day: IsoDay,
@@ -78,8 +78,8 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addStreamStaff(
-        @Arg("streamId") streamId: number,
-        @Arg("newStaffs", () => [Int]) newStaffs: number[],
+        @Arg("streamId") streamId: string,
+        @Arg("newStaffs", () => [String]) newStaffs: string[],
         @Arg("updateSessions", () => Boolean) updateSessions: boolean
     ): Promise<SessionStream> {
         const stream = await SessionStream.findOneOrFail({ id: streamId });
@@ -124,7 +124,7 @@ export class SessionStreamResolver {
 
     @Mutation(() => [Session])
     async generateSessions(
-        @Arg("sessionStreamId", () => Int) sessionStreamId: number
+        @Arg("sessionStreamId") sessionStreamId: string
     ): Promise<Session[]> {
         const stream = await SessionStream.findOneOrFail({
             id: sessionStreamId,

@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { RequestStatus, RequestType } from "../types/request";
 import { Offer } from "./Offer";
@@ -20,9 +20,9 @@ import { Offer } from "./Offer";
 @Entity()
 @Unique(["requester", "session"])
 export class StaffRequest extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field(() => RequestType)
     @Column("varchar")
@@ -41,10 +41,10 @@ export class StaffRequest extends BaseEntity {
     status: RequestStatus;
 
     @Column()
-    requesterId: number;
+    requesterId: string;
 
     @Column()
-    sessionId: number;
+    sessionId: string;
 
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })

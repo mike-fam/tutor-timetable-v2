@@ -37,7 +37,7 @@ export class TermResolver {
     }
 
     @Query(() => Term)
-    async term(@Arg("termId", () => Int) termId: number): Promise<Term> {
+    async term(@Arg("termId") termId: string): Promise<Term> {
         return await Term.findOneOrFail(termId);
     }
 

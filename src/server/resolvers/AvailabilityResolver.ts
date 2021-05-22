@@ -28,8 +28,8 @@ registerEnumType(AvailabilityModificationType, {
 
 @InputType()
 class TimeslotInput {
-    @Field(() => Int)
-    id: number;
+    @Field()
+    id: string;
 
     @Field()
     startTime: number;

@@ -7,14 +7,14 @@ import {
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 
 @ObjectType()
 @Entity()
 export class Course extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field()
     @Column("varchar", { length: 20, unique: true })

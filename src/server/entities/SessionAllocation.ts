@@ -8,16 +8,16 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
 @Unique(["sessionId", "userId"])
 export class SessionAllocation extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
@@ -30,8 +30,8 @@ export class SessionAllocation extends BaseEntity {
     user: Lazy<User>;
 
     @Column()
-    sessionId: number;
+    sessionId: string;
 
     @Column()
-    userId: number;
+    userId: string;
 }

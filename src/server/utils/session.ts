@@ -3,8 +3,8 @@ import addWeeks from "date-fns/addWeeks";
 import addDays from "date-fns/addDays";
 import { IsoDay } from "../../types/date";
 
-const termCache = new Map<number, Term>();
-const streamCache = new Map<number, SessionStream>();
+const termCache = new Map<string, Term>();
+const streamCache = new Map<string, SessionStream>();
 
 export const getSessionTime = async (session: Session) => {
     const stream: SessionStream =

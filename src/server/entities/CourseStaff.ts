@@ -12,7 +12,7 @@ import {
 import { Timetable } from "./Timetable";
 import { User } from "./User";
 import { Preference } from "./Preference";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Role } from "../types/user";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 
@@ -21,9 +21,9 @@ import { checkFieldValueInEnum, Lazy } from "../utils/query";
 @Check(checkFieldValueInEnum(Role, "role"))
 @Unique(["timetableId", "userId"])
 export class CourseStaff extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field(() => Boolean)
     @Column({
@@ -31,12 +31,12 @@ export class CourseStaff extends BaseEntity {
     })
     isNew: boolean;
 
-    @Field(() => Int)
+    @Field()
     @Column()
-    userId: number;
+    userId: string;
 
     @Column()
-    timetableId: number;
+    timetableId: string;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {

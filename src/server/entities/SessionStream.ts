@@ -22,13 +22,13 @@ import { Field, Int, ObjectType } from "type-graphql";
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
 export class SessionStream extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
-    @Field(() => Int)
+    @Field()
     @Column()
-    timetableId: number;
+    timetableId: string;
 
     @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {

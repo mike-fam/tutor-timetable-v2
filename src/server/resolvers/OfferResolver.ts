@@ -23,22 +23,22 @@ import { RequestStatus, RequestType } from "../types/request";
 
 @InputType()
 class OfferInputType {
-    @Field(() => Int)
+    @Field()
     @IsNotEmpty()
-    requestId: number;
+    requestId: string;
 
-    @Field(() => [Int], { nullable: true })
+    @Field(() => [String], { nullable: true })
     @ArrayUnique()
-    sessionPreferences: number[];
+    sessionPreferences: string[];
 }
 
 @InputType()
 class EditOfferInputType {
-    @Field(() => Int)
-    offerId: number;
+    @Field()
+    offerId: string;
 
     @Field(() => [Int])
-    sessionPreferences: number[];
+    sessionPreferences: string[];
 }
 
 @Resolver()
@@ -99,16 +99,14 @@ export class OfferResolver {
     }
 
     @Query(() => Offer)
-    async getOfferById(
-        @Arg("offerId", () => Int) offerId: number
-    ): Promise<Offer> {
+    async getOfferById(@Arg("offerId") offerId: string): Promise<Offer> {
         const offer = await Offer.findOneOrFail({ id: offerId });
         return offer;
     }
 
     @Query(() => [Offer])
     async getOffersByRequestId(
-        @Arg("requestId", () => Int) requestId: number
+        @Arg("requestId") requestId: string
     ): Promise<Offer[]> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         return await Offer.find({ request });
@@ -122,7 +120,7 @@ export class OfferResolver {
         const offer = await Offer.findOneOrFail({ id: offerId });
 
         let preferredSessions: Array<Session> = [];
-        for (let sid of sessionPreferences) {
+        for (const sid of sessionPreferences) {
             const session = await Session.findOneOrFail({ id: sid });
             preferredSessions.push(session);
         }
@@ -134,7 +132,7 @@ export class OfferResolver {
     // TODO
     @Mutation(() => Offer)
     async removeOffer(
-        @Arg("offerId", () => Int) offerId: number,
+        @Arg("offerId") offerId: string,
         @Ctx() { req }: MyContext
     ): Promise<Offer> {
         const offer = await Offer.findOneOrFail({ id: offerId });
@@ -148,9 +146,9 @@ export class OfferResolver {
 
     @Mutation(() => Boolean)
     async acceptOffer(
-        @Arg("offerId", () => Int) offerId: number,
-        @Arg("offerSessionSwapId", () => Int, { nullable: true })
-        offerSessionSwapId: number,
+        @Arg("offerId") offerId: string,
+        @Arg("offerSessionSwapId", { nullable: true })
+        offerSessionSwapId: string,
         @Ctx() { req }: MyContext
     ): Promise<boolean> {
         // User
@@ -276,7 +274,7 @@ export class OfferResolver {
 // sessionUser refers to the user that is having their session switched into.
 const switchUserIntoSessionAllocation = async (
     user: User,
-    sessionsToSwitchInto: Array<number>,
+    sessionsToSwitchInto: Array<string>,
     sessionUser: User
 ): Promise<SessionAllocation[]> => {
     const sessionAllocs = await SessionAllocation.find({

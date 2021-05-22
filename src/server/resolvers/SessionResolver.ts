@@ -6,8 +6,8 @@ import { Session } from "../entities";
 export class SessionResolver {
     @Query(() => [Session])
     async sessions(
-        @Arg("termId", () => Int) termId: number,
-        @Arg("courseIds", () => [Int]) courseIds: number[],
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [String]) courseIds: string[],
         @Arg("week", () => Int) week: number
     ): Promise<Session[]> {
         if (courseIds.length === 0) {
@@ -25,9 +25,7 @@ export class SessionResolver {
     }
 
     @Query(() => Session)
-    async sessionById(
-        @Arg("sessionId", () => Int) sessionId: number
-    ): Promise<Session> {
+    async sessionById(@Arg("sessionId") sessionId: string): Promise<Session> {
         return await Session.findOneOrFail({ id: sessionId });
     }
 }

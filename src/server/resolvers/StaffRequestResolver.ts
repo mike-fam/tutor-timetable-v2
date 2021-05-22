@@ -32,9 +32,9 @@ class RequestFormInputType {
     title: string;
 
     // Sessions the user wants to switch into.
-    @Field(() => [Int])
+    @Field(() => [String])
     @ArrayUnique()
-    preferences: number[];
+    preferences: string[];
 
     @Field(() => RequestType)
     duration: RequestType;
@@ -43,18 +43,18 @@ class RequestFormInputType {
     @IsString()
     description: string;
 
-    @Field(() => Int)
-    termId: number;
+    @Field()
+    termId: string;
 
     // Session user wants to switch out of.
-    @Field(() => Int)
-    sessionId: number;
+    @Field()
+    sessionId: string;
 }
 
 @InputType()
 class EditRequestFormInputType {
-    @Field(() => Int)
-    requestId: number;
+    @Field()
+    requestId: string;
 
     @Field({ nullable: true })
     @IsNotEmpty()
@@ -64,7 +64,7 @@ class EditRequestFormInputType {
     @Field(() => [Int], { nullable: true })
     @ArrayNotEmpty()
     @ArrayUnique()
-    preferences: number[];
+    preferences: string[];
 
     @Field(() => RequestType, { nullable: true })
     @IsNotEmpty()
@@ -75,8 +75,8 @@ class EditRequestFormInputType {
     description: string;
 
     // Session user wants to switch out of.
-    @Field(() => Int, { nullable: true })
-    sessionId: number;
+    @Field({ nullable: true })
+    sessionId: string;
 
     @Field(() => Boolean)
     closeRequest: boolean;
@@ -183,7 +183,7 @@ export class StaffRequestResolver {
     // Used for displaying requests in modal.
     @Query(() => StaffRequest)
     async getRequestById(
-        @Arg("requestId", () => Int) requestId: number
+        @Arg("requestId") requestId: string
     ): Promise<StaffRequest> {
         return await StaffRequest.findOneOrFail({ id: requestId });
     }
@@ -201,7 +201,7 @@ export class StaffRequestResolver {
     // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
     async getRequestsByTermId(
-        @Arg("termId", () => Int) termId: number,
+        @Arg("termId") termId: string,
         @Ctx() { req }: MyContext
     ): Promise<StaffRequest[]> {
         const myCourseStaffs = await req.user!.courseStaffs;
@@ -253,7 +253,7 @@ export class StaffRequestResolver {
         if (preferences) {
             // Checks to make sure each session id exists.
             let swapPreference: Array<Session> = [];
-            for (let sid of preferences) {
+            for (const sid of preferences) {
                 swapPreference.push(await Session.findOneOrFail({ id: sid }));
             }
             request.swapPreference = swapPreference;
@@ -270,11 +270,11 @@ export class StaffRequestResolver {
         return request.save();
     }
 
-    @Mutation(() => Int)
+    @Mutation()
     async deleteRequestById(
         @Ctx() { req }: MyContext,
-        @Arg("requestId", () => Int) requestId: number
-    ): Promise<number> {
+        @Arg("requestId") requestId: string
+    ): Promise<string> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         const user = req.user!;
 

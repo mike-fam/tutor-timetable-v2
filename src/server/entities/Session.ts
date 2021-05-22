@@ -11,7 +11,7 @@ import {
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
 
@@ -19,9 +19,9 @@ import { Offer } from "./Offer";
 @Entity()
 @Unique(["sessionStreamId", "week"])
 export class Session extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
@@ -30,13 +30,13 @@ export class Session extends BaseEntity {
     sessionStream: SessionStream;
 
     @Column()
-    sessionStreamId: number;
+    sessionStreamId: string;
 
     @Field()
     @Column("varchar", { length: 15 })
     location: string;
 
-    @Field(() => Int)
+    @Field()
     @Column()
     week: number;
 

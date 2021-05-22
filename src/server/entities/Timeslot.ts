@@ -6,7 +6,7 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { IsoDay } from "../../types/date";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { User } from "./User";
@@ -16,9 +16,9 @@ import { User } from "./User";
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
 export class Timeslot extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field()
     @Column("float")

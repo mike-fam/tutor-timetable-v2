@@ -11,24 +11,24 @@ import { Course } from "./Course";
 import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
 import { SessionStream } from "./SessionStream";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
 @Unique(["courseId", "termId"])
 export class Timetable extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
-    @Field(() => Int)
+    @Field()
     @Column({ nullable: true })
-    courseId: number;
+    courseId: string;
 
-    @Field(() => Int)
+    @Field()
     @Column({ nullable: true })
-    termId: number;
+    termId: string;
 
     @Field(() => Course)
     @ManyToOne(() => Course, (course) => course.timetables, { lazy: true })

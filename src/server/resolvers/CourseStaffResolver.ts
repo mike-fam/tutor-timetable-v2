@@ -1,12 +1,4 @@
-import {
-    Arg,
-    Field,
-    InputType,
-    Int,
-    Mutation,
-    Query,
-    Resolver,
-} from "type-graphql";
+import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { CourseStaff, Timetable, User } from "../entities";
 import { Role } from "../types/user";
 import { CourseTermIdInput } from "./CourseTermId";
@@ -110,10 +102,10 @@ export class CourseStaffResolver {
     }
 
     // TODO: Validation
-    @Mutation(() => Int)
+    @Mutation()
     async removeCourseStaff(
-        @Arg("courseStaffId", () => Int) courseStaffId: number
-    ): Promise<number> {
+        @Arg("courseStaffId") courseStaffId: string
+    ): Promise<string> {
         try {
             await CourseStaff.delete(courseStaffId);
             return courseStaffId;

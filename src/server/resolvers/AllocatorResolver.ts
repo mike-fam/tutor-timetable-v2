@@ -3,7 +3,6 @@ import {
     Ctx,
     Field,
     Float,
-    Int,
     Mutation,
     ObjectType,
     Resolver,
@@ -28,10 +27,11 @@ import { Role } from "../types/user";
 import { getSessionTime } from "../utils/session";
 import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
+import { isDigits } from "../utils/string";
 
 type WeekId = number;
-type SessionStreamId = number;
-type StaffId = number;
+type SessionStreamId = string;
+type StaffId = string;
 
 @ObjectType()
 class Allocation {
@@ -79,7 +79,7 @@ type AllocatorOutputData = {
     detail: string;
     runtime: number;
     allocations: {
-        [key: number]: Array<number>;
+        [key: string]: Array<string>;
     };
 };
 
@@ -130,7 +130,7 @@ type AllocatorInput = {
 
 const allocationTokenManager = new Map<
     string,
-    [number, number, AllocatorOutputData]
+    [string, string, AllocatorOutputData]
 >();
 
 @Resolver()
@@ -139,7 +139,7 @@ export class AllocatorResolver {
     async requestAllocation(
         @Arg("courseTermInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
-        @Arg("staffIds", () => [Int]) staffIds: number[],
+        @Arg("staffIds", () => [String]) staffIds: string[],
         @Arg("newThreshold", () => Float, { nullable: true })
         newThreshold: number | undefined,
         @Ctx() { req }: MyContext
@@ -229,8 +229,12 @@ export class AllocatorResolver {
         output.allocations = await asyncMap(
             Object.entries(allocatorOutput.data.allocations),
             async ([streamId, staffIds]) => {
-                const dummyIds = staffIds.filter((staffId) => staffId < 0);
-                const realIds = staffIds.filter((staffId) => staffId > 0);
+                const dummyIds = staffIds.filter((staffId) =>
+                    isDigits(staffId)
+                );
+                const realIds = staffIds.filter((staffId) =>
+                    dummyIds.includes(staffId)
+                );
                 return {
                     sessionStream: await SessionStream.findOneOrFail(
                         parseInt(streamId)
@@ -323,12 +327,13 @@ export class AllocatorResolver {
             allocationOutput.allocations
         )) {
             for (const userId of staffIds) {
-                if (userId < 0) {
+                // skip dummy users
+                if (isDigits(userId)) {
                     continue;
                 }
                 streamAllocationsToBeSaved.push(
                     StreamAllocation.create({
-                        sessionStreamId: parseInt(sessionStreamId),
+                        sessionStreamId: sessionStreamId,
                         userId,
                     })
                 );
@@ -370,7 +375,7 @@ export class AllocatorResolver {
             const staffIds =
                 allocationOutput.allocations[session.sessionStreamId];
             for (const userId of staffIds) {
-                if (userId < 0) {
+                if (isDigits(userId)) {
                     continue;
                 }
                 sessionAllocationsToBeSaved.push(

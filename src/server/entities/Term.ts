@@ -9,18 +9,17 @@ import {
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
-import { checkFieldValueInEnum } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { TermType } from "../types/term";
-import { Lazy } from "../utils/query";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(TermType, "type"))
 @Unique(["type", "year"])
 export class Term extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
+    @Field()
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Field(() => TermType)
     @Column("varchar", { length: 20 })
