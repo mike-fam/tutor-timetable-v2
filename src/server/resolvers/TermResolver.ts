@@ -6,10 +6,11 @@ import {
     Int,
     Mutation,
     Query,
-    Resolver,
+    Resolver, UseMiddleware,
 } from "type-graphql";
 import { Term } from "../entities";
 import { TermType } from "../types/term";
+import { Log } from "../auth/accessControlMiddlewares";
 
 @ArgsType()
 class TermArgs {
@@ -29,7 +30,7 @@ class TermArgs {
     weekNames: Array<string>;
 }
 
-@Resolver()
+@Resolver(() => Term)
 export class TermResolver {
     @Query(() => [Term])
     async terms(): Promise<Term[]> {

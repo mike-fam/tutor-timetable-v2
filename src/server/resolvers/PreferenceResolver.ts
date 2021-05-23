@@ -27,7 +27,7 @@ class PreferenceInput {
 
 @Resolver()
 export class PreferenceResolver {
-    static async getPreference(user: User, courseId: number, termId: number) {
+    static async getPreference(user: User, courseId: string, termId: string) {
         return await getConnection()
             .getRepository(Preference)
             .createQueryBuilder("preference")

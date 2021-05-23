@@ -270,7 +270,7 @@ export class StaffRequestResolver {
         return request.save();
     }
 
-    @Mutation()
+    @Mutation(() => String)
     async deleteRequestById(
         @Ctx() { req }: MyContext,
         @Arg("requestId") requestId: string

@@ -102,7 +102,7 @@ export class CourseStaffResolver {
     }
 
     // TODO: Validation
-    @Mutation()
+    @Mutation(() => String)
     async removeCourseStaff(
         @Arg("courseStaffId") courseStaffId: string
     ): Promise<string> {
