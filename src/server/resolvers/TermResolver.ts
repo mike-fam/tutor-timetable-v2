@@ -6,11 +6,10 @@ import {
     Int,
     Mutation,
     Query,
-    Resolver, UseMiddleware,
+    Resolver
 } from "type-graphql";
 import { Term } from "../entities";
 import { TermType } from "../types/term";
-import { Log } from "../auth/accessControlMiddlewares";
 
 @ArgsType()
 class TermArgs {
