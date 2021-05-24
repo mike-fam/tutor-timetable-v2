@@ -81,4 +81,17 @@ export class SessionStream extends BaseEntity {
         { lazy: true, cascade: ["insert"] }
     )
     streamAllocations: Lazy<StreamAllocation[]>;
+
+    @Field(() => [SessionStream])
+    @OneToMany(() => SessionStream, (stream) => stream.based, {
+        lazy: true,
+    })
+    basedStreams: Lazy<SessionStream[]>;
+
+    @Field(() => SessionStream)
+    @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
+        lazy: true,
+        nullable: true,
+    })
+    based: Lazy<SessionStream>;
 }
