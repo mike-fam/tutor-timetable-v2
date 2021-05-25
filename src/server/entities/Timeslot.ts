@@ -1,5 +1,4 @@
 import {
-    BaseEntity,
     Check,
     Column,
     Entity,
@@ -10,16 +9,13 @@ import { Field, ObjectType } from "type-graphql";
 import { IsoDay } from "../../types/date";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { User } from "./User";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
 export class Timeslot extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field()
     @Column("float")
     startTime: number;

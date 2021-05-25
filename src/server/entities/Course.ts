@@ -1,21 +1,12 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
 import { Field, ObjectType } from "type-graphql";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 export class Course extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field()
     @Column("varchar", { length: 20, unique: true })
     code: string;

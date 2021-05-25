@@ -1,12 +1,10 @@
 import {
-    BaseEntity,
     Column,
     Entity,
     JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn,
     Unique,
 } from "typeorm";
 import { User } from "./User";
@@ -15,15 +13,12 @@ import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { RequestStatus, RequestType } from "../types/request";
 import { Offer } from "./Offer";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 @Unique(["requester", "session"])
 export class StaffRequest extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => RequestType)
     @Column("varchar")
     type: RequestType;

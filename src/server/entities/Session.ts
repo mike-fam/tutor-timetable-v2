@@ -1,6 +1,4 @@
 import {
-    BaseEntity,
-    Column,
     Entity,
     ManyToMany,
     ManyToOne,
@@ -14,15 +12,13 @@ import { StaffRequest } from "./StaffRequest";
 import { Field, FieldResolver, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
+import { BaseEntity } from "./BaseEntity";
+import { Column } from "typeorm";
 
 @ObjectType()
 @Entity()
 @Unique(["sessionStreamId", "week"])
 export class Session extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,

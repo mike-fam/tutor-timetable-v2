@@ -1,12 +1,10 @@
 import {
-    BaseEntity,
     Check,
     Column,
     Entity,
     JoinColumn,
     ManyToOne,
     OneToOne,
-    PrimaryGeneratedColumn,
     Unique,
 } from "typeorm";
 import { Timetable } from "./Timetable";
@@ -15,16 +13,13 @@ import { Preference } from "./Preference";
 import { Field, ObjectType } from "type-graphql";
 import { Role } from "../types/user";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(Role, "role"))
 @Unique(["timetableId", "userId"])
 export class CourseStaff extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => Boolean)
     @Column({
         type: Boolean,

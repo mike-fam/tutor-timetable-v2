@@ -1,24 +1,14 @@
 import { Field, ObjectType } from "type-graphql";
-import {
-    BaseEntity,
-    Entity,
-    JoinTable,
-    ManyToMany,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { Lazy } from "../utils/query";
 import { Session } from "./Session";
 import { StaffRequest } from "./StaffRequest";
 import { User } from "./User";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 export class Offer extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => StaffRequest)
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,

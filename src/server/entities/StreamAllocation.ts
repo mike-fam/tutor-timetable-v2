@@ -1,5 +1,4 @@
 import {
-    BaseEntity,
     Column,
     Entity,
     ManyToOne,
@@ -10,15 +9,12 @@ import { SessionStream } from "./SessionStream";
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 @Unique(["sessionStreamId", "userId"])
 export class StreamAllocation extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => SessionStream)
     @ManyToOne(
         () => SessionStream,

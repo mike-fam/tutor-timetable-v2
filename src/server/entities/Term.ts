@@ -1,26 +1,15 @@
-import {
-    BaseEntity,
-    Check,
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Unique,
-} from "typeorm";
+import { Check, Column, Entity, OneToMany, Unique } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { TermType } from "../types/term";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(TermType, "type"))
 @Unique(["type", "year"])
 export class Term extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field(() => TermType)
     @Column("varchar", { length: 20 })
     type: TermType;

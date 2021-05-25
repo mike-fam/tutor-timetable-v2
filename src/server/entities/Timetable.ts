@@ -1,27 +1,16 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    Unique,
-} from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, Unique } from "typeorm";
 import { Course } from "./Course";
 import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
 import { SessionStream } from "./SessionStream";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 @Unique(["courseId", "termId"])
 export class Timetable extends BaseEntity {
-    @Field()
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
     @Field()
     @Column({ nullable: true })
     courseId: string;
