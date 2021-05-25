@@ -15,6 +15,7 @@ import {
     Timetable,
     User,
 } from "./entities";
+import { UserSettings } from "./entities/UserSettings";
 
 export default {
     type: "postgres",
@@ -33,6 +34,7 @@ export default {
         Timeslot,
         Timetable,
         User,
+        UserSettings,
     ],
     migrations: [
         __prod__
