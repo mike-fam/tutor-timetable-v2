@@ -11,7 +11,7 @@ import {
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
-import { Field, ObjectType } from "type-graphql";
+import { Field, FieldResolver, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
 
