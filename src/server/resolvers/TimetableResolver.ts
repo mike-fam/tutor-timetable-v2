@@ -10,14 +10,14 @@ export class TimetableResolver {
 
     @Query(() => Timetable, { nullable: true })
     async timetable(
-        @Arg("courseId") courseId: number,
-        @Arg("termId") termId: number
+        @Arg("courseId") courseId: string,
+        @Arg("termId") termId: string
     ): Promise<Timetable | undefined> {
         return await Timetable.findOne({ courseId, termId });
     }
 
     @Query(() => Timetable, { nullable: true })
-    async timetableById(@Arg("id") id: number): Promise<Timetable | undefined> {
+    async timetableById(@Arg("id") id: string): Promise<Timetable | undefined> {
         return await Timetable.findOne({ id });
     }
 }
