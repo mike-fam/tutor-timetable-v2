@@ -49,3 +49,4 @@ export { Term } from "./Term";
 export { Timetable } from "./Timetable";
 export { Timeslot } from "./Timeslot";
 export { User } from "./User";
+export { UserSettings } from "./UserSettings";

@@ -25,6 +25,23 @@ import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 import { CourseResolver } from "./resolvers/CourseResolver";
 import { OfferResolver } from "./resolvers/OfferResolver";
 import * as path from "path";
+import { createLoader } from "./dataloaders/createLoader";
+import {
+    Course,
+    CourseStaff,
+    Offer,
+    Preference,
+    Session,
+    SessionAllocation,
+    SessionStream,
+    StaffRequest,
+    StreamAllocation,
+    Term,
+    Timeslot,
+    Timetable,
+    User,
+} from "./entities";
+import { UserSettings } from "./entities/UserSettings";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -63,7 +80,26 @@ const main = async () => {
             ],
             dateScalarMode: "isoDate",
         }),
-        context: ({ req, res }): MyContext => ({ req, res }),
+        context: ({ req, res }): MyContext => ({
+            req,
+            res,
+            loaders: {
+                course: createLoader(Course),
+                courseStaff: createLoader(CourseStaff),
+                offer: createLoader(Offer),
+                preference: createLoader(Preference),
+                session: createLoader(Session),
+                sessionAllocation: createLoader(SessionAllocation),
+                sessionStream: createLoader(SessionStream),
+                staffRequest: createLoader(StaffRequest),
+                streamAllocation: createLoader(StreamAllocation),
+                term: createLoader(Term),
+                timeslot: createLoader(Timeslot),
+                timetable: createLoader(Timetable),
+                user: createLoader(User),
+                userSettings: createLoader(UserSettings),
+            },
+        }),
     });
 
     apolloServer.applyMiddleware({ app });
