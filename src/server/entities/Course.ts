@@ -1,8 +1,10 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany, RelationId } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
-import { Field, ObjectType } from "type-graphql";
+import { Ctx, Field, FieldResolver, ObjectType, Root } from "type-graphql";
 import { BaseEntity } from "./BaseEntity";
+import { MyContext } from "../types/context";
+import { TimetableLoader } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -15,7 +17,15 @@ export class Course extends BaseEntity {
     @Column("varchar", { length: 100 })
     title: string;
 
-    @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.course, { lazy: true })
     timetables: Lazy<Timetable[]>;
+
+    @RelationId((course: Course) => course.timetables)
+    timetableIds: string[];
+
+    // TODO: FieldResolver
+    // async getTimetables(loader: TimetableLoader) {
+    //     return await loader.loadMany(this.timetableIds);
+    // }
+
 }

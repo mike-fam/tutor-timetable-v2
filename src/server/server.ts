@@ -114,6 +114,8 @@ const main = async () => {
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });
+
+    console.log(await Course.find());
 };
 
 main().catch((err) => {
