@@ -21,6 +21,10 @@ export class User extends BaseEntity {
     name: string;
 
     @Field()
+    @Column()
+    isAdmin: boolean;
+
+    @Field()
     @Column({ length: 256 })
     email: string;
 
