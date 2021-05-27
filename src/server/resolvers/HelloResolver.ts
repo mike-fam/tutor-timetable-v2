@@ -1,5 +1,5 @@
 import { Query, Resolver } from "type-graphql";
-import { Course, Timetable } from "../entities";
+import { Timetable } from "../entities";
 import { CheckPermEntity } from "../auth/decorators";
 import { Permission } from "../types/permission";
 
@@ -11,9 +11,9 @@ export class HelloResolver {
     }
 
     @CheckPermEntity(Permission.READ)
-    @Query(() => Course)
-    async test(): Promise<Course> {
+    @Query(() => Timetable)
+    async test(): Promise<Timetable> {
         const timetable = await Timetable.findOneOrFail();
-        return await timetable.getCourse();
+        return timetable;
     }
 }
