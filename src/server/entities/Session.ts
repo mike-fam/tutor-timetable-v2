@@ -1,31 +1,32 @@
 import {
+    Column,
     Entity,
     ManyToMany,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn,
+    RelationId,
     Unique,
 } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
-import { Field, FieldResolver, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
-import { BaseEntity } from "./BaseEntity";
-import { Column } from "typeorm";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
-@Unique(["sessionStreamId", "week"])
-export class Session extends BaseEntity {
+@Unique(["sessionStream", "week"])
+export class Session extends CourseRelatedEntity {
     @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,
     })
     sessionStream: SessionStream;
 
-    @Column()
+    @RelationId((session: Session) => session.sessionStream)
     sessionStreamId: string;
 
     @Field()
@@ -57,4 +58,10 @@ export class Session extends BaseEntity {
     @Field(() => [Offer])
     @ManyToMany(() => Offer, (offer) => offer.preferences, { lazy: true })
     offerPreferences: Lazy<Offer[]>;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = Session.loaders;
+        const stream = await loaders.sessionStream.load(this.sessionStreamId);
+        return await stream.getCourse();
+    }
 }

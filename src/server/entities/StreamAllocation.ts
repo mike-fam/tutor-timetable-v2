@@ -1,20 +1,15 @@
-import {
-    Column,
-    Entity,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-    Unique,
-} from "typeorm";
+import { Entity, ManyToOne, RelationId, Unique } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
-@Unique(["sessionStreamId", "userId"])
-export class StreamAllocation extends BaseEntity {
+@Unique(["sessionStream", "user"])
+export class StreamAllocation extends CourseRelatedEntity {
     @Field(() => SessionStream)
     @ManyToOne(
         () => SessionStream,
@@ -27,9 +22,15 @@ export class StreamAllocation extends BaseEntity {
     @ManyToOne(() => User, (user) => user.streamAllocations, { lazy: true })
     user: Lazy<User>;
 
-    @Column()
+    @RelationId((allocation: StreamAllocation) => allocation.sessionStream)
     sessionStreamId: string;
 
-    @Column()
+    @RelationId((allocation: StreamAllocation) => allocation.user)
     userId: string;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = StreamAllocation.loaders;
+        const stream = await loaders.sessionStream.load(this.sessionStreamId);
+        return await stream.getCourse();
+    }
 }

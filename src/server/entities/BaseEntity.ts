@@ -5,12 +5,19 @@ import {
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Permission } from "../types/permission";
+import { DataLoaders } from "../types/dataloaders";
 
 @ObjectType()
 export abstract class BaseEntity extends TypeOrmBaseEntity {
     @Field()
     @PrimaryGeneratedColumn("uuid")
     id: string;
+
+    protected static loaders: DataLoaders;
+
+    public static setLoaders(loaders: DataLoaders) {
+        this.loaders = loaders;
+    }
 
     public async hasPermission(
         user: User,

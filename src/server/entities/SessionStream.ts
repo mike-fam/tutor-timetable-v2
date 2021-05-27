@@ -1,4 +1,11 @@
-import { Check, Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import {
+    Check,
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    RelationId,
+} from "typeorm";
 import { Timetable } from "./Timetable";
 import { SessionType } from "../types/session";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
@@ -6,7 +13,8 @@ import { IsoDay } from "../../types/date";
 import { Session } from "./Session";
 import { StreamAllocation } from "./StreamAllocation";
 import { Field, Int, ObjectType } from "type-graphql";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
@@ -14,9 +22,9 @@ import { BaseEntity } from "./BaseEntity";
 @Check(checkFieldValueInEnum(SessionType, "type"))
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
-export class SessionStream extends BaseEntity {
+export class SessionStream extends CourseRelatedEntity {
     @Field()
-    @Column()
+    @RelationId((stream: SessionStream) => stream.timetable)
     timetableId: string;
 
     @Field(() => Timetable)
@@ -83,4 +91,10 @@ export class SessionStream extends BaseEntity {
         nullable: true,
     })
     based: Lazy<SessionStream>;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = SessionStream.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await timetable.getCourse();
+    }
 }

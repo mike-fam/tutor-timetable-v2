@@ -1,14 +1,16 @@
 import { Column, Entity, OneToMany, RelationId } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
-import { Ctx, Field, FieldResolver, ObjectType, Root } from "type-graphql";
-import { BaseEntity } from "./BaseEntity";
-import { MyContext } from "../types/context";
-import { TimetableLoader } from "../types/dataloaders";
+import { Field, ObjectType } from "type-graphql";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { User } from "./User";
+import { Permission } from "../types/permission";
+import { DataLoaders } from "../types/dataloaders";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
-export class Course extends BaseEntity {
+export class Course extends CourseRelatedEntity {
     @Field()
     @Column("varchar", { length: 20, unique: true })
     code: string;
@@ -28,4 +30,30 @@ export class Course extends BaseEntity {
     //     return await loader.loadMany(this.timetableIds);
     // }
 
+    // TODO maybe inject loaders into superclass
+    private loaders: DataLoaders;
+
+    public async hasPermission(
+        user: User,
+        permission: Permission
+    ): Promise<boolean> {
+        let activeTerm;
+        try {
+            activeTerm = await Term.findOneOrFail({
+                isActive: true,
+            });
+        } catch (e) {
+            throw new Error("No active term");
+        }
+        if (permission === Permission.READ) {
+            return true;
+        } else if (permission === Permission.UPDATE) {
+            return user.isCoordinatorOf(this, activeTerm);
+        }
+        return super.hasPermission(user, permission);
+    }
+
+    public async getCourse(): Promise<Course> {
+        return this;
+    }
 }

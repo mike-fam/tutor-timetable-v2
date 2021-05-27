@@ -5,6 +5,7 @@ import {
     JoinColumn,
     ManyToOne,
     OneToOne,
+    RelationId,
     Unique,
 } from "typeorm";
 import { Timetable } from "./Timetable";
@@ -13,13 +14,14 @@ import { Preference } from "./Preference";
 import { Field, ObjectType } from "type-graphql";
 import { Role } from "../types/user";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(Role, "role"))
-@Unique(["timetableId", "userId"])
-export class CourseStaff extends BaseEntity {
+@Unique(["timetable", "user"])
+export class CourseStaff extends CourseRelatedEntity {
     @Field(() => Boolean)
     @Column({
         type: Boolean,
@@ -30,7 +32,7 @@ export class CourseStaff extends BaseEntity {
     @Column()
     userId: string;
 
-    @Column()
+    @RelationId((courseStaff: CourseStaff) => courseStaff.timetable)
     timetableId: string;
 
     @Field(() => Timetable)
@@ -54,4 +56,10 @@ export class CourseStaff extends BaseEntity {
     })
     @JoinColumn()
     preference: Lazy<Preference> | undefined;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = CourseStaff.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await loaders.course.load(timetable.courseId);
+    }
 }

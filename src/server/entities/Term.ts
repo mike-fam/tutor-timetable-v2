@@ -34,4 +34,8 @@ export class Term extends BaseEntity {
     @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.termId, { lazy: true })
     timetables: Lazy<Timetable[]>;
+
+    @Field()
+    @Column({ default: false })
+    isActive: boolean;
 }

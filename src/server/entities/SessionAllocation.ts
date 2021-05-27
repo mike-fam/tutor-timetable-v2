@@ -1,14 +1,15 @@
-import { Column, Entity, ManyToOne, Unique } from "typeorm";
+import { Entity, ManyToOne, RelationId, Unique } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
-@Unique(["sessionId", "userId"])
-export class SessionAllocation extends BaseEntity {
+@Unique(["session", "user"])
+export class SessionAllocation extends CourseRelatedEntity {
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
         lazy: true,
@@ -19,9 +20,19 @@ export class SessionAllocation extends BaseEntity {
     @ManyToOne(() => User, (user) => user.sessionAllocations, { lazy: true })
     user: Lazy<User>;
 
-    @Column()
+    @RelationId(
+        (sessionAllocation: SessionAllocation) => sessionAllocation.session
+    )
     sessionId: string;
 
-    @Column()
+    @RelationId(
+        (sessionAllocation: SessionAllocation) => sessionAllocation.user
+    )
     userId: string;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = SessionAllocation.loaders;
+        const session = await loaders.session.load(this.sessionId);
+        return await session.getCourse();
+    }
 }

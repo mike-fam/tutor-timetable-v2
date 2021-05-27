@@ -1,6 +1,6 @@
 import { createMethodDecorator } from "type-graphql";
 import { Permission } from "../types/permission";
-import { BaseEntity } from "../entities/BaseEntity";
+import { CourseRelatedEntity } from "../entities/CourseRelatedEntity";
 import { MyContext } from "../types/context";
 
 export function CheckPermEntity(perm: Permission) {
@@ -11,12 +11,17 @@ export function CheckPermEntity(perm: Permission) {
             const result = await next();
 
             // Throw error if result is not an entity obj or an array of entity objs
-            if (!(result instanceof BaseEntity || result instanceof Array)) {
+            if (
+                !(
+                    result instanceof CourseRelatedEntity ||
+                    result instanceof Array
+                )
+            ) {
                 throw new Error(
                     `Permission error: Expect an object type but got ${typeof result}`
                 );
             }
-            if (result instanceof BaseEntity) {
+            if (result instanceof CourseRelatedEntity) {
                 if (await result.hasPermission(user, perm)) {
                     return result;
                 }
@@ -24,7 +29,7 @@ export function CheckPermEntity(perm: Permission) {
                 // result is an array
                 for (const object of result) {
                     // Error if not of type entity
-                    if (!(object instanceof BaseEntity)) {
+                    if (!(object instanceof CourseRelatedEntity)) {
                         throw new Error(
                             `Permission error: Expect an object type but got ${typeof object}`
                         );

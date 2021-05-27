@@ -1,22 +1,22 @@
-import { Column, Entity, ManyToOne, OneToMany, Unique } from "typeorm";
+import { Entity, ManyToOne, OneToMany, RelationId, Unique } from "typeorm";
 import { Course } from "./Course";
 import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
 import { SessionStream } from "./SessionStream";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
 
 @ObjectType()
 @Entity()
-@Unique(["courseId", "termId"])
-export class Timetable extends BaseEntity {
+@Unique(["course", "term"])
+export class Timetable extends CourseRelatedEntity {
     @Field()
-    @Column({ nullable: true })
+    @RelationId((timetable: Timetable) => timetable.course)
     courseId: string;
 
     @Field()
-    @Column({ nullable: true })
+    @RelationId((timetable: Timetable) => timetable.term)
     termId: string;
 
     @Field(() => Course)
@@ -40,4 +40,8 @@ export class Timetable extends BaseEntity {
         { lazy: true }
     )
     sessionStreams: Lazy<SessionStream[]>;
+
+    public async getCourse(): Promise<Course> {
+        return await Timetable.loaders.course.load(this.courseId);
+    }
 }

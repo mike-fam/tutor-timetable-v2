@@ -42,6 +42,7 @@ import {
     User,
 } from "./entities";
 import { UserSettings } from "./entities/UserSettings";
+import { LoadersInjector } from "./middlewares/loaders-injection";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -79,6 +80,7 @@ const main = async () => {
                 OfferResolver,
             ],
             dateScalarMode: "isoDate",
+            globalMiddlewares: [LoadersInjector],
         }),
         context: ({ req, res }): MyContext => ({
             req,
@@ -114,8 +116,6 @@ const main = async () => {
     server.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });
-
-    console.log(await Course.find());
 };
 
 main().catch((err) => {

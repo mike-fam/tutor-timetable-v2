@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany, RelationId } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
@@ -8,6 +8,10 @@ import { Lazy } from "../utils/query";
 import { Timeslot } from "./Timeslot";
 import { Offer } from "./Offer";
 import { BaseEntity } from "./BaseEntity";
+import { Course } from "./Course";
+import { Term } from "./Term";
+import asyncFilter from "node-filter-async";
+import { Role } from "../types/user";
 
 @ObjectType()
 @Entity()
@@ -21,7 +25,7 @@ export class User extends BaseEntity {
     name: string;
 
     @Field()
-    @Column()
+    @Column({ default: false })
     isAdmin: boolean;
 
     @Field()
@@ -33,6 +37,9 @@ export class User extends BaseEntity {
         lazy: true,
     })
     courseStaffs: Lazy<CourseStaff[]>;
+
+    @RelationId((user: User) => user.courseStaffs)
+    courseStaffIds: string[];
 
     @Field(() => [StreamAllocation])
     @OneToMany(
@@ -69,4 +76,35 @@ export class User extends BaseEntity {
     @Field(() => [Offer])
     @OneToMany(() => Offer, (offer) => offer.user, { lazy: true })
     offers: Lazy<Offer[]>;
+
+    private async getCourseStaff(
+        course: Course,
+        term: Term
+    ): Promise<CourseStaff[]> {
+        const loaders = User.loaders;
+        const courseStaffs = await loaders.courseStaff.loadMany(
+            this.courseStaffIds
+        );
+        return (await asyncFilter(courseStaffs, async (courseStaff) => {
+            if (courseStaff instanceof Error) {
+                return false;
+            }
+            const timetable = await loaders.timetable.load(
+                courseStaff.timetableId
+            );
+            return (
+                timetable.courseId === course.id && timetable.termId === term.id
+            );
+        })) as CourseStaff[];
+    }
+
+    public async isCoordinatorOf(course: Course, term: Term): Promise<boolean> {
+        return (await this.getCourseStaff(course, term)).some(
+            (courseStaff) => courseStaff.role === Role.COURSE_COORDINATOR
+        );
+    }
+
+    public async isStaffOf(course: Course, term: Term): Promise<boolean> {
+        return (await this.getCourseStaff(course, term)).length > 0;
+    }
 }

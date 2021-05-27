@@ -1,10 +1,4 @@
-import {
-    Check,
-    Column,
-    Entity,
-    ManyToOne,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { Check, Column, Entity, ManyToOne } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { IsoDay } from "../../types/date";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";

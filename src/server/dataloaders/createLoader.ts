@@ -1,6 +1,6 @@
-import { BaseEntity } from "../entities/BaseEntity";
 import DataLoader from "dataloader";
 import { ObjectType } from "typeorm";
+import { BaseEntity } from "../entities/BaseEntity";
 
 export const createLoader = <T extends BaseEntity>(
     type: ObjectType<T>

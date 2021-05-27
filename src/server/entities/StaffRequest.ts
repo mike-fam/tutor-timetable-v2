@@ -5,6 +5,7 @@ import {
     ManyToMany,
     ManyToOne,
     OneToMany,
+    RelationId,
     Unique,
 } from "typeorm";
 import { User } from "./User";
@@ -13,12 +14,13 @@ import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { RequestStatus, RequestType } from "../types/request";
 import { Offer } from "./Offer";
-import { BaseEntity } from "./BaseEntity";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
 
 @ObjectType()
 @Entity()
 @Unique(["requester", "session"])
-export class StaffRequest extends BaseEntity {
+export class StaffRequest extends CourseRelatedEntity {
     @Field(() => RequestType)
     @Column("varchar")
     type: RequestType;
@@ -35,10 +37,10 @@ export class StaffRequest extends BaseEntity {
     @Column("varchar")
     status: RequestStatus;
 
-    @Column()
+    @RelationId((request: StaffRequest) => request.requester)
     requesterId: string;
 
-    @Column()
+    @RelationId((request: StaffRequest) => request.session)
     sessionId: string;
 
     @Field(() => User)
@@ -68,4 +70,10 @@ export class StaffRequest extends BaseEntity {
     @Field(() => [Offer])
     @OneToMany(() => Offer, (offer) => offer.request, { lazy: true })
     offers: Lazy<Offer[]>;
+
+    public async getCourse(): Promise<Course> {
+        const loaders = StaffRequest.loaders;
+        const session = await loaders.session.load(this.sessionId);
+        return await session.getCourse();
+    }
 }
