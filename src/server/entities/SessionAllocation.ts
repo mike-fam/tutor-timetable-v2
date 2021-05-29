@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, RelationId, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, RelationId, Unique } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
 import { Field, ObjectType } from "type-graphql";
@@ -29,11 +29,13 @@ export class SessionAllocation
     @RelationId(
         (sessionAllocation: SessionAllocation) => sessionAllocation.session
     )
+    @Column()
     sessionId: string;
 
     @RelationId(
         (sessionAllocation: SessionAllocation) => sessionAllocation.user
     )
+    @Column()
     userId: string;
 
     public async getCourse(): Promise<Course> {

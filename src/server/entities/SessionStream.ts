@@ -30,6 +30,7 @@ export class SessionStream
     implements CourseRelatedEntity, TermRelatedEntity {
     @Field()
     @RelationId((stream: SessionStream) => stream.timetable)
+    @Column()
     timetableId: string;
 
     @Field(() => Timetable)

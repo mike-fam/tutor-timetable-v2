@@ -47,9 +47,11 @@ export class StaffRequest
     status: RequestStatus;
 
     @RelationId((request: StaffRequest) => request.requester)
+    @Column()
     requesterId: string;
 
     @RelationId((request: StaffRequest) => request.session)
+    @Column()
     sessionId: string;
 
     @Field(() => User)

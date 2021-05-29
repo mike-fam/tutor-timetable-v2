@@ -34,6 +34,7 @@ export class Offer
     request: Lazy<StaffRequest>;
 
     @RelationId((offer: Offer) => offer.request)
+    @Column()
     requestId: string;
 
     @Field(() => User)
@@ -41,6 +42,7 @@ export class Offer
     user: Lazy<User>;
 
     @RelationId((offer: Offer) => offer.user)
+    @Column()
     userId: string;
 
     @Field(() => [Session])

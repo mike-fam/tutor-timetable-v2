@@ -1,4 +1,11 @@
-import { Entity, ManyToOne, OneToMany, RelationId, Unique } from "typeorm";
+import {
+    Column,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    RelationId,
+    Unique,
+} from "typeorm";
 import { Course } from "./Course";
 import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
@@ -15,12 +22,12 @@ import { TermRelatedEntity } from "./TermRelatedEntity";
 export class Timetable
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity {
-    @Field()
     @RelationId((timetable: Timetable) => timetable.course)
+    @Column()
     courseId: string;
 
-    @Field()
     @RelationId((timetable: Timetable) => timetable.term)
+    @Column()
     termId: string;
 
     @Field(() => Course)

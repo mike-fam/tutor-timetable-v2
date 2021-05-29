@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, RelationId, Unique } from "typeorm";
+import { Column, Entity, ManyToOne, RelationId, Unique } from "typeorm";
 import { SessionStream } from "./SessionStream";
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
@@ -28,9 +28,11 @@ export class StreamAllocation
     user: Lazy<User>;
 
     @RelationId((allocation: StreamAllocation) => allocation.sessionStream)
+    @Column()
     sessionStreamId: string;
 
     @RelationId((allocation: StreamAllocation) => allocation.user)
+    @Column()
     userId: string;
 
     public async getCourse(): Promise<Course> {

@@ -35,9 +35,11 @@ export class CourseStaff
     isNew: boolean;
 
     @RelationId((courseStaff: CourseStaff) => courseStaff.user)
+    @Column()
     userId: string;
 
     @RelationId((courseStaff: CourseStaff) => courseStaff.timetable)
+    @Column()
     timetableId: string;
 
     @Field(() => Timetable)
@@ -63,6 +65,7 @@ export class CourseStaff
     preference: Lazy<Preference> | undefined;
 
     @RelationId((courseStaff: CourseStaff) => courseStaff.preference)
+    @Column()
     preferenceId: string;
 
     public async getCourse(): Promise<Course> {

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
-import { Entity, OneToOne, RelationId } from "typeorm";
+import { Column, Entity, OneToOne, RelationId } from "typeorm";
 import { User } from "./User";
 import { Lazy } from "../utils/query";
 import { BaseEntity } from "./BaseEntity";
@@ -13,6 +13,7 @@ export class UserSettings extends BaseEntity {
     user: Lazy<User>;
 
     @RelationId((settings: UserSettings) => settings.user)
+    @Column()
     userId: string;
 
     public async getOwner(): Promise<User> {

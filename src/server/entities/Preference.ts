@@ -37,6 +37,7 @@ export class Preference
     courseStaff: Lazy<CourseStaff>;
 
     @RelationId((preference: Preference) => preference.courseStaff)
+    @Column()
     courseStaffId: string;
 
     public async getCourse(): Promise<Course> {

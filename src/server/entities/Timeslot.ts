@@ -28,6 +28,7 @@ export class Timeslot extends BaseEntity implements UserRelatedEntity {
     user: Lazy<User>;
 
     @RelationId((timeslot: Timeslot) => timeslot.user)
+    @Column()
     userId: string;
 
     public async getOwner(): Promise<User> {

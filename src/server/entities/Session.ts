@@ -32,6 +32,7 @@ export class Session
     sessionStream: SessionStream;
 
     @RelationId((session: Session) => session.sessionStream)
+    @Column()
     sessionStreamId: string;
 
     @Field()
