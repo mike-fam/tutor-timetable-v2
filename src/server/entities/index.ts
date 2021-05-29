@@ -7,6 +7,7 @@ import {
     AllocationStatus,
     AllocationType,
 } from "../resolvers/AllocatorResolver";
+import { OfferStatus } from "../types/offer";
 
 registerEnumType(SessionType, {
     name: "SessionType",
@@ -26,6 +27,10 @@ registerEnumType(RequestType, {
 
 registerEnumType(RequestStatus, {
     name: "RequestStatus",
+});
+
+registerEnumType(OfferStatus, {
+    name: "OfferStatus",
 });
 
 registerEnumType(AllocationType, {

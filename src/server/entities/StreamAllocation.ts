@@ -5,11 +5,16 @@ import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 @Unique(["sessionStream", "user"])
-export class StreamAllocation extends CourseRelatedEntity {
+export class StreamAllocation
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => SessionStream)
     @ManyToOne(
         () => SessionStream,
@@ -32,5 +37,11 @@ export class StreamAllocation extends CourseRelatedEntity {
         const loaders = StreamAllocation.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = StreamAllocation.loaders;
+        const stream = await loaders.sessionStream.load(this.sessionStreamId);
+        return await stream.getTerm();
     }
 }

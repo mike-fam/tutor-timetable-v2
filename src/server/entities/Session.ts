@@ -15,11 +15,16 @@ import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 @Unique(["sessionStream", "week"])
-export class Session extends CourseRelatedEntity {
+export class Session
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,
@@ -63,5 +68,11 @@ export class Session extends CourseRelatedEntity {
         const loaders = Session.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = Session.loaders;
+        const stream = await loaders.sessionStream.load(this.sessionStreamId);
+        return await stream.getTerm();
     }
 }

@@ -86,21 +86,17 @@ export class User extends BaseEntity {
         course?: Course
     ): Promise<CourseStaff[]> {
         const loaders = User.loaders;
-        const courseStaffs = await loaders.courseStaff.loadMany(
+        const courseStaffs = (await loaders.courseStaff.loadMany(
             this.courseStaffIds
-        );
-        return (await asyncFilter(courseStaffs, async (courseStaff) => {
-            if (courseStaff instanceof Error) {
-                return false;
-            }
-            const timetable = await loaders.timetable.load(
-                courseStaff.timetableId
-            );
+        )) as CourseStaff[];
+        return await asyncFilter(courseStaffs, async (courseStaff) => {
+            const staffCourse = await courseStaff.getCourse();
+            const staffTerm = await courseStaff.getTerm();
             return (
-                timetable.termId === term.id &&
-                (!course || course.id === timetable.courseId)
+                staffTerm.id === term.id &&
+                (!course || course.id === staffCourse.id)
             );
-        })) as CourseStaff[];
+        });
     }
 
     public async isCoordinatorOf(course: Course, term: Term): Promise<boolean> {

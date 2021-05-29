@@ -15,6 +15,9 @@ import { StreamAllocation } from "./StreamAllocation";
 import { Field, Int, ObjectType } from "type-graphql";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
@@ -22,7 +25,9 @@ import { Course } from "./Course";
 @Check(checkFieldValueInEnum(SessionType, "type"))
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
-export class SessionStream extends CourseRelatedEntity {
+export class SessionStream
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field()
     @RelationId((stream: SessionStream) => stream.timetable)
     timetableId: string;
@@ -96,5 +101,11 @@ export class SessionStream extends CourseRelatedEntity {
         const loaders = SessionStream.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await timetable.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = SessionStream.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await timetable.getTerm();
     }
 }

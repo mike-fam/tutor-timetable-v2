@@ -1,15 +1,30 @@
 import { Field, ObjectType } from "type-graphql";
-import { Entity, JoinTable, ManyToMany, ManyToOne, RelationId } from "typeorm";
-import { Lazy } from "../utils/query";
+import {
+    Check,
+    Column,
+    Entity,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    RelationId
+} from "typeorm";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { Session } from "./Session";
 import { StaffRequest } from "./StaffRequest";
 import { User } from "./User";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
+import { OfferStatus } from "../types/offer";
 
 @ObjectType()
 @Entity()
-export class Offer extends CourseRelatedEntity {
+@Check(checkFieldValueInEnum(OfferStatus, "status"))
+export class Offer
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => StaffRequest)
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
@@ -32,9 +47,20 @@ export class Offer extends CourseRelatedEntity {
     @JoinTable()
     preferences: Lazy<Session[]>;
 
+    // TODO: Offer status
+    @Field(() => OfferStatus)
+    @Column({ enum: OfferStatus })
+    status: OfferStatus;
+
     public async getCourse(): Promise<Course> {
         const loaders = Offer.loaders;
         const request = await loaders.staffRequest.load(this.requestId);
         return await request.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = Offer.loaders;
+        const request = await loaders.staffRequest.load(this.requestId);
+        return await request.getTerm();
     }
 }

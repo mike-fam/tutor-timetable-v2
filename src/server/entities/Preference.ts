@@ -5,12 +5,17 @@ import { CourseStaff } from "./CourseStaff";
 import { Field, ObjectType } from "type-graphql";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 // Session type is one of the types specified.
 @Check(checkFieldValueInEnum(SessionType, "sessionType"))
-export class Preference extends CourseRelatedEntity {
+export class Preference
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => SessionType, { nullable: true })
     @Column("varchar", { length: 15, nullable: true })
     sessionType: SessionType | undefined;
@@ -36,5 +41,11 @@ export class Preference extends CourseRelatedEntity {
         const loader = Preference.loaders;
         const courseStaff = await loader.courseStaff.load(this.courseStaffId);
         return await courseStaff.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loader = Preference.loaders;
+        const courseStaff = await loader.courseStaff.load(this.courseStaffId);
+        return await courseStaff.getTerm();
     }
 }

@@ -1,6 +1,5 @@
 import { User } from "../entities";
 import { CANT_FIND, PERM_ERR } from "../constants";
-import { DeleteInput } from "../inputs/DeleteInput";
 import { BaseEntity } from "../entities/BaseEntity";
 import { DeepPartial, ObjectType } from "typeorm";
 import asyncFilter from "node-filter-async";
@@ -30,11 +29,6 @@ export const BaseModel = <T extends BaseEntity>() => {
             return user.isAdmin;
         }
 
-        /**
-         * Important: Note that this method is static
-         * @param toCreate
-         * @param user
-         */
         protected static async canCreate(
             toCreate: T,
             user: User
@@ -123,7 +117,7 @@ export const BaseModel = <T extends BaseEntity>() => {
                 deleteCriteria
             );
             if (deleteCandidates.length === 0) {
-                throw new Error(CANT_FIND);
+                throw new Error(CANT_FIND + this.entityCls.name);
             }
             if (deleteCandidates.length > 1) {
                 throw new Error(

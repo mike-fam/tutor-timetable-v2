@@ -1,4 +1,5 @@
 import {
+    Check,
     Column,
     Entity,
     JoinTable,
@@ -6,21 +7,28 @@ import {
     ManyToOne,
     OneToMany,
     RelationId,
-    Unique,
+    Unique
 } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
 import { Field, ObjectType } from "type-graphql";
-import { Lazy } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { RequestStatus, RequestType } from "../types/request";
 import { Offer } from "./Offer";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 @Unique(["requester", "session"])
-export class StaffRequest extends CourseRelatedEntity {
+@Check(checkFieldValueInEnum(RequestType, "type"))
+@Check(checkFieldValueInEnum(RequestStatus, "status"))
+export class StaffRequest
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => RequestType)
     @Column("varchar")
     type: RequestType;
@@ -75,5 +83,11 @@ export class StaffRequest extends CourseRelatedEntity {
         const loaders = StaffRequest.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = StaffRequest.loaders;
+        const session = await loaders.session.load(this.sessionId);
+        return await session.getTerm();
     }
 }

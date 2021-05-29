@@ -16,12 +16,17 @@ import { Role } from "../types/user";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(Role, "role"))
 @Unique(["timetable", "user"])
-export class CourseStaff extends CourseRelatedEntity {
+export class CourseStaff
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => Boolean)
     @Column({
         type: Boolean,
@@ -57,9 +62,18 @@ export class CourseStaff extends CourseRelatedEntity {
     @JoinColumn()
     preference: Lazy<Preference> | undefined;
 
+    @RelationId((courseStaff: CourseStaff) => courseStaff.preference)
+    preferenceId: string;
+
     public async getCourse(): Promise<Course> {
         const loaders = CourseStaff.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await loaders.course.load(timetable.courseId);
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = CourseStaff.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await loaders.term.load(timetable.termId);
     }
 }

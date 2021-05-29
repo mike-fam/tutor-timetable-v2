@@ -6,11 +6,15 @@ import { SessionStream } from "./SessionStream";
 import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
 
 @ObjectType()
 @Entity()
 @Unique(["course", "term"])
-export class Timetable extends CourseRelatedEntity {
+export class Timetable
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field()
     @RelationId((timetable: Timetable) => timetable.course)
     courseId: string;
@@ -43,5 +47,9 @@ export class Timetable extends CourseRelatedEntity {
 
     public async getCourse(): Promise<Course> {
         return await Timetable.loaders.course.load(this.courseId);
+    }
+
+    public async getTerm(): Promise<Term> {
+        return await Timetable.loaders.term.load(this.termId);
     }
 }

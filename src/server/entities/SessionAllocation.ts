@@ -5,11 +5,16 @@ import { Field, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
 @Unique(["session", "user"])
-export class SessionAllocation extends CourseRelatedEntity {
+export class SessionAllocation
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
         lazy: true,
@@ -34,5 +39,11 @@ export class SessionAllocation extends CourseRelatedEntity {
         const loaders = SessionAllocation.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = SessionAllocation.loaders;
+        const session = await loaders.session.load(this.sessionId);
+        return await session.getTerm();
     }
 }

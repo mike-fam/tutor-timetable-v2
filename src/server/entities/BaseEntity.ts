@@ -11,7 +11,7 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    protected static loaders: DataLoaders;
+    public static loaders: DataLoaders;
 
     public static setLoaders(loaders: DataLoaders) {
         this.loaders = loaders;

@@ -24,7 +24,8 @@
     "plugins": [
         "react",
         "@typescript-eslint",
-        "prettier"
+        "prettier",
+        "jsdoc"
     ],
     "rules": {
         "semi": ["warn", "always"],

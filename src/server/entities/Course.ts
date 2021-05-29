@@ -2,12 +2,11 @@ import { Column, Entity, OneToMany, RelationId } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
 import { Field, ObjectType } from "type-graphql";
-import { CourseRelatedEntity } from "./CourseRelatedEntity";
-import { User } from "./User";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
-export class Course extends CourseRelatedEntity {
+export class Course extends BaseEntity {
     @Field()
     @Column("varchar", { length: 20, unique: true })
     code: string;
@@ -26,12 +25,4 @@ export class Course extends CourseRelatedEntity {
     // async getTimetables(loader: TimetableLoader) {
     //     return await loader.loadMany(this.timetableIds);
     // }
-
-    public async canRead(user: User): Promise<boolean> {
-        return true;
-    }
-
-    public async getCourse(): Promise<Course> {
-        return this;
-    }
 }
