@@ -12,6 +12,7 @@ import { Course } from "./Course";
 import { Term } from "./Term";
 import asyncFilter from "node-filter-async";
 import { Role } from "../types/user";
+import { asyncMap } from "../../utils/array";
 
 @ObjectType()
 @Entity()
@@ -77,9 +78,12 @@ export class User extends BaseEntity {
     @OneToMany(() => Offer, (offer) => offer.user, { lazy: true })
     offers: Lazy<Offer[]>;
 
+    private getCourseStaff(term: Term): Promise<CourseStaff[]>;
+    private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;
+
     private async getCourseStaff(
-        course: Course,
-        term: Term
+        term: Term,
+        course?: Course
     ): Promise<CourseStaff[]> {
         const loaders = User.loaders;
         const courseStaffs = await loaders.courseStaff.loadMany(
@@ -93,18 +97,35 @@ export class User extends BaseEntity {
                 courseStaff.timetableId
             );
             return (
-                timetable.courseId === course.id && timetable.termId === term.id
+                timetable.termId === term.id &&
+                (!course || course.id === timetable.courseId)
             );
         })) as CourseStaff[];
     }
 
     public async isCoordinatorOf(course: Course, term: Term): Promise<boolean> {
-        return (await this.getCourseStaff(course, term)).some(
+        return (await this.getCourseStaff(term, course)).some(
             (courseStaff) => courseStaff.role === Role.COURSE_COORDINATOR
         );
     }
 
     public async isStaffOf(course: Course, term: Term): Promise<boolean> {
-        return (await this.getCourseStaff(course, term)).length > 0;
+        return (await this.getCourseStaff(term, course)).length > 0;
+    }
+
+    public async coursesCoordinating(term: Term): Promise<Course[]> {
+        const courseStaff = (await this.getCourseStaff(term)).filter(
+            (courseStaff) => courseStaff.role === Role.COURSE_COORDINATOR
+        );
+        return await asyncMap(
+            courseStaff,
+            async (courseStaff) => await courseStaff.getCourse()
+        );
+    }
+
+    public async coursesWorkingIn(term: Term): Promise<Course[]> {
+        return await asyncMap(await this.getCourseStaff(term), (courseStaff) =>
+            courseStaff.getCourse()
+        );
     }
 }

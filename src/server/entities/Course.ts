@@ -4,9 +4,6 @@ import { Lazy } from "../utils/query";
 import { Field, ObjectType } from "type-graphql";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { User } from "./User";
-import { Permission } from "../types/permission";
-import { DataLoaders } from "../types/dataloaders";
-import { Term } from "./Term";
 
 @ObjectType()
 @Entity()
@@ -30,27 +27,8 @@ export class Course extends CourseRelatedEntity {
     //     return await loader.loadMany(this.timetableIds);
     // }
 
-    // TODO maybe inject loaders into superclass
-    private loaders: DataLoaders;
-
-    public async hasPermission(
-        user: User,
-        permission: Permission
-    ): Promise<boolean> {
-        let activeTerm;
-        try {
-            activeTerm = await Term.findOneOrFail({
-                isActive: true,
-            });
-        } catch (e) {
-            throw new Error("No active term");
-        }
-        if (permission === Permission.READ) {
-            return true;
-        } else if (permission === Permission.UPDATE) {
-            return user.isCoordinatorOf(this, activeTerm);
-        }
-        return super.hasPermission(user, permission);
+    public async canRead(user: User): Promise<boolean> {
+        return true;
     }
 
     public async getCourse(): Promise<Course> {

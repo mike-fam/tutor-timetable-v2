@@ -4,6 +4,8 @@ import { Field, Int, ObjectType } from "type-graphql";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { TermType } from "../types/term";
 import { BaseEntity } from "./BaseEntity";
+import isBefore from "date-fns/isBefore";
+import isAfter from "date-fns/isAfter";
 
 @ObjectType()
 @Entity()
@@ -38,4 +40,26 @@ export class Term extends BaseEntity {
     @Field()
     @Column({ default: false })
     isActive: boolean;
+
+    public static async getActiveTerm(): Promise<Term> {
+        const terms = await Term.find();
+        for (const term of terms) {
+            if (term.isActive) {
+                return term;
+            }
+        }
+        const today = new Date();
+        for (const term of terms) {
+            if (
+                isBefore(today, term.endDate) &&
+                isAfter(today, term.startDate)
+            ) {
+                return term;
+            }
+        }
+        throw new Error(
+            "No active term. There must be EXACTLY ONE " +
+                "active term to perform this action."
+        );
+    }
 }
