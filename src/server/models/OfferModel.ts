@@ -25,8 +25,9 @@ export class OfferModel extends BaseModel<Offer>() {
      * A user can update an offer if they are admin or the offer maker.
      * The offer maker can NOT change
      *      * the request or requestId of the offer.
-     *      * the creator of the maker (i.e. themselves)
-     *      * the status of the offer
+     *      * the creator of the offer (i.e. themselves)
+     *      * the status of the offer (it has to be changed by the original
+     *          requester when accepting or rejecting the offer.
      * @param toUpdate
      * @param updatedFields
      * @param user
@@ -37,7 +38,10 @@ export class OfferModel extends BaseModel<Offer>() {
         updatedFields: DeepPartial<Offer>,
         user: User
     ): Promise<boolean> {
-        // if ()
+        if (user.isAdmin) {
+            return true;
+        }
+        // TODO
         return false;
     }
 }

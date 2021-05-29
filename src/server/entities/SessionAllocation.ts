@@ -8,13 +8,14 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { UserRelatedEntity } from "./UserRelatedEntity";
 
 @ObjectType()
 @Entity()
 @Unique(["session", "user"])
 export class SessionAllocation
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
         lazy: true,
@@ -45,5 +46,10 @@ export class SessionAllocation
         const loaders = SessionAllocation.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getTerm();
+    }
+
+    public async getOwner(): Promise<User> {
+        const loaders = SessionAllocation.loaders;
+        return await loaders.user.load(this.userId);
     }
 }

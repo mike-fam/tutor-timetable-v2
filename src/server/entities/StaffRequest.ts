@@ -7,7 +7,7 @@ import {
     ManyToOne,
     OneToMany,
     RelationId,
-    Unique
+    Unique,
 } from "typeorm";
 import { User } from "./User";
 import { Session } from "./Session";
@@ -20,6 +20,7 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { UserRelatedEntity } from "./UserRelatedEntity";
 
 @ObjectType()
 @Entity()
@@ -28,7 +29,7 @@ import { Term } from "./Term";
 @Check(checkFieldValueInEnum(RequestStatus, "status"))
 export class StaffRequest
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
     @Field(() => RequestType)
     @Column("varchar")
     type: RequestType;
@@ -89,5 +90,10 @@ export class StaffRequest
         const loaders = StaffRequest.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getTerm();
+    }
+
+    public async getOwner(): Promise<User> {
+        const loaders = StaffRequest.loaders;
+        return await loaders.user.load(this.requesterId);
     }
 }

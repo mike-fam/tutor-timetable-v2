@@ -6,7 +6,7 @@ import {
     JoinTable,
     ManyToMany,
     ManyToOne,
-    RelationId
+    RelationId,
 } from "typeorm";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { Session } from "./Session";
@@ -18,13 +18,14 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { OfferStatus } from "../types/offer";
+import { UserRelatedEntity } from "./UserRelatedEntity";
 
 @ObjectType()
 @Entity()
 @Check(checkFieldValueInEnum(OfferStatus, "status"))
 export class Offer
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
     @Field(() => StaffRequest)
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
@@ -38,6 +39,9 @@ export class Offer
     @Field(() => User)
     @ManyToOne(() => User, (user) => user.offers, { lazy: true })
     user: Lazy<User>;
+
+    @RelationId((offer: Offer) => offer.user)
+    userId: string;
 
     @Field(() => [Session])
     @ManyToMany(() => Session, (session) => session.offerPreferences, {
@@ -62,5 +66,10 @@ export class Offer
         const loaders = Offer.loaders;
         const request = await loaders.staffRequest.load(this.requestId);
         return await request.getTerm();
+    }
+
+    public async getOwner(): Promise<User> {
+        const loaders = Offer.loaders;
+        return await loaders.user.load(this.userId);
     }
 }

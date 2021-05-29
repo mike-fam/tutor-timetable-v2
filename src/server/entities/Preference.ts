@@ -8,6 +8,8 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { UserRelatedEntity } from "./UserRelatedEntity";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -15,7 +17,7 @@ import { Term } from "./Term";
 @Check(checkFieldValueInEnum(SessionType, "sessionType"))
 export class Preference
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
     @Field(() => SessionType, { nullable: true })
     @Column("varchar", { length: 15, nullable: true })
     sessionType: SessionType | undefined;
@@ -47,5 +49,11 @@ export class Preference
         const loader = Preference.loaders;
         const courseStaff = await loader.courseStaff.load(this.courseStaffId);
         return await courseStaff.getTerm();
+    }
+
+    public async getOwner(): Promise<User> {
+        const loader = Preference.loaders;
+        const courseStaff = await loader.courseStaff.load(this.courseStaffId);
+        return await courseStaff.getOwner();
     }
 }

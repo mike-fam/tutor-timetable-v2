@@ -44,4 +44,9 @@ export class StreamAllocation
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getTerm();
     }
+
+    public async getOwner(): Promise<User> {
+        const loaders = StreamAllocation.loaders;
+        return await loaders.user.load(this.userId);
+    }
 }

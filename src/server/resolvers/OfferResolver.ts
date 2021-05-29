@@ -61,8 +61,7 @@ export class OfferResolver {
             throw new Error("You cannot create an offer for a request you own");
         }
 
-        const isOfferUnique =
-            (await Offer.find({ user, request })).length > 0 ? false : true;
+        const isOfferUnique = (await Offer.find({ user, request })).length <= 0;
 
         if (!isOfferUnique) {
             throw new Error(

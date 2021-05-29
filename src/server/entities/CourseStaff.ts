@@ -19,6 +19,7 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { UserRelatedEntity } from "./UserRelatedEntity";
 
 @ObjectType()
 @Entity()
@@ -26,15 +27,14 @@ import { Term } from "./Term";
 @Unique(["timetable", "user"])
 export class CourseStaff
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
     @Field(() => Boolean)
     @Column({
         type: Boolean,
     })
     isNew: boolean;
 
-    @Field()
-    @Column()
+    @RelationId((courseStaff: CourseStaff) => courseStaff.user)
     userId: string;
 
     @RelationId((courseStaff: CourseStaff) => courseStaff.timetable)
@@ -75,5 +75,10 @@ export class CourseStaff
         const loaders = CourseStaff.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await loaders.term.load(timetable.termId);
+    }
+
+    public async getOwner(): Promise<User> {
+        const loaders = CourseStaff.loaders;
+        return await loaders.user.load(this.userId);
     }
 }
