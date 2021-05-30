@@ -1,4 +1,5 @@
 import {
+    Check,
     Column,
     Entity,
     ManyToOne,
@@ -11,14 +12,17 @@ import { Term } from "./Term";
 import { CourseStaff } from "./CourseStaff";
 import { SessionStream } from "./SessionStream";
 import { Field, ObjectType } from "type-graphql";
-import { Lazy } from "../utils/query";
+import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
+import { FreezeState } from "../types/timetable";
 
 @ObjectType()
 @Entity()
 @Unique(["course", "term"])
+@Check(checkFieldValueInEnum(FreezeState, "permanentRequestLock"))
+@Check(checkFieldValueInEnum(FreezeState, "temporaryRequestLock"))
 export class Timetable
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity {
@@ -51,6 +55,14 @@ export class Timetable
         { lazy: true }
     )
     sessionStreams: Lazy<SessionStream[]>;
+
+    @Field(() => FreezeState)
+    @Column({ enum: FreezeState, default: FreezeState.FREE })
+    permanentRequestLock: FreezeState;
+
+    @Field(() => FreezeState)
+    @Column({ enum: FreezeState, default: FreezeState.FREE })
+    temporaryRequestLock: FreezeState;
 
     public async getCourse(): Promise<Course> {
         return await Timetable.loaders.course.load(this.courseId);

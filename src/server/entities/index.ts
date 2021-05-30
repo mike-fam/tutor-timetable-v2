@@ -8,6 +8,7 @@ import {
     AllocationType,
 } from "../resolvers/AllocatorResolver";
 import { OfferStatus } from "../types/offer";
+import { FreezeState } from "../types/timetable";
 
 registerEnumType(SessionType, {
     name: "SessionType",
@@ -39,6 +40,10 @@ registerEnumType(AllocationType, {
 
 registerEnumType(AllocationStatus, {
     name: "AllocationStatus",
+});
+
+registerEnumType(FreezeState, {
+    name: "FreezeState",
 });
 
 export { Course } from "./Course";
