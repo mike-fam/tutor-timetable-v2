@@ -3,6 +3,7 @@ import { CANT_FIND, PERM_ERR } from "../constants";
 import { BaseEntity } from "../entities/BaseEntity";
 import { DeepPartial, ObjectType } from "typeorm";
 import asyncFilter from "node-filter-async";
+import { PermissionState } from "../types/permission";
 
 export type Model = ReturnType<typeof BaseModel>;
 
@@ -10,30 +11,74 @@ export const BaseModel = <T extends BaseEntity>() => {
     abstract class AbstractBaseModel {
         protected static entityCls: ObjectType<T>;
 
-        protected static async canRead(obj: T, user: User): Promise<boolean> {
-            return user.isAdmin;
+        private static async permRead(
+            obj: T,
+            user: User
+        ): Promise<PermissionState> {
+            if (user.isAdmin) {
+                return { hasPerm: true };
+            }
+            return await this.canRead(obj, user);
+        }
+
+        private static async permUpdate(
+            toUpdate: T,
+            updatedFields: DeepPartial<T>,
+            user: User
+        ): Promise<PermissionState> {
+            if (user.isAdmin) {
+                return { hasPerm: true };
+            }
+            return await this.canUpdate(toUpdate, updatedFields, user);
+        }
+
+        private static async permDelete(
+            toDelete: T,
+            user: User
+        ): Promise<PermissionState> {
+            if (user.isAdmin) {
+                return { hasPerm: true };
+            }
+            return await this.canDelete(toDelete, user);
+        }
+
+        private static async permCreate(
+            toCreate: T,
+            user: User
+        ): Promise<PermissionState> {
+            if (user.isAdmin) {
+                return { hasPerm: true };
+            }
+            return await this.canCreate(toCreate, user);
+        }
+
+        protected static async canRead(
+            obj: T,
+            user: User
+        ): Promise<PermissionState> {
+            return { hasPerm: user.isAdmin };
         }
 
         protected static async canUpdate(
             toUpdate: T,
             updatedFields: DeepPartial<T>,
             user: User
-        ): Promise<boolean> {
-            return user.isAdmin;
+        ): Promise<PermissionState> {
+            return { hasPerm: user.isAdmin };
         }
 
         protected static async canDelete(
             toDelete: T,
             user: User
-        ): Promise<boolean> {
-            return user.isAdmin;
+        ): Promise<PermissionState> {
+            return { hasPerm: user.isAdmin };
         }
 
         protected static async canCreate(
             toCreate: T,
             user: User
-        ): Promise<boolean> {
-            return user.isAdmin;
+        ): Promise<PermissionState> {
+            return { hasPerm: user.isAdmin };
         }
 
         public static async get(
@@ -46,10 +91,11 @@ export const BaseModel = <T extends BaseEntity>() => {
             if (!result) {
                 throw new Error(CANT_FIND + this.entityCls.name);
             }
-            if (await this.canRead(result, user)) {
+            const { hasPerm, errMsg } = await this.permRead(result, user);
+            if (hasPerm) {
                 return result;
             }
-            throw new Error(PERM_ERR);
+            throw new Error(errMsg || PERM_ERR);
         }
 
         public static async getMany(
@@ -57,18 +103,24 @@ export const BaseModel = <T extends BaseEntity>() => {
             user: User
         ): Promise<T[]> {
             const results = await (this.entityCls as any).find(entityLike);
-            return await asyncFilter(
-                results,
-                async (result) => await this.canRead(result, user)
-            );
+            return await asyncFilter(results, async (result) => {
+                const { hasPerm } = await this.permRead(result, user);
+                return hasPerm;
+            });
         }
 
-        public static async getById(entityId: T["id"], user: User): Promise<T> {
+        public static async getById(entityId: string, user: User): Promise<T> {
+            let result: T;
             try {
-                return await (this.entityCls as any).loaders.load(entityId);
+                result = await (this.entityCls as any).loaders.load(entityId);
             } catch (e) {
                 throw new Error(CANT_FIND + this.entityCls.name);
             }
+            const { hasPerm, errMsg } = await this.permRead(result, user);
+            if (hasPerm) {
+                return result;
+            }
+            throw new Error(errMsg || PERM_ERR);
         }
 
         public static async create(
@@ -76,10 +128,11 @@ export const BaseModel = <T extends BaseEntity>() => {
             user: User
         ): Promise<T> {
             const toCreate: T = (this.entityCls as any).create(entityLike);
-            if (await this.canCreate(toCreate, user)) {
+            const { hasPerm, errMsg } = await this.permCreate(toCreate, user);
+            if (hasPerm) {
                 return await toCreate.save();
             }
-            throw new Error(PERM_ERR);
+            throw new Error(errMsg || PERM_ERR);
         }
 
         public static async update(
@@ -99,14 +152,19 @@ export const BaseModel = <T extends BaseEntity>() => {
                 );
             }
             let toUpdate = updateCandidates[0];
-            if (await this.canUpdate(toUpdate, updatedFields, user)) {
+            const { hasPerm, errMsg } = await this.permUpdate(
+                toUpdate,
+                updatedFields,
+                user
+            );
+            if (hasPerm) {
                 toUpdate = {
                     ...toUpdate,
                     ...updatedFields,
                 };
                 return await toUpdate.save();
             }
-            throw new Error(PERM_ERR);
+            throw new Error(errMsg || PERM_ERR);
         }
 
         public static async delete(
@@ -128,10 +186,11 @@ export const BaseModel = <T extends BaseEntity>() => {
             if (!toDelete) {
                 throw new Error(CANT_FIND);
             }
-            if (await this.canDelete(toDelete, user)) {
+            const { hasPerm, errMsg } = await this.permDelete(toDelete, user);
+            if (hasPerm) {
                 return await toDelete.remove();
             }
-            throw new Error(PERM_ERR);
+            throw new Error(errMsg || PERM_ERR);
         }
     }
 

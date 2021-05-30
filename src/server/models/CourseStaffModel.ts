@@ -1,6 +1,7 @@
 import { BaseModel } from "./BaseModel";
-import { CourseStaff, User } from "../entities";
+import { CourseStaff, Preference, Timetable, User } from "../entities";
 import { DeepPartial } from "typeorm";
+import { PermissionState } from "../types/permission";
 
 export class CourseStaffModel extends BaseModel<CourseStaff>() {
     protected static entityCls = CourseStaff;
@@ -16,18 +17,20 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
     protected static async canRead(
         courseStaff: CourseStaff,
         user: User
-    ): Promise<boolean> {
+    ): Promise<PermissionState> {
         if (user.isAdmin) {
-            return true;
+            return { hasPerm: true };
         }
         const loaders = CourseStaff.loaders;
         const userRoles: CourseStaff[] = (await loaders.courseStaff.loadMany(
             user.courseStaffIds
         )) as CourseStaff[];
 
-        return userRoles.some(
-            (userRole) => courseStaff.timetableId === userRole.timetableId
-        );
+        return {
+            hasPerm: userRoles.some(
+                (userRole) => courseStaff.timetableId === userRole.timetableId
+            ),
+        };
     }
 
     /**
@@ -46,15 +49,12 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
         toUpdate: CourseStaff,
         updatedFields: DeepPartial<CourseStaff>,
         user: User
-    ): Promise<boolean> {
-        if (user.isAdmin) {
-            return true;
-        }
+    ): Promise<PermissionState> {
         const course = await toUpdate.getCourse();
         const term = await toUpdate.getTerm();
         // Check if user is coordinator
         if (!(await user.isCoordinatorOf(course, term))) {
-            return false;
+            return { hasPerm: false };
         }
         // Can assume user is coordinator from this point
         // Disallow changing timetable
@@ -62,13 +62,24 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
             updatedFields.timetableId &&
             updatedFields.timetableId !== toUpdate.timetableId
         ) {
-            return false;
+            return { hasPerm: false };
+        }
+        const timetable = updatedFields.timetable as Timetable | undefined;
+        if (timetable && timetable.id !== toUpdate.timetableId) {
+            return { hasPerm: false };
         }
         // Disallow changing preferences
-        return (
-            !!updatedFields.preferenceId ||
-            updatedFields.preferenceId === toUpdate.preferenceId
-        );
+        if (
+            updatedFields.preferenceId &&
+            updatedFields.preferenceId !== toUpdate.preferenceId
+        ) {
+            return { hasPerm: false };
+        }
+        const preference = updatedFields.preference as Preference | undefined;
+        if (preference && preference.id !== toUpdate.preferenceId) {
+            return { hasPerm: false };
+        }
+        return { hasPerm: true };
     }
 
     /**
@@ -82,13 +93,10 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
     protected static async canDelete(
         toDelete: CourseStaff,
         user: User
-    ): Promise<boolean> {
-        if (user.isAdmin) {
-            return true;
-        }
+    ): Promise<PermissionState> {
         const course = await toDelete.getCourse();
         const term = await toDelete.getTerm();
-        return user.isCoordinatorOf(course, term);
+        return { hasPerm: await user.isCoordinatorOf(course, term) };
     }
 
     /**
@@ -102,12 +110,14 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
     protected static async canCreate(
         toCreate: CourseStaff,
         user: User
-    ): Promise<boolean> {
+    ): Promise<PermissionState> {
         // Cannot use course and term directly, have to use timetableId here
         const loaders = CourseStaff.loaders;
-        const timetable = await loaders.timetable.load(toCreate.timetableId);
+        const timetable =
+            (toCreate.timetable as Timetable) ||
+            (await loaders.timetable.load(toCreate.timetableId));
         const course = await timetable.getCourse();
         const term = await timetable.getTerm();
-        return await user.isCoordinatorOf(course, term);
+        return { hasPerm: await user.isCoordinatorOf(course, term) };
     }
 }

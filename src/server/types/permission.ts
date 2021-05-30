@@ -1,6 +1,4 @@
-export enum Permission {
-    READ,
-    CREATE,
-    UPDATE,
-    DELETE,
-}
+export type PermissionState = {
+    hasPerm: boolean;
+    errMsg?: string;
+};

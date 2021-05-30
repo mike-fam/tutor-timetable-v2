@@ -1,6 +1,7 @@
 import { BaseModel } from "./BaseModel";
 import { Course, Term, User } from "../entities";
 import { DeepPartial } from "typeorm";
+import { PermissionState } from "../types/permission";
 
 /**
  * Manages course-related permissions
@@ -20,13 +21,15 @@ export class CourseModel extends BaseModel<Course>() {
     protected static async canRead(
         course: Course,
         user: User
-    ): Promise<boolean> {
-        return true;
+    ): Promise<PermissionState> {
+        return {
+            hasPerm: true,
+        };
     }
 
     /**
      * Checks if a user can update a course
-     * Only course coordinators or admins can update courses.
+     * Only CURRENT course coordinators or admins can update courses.
      * Only admins can change the course code
      * TODO: Fill parameters
      * @param course
@@ -38,12 +41,20 @@ export class CourseModel extends BaseModel<Course>() {
         course: Course,
         updatedFields: DeepPartial<Course>,
         user: User
-    ): Promise<boolean> {
+    ): Promise<PermissionState> {
         // Check if user is course coordinator of course
         if (!(await user.isCoordinatorOf(course, await Term.getActiveTerm()))) {
-            return user.isAdmin;
+            return {
+                hasPerm: user.isAdmin,
+                errMsg:
+                    "You have to be course coordinator to update this course",
+            };
         }
-        // User is coordinator of course at this point
-        return !updatedFields.code || updatedFields.code === course.code;
+        // User is coordinator of course at this point, check if course code is
+        // modified
+        return {
+            hasPerm: !updatedFields.code || updatedFields.code === course.code,
+            errMsg: "Only admins can change the course code",
+        };
     }
 }
