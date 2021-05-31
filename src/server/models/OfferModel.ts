@@ -4,10 +4,16 @@ import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
 import {
     PERMANENT_LOCK_MESSAGE,
+    RequestStatus,
     RequestType,
     TEMPORARY_LOCK_MESSAGE,
 } from "../types/request";
 import { FreezeState } from "../types/timetable";
+import { OfferStatus } from "../types/offer";
+import pick from "lodash/pick";
+import isEqual from "lodash/isEqual";
+import keys from "lodash/keys";
+import omit from "lodash/omit";
 
 export class OfferModel extends BaseModel<Offer>() {
     protected static entityCls = Offer;
@@ -35,6 +41,11 @@ export class OfferModel extends BaseModel<Offer>() {
      *      * the creator of the offer (i.e. themselves)
      *      * the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
+     * The original requester CAN ONLY make change to the the offer status
+     * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
+     * They can NOT change the status to ACCEPTED if there is already another
+     * offer of the same request that's accepted or if the request's status is
+     * not OPEN.
      * @param offer
      * @param updatedFields
      * @param user
@@ -45,52 +56,95 @@ export class OfferModel extends BaseModel<Offer>() {
         updatedFields: DeepPartial<Offer>,
         user: User
     ): Promise<PermissionState> {
-        if (user.id !== (await offer.getOwner()).id) {
-            return { hasPerm: false };
+        const request = await this.entityCls.loaders.staffRequest.load(
+            offer.requestId
+        );
+        // If request is made from offer maker
+        if (user.id === (await offer.getOwner()).id) {
+            // Prevent manual change of offer status
+            if (updatedFields.status && updatedFields.status !== offer.status) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You cannot manually change the offer status",
+                };
+            }
+            // Prevent change of request id
+            if (
+                updatedFields.requestId &&
+                updatedFields.requestId !== offer.requestId
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You cannot change the request of an offer",
+                };
+            }
+            const requestToUpdate = updatedFields.request as
+                | StaffRequest
+                | undefined;
+            if (requestToUpdate && requestToUpdate.id !== offer.requestId) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You cannot change the request of an offer",
+                };
+            }
+            // Prevent change of offer owner
+            if (updatedFields.userId && updatedFields.userId !== offer.userId) {
+                return {
+                    hasPerm: false,
+                    errMsg: "The offer owner has to be yourself",
+                };
+            }
+            const owner = updatedFields.user as StaffRequest | undefined;
+            if (owner && owner.id !== offer.userId) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You cannot update the owner of an offer",
+                };
+            }
+            return { hasPerm: true };
+            // If user is requester
+        } else if (user.id === request.requesterId) {
+            const fieldsToUpdate = omit(
+                pick(offer, keys(updatedFields)),
+                "status"
+            );
+            // Disallow changing any field other than `status`
+            if (!isEqual(fieldsToUpdate, omit(updatedFields, "status"))) {
+                return { hasPerm: false };
+            }
+            if (updatedFields.status === OfferStatus.REJECTED) {
+                return { hasPerm: true };
+            }
+            if (updatedFields.status === OfferStatus.ACCEPTED) {
+                if (request.status !== RequestStatus.OPEN) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "You cannot accept an offer of a closed request.",
+                    };
+                }
+                const otherOffers = (await Offer.loaders.offer.loadMany(
+                    request.offerIds
+                )) as Offer[];
+                return {
+                    hasPerm: !otherOffers.some(
+                        (offer) => offer.status === OfferStatus.ACCEPTED
+                    ),
+                    errMsg:
+                        "You have already accepted an offer for this request",
+                };
+            }
         }
-        // Prevent change of request id
-        if (
-            updatedFields.requestId &&
-            updatedFields.requestId !== offer.requestId
-        ) {
-            return {
-                hasPerm: false,
-                errMsg: "You cannot change the request of an offer",
-            };
-        }
-        const request = updatedFields.request as StaffRequest | undefined;
-        if (request && request.id !== offer.requestId) {
-            return {
-                hasPerm: false,
-                errMsg: "You cannot change the request of an offer",
-            };
-        }
-        // Prevent change of offer owner
-        if (updatedFields.userId && updatedFields.userId !== offer.userId) {
-            return {
-                hasPerm: false,
-                errMsg: "The offer owner has to be yourself",
-            };
-        }
-        const owner = updatedFields.user as StaffRequest | undefined;
-        if (owner && owner.id !== offer.userId) {
-            return {
-                hasPerm: false,
-                errMsg: "The offer owner has to be yourself",
-            };
-        }
-        // Prevent manual change of offer status
-        if (updatedFields.status && updatedFields.status !== offer.status) {
-            return { hasPerm: false };
-        }
-        return { hasPerm: true };
+        return { hasPerm: false };
     }
 
     /**
-     * A user can delete an offer if ANY of these conditions hold
-     *      * they are admin
-     *      * they are course coordinator (i.e. supervisor) of the offer maker
-     *      * they are the offer maker
+     * A user can delete an offer if
+     * they are admin
+     * OR
+     * they are course coordinator (i.e. supervisor) of the offer maker
+     * OR
+     * they are the offer maker AND the status of the offer is not ACCEPTED
      * @param offer
      * @param user
      * @protected
@@ -106,7 +160,16 @@ export class OfferModel extends BaseModel<Offer>() {
             return { hasPerm: true };
         }
         // Allow offer owner only
-        return { hasPerm: offer.userId === user.id };
+        if (offer.userId !== user.id) {
+            return { hasPerm: false };
+        }
+        if (offer.status === OfferStatus.ACCEPTED) {
+            return {
+                hasPerm: false,
+                errMsg: "You cannot delete an offer that's already accepted",
+            };
+        }
+        return { hasPerm: true };
     }
 
     /**

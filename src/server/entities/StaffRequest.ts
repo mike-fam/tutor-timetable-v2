@@ -89,6 +89,9 @@ export class StaffRequest
     @OneToMany(() => Offer, (offer) => offer.request, { lazy: true })
     offers: Lazy<Offer[]>;
 
+    @RelationId((request: StaffRequest) => request.offers)
+    offerIds: string[]
+
     public async getCourse(): Promise<Course> {
         const loaders = StaffRequest.loaders;
         const session = await loaders.session.load(this.sessionId);
