@@ -6,6 +6,7 @@ import { TermType } from "../types/term";
 import { BaseEntity } from "./BaseEntity";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
+import { RelationId } from "typeorm/browser";
 
 @ObjectType()
 @Entity()
@@ -36,6 +37,9 @@ export class Term extends BaseEntity {
     @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.termId, { lazy: true })
     timetables: Lazy<Timetable[]>;
+
+    @RelationId((term: Term) => term.timetables)
+    timetableIds: string[];
 
     @Field()
     @Column({ default: false })

@@ -78,6 +78,9 @@ export class User extends BaseEntity {
     @OneToMany(() => Offer, (offer) => offer.user, { lazy: true })
     offers: Lazy<Offer[]>;
 
+    @RelationId((user: User) => user.offers)
+    offerIds: string[];
+
     private getCourseStaff(term: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;
 

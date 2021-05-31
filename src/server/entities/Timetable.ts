@@ -17,6 +17,8 @@ import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { FreezeState } from "../types/timetable";
+import { StaffRequest } from "./StaffRequest";
+import { RequestType } from "../types/request";
 
 @ObjectType()
 @Entity()
@@ -70,5 +72,15 @@ export class Timetable
 
     public async getTerm(): Promise<Term> {
         return await Timetable.loaders.term.load(this.termId);
+    }
+
+    public static async fromCourseTerm(
+        course: Course,
+        term: Term
+    ): Promise<Timetable> {
+        const timetableId = course.timetableIds.find((timetableId) =>
+            term.timetableIds.includes(timetableId)
+        )!;
+        return Timetable.loaders.timetable.load(timetableId);
     }
 }

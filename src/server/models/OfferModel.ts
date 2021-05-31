@@ -1,14 +1,20 @@
 import { BaseModel } from "./BaseModel";
-import { Offer, StaffRequest, User } from "../entities";
+import { Offer, StaffRequest, Timetable, User } from "../entities";
 import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
+import {
+    PERMANENT_LOCK_MESSAGE,
+    RequestType,
+    TEMPORARY_LOCK_MESSAGE,
+} from "../types/request";
+import { FreezeState } from "../types/timetable";
 
 export class OfferModel extends BaseModel<Offer>() {
     protected static entityCls = Offer;
 
     /**
-     * A user can read an offer entry if they are admin or they work in the
-     * same course as the offer maker
+     * A user can read an offer entry if they are admin OR
+     * they work in the same course as the offer maker
      * @param offer
      * @param user
      * @protected
@@ -112,10 +118,12 @@ export class OfferModel extends BaseModel<Offer>() {
      *          to themself
      *      * They are a staff member of the same course and term of the request
      *          maker
-     *      * The request the offer is directed to is not their own request
-     *      * They have not already made an offer for that request
+     *      * The request the offer is not for one of their own requests
+     *      * They have not already made an offer for said request
      *      * That request is not frozen
-     *
+     *      * if that request has `allowNonPrefOffers` set to false,
+     *          all sessions specified in the `preferences` field have to
+     *          be in the `swapPreference` field of the request.
      * @param offer
      * @param user
      * @protected
@@ -124,6 +132,95 @@ export class OfferModel extends BaseModel<Offer>() {
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
-        return { hasPerm: user.isAdmin };
+        // Check if user on offer and user making request are the same person
+        if (offer.userId && offer.userId !== user.id) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot create a new offer on behalf of someone else",
+            };
+        }
+        const offerMaker = offer.user as User | undefined;
+        if (offerMaker && offerMaker.id !== user.id) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot create a new offer on behalf of someone else",
+            };
+        }
+
+        // Check if user works on the same course and term of the requester
+        const requestId = offer.requestId || (await offer.request).id;
+        const request = await this.entityCls.loaders.staffRequest.load(
+            requestId
+        );
+        const course = await request.getCourse();
+        const term = await request.getTerm();
+        if (!(await user.isStaffOf(course, term))) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot make an offer for a request of another course",
+            };
+        }
+        // Check if offer is for a request of that user
+        const requester = await request.getOwner();
+        if (requester.id === user.id) {
+            return {
+                hasPerm: false,
+                errMsg: "You cannot make an offer for a request of your own",
+            };
+        }
+        // Check if user already has an offer of that request
+        const offersMade = (await this.entityCls.loaders.offer.loadMany(
+            user.offerIds
+        )) as Offer[];
+        const requestIds = offersMade.map((offer) => offer.requestId);
+        if (requestIds.includes(requestId)) {
+            return {
+                hasPerm: false,
+                errMsg: "You already made an offer for this request",
+            };
+        }
+        // Check if request is frozen
+        const timetable = await Timetable.fromCourseTerm(course, term);
+        // Temporary request
+        if (request.type === RequestType.TEMPORARY) {
+            // Cannot make offer if frozen
+            if (timetable.temporaryRequestLock === FreezeState.LOCK) {
+                return {
+                    hasPerm: false,
+                    errMsg: TEMPORARY_LOCK_MESSAGE,
+                };
+            }
+        } else if (request.type === RequestType.PERMANENT) {
+            // Cannot make offer if frozen
+            if (timetable.permanentRequestLock === FreezeState.LOCK) {
+                return {
+                    hasPerm: false,
+                    errMsg: PERMANENT_LOCK_MESSAGE,
+                };
+            }
+        }
+        if (!request.allowNonPrefOffers) {
+            const sessionPreferenceIds = (await offer.preferences).map(
+                (session) => session.id
+            );
+            // If any of sessionPreferenceIds not in request.swapPreference
+            if (
+                sessionPreferenceIds.some(
+                    (sessionId) =>
+                        !request.swapPreferenceSessionIds.includes(sessionId)
+                )
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot specify a session that's not included" +
+                        "in the original swap preference",
+                };
+            }
+        }
+        return { hasPerm: true };
     }
 }

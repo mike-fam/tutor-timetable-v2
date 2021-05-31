@@ -82,6 +82,9 @@ export class StaffRequest
     @JoinTable()
     swapPreference: Lazy<Session[]>;
 
+    @RelationId((request: StaffRequest) => request.swapPreference)
+    swapPreferenceSessionIds: string[];
+
     @Field(() => [Offer])
     @OneToMany(() => Offer, (offer) => offer.request, { lazy: true })
     offers: Lazy<Offer[]>;
