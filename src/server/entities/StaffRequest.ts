@@ -46,6 +46,10 @@ export class StaffRequest
     @Column("varchar")
     status: RequestStatus;
 
+    @Field()
+    @Column({ default: false })
+    allowNonPrefOffers: boolean;
+
     @RelationId((request: StaffRequest) => request.requester)
     @Column()
     requesterId: string;
