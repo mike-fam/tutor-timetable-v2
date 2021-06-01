@@ -12,6 +12,7 @@ import { FreezeState } from "../types/timetable";
 import { OfferStatus } from "../types/offer";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
+import { canAcceptRequest, canRequestForApproval } from "../utils/requests";
 
 export class OfferModel extends BaseModel<Offer>() {
     protected static entityCls = Offer;
@@ -39,11 +40,11 @@ export class OfferModel extends BaseModel<Offer>() {
      *      * the creator of the offer (i.e. themselves)
      *      * the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
-     * The original requester CAN ONLY make change to the the offer status
+     * The original requester CAN ONLY make changes to the the offer status
      * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
      * They can NOT change the status to ACCEPTED if there is already another
      * offer of the same request that's accepted, OR if the request's status is
-     * not OPEN, OR if the requested is frozen.
+     * not OPEN, OR if the request is frozen.
      *
      * Course coordinators can change the state of the offer status from
      * AWAITING_APPROVAL to ACCEPTED or REJECTED
@@ -105,7 +106,7 @@ export class OfferModel extends BaseModel<Offer>() {
                 };
             }
             return { hasPerm: true };
-            // If user is requester
+            // If user is the requester
         } else if (user.id === request.requesterId) {
             // Disallow changing any field other than `status`
             if (!isEmpty(omit(updatedFields, "status"))) {
@@ -119,12 +120,15 @@ export class OfferModel extends BaseModel<Offer>() {
                         "You cannot make changes to an offer that's not open",
                 };
             }
-            // Always allow user to reject offer
+            // Always allow user to reject the offer
             if (updatedFields.status === OfferStatus.REJECTED) {
                 return { hasPerm: true };
             }
-            // If user wants to accept request
-            if (updatedFields.status === OfferStatus.ACCEPTED) {
+            // If user wants to accept the offer
+            if (
+                updatedFields.status === OfferStatus.ACCEPTED ||
+                updatedFields.status === OfferStatus.AWAITING_APPROVAL
+            ) {
                 // Prevent user from accepting a closed request
                 if (request.status !== RequestStatus.OPEN) {
                     return {
@@ -133,7 +137,12 @@ export class OfferModel extends BaseModel<Offer>() {
                             "You cannot accept an offer of a closed request.",
                     };
                 }
-                if (!timetable.canAcceptRequest(request)) {
+                // Prevent user from marking offer as accepted when there's a
+                // freeze
+                if (
+                    updatedFields.status === OfferStatus.ACCEPTED &&
+                    !canAcceptRequest(request, timetable)
+                ) {
                     return {
                         hasPerm: false,
                         errMsg:
@@ -142,7 +151,19 @@ export class OfferModel extends BaseModel<Offer>() {
                             "coordinators",
                     };
                 }
-                // Prevent user from accepting multiple requests
+                // Prevent user from requesting offer approval if request is frozen
+                if (
+                    updatedFields.status === OfferStatus.AWAITING_APPROVAL &&
+                    !canRequestForApproval(request, timetable)
+                ) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "Cannot request for approval because requests" +
+                            " are currently frozen",
+                    };
+                }
+                // Prevent user from accepting multiple offers
                 const otherOffers = (await Offer.loaders.offer.loadMany(
                     request.offerIds
                 )) as Offer[];
@@ -159,7 +180,38 @@ export class OfferModel extends BaseModel<Offer>() {
                             "You have already accepted an offer for this request",
                     };
                 }
+                // Allow user to accept offer by this point
+                return { hasPerm: true };
             }
+            // Disallow updating the offer status to any other value
+            return { hasPerm: false };
+            // If user is course coordinator
+        } else if (await user.isCoordinatorOf(course, term)) {
+            // Disallow changing any field other than `status`
+            if (!isEmpty(omit(updatedFields, "status"))) {
+                return { hasPerm: false };
+            }
+            // Disallow any operation if offer is not awaiting for approval
+            if (offer.status !== OfferStatus.AWAITING_APPROVAL) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot make changes to an offer that's not " +
+                        "awaiting for your approval",
+                };
+            }
+            // Disallow changing offer status to anything other than rejected
+            // and accepted
+            if (
+                updatedFields.status !== OfferStatus.REJECTED &&
+                updatedFields.status !== OfferStatus.ACCEPTED
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You can only approve or reject this offer.",
+                };
+            }
+            return { hasPerm: true };
         }
         return { hasPerm: false };
     }

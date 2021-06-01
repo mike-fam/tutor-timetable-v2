@@ -1,9 +1,9 @@
-import { Arg, Ctx, Query, Resolver } from "type-graphql";
-import { Course } from "../entities";
+import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import { Course, Timetable } from "../entities";
 import { CourseModel } from "../models/CourseModel";
 import { MyContext } from "../types/context";
 
-@Resolver()
+@Resolver(() => Course)
 export class CourseResolver {
     @Query(() => [Course])
     async courses(@Ctx() { req }: MyContext): Promise<Course[]> {
@@ -16,5 +16,12 @@ export class CourseResolver {
         @Ctx() { req }: MyContext
     ): Promise<Course> {
         return await CourseModel.getById(courseId, req.user);
+    }
+
+    @FieldResolver(() => [Timetable])
+    async timetables(@Root() course: Course): Promise<Timetable[]> {
+        return (await Course.loaders.timetable.loadMany(
+            course.timetableIds
+        )) as Timetable[];
     }
 }

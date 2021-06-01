@@ -12,7 +12,7 @@ export class CourseModel extends BaseModel<Course>() {
     protected static entityCls = Course;
 
     /**
-     * Anyone can read courses
+     * Anyone can read any course
      * TODO: Fill parameters
      * @param course
      * @param user
@@ -45,7 +45,7 @@ export class CourseModel extends BaseModel<Course>() {
         // Check if user is course coordinator of course
         if (!(await user.isCoordinatorOf(course, await Term.getActiveTerm()))) {
             return {
-                hasPerm: user.isAdmin,
+                hasPerm: false,
                 errMsg:
                     "You have to be course coordinator to update this course",
             };

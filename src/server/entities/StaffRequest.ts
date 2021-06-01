@@ -58,11 +58,13 @@ export class StaffRequest
     @Column()
     sessionId: string;
 
-    @Field(() => User)
+    @RelationId((request: StaffRequest) => request.acceptor)
+    @Column()
+    acceptorId: string;
+
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })
     requester: Lazy<User>;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.acceptedRequests, { lazy: true })
     acceptor: Lazy<User>;
 
@@ -90,7 +92,7 @@ export class StaffRequest
     offers: Lazy<Offer[]>;
 
     @RelationId((request: StaffRequest) => request.offers)
-    offerIds: string[]
+    offerIds: string[];
 
     public async getCourse(): Promise<Course> {
         const loaders = StaffRequest.loaders;
