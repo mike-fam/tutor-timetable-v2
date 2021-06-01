@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, RelationId } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, RelationId } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
@@ -13,6 +13,7 @@ import { Term } from "./Term";
 import asyncFilter from "node-filter-async";
 import { Role } from "../types/user";
 import { asyncMap } from "../../utils/array";
+import { UserSettings } from "./UserSettings";
 
 @ObjectType()
 @Entity()
@@ -80,6 +81,10 @@ export class User extends BaseEntity {
 
     @RelationId((user: User) => user.offers)
     offerIds: string[];
+
+    @Field(() => UserSettings)
+    @OneToOne(() => UserSettings, (settings) => settings.user, { lazy: true })
+    settings: Lazy<User>;
 
     private getCourseStaff(term: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;

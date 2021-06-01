@@ -34,7 +34,7 @@ export class Term extends BaseEntity {
     weekNames: Array<string>;
 
     @Field(() => [Timetable])
-    @OneToMany(() => Timetable, (timetable) => timetable.termId, { lazy: true })
+    @OneToMany(() => Timetable, (timetable) => timetable.term, { lazy: true })
     timetables: Lazy<Timetable[]>;
 
     @RelationId((term: Term) => term.timetables)

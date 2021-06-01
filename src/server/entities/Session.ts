@@ -10,7 +10,7 @@ import {
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
@@ -39,7 +39,7 @@ export class Session
     @Column("varchar", { length: 15 })
     location: string;
 
-    @Field()
+    @Field(() => Int)
     @Column()
     week: number;
 
