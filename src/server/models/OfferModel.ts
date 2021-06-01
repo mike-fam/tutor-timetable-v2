@@ -8,11 +8,14 @@ import {
     RequestType,
     TEMPORARY_LOCK_MESSAGE,
 } from "../types/request";
-import { FreezeState } from "../types/timetable";
 import { OfferStatus } from "../types/offer";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
-import { canAcceptRequest, canRequestForApproval } from "../utils/requests";
+import {
+    canAcceptRequest,
+    canMakeNewOffer,
+    canRequestForApproval,
+} from "../utils/requests";
 
 export class OfferModel extends BaseModel<Offer>() {
     protected static entityCls = Offer;
@@ -325,23 +328,14 @@ export class OfferModel extends BaseModel<Offer>() {
         }
         // Check if request is frozen
         const timetable = await Timetable.fromCourseTerm(course, term);
-        // Temporary request
-        if (request.type === RequestType.TEMPORARY) {
-            // Cannot make offer if frozen
-            if (timetable.temporaryRequestLock === FreezeState.LOCK) {
-                return {
-                    hasPerm: false,
-                    errMsg: TEMPORARY_LOCK_MESSAGE,
-                };
-            }
-        } else if (request.type === RequestType.PERMANENT) {
-            // Cannot make offer if frozen
-            if (timetable.permanentRequestLock === FreezeState.LOCK) {
-                return {
-                    hasPerm: false,
-                    errMsg: PERMANENT_LOCK_MESSAGE,
-                };
-            }
+        if (!canMakeNewOffer(request, timetable)) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    request.type === RequestType.TEMPORARY
+                        ? TEMPORARY_LOCK_MESSAGE
+                        : PERMANENT_LOCK_MESSAGE,
+            };
         }
         if (!request.allowNonPrefOffers) {
             const sessionPreferenceIds = (await offer.preferences).map(
