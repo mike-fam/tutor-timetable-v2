@@ -2,4 +2,5 @@ export enum OfferStatus {
     OPEN = "OPEN",
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
+    AWAITING_APPROVAL = "AWAITING_APPROVAL",
 }

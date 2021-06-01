@@ -53,9 +53,8 @@ export class Offer
     @JoinTable()
     preferences: Lazy<Session[]>;
 
-    // TODO: Offer status
     @Field(() => OfferStatus)
-    @Column({ enum: OfferStatus })
+    @Column({ enum: OfferStatus, default: OfferStatus.OPEN })
     status: OfferStatus;
 
     public async getCourse(): Promise<Course> {

@@ -1,4 +1,4 @@
-import { Check, Column, Entity, OneToMany, Unique } from "typeorm";
+import { Check, Column, Entity, OneToMany, RelationId, Unique } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Field, Int, ObjectType } from "type-graphql";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
@@ -6,7 +6,6 @@ import { TermType } from "../types/term";
 import { BaseEntity } from "./BaseEntity";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
-import { RelationId } from "typeorm/browser";
 
 @ObjectType()
 @Entity()

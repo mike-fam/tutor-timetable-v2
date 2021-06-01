@@ -10,9 +10,7 @@ import {
 } from "../types/request";
 import { FreezeState } from "../types/timetable";
 import { OfferStatus } from "../types/offer";
-import pick from "lodash/pick";
-import isEqual from "lodash/isEqual";
-import keys from "lodash/keys";
+import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 
 export class OfferModel extends BaseModel<Offer>() {
@@ -44,8 +42,12 @@ export class OfferModel extends BaseModel<Offer>() {
      * The original requester CAN ONLY make change to the the offer status
      * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
      * They can NOT change the status to ACCEPTED if there is already another
-     * offer of the same request that's accepted or if the request's status is
-     * not OPEN.
+     * offer of the same request that's accepted, OR if the request's status is
+     * not OPEN, OR if the requested is frozen.
+     *
+     * Course coordinators can change the state of the offer status from
+     * AWAITING_APPROVAL to ACCEPTED or REJECTED
+     *
      * @param offer
      * @param updatedFields
      * @param user
@@ -56,9 +58,10 @@ export class OfferModel extends BaseModel<Offer>() {
         updatedFields: DeepPartial<Offer>,
         user: User
     ): Promise<PermissionState> {
-        const request = await this.entityCls.loaders.staffRequest.load(
-            offer.requestId
-        );
+        const request = await Offer.loaders.staffRequest.load(offer.requestId);
+        const course = await offer.getCourse();
+        const term = await offer.getTerm();
+        const timetable = await Timetable.fromCourseTerm(course, term);
         // If request is made from offer maker
         if (user.id === (await offer.getOwner()).id) {
             // Prevent manual change of offer status
@@ -104,18 +107,25 @@ export class OfferModel extends BaseModel<Offer>() {
             return { hasPerm: true };
             // If user is requester
         } else if (user.id === request.requesterId) {
-            const fieldsToUpdate = omit(
-                pick(offer, keys(updatedFields)),
-                "status"
-            );
             // Disallow changing any field other than `status`
-            if (!isEqual(fieldsToUpdate, omit(updatedFields, "status"))) {
+            if (!isEmpty(omit(updatedFields, "status"))) {
                 return { hasPerm: false };
             }
+            // Disallow any operation if offer is not open
+            if (offer.status !== OfferStatus.OPEN) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot make changes to an offer that's not open",
+                };
+            }
+            // Always allow user to reject offer
             if (updatedFields.status === OfferStatus.REJECTED) {
                 return { hasPerm: true };
             }
+            // If user wants to accept request
             if (updatedFields.status === OfferStatus.ACCEPTED) {
+                // Prevent user from accepting a closed request
                 if (request.status !== RequestStatus.OPEN) {
                     return {
                         hasPerm: false,
@@ -123,16 +133,32 @@ export class OfferModel extends BaseModel<Offer>() {
                             "You cannot accept an offer of a closed request.",
                     };
                 }
+                if (!timetable.canAcceptRequest(request)) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "Cannot accept request because requests either" +
+                            " are frozen or need to be approved by course " +
+                            "coordinators",
+                    };
+                }
+                // Prevent user from accepting multiple requests
                 const otherOffers = (await Offer.loaders.offer.loadMany(
                     request.offerIds
                 )) as Offer[];
-                return {
-                    hasPerm: !otherOffers.some(
-                        (offer) => offer.status === OfferStatus.ACCEPTED
-                    ),
-                    errMsg:
-                        "You have already accepted an offer for this request",
-                };
+                if (
+                    !otherOffers.some(
+                        (offer) =>
+                            offer.status === OfferStatus.ACCEPTED ||
+                            offer.status === OfferStatus.AWAITING_APPROVAL
+                    )
+                ) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "You have already accepted an offer for this request",
+                    };
+                }
             }
         }
         return { hasPerm: false };
