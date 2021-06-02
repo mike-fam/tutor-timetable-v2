@@ -2,6 +2,7 @@ import { StaffRequest, User } from "../entities";
 import { BaseModel } from "./BaseModel";
 import { PermissionState } from "../types/permission";
 import { DeepPartial } from "typeorm";
+import { RequestStatus } from "../types/request";
 
 export class RequestModel extends BaseModel<StaffRequest>() {
     protected static entityCls = StaffRequest;
@@ -45,9 +46,27 @@ export class RequestModel extends BaseModel<StaffRequest>() {
 
         // Makes sure the user is the same user that created the request.
         if (user.id === request.id) {
+            // placeholder
+            return { hasPerm: false };
         }
         // if user is course coordinator
         if (user.isCoordinatorOf(course, term)) {
+            // If request is already closed, they cannot make changes.
+            if (request.status === RequestStatus.CLOSED) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "The request is closed and cannot have any changes made to it.",
+                };
+            }
+            // If finaliser field is not the same as the user.
+            if (updatedFields.finaliser && updatedFields.finaliser !== user) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot set the finaliser as anyone except yourself.",
+                };
+            }
         }
         return { hasPerm: false };
     }
