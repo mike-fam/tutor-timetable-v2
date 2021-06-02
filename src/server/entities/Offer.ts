@@ -53,9 +53,27 @@ export class Offer
     @JoinTable()
     preferences: Lazy<Session[]>;
 
+    @RelationId((offer: Offer) => offer.preferences)
+    preferenceSessionIds: string[];
+
     @Field(() => OfferStatus)
     @Column({ enum: OfferStatus, default: OfferStatus.OPEN })
     status: OfferStatus;
+
+    @Field(() => [Session])
+    @ManyToOne(() => Session, (session) => session.acceptedOffers, {
+        lazy: true,
+        nullable: true,
+    })
+    acceptedSession: Lazy<Session>;
+
+    @RelationId((offer: Offer) => offer.acceptedSession)
+    @Column({ nullable: true })
+    acceptedSessionId: string;
+
+    @Field()
+    @Column({ default: false })
+    mustSwap: boolean;
 
     public async getCourse(): Promise<Course> {
         const loaders = Offer.loaders;

@@ -16,6 +16,7 @@ import {
     User,
 } from "./entities";
 import { UserSettings } from "./entities/UserSettings";
+import { OfferSubscriber } from "./subscribers/OfferSubscriber";
 
 export default {
     type: "postgres",
@@ -41,6 +42,7 @@ export default {
             ? "build/server/migrations/*.js"
             : "src/server/migrations/*.ts",
     ],
+    subscribers: [OfferSubscriber],
     logging: !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
         migrationsDir: __prod__

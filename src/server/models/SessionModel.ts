@@ -1,5 +1,5 @@
 import { BaseModel } from "./BaseModel";
-import { Offer, Session, User } from "../entities";
+import { Session, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { DeepPartial } from "typeorm";
 
@@ -18,5 +18,25 @@ export class SessionModel extends BaseModel<Session>() {
         const course = await session.getCourse();
         const term = await session.getTerm();
         return { hasPerm: await user.isStaffOf(course, term) };
+    }
+
+    /**
+     * A user can update a session if ANY of these conditions hold
+     * They are admin
+     * OR
+     * They are the course coordinator AND
+     *      * They don't change the session stream
+     *      * They
+     * @param session
+     * @param updatedFields
+     * @param user
+     * @protected
+     */
+    protected static async canUpdate(
+        session: Session,
+        updatedFields: DeepPartial<Session>,
+        user: User
+    ): Promise<PermissionState> {
+        return { hasPerm: false };
     }
 }

@@ -59,7 +59,7 @@ export class StaffRequest
     sessionId: string;
 
     @RelationId((request: StaffRequest) => request.acceptor)
-    @Column()
+    @Column({ nullable: true })
     acceptorId: string;
 
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })

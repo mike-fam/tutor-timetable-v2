@@ -206,8 +206,33 @@ export class OfferModel extends BaseModel<Offer>() {
                     return {
                         hasPerm: false,
                         errMsg:
-                            "You have already accepted an offer for this request",
+                            "You have already accepted an offer for this " +
+                            "request.",
                     };
+                }
+                if (
+                    offer.mustSwap &&
+                    !updatedFields.acceptedSession &&
+                    !updatedFields.acceptedSessionId
+                ) {
+                    return {
+                        hasPerm: false,
+                        errMsg: "You have to specify the session you want to " +
+                            "swap with the offerer."
+                    };
+                }
+                let acceptedSession: Session;
+                if (updatedFields.acceptedSessionId) {
+                    acceptedSession = await Offer.loaders.session.load(updatedFields.acceptedSessionId)
+                } else {
+                    acceptedSession = (await updatedFields.acceptedSession) as Session;
+                }
+                if (!offer.preferenceSessionIds.includes(acceptedSession.id)) {
+                    return {
+                        hasPerm: false,
+                        errMsg: "You have to accept one of the sessions that" +
+                            "the offerer specified."
+                    }
                 }
                 // Allow user to accept offer by this point
                 return { hasPerm: true };

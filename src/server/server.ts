@@ -43,6 +43,7 @@ import {
 } from "./entities";
 import { UserSettings } from "./entities/UserSettings";
 import { LoadersInjector } from "./middlewares/loaders-injection";
+import { OfferStatus } from "./types/offer";
 
 const main = async () => {
     await createConnection(ormconfig);

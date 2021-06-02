@@ -70,6 +70,10 @@ export class Session
     @ManyToMany(() => Offer, (offer) => offer.preferences, { lazy: true })
     offerPreferences: Lazy<Offer[]>;
 
+    @Field(() => Offer)
+    @OneToMany(() => Offer, (offer) => offer.acceptedSession, { lazy: true })
+    acceptedOffers: Lazy<Offer[]>;
+
     public async getCourse(): Promise<Course> {
         const loaders = Session.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
@@ -91,5 +95,24 @@ export class Session
             loaders.user.load(allocation.userId)
         );
         return users;
+    }
+
+    public async allocate(user: User): Promise<void> {
+        const allocation = SessionAllocation.create({
+            session: this,
+            user,
+        });
+        await allocation.save();
+    }
+
+    public async deallocate(user: User): Promise<void> {
+        const allocation = await SessionAllocation.findOne({
+            session: this,
+            user,
+        });
+        if (!allocation) {
+            return;
+        }
+        await allocation.remove();
     }
 }
