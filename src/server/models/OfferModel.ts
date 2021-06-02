@@ -43,6 +43,10 @@ export class OfferModel extends BaseModel<Offer>() {
      *      * the creator of the offer (i.e. themselves)
      *      * the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
+     * The offer maker CAN make changes to the preferences, but the end
+     * preference MUST only contain ONLY sessions they are assigned to, and ALL
+     * sessions must be of the same course and term
+     *
      * The original requester CAN ONLY make changes to the the offer status
      * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
      * They can NOT change the status to ACCEPTED if there is already another
@@ -106,6 +110,24 @@ export class OfferModel extends BaseModel<Offer>() {
                 return {
                     hasPerm: false,
                     errMsg: "You cannot update the owner of an offer",
+                };
+            }
+            // TODO Check if offer preferences only contain sessions the user works on
+            const allocatedSessions = await user.allocatedSessions(
+                course,
+                term
+            );
+            if (
+                allocatedSessions.some(
+                    (allocatedSession) =>
+                        allocatedSession.id === request.sessionId
+                )
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot make an offer for this request because you" +
+                        " works on the requested session.",
                 };
             }
             return { hasPerm: true };
@@ -262,12 +284,14 @@ export class OfferModel extends BaseModel<Offer>() {
      *          to themself
      *      * They are a staff member of the same course and term of the request
      *          maker
-     *      * The request the offer is not for one of their own requests
+     *      * The offer is not for one of their own requests
      *      * They have not already made an offer for said request
      *      * That request is not frozen
      *      * if that request has `allowNonPrefOffers` set to false,
      *          all sessions specified in the `preferences` field have to
      *          be in the `swapPreference` field of the request.
+     *      * That user has not already worked on the session on the request
+     *      * The swap preference only contains sessions that they work on
      * @param offer
      * @param user
      * @protected
@@ -276,6 +300,7 @@ export class OfferModel extends BaseModel<Offer>() {
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
+        const loaders = this.entityCls.loaders;
         // Check if user on offer and user making request are the same person
         if (offer.userId && offer.userId !== user.id) {
             return {
@@ -295,9 +320,7 @@ export class OfferModel extends BaseModel<Offer>() {
 
         // Check if user works on the same course and term of the requester
         const requestId = offer.requestId || (await offer.request).id;
-        const request = await this.entityCls.loaders.staffRequest.load(
-            requestId
-        );
+        const request = await loaders.staffRequest.load(requestId);
         const course = await request.getCourse();
         const term = await request.getTerm();
         if (!(await user.isStaffOf(course, term))) {
@@ -316,7 +339,7 @@ export class OfferModel extends BaseModel<Offer>() {
             };
         }
         // Check if user already has an offer of that request
-        const offersMade = (await this.entityCls.loaders.offer.loadMany(
+        const offersMade = (await loaders.offer.loadMany(
             user.offerIds
         )) as Offer[];
         const requestIds = offersMade.map((offer) => offer.requestId);
@@ -326,6 +349,33 @@ export class OfferModel extends BaseModel<Offer>() {
                 errMsg: "You already made an offer for this request",
             };
         }
+        // Check if user already works on session in request
+        const session = await loaders.session.load(request.sessionId);
+        const allocatedUsers = await session.getAllocatedUsers();
+        if (allocatedUsers.some((allocated) => allocated.id === user.id)) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot make an offer for this request because you" +
+                    " works on the requested session.",
+            };
+        }
+        // Check if offer preferences only contain sessions the user works on
+        // and all the sessions belong to the same course and term
+        const allocatedSessions = await user.allocatedSessions(course, term);
+        if (
+            allocatedSessions.some(
+                (allocatedSession) => allocatedSession.id === session.id
+            )
+        ) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot make an offer for this request because you" +
+                    " works on the requested session.",
+            };
+        }
+
         // Check if request is frozen
         const timetable = await Timetable.fromCourseTerm(course, term);
         if (!canMakeNewOffer(request, timetable)) {
@@ -337,6 +387,7 @@ export class OfferModel extends BaseModel<Offer>() {
                         : PERMANENT_LOCK_MESSAGE,
             };
         }
+        // Respect requester's swap preference
         if (!request.allowNonPrefOffers) {
             const sessionPreferenceIds = (await offer.preferences).map(
                 (session) => session.id

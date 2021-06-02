@@ -5,7 +5,7 @@ import { DeepPartial } from "typeorm";
 
 export class SessionModel extends BaseModel<Session>() {
     /**
-     * A user can read an session if they are admin OR
+     * A user can read a session if they are admin OR
      * they work in the same course that the session belongs to
      * @param session
      * @param user

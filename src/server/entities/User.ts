@@ -14,6 +14,7 @@ import asyncFilter from "node-filter-async";
 import { Role } from "../types/user";
 import { asyncMap } from "../../utils/array";
 import { UserSettings } from "./UserSettings";
+import { Session } from "./Session";
 
 @ObjectType()
 @Entity()
@@ -58,6 +59,9 @@ export class User extends BaseEntity {
         { lazy: true }
     )
     sessionAllocations: Lazy<SessionAllocation[]>;
+
+    @RelationId((user: User) => user.sessionAllocations)
+    sessionAllocationIds: string[];
 
     @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester, {
@@ -130,6 +134,26 @@ export class User extends BaseEntity {
     public async coursesWorkingIn(term: Term): Promise<Course[]> {
         return await asyncMap(await this.getCourseStaff(term), (courseStaff) =>
             courseStaff.getCourse()
+        );
+    }
+
+    public async allocatedSessions(
+        course: Course,
+        term: Term
+    ): Promise<Session[]> {
+        const sessionAllocations = (await User.loaders.sessionAllocation.loadMany(
+            this.sessionAllocationIds
+        )) as SessionAllocation[];
+        const sessions = (await User.loaders.session.loadMany(
+            sessionAllocations.map(
+                (sessionAllocation) => sessionAllocation.sessionId
+            )
+        )) as Session[];
+        return await asyncFilter(
+            sessions,
+            async (session) =>
+                (await session.getTerm()).id === term.id &&
+                (await session.getCourse()).id === course.id
         );
     }
 }
