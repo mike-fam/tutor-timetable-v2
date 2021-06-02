@@ -1,5 +1,5 @@
 import { BaseModel } from "./BaseModel";
-import { Offer, StaffRequest, Timetable, User } from "../entities";
+import { Offer, Session, StaffRequest, Timetable, User } from "../entities";
 import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
 import {
@@ -112,22 +112,26 @@ export class OfferModel extends BaseModel<Offer>() {
                     errMsg: "You cannot update the owner of an offer",
                 };
             }
-            // TODO Check if offer preferences only contain sessions the user works on
+            // Check if offer preferences only contain sessions the user works on
             const allocatedSessions = await user.allocatedSessions(
                 course,
                 term
             );
+            const allocatedSessionIds = allocatedSessions.map(
+                (session) => session.id
+            );
+            const preferences = (await updatedFields.preferences) as Session[];
             if (
-                allocatedSessions.some(
-                    (allocatedSession) =>
-                        allocatedSession.id === request.sessionId
+                preferences &&
+                preferences.some(
+                    (preference) => !allocatedSessionIds.includes(preference.id)
                 )
             ) {
                 return {
                     hasPerm: false,
                     errMsg:
-                        "You cannot make an offer for this request because you" +
-                        " works on the requested session.",
+                        "You cannot include a session that you are not " +
+                        "allocated to as a preference",
                 };
             }
             return { hasPerm: true };
@@ -357,22 +361,27 @@ export class OfferModel extends BaseModel<Offer>() {
                 hasPerm: false,
                 errMsg:
                     "You cannot make an offer for this request because you" +
-                    " works on the requested session.",
+                    " work on the requested session.",
             };
         }
         // Check if offer preferences only contain sessions the user works on
         // and all the sessions belong to the same course and term
         const allocatedSessions = await user.allocatedSessions(course, term);
+        const allocatedSessionIds = allocatedSessions.map(
+            (session) => session.id
+        );
+        const preferences = (await offer.preferences) as Session[];
         if (
-            allocatedSessions.some(
-                (allocatedSession) => allocatedSession.id === session.id
+            preferences &&
+            preferences.some(
+                (preference) => !allocatedSessionIds.includes(preference.id)
             )
         ) {
             return {
                 hasPerm: false,
                 errMsg:
-                    "You cannot make an offer for this request because you" +
-                    " works on the requested session.",
+                    "You cannot include a session that you are not " +
+                    "allocated to as a preference",
             };
         }
 
