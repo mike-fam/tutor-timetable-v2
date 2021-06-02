@@ -1,5 +1,5 @@
 import { BaseModel } from "./BaseModel";
-import { Offer, StaffRequest, Timetable, User } from "../entities";
+import { Offer, Session, StaffRequest, Timetable, User } from "../entities";
 import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
 import {
@@ -8,10 +8,14 @@ import {
     RequestType,
     TEMPORARY_LOCK_MESSAGE,
 } from "../types/request";
-import { FreezeState } from "../types/timetable";
 import { OfferStatus } from "../types/offer";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
+import {
+    canAcceptRequest,
+    canMakeNewOffer,
+    canRequestForApproval,
+} from "../utils/requests";
 
 export class OfferModel extends BaseModel<Offer>() {
     protected static entityCls = Offer;
@@ -39,11 +43,15 @@ export class OfferModel extends BaseModel<Offer>() {
      *      * the creator of the offer (i.e. themselves)
      *      * the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
-     * The original requester CAN ONLY make change to the the offer status
+     * The offer maker CAN make changes to the preferences, but the end
+     * preference MUST only contain ONLY sessions they are assigned to, and ALL
+     * sessions must be of the same course and term
+     *
+     * The original requester CAN ONLY make changes to the the offer status
      * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
      * They can NOT change the status to ACCEPTED if there is already another
      * offer of the same request that's accepted, OR if the request's status is
-     * not OPEN, OR if the requested is frozen.
+     * not OPEN, OR if the request is frozen.
      *
      * Course coordinators can change the state of the offer status from
      * AWAITING_APPROVAL to ACCEPTED or REJECTED
@@ -104,8 +112,30 @@ export class OfferModel extends BaseModel<Offer>() {
                     errMsg: "You cannot update the owner of an offer",
                 };
             }
+            // Check if offer preferences only contain sessions the user works on
+            const allocatedSessions = await user.allocatedSessions(
+                course,
+                term
+            );
+            const allocatedSessionIds = allocatedSessions.map(
+                (session) => session.id
+            );
+            const preferences = (await updatedFields.preferences) as Session[];
+            if (
+                preferences &&
+                preferences.some(
+                    (preference) => !allocatedSessionIds.includes(preference.id)
+                )
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot include a session that you are not " +
+                        "allocated to as a preference",
+                };
+            }
             return { hasPerm: true };
-            // If user is requester
+            // If user is the requester
         } else if (user.id === request.requesterId) {
             // Disallow changing any field other than `status`
             if (!isEmpty(omit(updatedFields, "status"))) {
@@ -119,12 +149,15 @@ export class OfferModel extends BaseModel<Offer>() {
                         "You cannot make changes to an offer that's not open",
                 };
             }
-            // Always allow user to reject offer
+            // Always allow user to reject the offer
             if (updatedFields.status === OfferStatus.REJECTED) {
                 return { hasPerm: true };
             }
-            // If user wants to accept request
-            if (updatedFields.status === OfferStatus.ACCEPTED) {
+            // If user wants to accept the offer
+            if (
+                updatedFields.status === OfferStatus.ACCEPTED ||
+                updatedFields.status === OfferStatus.AWAITING_APPROVAL
+            ) {
                 // Prevent user from accepting a closed request
                 if (request.status !== RequestStatus.OPEN) {
                     return {
@@ -133,7 +166,12 @@ export class OfferModel extends BaseModel<Offer>() {
                             "You cannot accept an offer of a closed request.",
                     };
                 }
-                if (!timetable.canAcceptRequest(request)) {
+                // Prevent user from marking offer as accepted when there's a
+                // freeze
+                if (
+                    updatedFields.status === OfferStatus.ACCEPTED &&
+                    !canAcceptRequest(request, timetable)
+                ) {
                     return {
                         hasPerm: false,
                         errMsg:
@@ -142,7 +180,19 @@ export class OfferModel extends BaseModel<Offer>() {
                             "coordinators",
                     };
                 }
-                // Prevent user from accepting multiple requests
+                // Prevent user from requesting offer approval if request is frozen
+                if (
+                    updatedFields.status === OfferStatus.AWAITING_APPROVAL &&
+                    !canRequestForApproval(request, timetable)
+                ) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "Cannot request for approval because requests" +
+                            " are currently frozen",
+                    };
+                }
+                // Prevent user from accepting multiple offers
                 const otherOffers = (await Offer.loaders.offer.loadMany(
                     request.offerIds
                 )) as Offer[];
@@ -159,7 +209,38 @@ export class OfferModel extends BaseModel<Offer>() {
                             "You have already accepted an offer for this request",
                     };
                 }
+                // Allow user to accept offer by this point
+                return { hasPerm: true };
             }
+            // Disallow updating the offer status to any other value
+            return { hasPerm: false };
+            // If user is course coordinator
+        } else if (await user.isCoordinatorOf(course, term)) {
+            // Disallow changing any field other than `status`
+            if (!isEmpty(omit(updatedFields, "status"))) {
+                return { hasPerm: false };
+            }
+            // Disallow any operation if offer is not awaiting for approval
+            if (offer.status !== OfferStatus.AWAITING_APPROVAL) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You cannot make changes to an offer that's not " +
+                        "awaiting for your approval",
+                };
+            }
+            // Disallow changing offer status to anything other than rejected
+            // and accepted
+            if (
+                updatedFields.status !== OfferStatus.REJECTED &&
+                updatedFields.status !== OfferStatus.ACCEPTED
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg: "You can only approve or reject this offer.",
+                };
+            }
+            return { hasPerm: true };
         }
         return { hasPerm: false };
     }
@@ -207,12 +288,14 @@ export class OfferModel extends BaseModel<Offer>() {
      *          to themself
      *      * They are a staff member of the same course and term of the request
      *          maker
-     *      * The request the offer is not for one of their own requests
+     *      * The offer is not for one of their own requests
      *      * They have not already made an offer for said request
      *      * That request is not frozen
      *      * if that request has `allowNonPrefOffers` set to false,
      *          all sessions specified in the `preferences` field have to
      *          be in the `swapPreference` field of the request.
+     *      * That user has not already worked on the session on the request
+     *      * The swap preference only contains sessions that they work on
      * @param offer
      * @param user
      * @protected
@@ -221,6 +304,7 @@ export class OfferModel extends BaseModel<Offer>() {
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
+        const loaders = this.entityCls.loaders;
         // Check if user on offer and user making request are the same person
         if (offer.userId && offer.userId !== user.id) {
             return {
@@ -240,9 +324,7 @@ export class OfferModel extends BaseModel<Offer>() {
 
         // Check if user works on the same course and term of the requester
         const requestId = offer.requestId || (await offer.request).id;
-        const request = await this.entityCls.loaders.staffRequest.load(
-            requestId
-        );
+        const request = await loaders.staffRequest.load(requestId);
         const course = await request.getCourse();
         const term = await request.getTerm();
         if (!(await user.isStaffOf(course, term))) {
@@ -261,7 +343,7 @@ export class OfferModel extends BaseModel<Offer>() {
             };
         }
         // Check if user already has an offer of that request
-        const offersMade = (await this.entityCls.loaders.offer.loadMany(
+        const offersMade = (await loaders.offer.loadMany(
             user.offerIds
         )) as Offer[];
         const requestIds = offersMade.map((offer) => offer.requestId);
@@ -271,26 +353,50 @@ export class OfferModel extends BaseModel<Offer>() {
                 errMsg: "You already made an offer for this request",
             };
         }
+        // Check if user already works on session in request
+        const session = await loaders.session.load(request.sessionId);
+        const allocatedUsers = await session.getAllocatedUsers();
+        if (allocatedUsers.some((allocated) => allocated.id === user.id)) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot make an offer for this request because you" +
+                    " work on the requested session.",
+            };
+        }
+        // Check if offer preferences only contain sessions the user works on
+        // and all the sessions belong to the same course and term
+        const allocatedSessions = await user.allocatedSessions(course, term);
+        const allocatedSessionIds = allocatedSessions.map(
+            (session) => session.id
+        );
+        const preferences = (await offer.preferences) as Session[];
+        if (
+            preferences &&
+            preferences.some(
+                (preference) => !allocatedSessionIds.includes(preference.id)
+            )
+        ) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    "You cannot include a session that you are not " +
+                    "allocated to as a preference",
+            };
+        }
+
         // Check if request is frozen
         const timetable = await Timetable.fromCourseTerm(course, term);
-        // Temporary request
-        if (request.type === RequestType.TEMPORARY) {
-            // Cannot make offer if frozen
-            if (timetable.temporaryRequestLock === FreezeState.LOCK) {
-                return {
-                    hasPerm: false,
-                    errMsg: TEMPORARY_LOCK_MESSAGE,
-                };
-            }
-        } else if (request.type === RequestType.PERMANENT) {
-            // Cannot make offer if frozen
-            if (timetable.permanentRequestLock === FreezeState.LOCK) {
-                return {
-                    hasPerm: false,
-                    errMsg: PERMANENT_LOCK_MESSAGE,
-                };
-            }
+        if (!canMakeNewOffer(request, timetable)) {
+            return {
+                hasPerm: false,
+                errMsg:
+                    request.type === RequestType.TEMPORARY
+                        ? TEMPORARY_LOCK_MESSAGE
+                        : PERMANENT_LOCK_MESSAGE,
+            };
         }
+        // Respect requester's swap preference
         if (!request.allowNonPrefOffers) {
             const sessionPreferenceIds = (await offer.preferences).map(
                 (session) => session.id

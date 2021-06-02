@@ -83,22 +83,4 @@ export class Timetable
         )!;
         return Timetable.loaders.timetable.load(timetableId);
     }
-
-    public canAcceptRequest(request: StaffRequest): boolean {
-        if (request.type === RequestType.PERMANENT) {
-            return this.permanentRequestLock === FreezeState.FREE;
-        } else if (request.type === RequestType.TEMPORARY) {
-            return this.temporaryRequestLock === FreezeState.FREE;
-        }
-        return false; // Needed for compiler
-    }
-
-    public canMakeNewOffer(request: StaffRequest): boolean {
-        if (request.type === RequestType.PERMANENT) {
-            return this.permanentRequestLock !== FreezeState.LOCK;
-        } else if (request.type === RequestType.TEMPORARY) {
-            return this.temporaryRequestLock !== FreezeState.LOCK;
-        }
-        return false; // Needed for compiler
-    }
 }

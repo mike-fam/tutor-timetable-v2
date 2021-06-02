@@ -9,7 +9,7 @@ import { StreamAllocation } from "./StreamAllocation";
 @Entity()
 export class UserSettings extends BaseEntity {
     @Field(() => User)
-    @OneToOne(() => User, { lazy: true })
+    @OneToOne(() => User, (user) => user.settings, { lazy: true })
     user: Lazy<User>;
 
     @RelationId((settings: UserSettings) => settings.user)

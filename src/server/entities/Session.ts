@@ -10,7 +10,7 @@ import {
 import { SessionStream } from "./SessionStream";
 import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
 import { Offer } from "./Offer";
 import { CourseRelatedEntity } from "./CourseRelatedEntity";
@@ -18,6 +18,8 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { User } from "./User";
+import { asyncMap } from "../../utils/array";
 
 @ObjectType()
 @Entity()
@@ -39,7 +41,7 @@ export class Session
     @Column("varchar", { length: 15 })
     location: string;
 
-    @Field()
+    @Field(() => Int)
     @Column()
     week: number;
 
@@ -50,6 +52,9 @@ export class Session
         { lazy: true, cascade: ["insert"] }
     )
     sessionAllocations: Lazy<SessionAllocation[]>;
+
+    @RelationId((session: Session) => session.sessionAllocations)
+    allocationIds: string;
 
     @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (request) => request.session, { lazy: true })
@@ -75,5 +80,16 @@ export class Session
         const loaders = Session.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getTerm();
+    }
+
+    public async getAllocatedUsers(): Promise<User[]> {
+        const loaders = Session.loaders;
+        const allocations = (await loaders.sessionAllocation.loadMany(
+            this.allocationIds
+        )) as SessionAllocation[];
+        const users = await asyncMap(allocations, (allocation) =>
+            loaders.user.load(allocation.userId)
+        );
+        return users;
     }
 }

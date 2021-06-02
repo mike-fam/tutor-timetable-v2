@@ -26,7 +26,7 @@ export class UpdateDetailsInputType {
 export class UserResolver {
     @Query(() => User)
     async me(@Ctx() { req }: MyContext): Promise<User> {
-        return req.user!;
+        return req.user;
     }
 
     @Mutation(() => User)

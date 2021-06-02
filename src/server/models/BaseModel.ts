@@ -184,7 +184,7 @@ export const BaseModel = <T extends BaseEntity>() => {
             }
             const toDelete = deleteCandidates[0];
             if (!toDelete) {
-                throw new Error(CANT_FIND);
+                throw new Error(CANT_FIND + this.entityCls.name);
             }
             const { hasPerm, errMsg } = await this.permDelete(toDelete, user);
             if (hasPerm) {

@@ -8,11 +8,13 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
 import { In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
@@ -22,6 +24,7 @@ import {
     SessionStream,
     StaffRequest,
     Timetable,
+    User,
 } from "../entities";
 import { MyContext } from "../types/context";
 
@@ -82,7 +85,7 @@ class EditRequestFormInputType {
     closeRequest: boolean;
 }
 
-@Resolver()
+@Resolver(() => StaffRequest)
 export class StaffRequestResolver {
     @Mutation(() => StaffRequest)
     async createRequest(
@@ -284,5 +287,15 @@ export class StaffRequestResolver {
         const id = request.id;
         await request.remove();
         return id;
+    }
+
+    @FieldResolver(() => User)
+    async acceptor(@Root() root: StaffRequest): Promise<User> {
+        return await StaffRequest.loaders.user.load(root.acceptorId);
+    }
+
+    @FieldResolver(() => User)
+    async requester(@Root() root: StaffRequest): Promise<User> {
+        return await StaffRequest.loaders.user.load(root.requesterId);
     }
 }

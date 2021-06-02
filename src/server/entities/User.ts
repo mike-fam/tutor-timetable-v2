@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, RelationId } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, RelationId } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
 import { StreamAllocation } from "./StreamAllocation";
@@ -13,6 +13,8 @@ import { Term } from "./Term";
 import asyncFilter from "node-filter-async";
 import { Role } from "../types/user";
 import { asyncMap } from "../../utils/array";
+import { UserSettings } from "./UserSettings";
+import { Session } from "./Session";
 
 @ObjectType()
 @Entity()
@@ -58,6 +60,9 @@ export class User extends BaseEntity {
     )
     sessionAllocations: Lazy<SessionAllocation[]>;
 
+    @RelationId((user: User) => user.sessionAllocations)
+    sessionAllocationIds: string[];
+
     @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester, {
         lazy: true,
@@ -80,6 +85,10 @@ export class User extends BaseEntity {
 
     @RelationId((user: User) => user.offers)
     offerIds: string[];
+
+    @Field(() => UserSettings)
+    @OneToOne(() => UserSettings, (settings) => settings.user, { lazy: true })
+    settings: Lazy<User>;
 
     private getCourseStaff(term: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;
@@ -125,6 +134,26 @@ export class User extends BaseEntity {
     public async coursesWorkingIn(term: Term): Promise<Course[]> {
         return await asyncMap(await this.getCourseStaff(term), (courseStaff) =>
             courseStaff.getCourse()
+        );
+    }
+
+    public async allocatedSessions(
+        course: Course,
+        term: Term
+    ): Promise<Session[]> {
+        const sessionAllocations = (await User.loaders.sessionAllocation.loadMany(
+            this.sessionAllocationIds
+        )) as SessionAllocation[];
+        const sessions = (await User.loaders.session.loadMany(
+            sessionAllocations.map(
+                (sessionAllocation) => sessionAllocation.sessionId
+            )
+        )) as Session[];
+        return await asyncFilter(
+            sessions,
+            async (session) =>
+                (await session.getTerm()).id === term.id &&
+                (await session.getCourse()).id === course.id
         );
     }
 }
