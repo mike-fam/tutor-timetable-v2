@@ -43,15 +43,18 @@ export class OfferModel extends BaseModel<Offer>() {
      *      * the creator of the offer (i.e. themselves)
      *      * the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
-     * The offer maker CAN make changes to the preferences, but the end
-     * preference MUST only contain ONLY sessions they are assigned to, and ALL
-     * sessions must be of the same course and term
+     * The offer maker CAN make changes to the preferences, but it has to
+     * satisfy ALL of the following constraints
+     *      * preference MUST only contain ONLY sessions they are assigned to
+     *      * ALL sessions must be of the same course and term
      *
-     * The original requester CAN ONLY make changes to the the offer status
-     * and NO OTHER field. The status can be changed to REJECTED or ACCEPTED.
-     * They can NOT change the status to ACCEPTED if there is already another
-     * offer of the same request that's accepted, OR if the request's status is
-     * not OPEN, OR if the request is frozen.
+     * The original requester CAN ONLY make changes to the offer status
+     * and NO OTHER field.
+     * The status can be changed to REJECTED, ACCEPTED or AWAITING_APPROVAL.
+     * They can NOT change the status to ACCEPTED if
+     * there is already another offer of the same request that's accepted,
+     * OR
+     * if the request's status is not OPEN, OR if the request is frozen.
      *
      * Course coordinators can change the state of the offer status from
      * AWAITING_APPROVAL to ACCEPTED or REJECTED
@@ -217,22 +220,26 @@ export class OfferModel extends BaseModel<Offer>() {
                 ) {
                     return {
                         hasPerm: false,
-                        errMsg: "You have to specify the session you want to " +
-                            "swap with the offerer."
+                        errMsg:
+                            "You have to specify the session you want to " +
+                            "swap with the offerer.",
                     };
                 }
                 let acceptedSession: Session;
                 if (updatedFields.acceptedSessionId) {
-                    acceptedSession = await Offer.loaders.session.load(updatedFields.acceptedSessionId)
+                    acceptedSession = await Offer.loaders.session.load(
+                        updatedFields.acceptedSessionId
+                    );
                 } else {
                     acceptedSession = (await updatedFields.acceptedSession) as Session;
                 }
                 if (!offer.preferenceSessionIds.includes(acceptedSession.id)) {
                     return {
                         hasPerm: false,
-                        errMsg: "You have to accept one of the sessions that" +
-                            "the offerer specified."
-                    }
+                        errMsg:
+                            "You have to accept one of the sessions that" +
+                            "the offerer specified.",
+                    };
                 }
                 // Allow user to accept offer by this point
                 return { hasPerm: true };

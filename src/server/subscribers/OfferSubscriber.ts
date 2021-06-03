@@ -13,6 +13,7 @@ export class OfferSubscriber implements EntitySubscriberInterface {
     }
 
     async afterUpdate(event: UpdateEvent<Offer>): Promise<void> {
+        // TODO: Move this logic to the Offer resolver
         const loaders = Offer.loaders;
         const beforeUpdate = event.databaseEntity;
         const afterUpdate = event.entity;
