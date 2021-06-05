@@ -74,12 +74,6 @@ export class User extends BaseEntity {
     @RelationId((user: User) => user.requests)
     requestIds: string[];
 
-    @Field(() => [StaffRequest])
-    @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor, {
-        lazy: true,
-    })
-    acceptedRequests: Lazy<StaffRequest[]>;
-
     @Field(() => [Timeslot])
     @OneToMany(() => Timeslot, (timeslot) => timeslot.user, { lazy: true })
     availabilities: Lazy<Timeslot[]>;

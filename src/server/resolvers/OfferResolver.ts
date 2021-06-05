@@ -297,7 +297,7 @@ const acceptOfferCleanUp = async (
     request: StaffRequest,
     acceptor: User
 ): Promise<StaffRequest> => {
-    request.acceptor = acceptor;
+    // request.acceptor = acceptor;
     request.status = RequestStatus.CLOSED;
     await request.save();
 

@@ -292,14 +292,6 @@ export class StaffRequestResolver extends EntityResolver {
     }
 
     @FieldResolver(() => User)
-    async acceptor(
-        @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
-    ): Promise<User> {
-        return await this.userModel.getById(root.acceptorId, req.user);
-    }
-
-    @FieldResolver(() => User)
     async requester(
         @Root() root: StaffRequest,
         @Ctx() { req }: MyContext

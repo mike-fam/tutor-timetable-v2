@@ -130,4 +130,8 @@ export class Offer
             return subsequentSessionIds.includes(session.id);
         }
     }
+
+    public async getRequest(): Promise<StaffRequest> {
+        return await Utils.loaders.staffRequest.load(this.requestId);
+    }
 }

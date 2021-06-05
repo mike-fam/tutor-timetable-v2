@@ -23,6 +23,7 @@ import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { Utils } from "../utils/Util";
 import { SessionStream } from "./SessionStream";
+import { OfferStatus } from "../types/offer";
 
 @ObjectType()
 @Entity()
@@ -56,27 +57,24 @@ export class StaffRequest
     @Column()
     requesterId: string;
 
-    @RelationId((request: StaffRequest) => request.session)
-    @Column()
-    sessionId: string;
-
-    @RelationId((request: StaffRequest) => request.acceptor)
-    @Column({ nullable: true })
-    acceptorId: string;
-
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })
     requester: Lazy<User>;
-
-    @ManyToOne(() => User, (user) => user.acceptedRequests, { lazy: true })
-    acceptor: Lazy<User>;
 
     @Field(() => User)
     @ManyToOne(() => User, { lazy: true, nullable: true })
     finaliser: Lazy<User>;
 
+    @RelationId((request: StaffRequest) => request.finaliser)
+    @Column({ nullable: true })
+    finaliserId: string | null;
+
     @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.requests, { lazy: true })
     session: Lazy<Session>;
+
+    @RelationId((request: StaffRequest) => request.session)
+    @Column()
+    sessionId: string;
 
     @Field(() => [Session])
     @ManyToMany(() => Session, (session) => session.preferredSwaps, {
@@ -140,5 +138,15 @@ export class StaffRequest
             );
             return subsequentSessionIds.includes(session.id);
         }
+    }
+
+    public async getAcceptedOffer(): Promise<Offer | null> {
+        const offers = (await Utils.loaders.offer.loadMany(
+            this.offerIds
+        )) as Offer[];
+        const acceptedOffer = offers.filter(
+            (offer) => offer.status === OfferStatus.ACCEPTED
+        );
+        return acceptedOffer.length === 0 ? null : acceptedOffer[0];
     }
 }

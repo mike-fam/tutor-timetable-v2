@@ -78,7 +78,7 @@ export class OfferModel extends BaseModel<Offer> {
         const course = await offer.getCourse();
         const term = await offer.getTerm();
         const timetable = await Timetable.fromCourseTerm(course, term);
-        // If request is made from offer maker
+        // If user is the offer maker
         if (user.id === (await offer.getOwner()).id) {
             // Prevent manual change of offer status
             if (updatedFields.status && updatedFields.status !== offer.status) {
@@ -141,6 +141,28 @@ export class OfferModel extends BaseModel<Offer> {
                         "You cannot include a session that you are not " +
                         "allocated to as a preference",
                 };
+            }
+            // Respect requester's swap preference
+            if (!request.allowNonPrefOffers) {
+                const sessionPreferenceIds = (await offer.preferences).map(
+                    (session) => session.id
+                );
+                // If any of sessionPreferenceIds not in request.swapPreference
+                if (
+                    sessionPreferenceIds.some(
+                        (sessionId) =>
+                            !request.swapPreferenceSessionIds.includes(
+                                sessionId
+                            )
+                    )
+                ) {
+                    return {
+                        hasPerm: false,
+                        errMsg:
+                            "You cannot specify a session that's not included" +
+                            "in the original swap preference",
+                    };
+                }
             }
             return { hasPerm: true };
             // If user is the requester
