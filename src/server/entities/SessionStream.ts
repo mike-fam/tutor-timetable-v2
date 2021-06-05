@@ -19,7 +19,7 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -108,7 +108,7 @@ export class SessionStream
 
     @RelationId((stream: SessionStream) => stream.based)
     @Column({ nullable: true })
-    basedId: string;
+    basedId: string | null;
 
     public async getCourse(): Promise<Course> {
         const loaders = Utils.loaders;
@@ -120,5 +120,24 @@ export class SessionStream
         const loaders = Utils.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await timetable.getTerm();
+    }
+
+    public async allocate(user: User): Promise<void> {
+        const allocation = StreamAllocation.create({
+            sessionStream: this,
+            user,
+        });
+        await allocation.save();
+    }
+
+    public async deallocate(user: User): Promise<void> {
+        const allocation = await StreamAllocation.findOne({
+            sessionStream: this,
+            user,
+        });
+        if (!allocation) {
+            return;
+        }
+        await allocation.remove();
     }
 }
