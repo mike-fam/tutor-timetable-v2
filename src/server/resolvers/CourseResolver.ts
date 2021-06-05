@@ -1,13 +1,13 @@
 import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
 import { Course, Timetable } from "../entities";
-import { CourseModel } from "../models/CourseModel";
 import { MyContext } from "../types/context";
+import { EntityResolver } from "./EntityResolver";
 
 @Resolver(() => Course)
-export class CourseResolver {
+export class CourseResolver extends EntityResolver {
     @Query(() => [Course])
     async courses(@Ctx() { req }: MyContext): Promise<Course[]> {
-        return CourseModel.getMany({}, req.user);
+        return this.courseModel.getMany({}, req.user);
     }
 
     @Query(() => Course)
@@ -15,13 +15,17 @@ export class CourseResolver {
         @Arg("courseId") courseId: string,
         @Ctx() { req }: MyContext
     ): Promise<Course> {
-        return await CourseModel.getById(courseId, req.user);
+        return await this.courseModel.getById(courseId, req.user);
     }
 
     @FieldResolver(() => [Timetable])
-    async timetables(@Root() course: Course): Promise<Timetable[]> {
-        return (await Course.loaders.timetable.loadMany(
-            course.timetableIds
-        )) as Timetable[];
+    async timetables(
+        @Root() course: Course,
+        @Ctx() { req }: MyContext
+    ): Promise<Timetable[]> {
+        return await this.timetableModel.getByIds(
+            course.timetableIds,
+            req.user
+        );
     }
 }

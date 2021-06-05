@@ -5,6 +5,8 @@ import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { User } from "./User";
 import { BaseEntity } from "./BaseEntity";
 import { UserRelatedEntity } from "./UserRelatedEntity";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -32,7 +34,7 @@ export class Timeslot extends BaseEntity implements UserRelatedEntity {
     userId: string;
 
     public async getOwner(): Promise<User> {
-        const loaders = Timeslot.loaders;
+        const loaders = Utils.loaders;
         return await loaders.user.load(this.userId);
     }
 }

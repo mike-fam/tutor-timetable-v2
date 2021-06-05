@@ -20,6 +20,8 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -69,19 +71,19 @@ export class CourseStaff
     preferenceId: string;
 
     public async getCourse(): Promise<Course> {
-        const loaders = CourseStaff.loaders;
+        const loaders = Utils.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await loaders.course.load(timetable.courseId);
     }
 
     public async getTerm(): Promise<Term> {
-        const loaders = CourseStaff.loaders;
+        const loaders = Utils.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await loaders.term.load(timetable.termId);
     }
 
     public async getOwner(): Promise<User> {
-        const loaders = CourseStaff.loaders;
+        const loaders = Utils.loaders;
         return await loaders.user.load(this.userId);
     }
 }

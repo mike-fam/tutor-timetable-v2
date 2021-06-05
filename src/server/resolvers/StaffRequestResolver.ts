@@ -27,6 +27,8 @@ import {
     User,
 } from "../entities";
 import { MyContext } from "../types/context";
+import { UserModel } from "../models/UserModel";
+import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 class RequestFormInputType {
@@ -86,7 +88,7 @@ class EditRequestFormInputType {
 }
 
 @Resolver(() => StaffRequest)
-export class StaffRequestResolver {
+export class StaffRequestResolver extends EntityResolver {
     @Mutation(() => StaffRequest)
     async createRequest(
         @Arg("requestDetails", () => RequestFormInputType)
@@ -290,12 +292,18 @@ export class StaffRequestResolver {
     }
 
     @FieldResolver(() => User)
-    async acceptor(@Root() root: StaffRequest): Promise<User> {
-        return await StaffRequest.loaders.user.load(root.acceptorId);
+    async acceptor(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<User> {
+        return await this.userModel.getById(root.acceptorId, req.user);
     }
 
     @FieldResolver(() => User)
-    async requester(@Root() root: StaffRequest): Promise<User> {
-        return await StaffRequest.loaders.user.load(root.requesterId);
+    async requester(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<User> {
+        return await this.userModel.getById(root.requesterId, req.user);
     }
 }

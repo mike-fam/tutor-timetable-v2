@@ -47,3 +47,5 @@ export type DataLoaders = {
     user: UserLoader;
     userSettings: UserSettingsLoader;
 };
+
+export type DataLoaderKey = keyof DataLoaders;

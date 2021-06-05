@@ -2,9 +2,14 @@ import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, Timetable, User } from "../entities";
 import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
+import { Utils } from "../utils/Util";
 
-export class CourseStaffModel extends BaseModel<CourseStaff>() {
-    protected static entityCls = CourseStaff;
+export class CourseStaffModel extends BaseModel<CourseStaff> {
+    public constructor() {
+        super();
+        this.entityCls = CourseStaff;
+        this.loader = Utils.loaders.courseStaff;
+    }
 
     /**
      * A user can read a course staff entry if they are a staff of the same
@@ -14,14 +19,14 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
      * @param user
      * @protected
      */
-    protected static async canRead(
+    protected async canRead(
         courseStaff: CourseStaff,
         user: User
     ): Promise<PermissionState> {
         if (user.isAdmin) {
             return { hasPerm: true };
         }
-        const loaders = CourseStaff.loaders;
+        const loaders = Utils.loaders;
         const userRoles: CourseStaff[] = (await loaders.courseStaff.loadMany(
             user.courseStaffIds
         )) as CourseStaff[];
@@ -45,7 +50,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
      * @param user
      * @protected
      */
-    protected static async canUpdate(
+    protected async canUpdate(
         toUpdate: CourseStaff,
         updatedFields: DeepPartial<CourseStaff>,
         user: User
@@ -90,7 +95,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
      * @param user
      * @protected
      */
-    protected static async canDelete(
+    protected async canDelete(
         toDelete: CourseStaff,
         user: User
     ): Promise<PermissionState> {
@@ -107,12 +112,12 @@ export class CourseStaffModel extends BaseModel<CourseStaff>() {
      * @param user
      * @protected
      */
-    protected static async canCreate(
+    protected async canCreate(
         toCreate: CourseStaff,
         user: User
     ): Promise<PermissionState> {
         // Cannot use course and term directly, have to use timetableId here
-        const loaders = CourseStaff.loaders;
+        const loaders = Utils.loaders;
         const timetable =
             (toCreate.timetable as Timetable) ||
             (await loaders.timetable.load(toCreate.timetableId));

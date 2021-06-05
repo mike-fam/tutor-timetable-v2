@@ -10,6 +10,8 @@ import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { User } from "./User";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -41,19 +43,19 @@ export class Preference
     courseStaffId: string;
 
     public async getCourse(): Promise<Course> {
-        const loader = Preference.loaders;
+        const loader = Utils.loaders;
         const courseStaff = await loader.courseStaff.load(this.courseStaffId);
         return await courseStaff.getCourse();
     }
 
     public async getTerm(): Promise<Term> {
-        const loader = Preference.loaders;
+        const loader = Utils.loaders;
         const courseStaff = await loader.courseStaff.load(this.courseStaffId);
         return await courseStaff.getTerm();
     }
 
     public async getOwner(): Promise<User> {
-        const loader = Preference.loaders;
+        const loader = Utils.loaders;
         const courseStaff = await loader.courseStaff.load(this.courseStaffId);
         return await courseStaff.getOwner();
     }

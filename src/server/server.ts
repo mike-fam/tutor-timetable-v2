@@ -40,10 +40,10 @@ import {
     Timeslot,
     Timetable,
     User,
+    UserSettings,
 } from "./entities";
-import { UserSettings } from "./entities/UserSettings";
 import { LoadersInjector } from "./middlewares/loaders-injection";
-import { OfferStatus } from "./types/offer";
+import { Container } from "typedi";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -82,6 +82,7 @@ const main = async () => {
             ],
             dateScalarMode: "isoDate",
             globalMiddlewares: [LoadersInjector],
+            container: Container,
         }),
         context: ({ req, res }): MyContext => ({
             req,

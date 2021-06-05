@@ -2,14 +2,21 @@ import { BaseModel } from "./BaseModel";
 import { Course, Term, User } from "../entities";
 import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
+import { Utils } from "../utils/Util";
+import { Service } from "typedi";
 
 /**
  * Manages course-related permissions
  * Only admins can create and delete courses
  * Read and update permissions are described below
  */
-export class CourseModel extends BaseModel<Course>() {
-    protected static entityCls = Course;
+@Service()
+export class CourseModel extends BaseModel<Course> {
+    public constructor() {
+        super();
+        this.entityCls = Course;
+        this.loader = Utils.loaders.course;
+    }
 
     /**
      * Anyone can read any course
@@ -18,7 +25,7 @@ export class CourseModel extends BaseModel<Course>() {
      * @param user
      * @protected
      */
-    protected static async canRead(
+    protected async canRead(
         course: Course,
         user: User
     ): Promise<PermissionState> {
@@ -37,7 +44,7 @@ export class CourseModel extends BaseModel<Course>() {
      * @param user
      * @protected
      */
-    protected static async canUpdate(
+    protected async canUpdate(
         course: Course,
         updatedFields: DeepPartial<Course>,
         user: User

@@ -2,8 +2,15 @@ import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { DeepPartial } from "typeorm";
+import { Utils } from "../utils/Util";
 
-export class PreferenceModel extends BaseModel<Preference>() {
+export class PreferenceModel extends BaseModel<Preference> {
+    public constructor() {
+        super();
+        this.entityCls = Preference;
+        this.loader = Utils.loaders.preference;
+    }
+
     /**
      * A user can read a preference entry if EITHER of these holds
      *
@@ -16,7 +23,7 @@ export class PreferenceModel extends BaseModel<Preference>() {
      * @param user
      * @protected
      */
-    protected static async canRead(
+    protected async canRead(
         preference: Preference,
         user: User
     ): Promise<PermissionState> {
@@ -43,7 +50,7 @@ export class PreferenceModel extends BaseModel<Preference>() {
      * @param user
      * @protected
      */
-    protected static async canUpdate(
+    protected async canUpdate(
         preference: Preference,
         updatedFields: DeepPartial<Preference>,
         user: User
@@ -82,7 +89,7 @@ export class PreferenceModel extends BaseModel<Preference>() {
      * @param user
      * @protected
      */
-    protected static async canDelete(
+    protected async canDelete(
         preference: Preference,
         user: User
     ): Promise<PermissionState> {
@@ -100,15 +107,13 @@ export class PreferenceModel extends BaseModel<Preference>() {
      * @param user
      * @protected
      */
-    protected static async canCreate(
+    protected async canCreate(
         preference: Preference,
         user: User
     ): Promise<PermissionState> {
         const courseStaff =
             (await preference.courseStaff) ||
-            (await Preference.loaders.preference.load(
-                preference.courseStaffId
-            ));
+            (await Utils.loaders.preference.load(preference.courseStaffId));
         const course = await courseStaff.getCourse();
         const term = await courseStaff.getTerm();
         if (!(await user.isCoordinatorOf(course, term))) {

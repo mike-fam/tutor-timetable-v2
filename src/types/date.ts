@@ -10,7 +10,7 @@ export enum IsoDay {
 
 export type IsoDayFormatting =
     | "i"
-    | "io"
+    | "ii"
     | "ii"
     | "iii"
     | "iiii"

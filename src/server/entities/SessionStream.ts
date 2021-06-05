@@ -18,6 +18,8 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -77,6 +79,9 @@ export class SessionStream
     })
     sessions: Lazy<Session[]>;
 
+    @RelationId((stream: SessionStream) => stream.sessions)
+    sessionIds: string[];
+
     @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
@@ -84,6 +89,9 @@ export class SessionStream
         { lazy: true, cascade: ["insert"] }
     )
     streamAllocations: Lazy<StreamAllocation[]>;
+
+    @RelationId((stream: SessionStream) => stream.streamAllocations)
+    streamAllocationIds: string[];
 
     @Field(() => [SessionStream])
     @OneToMany(() => SessionStream, (stream) => stream.based, {
@@ -98,14 +106,18 @@ export class SessionStream
     })
     based: Lazy<SessionStream>;
 
+    @RelationId((stream: SessionStream) => stream.based)
+    @Column({ nullable: true })
+    basedId: string;
+
     public async getCourse(): Promise<Course> {
-        const loaders = SessionStream.loaders;
+        const loaders = Utils.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await timetable.getCourse();
     }
 
     public async getTerm(): Promise<Term> {
-        const loaders = SessionStream.loaders;
+        const loaders = Utils.loaders;
         const timetable = await loaders.timetable.load(this.timetableId);
         return await timetable.getTerm();
     }

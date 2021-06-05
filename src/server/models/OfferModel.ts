@@ -16,9 +16,14 @@ import {
     canMakeNewOffer,
     canRequestForApproval,
 } from "../utils/requests";
+import { Utils } from "../utils/Util";
 
-export class OfferModel extends BaseModel<Offer>() {
-    protected static entityCls = Offer;
+export class OfferModel extends BaseModel<Offer> {
+    public constructor() {
+        super();
+        this.entityCls = Offer;
+        this.loader = Utils.loaders.offer;
+    }
 
     /**
      * A user can read an offer entry if they are admin OR
@@ -27,7 +32,7 @@ export class OfferModel extends BaseModel<Offer>() {
      * @param user
      * @protected
      */
-    protected static async canRead(
+    protected async canRead(
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
@@ -64,12 +69,12 @@ export class OfferModel extends BaseModel<Offer>() {
      * @param user
      * @protected
      */
-    protected static async canUpdate(
+    protected async canUpdate(
         offer: Offer,
         updatedFields: DeepPartial<Offer>,
         user: User
     ): Promise<PermissionState> {
-        const request = await Offer.loaders.staffRequest.load(offer.requestId);
+        const request = await Utils.loaders.staffRequest.load(offer.requestId);
         const course = await offer.getCourse();
         const term = await offer.getTerm();
         const timetable = await Timetable.fromCourseTerm(course, term);
@@ -196,7 +201,7 @@ export class OfferModel extends BaseModel<Offer>() {
                     };
                 }
                 // Prevent user from accepting multiple offers
-                const otherOffers = (await Offer.loaders.offer.loadMany(
+                const otherOffers = (await Utils.loaders.offer.loadMany(
                     request.offerIds
                 )) as Offer[];
                 if (
@@ -213,6 +218,8 @@ export class OfferModel extends BaseModel<Offer>() {
                             "request.",
                     };
                 }
+                // Prevent user from accepting an offer without specifying the
+                // swap if offerer enforces it
                 if (
                     offer.mustSwap &&
                     !updatedFields.acceptedSession &&
@@ -225,9 +232,11 @@ export class OfferModel extends BaseModel<Offer>() {
                             "swap with the offerer.",
                     };
                 }
+                // Prevent user from setting the accepted session to a session
+                // that's not one of the offerer's preferences
                 let acceptedSession: Session;
                 if (updatedFields.acceptedSessionId) {
-                    acceptedSession = await Offer.loaders.session.load(
+                    acceptedSession = await Utils.loaders.session.load(
                         updatedFields.acceptedSessionId
                     );
                 } else {
@@ -288,7 +297,7 @@ export class OfferModel extends BaseModel<Offer>() {
      * @param user
      * @protected
      */
-    protected static async canDelete(
+    protected async canDelete(
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
@@ -332,11 +341,11 @@ export class OfferModel extends BaseModel<Offer>() {
      * @param user
      * @protected
      */
-    protected static async canCreate(
+    protected async canCreate(
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
-        const loaders = this.entityCls.loaders;
+        const loaders = Utils.loaders;
         // Check if user on offer and user making request are the same person
         if (offer.userId && offer.userId !== user.id) {
             return {
@@ -449,5 +458,21 @@ export class OfferModel extends BaseModel<Offer>() {
             }
         }
         return { hasPerm: true };
+    }
+
+    public async update(
+        toUpdateFind: DeepPartial<Offer>,
+        updatedFields: DeepPartial<Offer>,
+        user: User
+    ): Promise<Offer> {
+        const offer = await Offer.findOne(toUpdateFind);
+        if (
+            offer &&
+            offer.status !== OfferStatus.ACCEPTED &&
+            updatedFields.status === OfferStatus.ACCEPTED
+        ) {
+            updatedFields.acceptedDate = new Date();
+        }
+        return await super.update(toUpdateFind, updatedFields, user);
     }
 }

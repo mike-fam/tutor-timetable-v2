@@ -3,7 +3,8 @@ import { Column, Entity, OneToOne, RelationId } from "typeorm";
 import { User } from "./User";
 import { Lazy } from "../utils/query";
 import { BaseEntity } from "./BaseEntity";
-import { StreamAllocation } from "./StreamAllocation";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -17,7 +18,7 @@ export class UserSettings extends BaseEntity {
     userId: string;
 
     public async getOwner(): Promise<User> {
-        const loaders = StreamAllocation.loaders;
+        const loaders = Utils.loaders;
         return await loaders.user.load(this.userId);
     }
 }

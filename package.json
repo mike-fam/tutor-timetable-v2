@@ -52,6 +52,7 @@
     "semver": "7.3.2",
     "type-graphql": "^1.1.1",
     "type-graphql-dataloader": "^0.3.7",
+    "typedi": "^0.10.0",
     "typeorm": "^0.2.29",
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"

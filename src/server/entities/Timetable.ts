@@ -19,6 +19,8 @@ import { TermRelatedEntity } from "./TermRelatedEntity";
 import { FreezeState } from "../types/timetable";
 import { StaffRequest } from "./StaffRequest";
 import { RequestType } from "../types/request";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -67,11 +69,11 @@ export class Timetable
     temporaryRequestLock: FreezeState;
 
     public async getCourse(): Promise<Course> {
-        return await Timetable.loaders.course.load(this.courseId);
+        return await Utils.loaders.course.load(this.courseId);
     }
 
     public async getTerm(): Promise<Term> {
-        return await Timetable.loaders.term.load(this.termId);
+        return await Utils.loaders.term.load(this.termId);
     }
 
     public static async fromCourseTerm(
@@ -81,6 +83,6 @@ export class Timetable
         const timetableId = course.timetableIds.find((timetableId) =>
             term.timetableIds.includes(timetableId)
         )!;
-        return Timetable.loaders.timetable.load(timetableId);
+        return Utils.loaders.timetable.load(timetableId);
     }
 }

@@ -15,6 +15,8 @@ import { Role } from "../types/user";
 import { asyncMap } from "../../utils/array";
 import { UserSettings } from "./UserSettings";
 import { Session } from "./Session";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -69,6 +71,9 @@ export class User extends BaseEntity {
     })
     requests: Lazy<StaffRequest[]>;
 
+    @RelationId((user: User) => user.requests)
+    requestIds: string[];
+
     @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.acceptor, {
         lazy: true,
@@ -97,7 +102,7 @@ export class User extends BaseEntity {
         term: Term,
         course?: Course
     ): Promise<CourseStaff[]> {
-        const loaders = User.loaders;
+        const loaders = Utils.loaders;
         const courseStaffs = (await loaders.courseStaff.loadMany(
             this.courseStaffIds
         )) as CourseStaff[];
@@ -141,10 +146,10 @@ export class User extends BaseEntity {
         course: Course,
         term: Term
     ): Promise<Session[]> {
-        const sessionAllocations = (await User.loaders.sessionAllocation.loadMany(
+        const sessionAllocations = (await Utils.loaders.sessionAllocation.loadMany(
             this.sessionAllocationIds
         )) as SessionAllocation[];
-        const sessions = (await User.loaders.session.loadMany(
+        const sessions = (await Utils.loaders.session.loadMany(
             sessionAllocations.map(
                 (sessionAllocation) => sessionAllocation.sessionId
             )

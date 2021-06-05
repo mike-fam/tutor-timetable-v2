@@ -3,17 +3,10 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
-import { DataLoaders } from "../types/dataloaders";
 
 @ObjectType()
 export abstract class BaseEntity extends TypeOrmBaseEntity {
     @Field()
     @PrimaryGeneratedColumn("uuid")
     id: string;
-
-    public static loaders: DataLoaders;
-
-    public static setLoaders(loaders: DataLoaders) {
-        this.loaders = loaders;
-    }
 }

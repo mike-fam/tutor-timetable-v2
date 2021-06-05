@@ -3,6 +3,7 @@ import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
 import { Field, ObjectType } from "type-graphql";
 import { BaseEntity } from "./BaseEntity";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

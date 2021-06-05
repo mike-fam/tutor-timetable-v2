@@ -8,6 +8,8 @@ import { Course } from "./Course";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -36,19 +38,19 @@ export class StreamAllocation
     userId: string;
 
     public async getCourse(): Promise<Course> {
-        const loaders = StreamAllocation.loaders;
+        const loaders = Utils.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getCourse();
     }
 
     public async getTerm(): Promise<Term> {
-        const loaders = StreamAllocation.loaders;
+        const loaders = Utils.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
         return await stream.getTerm();
     }
 
     public async getOwner(): Promise<User> {
-        const loaders = StreamAllocation.loaders;
+        const loaders = Utils.loaders;
         return await loaders.user.load(this.userId);
     }
 }

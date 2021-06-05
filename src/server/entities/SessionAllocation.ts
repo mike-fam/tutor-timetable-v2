@@ -9,6 +9,8 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
+import { Utils } from "../utils/Util";
+import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -39,19 +41,19 @@ export class SessionAllocation
     userId: string;
 
     public async getCourse(): Promise<Course> {
-        const loaders = SessionAllocation.loaders;
+        const loaders = Utils.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getCourse();
     }
 
     public async getTerm(): Promise<Term> {
-        const loaders = SessionAllocation.loaders;
+        const loaders = Utils.loaders;
         const session = await loaders.session.load(this.sessionId);
         return await session.getTerm();
     }
 
     public async getOwner(): Promise<User> {
-        const loaders = SessionAllocation.loaders;
+        const loaders = Utils.loaders;
         return await loaders.user.load(this.userId);
     }
 }
