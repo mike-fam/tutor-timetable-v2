@@ -7,6 +7,7 @@ import { RequestStatus } from "../types/request";
 import omit from "lodash/omit";
 import isEmpty from "lodash/isEmpty";
 import { Service } from "typedi";
+import { asyncSome } from "../../utils/array";
 
 @Service()
 export class StaffRequestModel extends BaseModel<StaffRequest> {
@@ -45,6 +46,8 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      *      * The requester has to be themself
      *      * They are allocated to the session the request points to
      *      * They are not allocated to any of the swapPreference
+     *      * They have not made a request for the same session
+     *      * The request does not conflict with the freeze state
      * @param request
      * @param user
      */
@@ -52,6 +55,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
         request: StaffRequest,
         user: User
     ): Promise<PermissionState> {
+        // Check if the requester is themself
         let requesterId;
         if (request.requesterId) {
             requesterId = request.requesterId;
@@ -69,7 +73,8 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 errMsg: "The requester must be yourself",
             };
         }
-        let session;
+        // Check if session field provided
+        let session: Session;
         if (request.sessionId) {
             session = await Utils.loaders.session.load(request.sessionId);
         } else if (request.session) {
@@ -80,9 +85,10 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 errMsg: "Session field missing",
             };
         }
+        // Check if user actually works on the session on the request
         const course = await session.getCourse();
         const term = await session.getTerm();
-        const allocatedSessions = await user.allocatedSessions(course, term);
+        const allocatedSessions = await user.getAllocatedSessions(course, term);
         const allocatedSessionIds = allocatedSessions.map(
             (session) => session.id
         );
@@ -92,6 +98,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 errMsg: "You are not allocated to that session",
             };
         }
+        // Checks if user is already allocated to that session
         let swapPreferenceIds;
         if (request.swapPreference) {
             swapPreferenceIds = ((await request.swapPreference) as Session[]).map(
@@ -114,12 +121,29 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 };
             }
         }
+        // Check if user already made a request for that session
+        const userRequests = (await this.loader.loadMany(
+            user.requestIds
+        )) as StaffRequest[];
+        if (
+            await asyncSome(
+                userRequests,
+                async (request) => await request.hasEffectOn(session)
+            )
+        ) {
+            return {
+                hasPerm: false,
+                errMsg: "You already made a request that affects this session",
+            };
+        }
         if (await request.offers) {
+            // Check if user provides any offer
             return {
                 hasPerm: false,
                 errMsg: "New requests should not have any offer",
             };
         }
+        // Check if user provides the finaliser
         if (request.finaliserId || (await request.finaliser)) {
             return {
                 hasPerm: false,
@@ -264,7 +288,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 swapPreferenceIds = updatedField.swapPreferenceSessionIds;
             }
             if (swapPreferenceIds) {
-                const allocatedSessions = await user.allocatedSessions(
+                const allocatedSessions = await user.getAllocatedSessions(
                     course,
                     term
                 );

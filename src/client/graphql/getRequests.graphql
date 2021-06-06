@@ -1,4 +1,4 @@
-query getRequestById($requestId: Int!) {
+query getRequestById($requestId: String!) {
     getRequestById(requestId: $requestId) {
         id
         title
@@ -128,7 +128,7 @@ query getRequestsByUserId {
     }
 }
 
-query getRequestsByTermId($termId: Int!) {
+query getRequestsByTermId($termId: String!) {
     getRequestsByTermId(termId: $termId) {
         id
         title

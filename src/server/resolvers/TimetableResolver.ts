@@ -60,9 +60,6 @@ export class TimetableResolver extends EntityResolver {
         @Root() root: Timetable,
         @Ctx() { req }: MyContext
     ): Promise<SessionStream[]> {
-        return this.sessionStreamModel.getByIds(
-            root.sessionStreamIds,
-            req.user
-        );
+        return this.streamModel.getByIds(root.sessionStreamIds, req.user);
     }
 }

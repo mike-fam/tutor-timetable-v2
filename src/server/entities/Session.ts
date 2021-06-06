@@ -1,6 +1,7 @@
 import {
     Column,
     Entity,
+    JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -8,7 +9,6 @@ import {
     Unique,
 } from "typeorm";
 import { SessionStream } from "./SessionStream";
-import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Lazy } from "../utils/query";
@@ -19,7 +19,6 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { User } from "./User";
-import { asyncMap } from "../../utils/array";
 import { Utils } from "../utils/Util";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import addDays from "date-fns/addDays";
@@ -28,6 +27,7 @@ import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
 import asyncFilter from "node-filter-async";
 import isBefore from "date-fns/isBefore";
+import differenceBy from "lodash/differenceBy";
 
 @ObjectType()
 @Entity()
@@ -51,16 +51,6 @@ export class Session
     @Field(() => Int)
     @Column()
     week: number;
-
-    @OneToMany(
-        () => SessionAllocation,
-        (sessionAllocation) => sessionAllocation.session,
-        { lazy: true, cascade: ["insert"] }
-    )
-    sessionAllocations: Lazy<SessionAllocation[]>;
-
-    @RelationId((session: Session) => session.sessionAllocations)
-    allocationIds: string;
 
     @OneToMany(() => StaffRequest, (request) => request.session, { lazy: true })
     requests: Lazy<StaffRequest[]>;
@@ -88,6 +78,13 @@ export class Session
     @RelationId((session: Session) => session.acceptedOffers)
     acceptedOfferIds: string[];
 
+    @ManyToMany(() => User, (user) => user.allocatedSessions, { lazy: true })
+    allocatedUsers: Lazy<User[]>;
+
+    @RelationId((session: Session) => session.allocatedUsers)
+    @JoinTable()
+    allocatedUserIds: string[];
+
     public async getCourse(): Promise<Course> {
         const loaders = Utils.loaders;
         const stream = await loaders.sessionStream.load(this.sessionStreamId);
@@ -100,34 +97,27 @@ export class Session
         return await stream.getTerm();
     }
 
-    public async getAllocatedUsers(): Promise<User[]> {
-        const loaders = Utils.loaders;
-        const allocations = (await loaders.sessionAllocation.loadMany(
-            this.allocationIds
-        )) as SessionAllocation[];
-        const users = await asyncMap(allocations, (allocation) =>
-            loaders.user.load(allocation.userId)
+    public async allocate(...users: User[]): Promise<void> {
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            this.allocatedUserIds
+        )) as User[];
+        this.allocatedUsers = [...allocatedUsers, ...users];
+        await this.save();
+    }
+
+    public async deallocate(...users: User[]): Promise<void> {
+        const allocatedUsers = await this.allocatedUsers;
+        this.allocatedUsers = differenceBy(
+            allocatedUsers,
+            users,
+            (user) => user.id
         );
-        return users;
+        await this.save();
     }
 
-    public async allocate(user: User): Promise<void> {
-        const allocation = SessionAllocation.create({
-            session: this,
-            user,
-        });
-        await allocation.save();
-    }
-
-    public async deallocate(user: User): Promise<void> {
-        const allocation = await SessionAllocation.findOne({
-            session: this,
-            user,
-        });
-        if (!allocation) {
-            return;
-        }
-        await allocation.remove();
+    public async clearAllocation(): Promise<void> {
+        this.allocatedUsers = [];
+        await this.save();
     }
 
     public async date(): Promise<Date> {

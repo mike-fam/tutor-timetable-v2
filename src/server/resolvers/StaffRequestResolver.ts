@@ -21,7 +21,6 @@ import { RequestStatus, RequestType } from "../types/request";
 import {
     Offer,
     Session,
-    SessionAllocation,
     SessionStream,
     StaffRequest,
     Timetable,
@@ -42,14 +41,11 @@ class RequestFormInputType {
     preferences: string[];
 
     @Field(() => RequestType)
-    duration: RequestType;
+    type: RequestType;
 
     @Field({ nullable: true })
     @IsString()
     description: string;
-
-    @Field()
-    termId: string;
 
     // Session user wants to switch out of.
     @Field()
@@ -95,94 +91,23 @@ export class StaffRequestResolver extends EntityResolver {
         {
             title,
             preferences,
-            duration,
+            type,
             description,
             sessionId,
-            termId,
         }: RequestFormInputType,
         @Ctx() { req }: MyContext
     ): Promise<StaffRequest> {
-        const requester = req.user!;
-        const session = await Session.findOneOrFail({ id: sessionId });
-        const userSessions = await requester.sessionAllocations;
-        const userSessionStream = await session.sessionStream;
-        // Ensures session is for a valid timetable and session is for the current term.
-        await Timetable.findOneOrFail({
-            id: userSessionStream.timetableId,
-            termId: termId,
-        });
-
-        // Temporary freeze on permanent requests.
-        if (duration === RequestType.PERMANENT) {
-            throw new Error("Permanent requests are currently frozen.");
-        }
-
-        // Checks if user is in session.
-        if (
-            (await SessionAllocation.find({ sessionId, userId: requester.id }))
-                .length === 0
-        ) {
-            throw new Error(
-                "You cannot switch out of a session you are not in"
-            );
-        }
-
-        // Checks if session is in preferences.
-        if (preferences.includes(sessionId)) {
-            throw new Error("Your session cannot be in your preferences");
-        }
-
-        // Checks if user is trying to switch into a session they are already in.
-        if (
-            userSessions.filter(
-                (item) => preferences.indexOf(item.sessionId) > -1
-            ).length !== 0
-        ) {
-            throw new Error(
-                "Your cannot switch into a session you are already in"
-            );
-        }
-
-        // TODO: optimise db calls
-        // Checks session preferences exist and if they are part of the correct timetable.
-        let swapPreference: Array<Session> = [];
-        for (let sid of preferences) {
-            const sessionQuery = await Session.findOneOrFail({ id: sid });
-            const sessionStreamQuery = await SessionStream.findOneOrFail({
-                id: sessionQuery.sessionStreamId,
-            });
-            // Checks each preference is for a valid timetable and each preference is for the current term.
-            await Timetable.findOneOrFail({
-                id: sessionStreamQuery.timetableId,
-                termId: termId,
-            });
-            swapPreference.push(sessionQuery);
-        }
-
-        // Checks for duplicate requests of a session.
-        if (
-            (
-                await StaffRequest.find({
-                    requesterId: requester.id,
-                    sessionId: session.id,
-                })
-            ).length > 0
-        ) {
-            throw new Error(
-                `You have already made a request for ${userSessionStream.name} on that week`
-            );
-        }
-
-        const request = StaffRequest.create({
-            title,
-            description,
-            type: duration,
-            status: RequestStatus.OPEN,
-        });
-        request.requester = Promise.resolve(requester);
-        request.session = Promise.resolve(session);
-        request.swapPreference = Promise.resolve(swapPreference);
-        return await request.save();
+        return await this.staffRequestModel.create(
+            {
+                title,
+                type,
+                description,
+                swapPreferenceSessionIds: preferences,
+                sessionId,
+                status: RequestStatus.OPEN,
+            },
+            req.user
+        );
     }
 
     // Used for displaying requests in modal.

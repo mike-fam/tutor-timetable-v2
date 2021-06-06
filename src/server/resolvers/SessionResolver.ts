@@ -46,7 +46,7 @@ export class SessionResolver extends EntityResolver {
         @Root() root: Session,
         @Ctx() { req }: MyContext
     ): Promise<SessionStream> {
-        return this.sessionStreamModel.getById(root.sessionStreamId, req.user);
+        return this.streamModel.getById(root.sessionStreamId, req.user);
     }
 
     @FieldResolver(() => [User])
@@ -54,11 +54,7 @@ export class SessionResolver extends EntityResolver {
         @Root() root: Session,
         @Ctx() { req }: MyContext
     ): Promise<User[]> {
-        const allocatedUsers = await root.getAllocatedUsers();
-        return this.userModel.getByIds(
-            allocatedUsers.map((user) => user.id),
-            req.user
-        );
+        return this.userModel.getByIds(root.allocatedUserIds, req.user);
     }
 
     @FieldResolver(() => [StaffRequest])

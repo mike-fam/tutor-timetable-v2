@@ -22,7 +22,7 @@ export abstract class EntityResolver {
         protected offerModel: OfferModel,
         protected preferenceModel: PreferenceModel,
         protected sessionModel: SessionModel,
-        protected sessionStreamModel: SessionStreamModel,
+        protected streamModel: SessionStreamModel,
         protected staffRequestModel: StaffRequestModel,
         protected termModel: TermModel,
         protected timeslotModel: TimeslotModel,

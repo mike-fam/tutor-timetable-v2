@@ -16,11 +16,18 @@ const checkFreezeState = (
     return false; // Needed for compiler
 };
 
-export const canAcceptRequest = (
+export const canAcceptOffer = (
     request: StaffRequest,
     timetable: Timetable
 ): boolean => {
     return checkFreezeState(request, timetable, FreezeState.FREE);
+};
+
+export const canMarkOfferAwaitingForApproval = (
+    request: StaffRequest,
+    timetable: Timetable
+): boolean => {
+    return checkFreezeState(request, timetable, FreezeState.APPROVAL_REQUIRED);
 };
 
 export const canMakeNewOffer = (

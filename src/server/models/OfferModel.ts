@@ -12,7 +12,7 @@ import { OfferStatus } from "../types/offer";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import {
-    canAcceptRequest,
+    canAcceptOffer,
     canMakeNewOffer,
     canRequestForApproval,
 } from "../utils/requests";
@@ -139,7 +139,7 @@ export class OfferModel extends BaseModel<Offer> {
                 };
             }
             // Check if offer preferences only contain sessions the user works on
-            const allocatedSessions = await user.allocatedSessions(
+            const allocatedSessions = await user.getAllocatedSessions(
                 course,
                 term
             );
@@ -218,7 +218,7 @@ export class OfferModel extends BaseModel<Offer> {
                 // freeze
                 if (
                     updatedFields.status === OfferStatus.ACCEPTED &&
-                    !canAcceptRequest(request, timetable)
+                    !canAcceptOffer(request, timetable)
                 ) {
                     return {
                         hasPerm: false,
@@ -436,7 +436,9 @@ export class OfferModel extends BaseModel<Offer> {
         }
         // Check if user already works on session in request
         const session = await loaders.session.load(request.sessionId);
-        const allocatedUsers = await session.getAllocatedUsers();
+        const allocatedUsers = (await loaders.user.loadMany(
+            session.allocatedUserIds
+        )) as User[];
         if (allocatedUsers.some((allocated) => allocated.id === user.id)) {
             return {
                 hasPerm: false,
@@ -447,7 +449,7 @@ export class OfferModel extends BaseModel<Offer> {
         }
         // Check if offer preferences only contain sessions the user works on
         // and all the sessions belong to the same course and term
-        const allocatedSessions = await user.allocatedSessions(course, term);
+        const allocatedSessions = await user.getAllocatedSessions(course, term);
         const allocatedSessionIds = allocatedSessions.map(
             (session) => session.id
         );

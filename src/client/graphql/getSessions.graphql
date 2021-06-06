@@ -1,4 +1,4 @@
-query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
+query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
     sessions(termId: $termId, courseIds: $courseIds, week: $week) {
         id
         sessionStream {
@@ -27,7 +27,7 @@ query GetSessions($termId: Int!, $week: Int!, $courseIds: [Int!]!) {
     }
 }
 
-query GetSessionById($sessionId: Int!) {
+query GetSessionById($sessionId: String!) {
     sessionById(sessionId: $sessionId) {
         id
         sessionStream {

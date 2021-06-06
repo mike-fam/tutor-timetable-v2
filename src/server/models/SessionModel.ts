@@ -109,13 +109,56 @@ export class SessionModel extends BaseModel<Session> {
     }
 
     /**
-     * A user can allocate a staff member to a session if EITHER
+     * A user can allocate multiple staff members to a session if EITHER
      *
      * They are admin
      * OR
      * They are course coordinator of the session, AND ALL of the following hold
      *      * The staff member has to work in the same course in the same term
      *      * The staff member is not already on that session
+     * @param staff
+     * @param session
+     * @param user
+     * @protected
+     */
+    public async allocateMultiple(
+        session: Session,
+        staff: User[],
+        user: User
+    ): Promise<void> {
+        const course = await session.getCourse();
+        const term = await session.getTerm();
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            session.allocatedUserIds
+        )) as User[];
+        const allocatedUserIds = allocatedUsers.map((user) => user.id);
+        // Disallow if staff is already allocated to this session
+        for (const staffMember of staff) {
+            if (allocatedUserIds.includes(staffMember.id)) {
+                throw new Error(
+                    `User ${staffMember.name} already works in that session.`
+                );
+            }
+        }
+        // If not course coordinator
+        if (!(await user.isCoordinatorOf(course, term))) {
+            throw new Error(PERM_ERR);
+        }
+        // Disallow if staff is not of same course and same term
+        for (const staffMember of staff) {
+            if (!(await staffMember.isStaffOf(course, term))) {
+                throw new Error(
+                    `User ${staffMember.name} does not work in ` +
+                        `${course.code} in ${term.type}, ${term.year}.`
+                );
+            }
+        }
+        await session.allocate(...staff);
+    }
+
+    /**
+     * A user can allocate a single staff member to a session if EITHER
+     * they are admin
      * OR
      * They are a staff member of this session, AND ALL of the following hold
      *      * There is a request that points to this session OR
@@ -140,14 +183,14 @@ export class SessionModel extends BaseModel<Session> {
      * @param user
      * @protected
      */
-    protected async allocate(
+    public async allocateSingle(
         session: Session,
         staff: User,
         user: User
     ): Promise<void> {
-        const course = await session.getCourse();
-        const term = await session.getTerm();
-        const allocatedUsers = await session.getAllocatedUsers();
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            session.allocatedUserIds
+        )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
         // Disallow if staff is already allocated to this session
         if (allocatedUserIds.includes(staff.id)) {
@@ -155,23 +198,12 @@ export class SessionModel extends BaseModel<Session> {
                 `User ${staff.name} already works in that session.`
             );
         }
-        // Handle first case specified above
-        const loaders = Utils.loaders;
         // Get requests of this user
+        const loaders = Utils.loaders;
         const userRequests = (await loaders.staffRequest.loadMany(
             user.requestIds
         )) as StaffRequest[];
-        // If course coordinator
-        if (await user.isCoordinatorOf(course, term)) {
-            // Disallow if staff is not of same course and same term
-            if (!(await staff.isStaffOf(course, term))) {
-                throw new Error(
-                    `User ${staff.name} does not work in ` +
-                        `${course.code} in ${term.type}, ${term.year}.`
-                );
-            }
-            await session.allocate(staff);
-        } else if (allocatedUserIds.includes(user.id)) {
+        if (allocatedUserIds.includes(user.id)) {
             // Get requests that points to this session
             const affectingRequests = await asyncFilter(
                 userRequests,
@@ -234,12 +266,42 @@ export class SessionModel extends BaseModel<Session> {
     }
 
     /**
-     * A user can deallocate another staff member from a session if ETHER
+     * A user can deallocate multiple staff members from a session if ETHER
      * They are admin
      * OR
      * They are course coordinator of the course of this session, AND ALL of
      * the following conditions hold
      *      * The staff member has to be working on said session
+     * @param session
+     * @param staff
+     * @param user
+     */
+    public async deallocateMultiple(
+        session: Session,
+        staff: User[],
+        user: User
+    ) {
+        const course = await session.getCourse();
+        const term = await session.getTerm();
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            session.allocatedUserIds
+        )) as User[];
+        const allocatedUserIds = allocatedUsers.map((user) => user.id);
+        for (const staffMember of staff) {
+            if (!allocatedUserIds.includes(staffMember.id)) {
+                throw new Error(
+                    `User ${staffMember.name} does not work on that session`
+                );
+            }
+        }
+        if (await user.isCoordinatorOf(course, term)) {
+            await session.deallocate(...staff);
+        }
+    }
+
+    /**
+     * A user can deallocate another staff member from a session if ETHER
+     * They are admin
      * OR
      * They are a staff member of the course of this session, AND ALL of the
      * following conditions hold
@@ -264,21 +326,19 @@ export class SessionModel extends BaseModel<Session> {
      * @param user
      * @protected
      */
-    protected async deallocate(
+    public async deallocateSingle(
         session: Session,
         staff: User,
         user: User
     ): Promise<void> {
-        const course = await session.getCourse();
-        const term = await session.getTerm();
-        const allocatedUsers = await session.getAllocatedUsers();
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            session.allocatedUserIds
+        )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
         if (!allocatedUserIds.includes(staff.id)) {
             throw new Error(`User ${staff.name} does not work on that session`);
         }
-        if (await user.isCoordinatorOf(course, term)) {
-            await session.deallocate(staff);
-        } else if (staff.id === user.id) {
+        if (staff.id === user.id) {
             // User deallocates themself after accepting an offer
             const requestsOfUser = (await Utils.loaders.staffRequest.loadMany(
                 user.requestIds
@@ -303,6 +363,7 @@ export class SessionModel extends BaseModel<Session> {
             if (acceptedOffers.length === 0) {
                 throw new Error("You haven't accepted any offer yet.");
             }
+            await session.deallocate(staff);
         } else {
             // User deallocates another user from their session because they
             // accept the offer of that user
@@ -310,14 +371,11 @@ export class SessionModel extends BaseModel<Session> {
             const offers = (await Utils.loaders.offer.loadMany(
                 staff.offerIds
             )) as Offer[];
-            const acceptedOffers = offers.filter(
-                (offer) => offer.status === OfferStatus.ACCEPTED
-            );
-            const acceptedOffersOfSession = await asyncFilter(
-                acceptedOffers,
+            const acceptedOffers = await asyncFilter(
+                offers,
                 async (offer) => await offer.hasEffectOn(session)
             );
-            const requestsOfAcceptedOffers = acceptedOffersOfSession.map(
+            const requestsOfAcceptedOffers = acceptedOffers.map(
                 (offer) => offer.requestId
             );
             if (

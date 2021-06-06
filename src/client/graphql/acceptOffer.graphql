@@ -1,3 +1,3 @@
-mutation AcceptOffer($offerId: Int!, $offerSessionSwapId: Int) {
+mutation AcceptOffer($offerId: String!, $offerSessionSwapId: String) {
     acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId)
 }

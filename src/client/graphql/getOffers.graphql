@@ -1,4 +1,4 @@
-query getOfferById($offerId: Int!) {
+query getOfferById($offerId: String!) {
     getOfferById(offerId: $offerId) {
         id
         user {
@@ -34,7 +34,7 @@ query getOfferById($offerId: Int!) {
     }
 }
 
-query getOffersByRequestId($requestId: Int!) {
+query getOffersByRequestId($requestId: String!) {
     getOffersByRequestId(requestId: $requestId) {
         id
         preferences {

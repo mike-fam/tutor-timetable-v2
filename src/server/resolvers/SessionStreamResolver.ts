@@ -8,13 +8,7 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import {
-    Session,
-    SessionAllocation,
-    SessionStream,
-    StreamAllocation,
-    Timetable,
-} from "../entities";
+import { Session, SessionStream, Timetable } from "../entities";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
@@ -94,71 +88,57 @@ export class SessionStreamResolver extends EntityResolver {
     async addStreamStaff(
         @Arg("streamId") streamId: string,
         @Arg("newStaffs", () => [String]) newStaffs: string[],
-        @Arg("updateSessions", () => Boolean) updateSessions: boolean
+        @Arg("updateSessions", () => Boolean) updateSessions: boolean,
+        @Ctx() { req }: MyContext
     ): Promise<SessionStream> {
-        const stream = await SessionStream.findOneOrFail({ id: streamId });
-        const allocations = [...(await stream.streamAllocations)];
-        const newAllocations = [];
-        for (const userId of newStaffs) {
-            if (
-                allocations.some((allocation) => allocation.userId === userId)
-            ) {
-                continue;
-            }
-            newAllocations.push(
-                StreamAllocation.create({ userId, sessionStreamId: streamId })
-            );
-        }
-        await StreamAllocation.save(newAllocations);
+        const stream = await this.streamModel.getById(streamId, req.user);
+        const usersToAllocate = await this.userModel.getByIds(
+            newStaffs,
+            req.user
+        );
+        await this.streamModel.allocateMultiple(
+            stream,
+            usersToAllocate,
+            req.user
+        );
         if (updateSessions) {
-            const sessions = await stream.sessions;
-            const newSessionAllocations = [];
+            const sessions = await this.sessionModel.getByIds(
+                stream.sessionIds,
+                req.user
+            );
             for (const session of sessions) {
-                const sessionAllocations = await session.sessionAllocations;
-                for (const userId of newStaffs) {
-                    if (
-                        sessionAllocations.some(
-                            (allocation) => allocation.userId === userId
-                        )
-                    ) {
-                        continue;
-                    }
-                    newSessionAllocations.push(
-                        SessionAllocation.create({
-                            userId,
-                            sessionId: session.id,
-                        })
-                    );
-                }
+                await this.sessionModel.allocateMultiple(
+                    session,
+                    usersToAllocate,
+                    req.user
+                );
             }
-            await SessionAllocation.save(newSessionAllocations);
         }
         return stream;
     }
 
     @Mutation(() => [Session])
     async generateSessions(
-        @Arg("sessionStreamId") sessionStreamId: string
+        @Arg("sessionStreamId") sessionStreamId: string,
+        @Ctx() { req }: MyContext
     ): Promise<Session[]> {
-        const stream = await SessionStream.findOneOrFail({
-            id: sessionStreamId,
-        });
-        const allocations = await stream.streamAllocations;
-        const sessions = Session.create(
+        const stream = await this.streamModel.getById(
+            sessionStreamId,
+            req.user
+        );
+        const allocatedUsers = await this.userModel.getByIds(
+            stream.allocatedUserIds,
+            req.user
+        );
+        return await this.sessionModel.createMany(
             stream.weeks.map((week) => ({
                 week,
                 location: stream.location,
                 sessionStream: stream,
-                sessionAllocations: Promise.resolve(
-                    SessionAllocation.create(
-                        allocations.map((allocation) => ({
-                            user: allocation.user,
-                        }))
-                    )
-                ),
-            }))
+                allocatedUsers,
+            })),
+            req.user
         );
-        return await Session.save(sessions);
     }
 
     @FieldResolver(() => Timetable)
@@ -182,7 +162,7 @@ export class SessionStreamResolver extends EntityResolver {
         @Root() root: SessionStream,
         @Ctx() { req }: MyContext
     ): Promise<SessionStream[]> {
-        return this.sessionStreamModel.getByIds(root.basedStreamIds, req.user);
+        return this.streamModel.getByIds(root.basedStreamIds, req.user);
     }
 
     @FieldResolver(() => SessionStream, { nullable: true })
@@ -193,6 +173,6 @@ export class SessionStreamResolver extends EntityResolver {
         if (!root.basedId) {
             return null;
         }
-        return this.sessionStreamModel.getById(root.basedId, req.user);
+        return this.streamModel.getById(root.basedId, req.user);
     }
 }

@@ -9,7 +9,7 @@ query Terms {
     }
 }
 
-query Term($termId: Int!) {
+query Term($termId: String!) {
     term(termId: $termId) {
         id
         type

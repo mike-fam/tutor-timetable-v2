@@ -98,6 +98,20 @@ export abstract class BaseModel<T extends BaseEntity> {
         throw new Error(errMsg || PERM_ERR);
     }
 
+    public async createMany(
+        entityLike: DeepPartial<T>[],
+        user: User
+    ): Promise<T[]> {
+        const toCreate: T[] = (this.entityCls as any).create(entityLike);
+        for (const obj of toCreate) {
+            const { hasPerm, errMsg } = await this.permCreate(obj, user);
+            if (!hasPerm) {
+                throw new Error(errMsg || PERM_ERR);
+            }
+        }
+        return await (this.entityCls as any).save(toCreate);
+    }
+
     public async update(
         toUpdateFind: DeepPartial<T>,
         updatedFields: Partial<T>,

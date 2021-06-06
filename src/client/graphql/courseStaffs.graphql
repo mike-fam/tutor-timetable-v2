@@ -30,6 +30,6 @@ mutation AddCourseStaff(
     }
 }
 
-mutation RemoveCourseStaff($courseStaffId: Int!) {
+mutation RemoveCourseStaff($courseStaffId: String!) {
     removeCourseStaff(courseStaffId: $courseStaffId)
 }

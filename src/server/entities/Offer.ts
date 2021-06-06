@@ -68,7 +68,7 @@ export class Offer
 
     @RelationId((offer: Offer) => offer.acceptedSession)
     @Column({ nullable: true })
-    acceptedSessionId?: string;
+    acceptedSessionId: string | null;
 
     @Field()
     @Column({ default: false })

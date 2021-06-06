@@ -1,8 +1,13 @@
-import { Column, Entity, OneToMany, OneToOne, RelationId } from "typeorm";
+import {
+    Column,
+    Entity,
+    ManyToMany,
+    OneToMany,
+    OneToOne,
+    RelationId,
+} from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { CourseStaff } from "./CourseStaff";
-import { StreamAllocation } from "./StreamAllocation";
-import { SessionAllocation } from "./SessionAllocation";
 import { StaffRequest } from "./StaffRequest";
 import { Lazy } from "../utils/query";
 import { Timeslot } from "./Timeslot";
@@ -16,6 +21,7 @@ import { asyncMap } from "../../utils/array";
 import { UserSettings } from "./UserSettings";
 import { Session } from "./Session";
 import { Utils } from "../utils/Util";
+import { SessionStream } from "./SessionStream";
 
 @ObjectType()
 @Entity()
@@ -44,23 +50,6 @@ export class User extends BaseEntity {
     @RelationId((user: User) => user.courseStaffs)
     courseStaffIds: string[];
 
-    @OneToMany(
-        () => StreamAllocation,
-        (streamAllocation) => streamAllocation.user,
-        { lazy: true }
-    )
-    streamAllocations: Lazy<StreamAllocation[]>;
-
-    @OneToMany(
-        () => SessionAllocation,
-        (sessionAllocation) => sessionAllocation.user,
-        { lazy: true }
-    )
-    sessionAllocations: Lazy<SessionAllocation[]>;
-
-    @RelationId((user: User) => user.sessionAllocations)
-    sessionAllocationIds: string[];
-
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester, {
         lazy: true,
     })
@@ -86,6 +75,22 @@ export class User extends BaseEntity {
 
     @RelationId((user: User) => user.settings)
     settingsId: string;
+
+    @ManyToMany(() => Session, (session) => session.allocatedUsers, {
+        lazy: true,
+    })
+    allocatedSessions: Promise<Session[]>;
+
+    @RelationId((user: User) => user.allocatedSessions)
+    allocatedSessionIds: string[];
+
+    @ManyToMany(() => SessionStream, (stream) => stream.allocatedUsers, {
+        lazy: true,
+    })
+    allocatedStreams: Promise<SessionStream[]>;
+
+    @RelationId((user: User) => user.allocatedStreams)
+    allocatedStreamIds: string[];
 
     private getCourseStaff(term?: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;
@@ -134,19 +139,14 @@ export class User extends BaseEntity {
         );
     }
 
-    public async allocatedSessions(
+    public async getAllocatedSessions(
         course: Course,
         term: Term
     ): Promise<Session[]> {
-        const sessionAllocations = (await Utils.loaders.sessionAllocation.loadMany(
-            this.sessionAllocationIds
-        )) as SessionAllocation[];
         const sessions = (await Utils.loaders.session.loadMany(
-            sessionAllocations.map(
-                (sessionAllocation) => sessionAllocation.sessionId
-            )
+            this.allocatedSessionIds
         )) as Session[];
-        return await asyncFilter(
+        return asyncFilter(
             sessions,
             async (session) =>
                 (await session.getTerm()).id === term.id &&

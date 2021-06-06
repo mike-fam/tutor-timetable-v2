@@ -11,20 +11,23 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import { In, MoreThanOrEqual } from "typeorm";
 import {
     Offer,
-    Preference,
     Session,
-    SessionAllocation,
+    SessionStream,
     StaffRequest,
-    StreamAllocation,
+    Timetable,
     User,
 } from "../entities";
 import { MyContext } from "../types/context";
-import { RequestStatus, RequestType } from "../types/request";
+import { RequestType } from "../types/request";
 import { Service } from "typedi";
 import { EntityResolver } from "./EntityResolver";
+import { OfferStatus } from "../types/offer";
+import {
+    canAcceptOffer,
+    canMarkOfferAwaitingForApproval,
+} from "../utils/requests";
 
 @InputType()
 class OfferInputType {
@@ -149,129 +152,163 @@ export class OfferResolver extends EntityResolver {
         return await offer.remove();
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Offer)
     async acceptOffer(
         @Arg("offerId") offerId: string,
-        @Arg("offerSessionSwapId", { nullable: true })
-        offerSessionSwapId: string,
+        @Arg("offerSessionSwapId", () => String, { nullable: true })
+        offerSessionSwapId: string | null,
         @Ctx() { req }: MyContext
-    ): Promise<boolean> {
-        // User
-        const user = req.user!;
-        // Offer
-        const offer = await Offer.findOneOrFail({ id: offerId });
-        // Request
-        const request = await offer.request;
-        // Use who made the offer
-        const offerUser = await offer.user;
-        // Preferences of the offer made. Empty array if no preferences
-        const offerPrefs = await offer.preferences;
-        // Session requested by the requester
-        const requestedSession = await request.session;
-        // Session requester switches into if provided
-        const offerSession = await Session.findOne({
-            id: offerSessionSwapId,
-        });
-
-        // Freeze permanent requests.
-        if (request.type === RequestType.PERMANENT) {
-            throw new Error("Permanent requests are currently frozen.");
-        }
-
-        if (user.id !== (await request.requester).id) {
-            throw new Error("User ID does not match with request user ID");
-        }
-
-        if (request.status === RequestStatus.CLOSED) {
-            throw new Error("This request is closed");
-        }
-
-        if (offerPrefs.length > 0) {
-            if (offerSessionSwapId === null) {
-                throw new Error("You must provide a session preference");
-            }
-            if (
-                !offerPrefs.map((item) => item.id).includes(offerSessionSwapId)
-            ) {
-                throw new Error("session provided must be in the preferences");
-            }
-        }
-
-        if (request.type === RequestType.TEMPORARY) {
-            switchUserIntoSessionAllocation(
-                offerUser,
-                [requestedSession.id],
+    ): Promise<Offer> {
+        const { user } = req;
+        const offer = await this.offerModel.getById(offerId, req.user);
+        const request = await this.staffRequestModel.getById(
+            offer.requestId,
+            user
+        );
+        const requester = await this.userModel.getById(
+            request.requesterId,
+            user
+        );
+        const offerMaker = await this.userModel.getById(offer.userId, user);
+        const course = await request.getCourse();
+        const term = await request.getTerm();
+        const timetable = await Timetable.fromCourseTerm(course, term);
+        if (canAcceptOffer(request, timetable)) {
+            const updatedOffer = await this.offerModel.update(
+                { id: offerId },
+                {
+                    status: OfferStatus.ACCEPTED,
+                    acceptedSessionId:
+                        offerSessionSwapId || offer.acceptedSessionId,
+                },
                 user
             );
-
-            // If swap preferences were provided in the offer.
-            if (offerPrefs.length > 0 && offerSession) {
-                switchUserIntoSessionAllocation(
-                    user,
-                    [offerSession.id],
-                    offerUser
-                );
-            }
-            acceptOfferCleanUp(request, offerUser);
-            return true;
-        } else if (request.type === RequestType.PERMANENT) {
-            // Change stream allocation for offerer.
-            const requesterStreamAlloc = await StreamAllocation.findOneOrFail({
-                userId: user.id,
-                sessionStreamId: requestedSession.sessionStreamId,
-            });
-            requesterStreamAlloc.userId = offerUser.id;
-
-            // Change all session allocations from specified week onwards.
-            const startWeek = requestedSession.week;
-
-            // Get all session IDs for weeks after starting week.
-            const sessionsToSwitchInto = (
-                await Session.find({
-                    sessionStreamId: requestedSession.sessionStreamId,
-                    week: MoreThanOrEqual(startWeek),
-                })
-            ).map((item) => item.id);
-
-            switchUserIntoSessionAllocation(
-                offerUser,
-                sessionsToSwitchInto,
+            // Allocate offer maker to session
+            const requestedSession = await this.sessionModel.getById(
+                request.sessionId,
                 user
             );
-
-            // For swaps
-            if (offerPrefs.length > 0 && offerSession) {
-                // Change stream allocation for requester
-                const offerStreamAlloc = await StreamAllocation.findOneOrFail({
-                    userId: offerUser.id,
-                    sessionStreamId: offerSession.sessionStreamId,
-                });
-                offerStreamAlloc.userId = user.id;
-
-                // Get week of the starting session
-                const startWeek = offerSession.week;
-
-                // Get all session IDs from start week onwards.
-                const sessionsToSwitchInto = (
-                    await Session.find({
-                        sessionStreamId: offerSession.sessionStreamId,
-                        week: MoreThanOrEqual(startWeek),
-                    })
-                ).map((item) => item.id);
-
-                switchUserIntoSessionAllocation(
-                    user,
-                    sessionsToSwitchInto,
-                    offerUser
+            await this.performSwap(
+                requestedSession,
+                offerMaker,
+                requester,
+                user
+            );
+            // Allocate user to swapped session on offer
+            if (offerSessionSwapId) {
+                const swapSession = await this.sessionModel.getById(
+                    offerSessionSwapId,
+                    user
                 );
-                await offerStreamAlloc.save();
+                await this.performSwap(
+                    swapSession,
+                    requester,
+                    offerMaker,
+                    user
+                );
             }
-            await requesterStreamAlloc.save();
-            await acceptOfferCleanUp(request, offerUser);
-            return true;
+            // Change all subsequent sessions if request is permanent
+            if (request.type === RequestType.PERMANENT) {
+                const subsequentSessions = await requestedSession.subsequentSessions();
+                for (const subsequentSession of subsequentSessions) {
+                    await this.performSwap(
+                        subsequentSession,
+                        offerMaker,
+                        requester,
+                        user
+                    );
+                }
+                const stream = await this.streamModel.getById(
+                    requestedSession.sessionStreamId,
+                    user
+                );
+                await this.performStreamSwap(
+                    stream,
+                    offerMaker,
+                    requester,
+                    user
+                );
+                if (offerSessionSwapId) {
+                    const swapSession = await this.sessionModel.getById(
+                        offerSessionSwapId,
+                        user
+                    );
+                    const toSwaps = await swapSession.subsequentSessions();
+                    for (const toSwap of toSwaps) {
+                        await this.performSwap(
+                            toSwap,
+                            requester,
+                            offerMaker,
+                            user
+                        );
+                    }
+                    const stream = await this.streamModel.getById(
+                        swapSession.sessionStreamId,
+                        user
+                    );
+                    await this.performStreamSwap(
+                        stream,
+                        requester,
+                        offerMaker,
+                        user
+                    );
+                }
+            }
+            // After accepting an offer, set all other offers to rejected
+            const otherOfferIds = request.offerIds.filter(
+                (id) => id !== offerId
+            );
+            const otherOffers = await this.offerModel.getByIds(
+                otherOfferIds,
+                user
+            );
+            for (const otherOffer of otherOffers) {
+                await this.offerModel.update(
+                    otherOffer,
+                    { status: OfferStatus.REJECTED },
+                    user
+                );
+            }
+            return updatedOffer;
+        } else if (canMarkOfferAwaitingForApproval(request, timetable)) {
+            return await this.offerModel.update(
+                { id: offerId },
+                {
+                    status: OfferStatus.AWAITING_APPROVAL,
+                    acceptedSessionId: offerSessionSwapId,
+                },
+                req.user
+            );
         }
+        throw new Error("Something went wrong");
+    }
 
-        throw new Error("Something went wrong.");
+    private async performSwap(
+        session: Session,
+        toAllocate: User,
+        toDeallocate: User,
+        performer: User
+    ): Promise<void> {
+        await this.sessionModel.allocateSingle(session, toAllocate, performer);
+        await this.sessionModel.deallocateSingle(
+            session,
+            toDeallocate,
+            performer
+        );
+    }
+
+    private async performStreamSwap(
+        session: SessionStream,
+        toAllocate: User,
+        toDeallocate: User,
+        performer: User
+    ): Promise<void> {
+        await this.streamModel.allocateSingle(session, toAllocate, performer);
+        await this.streamModel.deallocateSingle(
+            session,
+            toDeallocate,
+            performer
+        );
     }
 
     @FieldResolver(() => StaffRequest)
@@ -287,15 +324,12 @@ export class OfferResolver extends EntityResolver {
         return this.userModel.getById(root.userId, req.user);
     }
 
-    @FieldResolver(() => [Preference])
+    @FieldResolver(() => [Session])
     async preferences(
         @Root() root: Offer,
         @Ctx() { req }: MyContext
-    ): Promise<Preference[]> {
-        return this.preferenceModel.getByIds(
-            root.preferenceSessionIds,
-            req.user
-        );
+    ): Promise<Session[]> {
+        return this.sessionModel.getByIds(root.preferenceSessionIds, req.user);
     }
 
     @FieldResolver(() => Session, { nullable: true })
@@ -309,41 +343,3 @@ export class OfferResolver extends EntityResolver {
         return this.sessionModel.getById(root.acceptedSessionId, req.user);
     }
 }
-
-// User refers to the person switching into the session.
-// sessionUser refers to the user that is having their session switched into.
-const switchUserIntoSessionAllocation = async (
-    user: User,
-    sessionsToSwitchInto: Array<string>,
-    sessionUser: User
-): Promise<SessionAllocation[]> => {
-    const sessionAllocs = await SessionAllocation.find({
-        userId: sessionUser.id,
-        sessionId: In(sessionsToSwitchInto),
-    });
-
-    if (sessionAllocs.length === 0) {
-        throw new Error("No sessions were found for " + sessionUser.username);
-    }
-
-    for (let alloc of sessionAllocs) {
-        alloc.userId = user.id;
-        await alloc.save();
-    }
-
-    return sessionAllocs;
-};
-
-const acceptOfferCleanUp = async (
-    request: StaffRequest,
-    acceptor: User
-): Promise<StaffRequest> => {
-    // request.acceptor = acceptor;
-    request.status = RequestStatus.CLOSED;
-    await request.save();
-
-    const offers = await Offer.find({ request: request });
-    offers.forEach(async (item) => await item.remove());
-
-    return request;
-};
