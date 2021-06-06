@@ -3,7 +3,9 @@ import { Course, CourseStaff, Term, Timeslot, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { Utils } from "../utils/Util";
 import { asyncMap, asyncSome } from "../../utils/array";
+import { Service } from "typedi";
 
+@Service()
 export class TimeslotModel extends BaseModel<Timeslot> {
     /**
      * A user can read a timeslot entry if EITHER

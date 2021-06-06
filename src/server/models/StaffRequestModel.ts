@@ -6,7 +6,9 @@ import { DeepPartial } from "typeorm";
 import { RequestStatus } from "../types/request";
 import omit from "lodash/omit";
 import isEmpty from "lodash/isEmpty";
+import { Service } from "typedi";
 
+@Service()
 export class StaffRequestModel extends BaseModel<StaffRequest> {
     public constructor() {
         super();
@@ -22,7 +24,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * @param request
      * @param user
      */
-    public async canDelete(
+    protected async canDelete(
         request: StaffRequest,
         user: User
     ): Promise<PermissionState> {
@@ -46,7 +48,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * @param request
      * @param user
      */
-    public async canCreate(
+    protected async canCreate(
         request: StaffRequest,
         user: User
     ): Promise<PermissionState> {

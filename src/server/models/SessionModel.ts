@@ -7,7 +7,9 @@ import { PERM_ERR } from "../constants";
 import { OfferStatus } from "../types/offer";
 import { Utils } from "../utils/Util";
 import asyncFilter from "node-filter-async";
+import { Service } from "typedi";
 
+@Service()
 export class SessionModel extends BaseModel<Session> {
     public constructor() {
         super();

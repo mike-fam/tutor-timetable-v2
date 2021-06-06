@@ -2,7 +2,9 @@ import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { Utils } from "../utils/Util";
+import { Service } from "typedi";
 
+@Service()
 export class PreferenceModel extends BaseModel<Preference> {
     public constructor() {
         super();

@@ -17,10 +17,7 @@ import { CourseRelatedEntity } from "./CourseRelatedEntity";
 import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { FreezeState } from "../types/timetable";
-import { StaffRequest } from "./StaffRequest";
-import { RequestType } from "../types/request";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

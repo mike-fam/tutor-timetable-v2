@@ -17,7 +17,9 @@ import {
     canRequestForApproval,
 } from "../utils/requests";
 import { Utils } from "../utils/Util";
+import { Service } from "typedi";
 
+@Service()
 export class OfferModel extends BaseModel<Offer> {
     public constructor() {
         super();

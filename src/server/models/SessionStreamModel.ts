@@ -2,7 +2,9 @@ import { BaseModel } from "./BaseModel";
 import { SessionStream, Timetable, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { Utils } from "../utils/Util";
+import { Service } from "typedi";
 
+@Service()
 export class SessionStreamModel extends BaseModel<SessionStream> {
     public constructor() {
         super();

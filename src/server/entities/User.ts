@@ -16,7 +16,6 @@ import { asyncMap } from "../../utils/array";
 import { UserSettings } from "./UserSettings";
 import { Session } from "./Session";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()
@@ -89,11 +88,11 @@ export class User extends BaseEntity {
     @OneToOne(() => UserSettings, (settings) => settings.user, { lazy: true })
     settings: Lazy<User>;
 
-    private getCourseStaff(term: Term): Promise<CourseStaff[]>;
+    private getCourseStaff(term?: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;
 
     private async getCourseStaff(
-        term: Term,
+        term?: Term,
         course?: Course
     ): Promise<CourseStaff[]> {
         const loaders = Utils.loaders;
@@ -104,7 +103,7 @@ export class User extends BaseEntity {
             const staffCourse = await courseStaff.getCourse();
             const staffTerm = await courseStaff.getTerm();
             return (
-                staffTerm.id === term.id &&
+                (!term || staffTerm.id === term.id) &&
                 (!course || course.id === staffCourse.id)
             );
         });
@@ -120,7 +119,7 @@ export class User extends BaseEntity {
         return (await this.getCourseStaff(term, course)).length > 0;
     }
 
-    public async coursesCoordinating(term: Term): Promise<Course[]> {
+    public async coursesCoordinating(term?: Term): Promise<Course[]> {
         const courseStaff = (await this.getCourseStaff(term)).filter(
             (courseStaff) => courseStaff.role === Role.COURSE_COORDINATOR
         );
@@ -130,7 +129,7 @@ export class User extends BaseEntity {
         );
     }
 
-    public async coursesWorkingIn(term: Term): Promise<Course[]> {
+    public async coursesWorkingIn(term?: Term): Promise<Course[]> {
         return await asyncMap(await this.getCourseStaff(term), (courseStaff) =>
             courseStaff.getCourse()
         );
