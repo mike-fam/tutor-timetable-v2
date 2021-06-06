@@ -10,13 +10,12 @@ import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { Utils } from "../utils/Util";
 
-@ObjectType()
+// TODO: Eventually remove this entity
 @Entity()
 @Unique(["sessionStream", "user"])
 export class StreamAllocation
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity {
-    @Field(() => SessionStream)
     @ManyToOne(
         () => SessionStream,
         (sessionStream) => sessionStream.streamAllocations,
@@ -24,7 +23,6 @@ export class StreamAllocation
     )
     sessionStream: Lazy<SessionStream>;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.streamAllocations, { lazy: true })
     user: Lazy<User>;
 

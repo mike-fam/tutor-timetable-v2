@@ -60,7 +60,6 @@ export class StaffRequest
     @ManyToOne(() => User, (user) => user.requests, { lazy: true })
     requester: Lazy<User>;
 
-    @Field(() => User)
     @ManyToOne(() => User, { lazy: true, nullable: true })
     finaliser: Lazy<User>;
 
@@ -68,7 +67,6 @@ export class StaffRequest
     @Column({ nullable: true })
     finaliserId: string | null;
 
-    @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.requests, { lazy: true })
     session: Lazy<Session>;
 
@@ -76,8 +74,7 @@ export class StaffRequest
     @Column()
     sessionId: string;
 
-    @Field(() => [Session])
-    @ManyToMany(() => Session, (session) => session.preferredSwaps, {
+    @ManyToMany(() => Session, (session) => session.preferredSwapRequests, {
         lazy: true,
         cascade: true,
     })
@@ -87,7 +84,6 @@ export class StaffRequest
     @RelationId((request: StaffRequest) => request.swapPreference)
     swapPreferenceSessionIds: string[];
 
-    @Field(() => [Offer])
     @OneToMany(() => Offer, (offer) => offer.request, { lazy: true })
     offers: Lazy<Offer[]>;
 

@@ -44,6 +44,7 @@ import {
 } from "./entities";
 import { LoadersInjector } from "./middlewares/loaders-injection";
 import { Container } from "typedi";
+import { UserSettingsResolver } from "./resolvers/UserSettingsResolver";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -79,6 +80,7 @@ const main = async () => {
                 StaffRequestResolver,
                 AllocatorResolver,
                 OfferResolver,
+                UserSettingsResolver,
             ],
             dateScalarMode: "isoDate",
             globalMiddlewares: [LoadersInjector],

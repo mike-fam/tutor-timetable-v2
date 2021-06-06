@@ -19,6 +19,7 @@ import {
 import { In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
 import {
+    Offer,
     Session,
     SessionAllocation,
     SessionStream,
@@ -296,5 +297,43 @@ export class StaffRequestResolver extends EntityResolver {
         @Ctx() { req }: MyContext
     ): Promise<User> {
         return await this.userModel.getById(root.requesterId, req.user);
+    }
+
+    @FieldResolver(() => User, { nullable: true })
+    async finaliser(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<User | null> {
+        if (!root.finaliserId) {
+            return null;
+        }
+        return this.userModel.getById(root.finaliserId, req.user);
+    }
+
+    @FieldResolver(() => Session)
+    async session(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<Session> {
+        return this.sessionModel.getById(root.sessionId, req.user);
+    }
+
+    @FieldResolver(() => [Session])
+    async swapPreference(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<Session[]> {
+        return this.sessionModel.getByIds(
+            root.swapPreferenceSessionIds,
+            req.user
+        );
+    }
+
+    @FieldResolver(() => [Offer])
+    async offers(
+        @Root() root: StaffRequest,
+        @Ctx() { req }: MyContext
+    ): Promise<Offer[]> {
+        return this.offerModel.getByIds(root.offerIds, req.user);
     }
 }

@@ -24,7 +24,6 @@ export class Timeslot extends BaseEntity implements UserRelatedEntity {
     @Column("int")
     day: IsoDay;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.availabilities, { lazy: true })
     user: Lazy<User>;
 

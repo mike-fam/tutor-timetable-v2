@@ -11,19 +11,17 @@ import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { Utils } from "../utils/Util";
 
-@ObjectType()
+// TODO: eventually remove this
 @Entity()
 @Unique(["session", "user"])
 export class SessionAllocation
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
-    @Field(() => Session)
     @ManyToOne(() => Session, (session) => session.sessionAllocations, {
         lazy: true,
     })
     session: Lazy<Session>;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.sessionAllocations, { lazy: true })
     user: Lazy<User>;
 

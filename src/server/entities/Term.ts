@@ -33,7 +33,6 @@ export class Term extends BaseEntity {
     @Column("varchar", { array: true, default: () => "array[]::varchar[]" })
     weekNames: Array<string>;
 
-    @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.term, { lazy: true })
     timetables: Lazy<Timetable[]>;
 

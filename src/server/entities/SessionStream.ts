@@ -30,12 +30,10 @@ import { User } from "./User";
 export class SessionStream
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity {
-    @Field()
     @RelationId((stream: SessionStream) => stream.timetable)
     @Column()
     timetableId: string;
 
-    @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {
         lazy: true,
     })
@@ -73,7 +71,6 @@ export class SessionStream
     @Column("int")
     numberOfStaff: number;
 
-    @Field(() => [Session])
     @OneToMany(() => Session, (session) => session.sessionStream, {
         lazy: true,
     })
@@ -82,7 +79,6 @@ export class SessionStream
     @RelationId((stream: SessionStream) => stream.sessions)
     sessionIds: string[];
 
-    @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
         (streamAllocation) => streamAllocation.sessionStream,
@@ -93,13 +89,14 @@ export class SessionStream
     @RelationId((stream: SessionStream) => stream.streamAllocations)
     streamAllocationIds: string[];
 
-    @Field(() => [SessionStream])
     @OneToMany(() => SessionStream, (stream) => stream.based, {
         lazy: true,
     })
     basedStreams: Lazy<SessionStream[]>;
 
-    @Field(() => SessionStream)
+    @RelationId((stream: SessionStream) => stream.basedStreams)
+    basedStreamIds: string[];
+
     @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
         lazy: true,
         nullable: true,

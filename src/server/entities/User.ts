@@ -36,7 +36,6 @@ export class User extends BaseEntity {
     @Column({ length: 256 })
     email: string;
 
-    @Field(() => [CourseStaff])
     @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.user, {
         lazy: true,
     })
@@ -45,7 +44,6 @@ export class User extends BaseEntity {
     @RelationId((user: User) => user.courseStaffs)
     courseStaffIds: string[];
 
-    @Field(() => [StreamAllocation])
     @OneToMany(
         () => StreamAllocation,
         (streamAllocation) => streamAllocation.user,
@@ -53,7 +51,6 @@ export class User extends BaseEntity {
     )
     streamAllocations: Lazy<StreamAllocation[]>;
 
-    @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
         (sessionAllocation) => sessionAllocation.user,
@@ -64,7 +61,6 @@ export class User extends BaseEntity {
     @RelationId((user: User) => user.sessionAllocations)
     sessionAllocationIds: string[];
 
-    @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (staffRequest) => staffRequest.requester, {
         lazy: true,
     })
@@ -73,20 +69,23 @@ export class User extends BaseEntity {
     @RelationId((user: User) => user.requests)
     requestIds: string[];
 
-    @Field(() => [Timeslot])
     @OneToMany(() => Timeslot, (timeslot) => timeslot.user, { lazy: true })
     availabilities: Lazy<Timeslot[]>;
 
-    @Field(() => [Offer])
+    @RelationId((user: User) => user.availabilities)
+    timeslotIds: string[];
+
     @OneToMany(() => Offer, (offer) => offer.user, { lazy: true })
     offers: Lazy<Offer[]>;
 
     @RelationId((user: User) => user.offers)
     offerIds: string[];
 
-    @Field(() => UserSettings)
     @OneToOne(() => UserSettings, (settings) => settings.user, { lazy: true })
     settings: Lazy<User>;
+
+    @RelationId((user: User) => user.settings)
+    settingsId: string;
 
     private getCourseStaff(term?: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;

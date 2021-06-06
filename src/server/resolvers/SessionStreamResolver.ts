@@ -1,16 +1,30 @@
-import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+    Arg,
+    Ctx,
+    FieldResolver,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+    Root,
+} from "type-graphql";
 import {
     Session,
     SessionAllocation,
     SessionStream,
     StreamAllocation,
+    Timetable,
 } from "../entities";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
+import { MyContext } from "../types/context";
+import { EntityResolver } from "./EntityResolver";
+import { Service } from "typedi";
 
-@Resolver()
-export class SessionStreamResolver {
+@Service()
+@Resolver(() => SessionStream)
+export class SessionStreamResolver extends EntityResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
         @Arg("termId") termId: string,
@@ -145,5 +159,40 @@ export class SessionStreamResolver {
             }))
         );
         return await Session.save(sessions);
+    }
+
+    @FieldResolver(() => Timetable)
+    async timetable(
+        @Root() root: SessionStream,
+        @Ctx() { req }: MyContext
+    ): Promise<Timetable> {
+        return this.timetableModel.getById(root.timetableId, req.user);
+    }
+
+    @FieldResolver(() => [Session])
+    async sessions(
+        @Root() root: SessionStream,
+        @Ctx() { req }: MyContext
+    ): Promise<Session[]> {
+        return this.sessionModel.getByIds(root.sessionIds, req.user);
+    }
+
+    @FieldResolver(() => [SessionStream])
+    async basedStreams(
+        @Root() root: SessionStream,
+        @Ctx() { req }: MyContext
+    ): Promise<SessionStream[]> {
+        return this.sessionStreamModel.getByIds(root.basedStreamIds, req.user);
+    }
+
+    @FieldResolver(() => SessionStream, { nullable: true })
+    async based(
+        @Root() root: SessionStream,
+        @Ctx() { req }: MyContext
+    ): Promise<SessionStream | null> {
+        if (!root.basedId) {
+            return null;
+        }
+        return this.sessionStreamModel.getById(root.basedId, req.user);
     }
 }

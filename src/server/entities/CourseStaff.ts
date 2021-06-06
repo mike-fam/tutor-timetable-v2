@@ -35,29 +35,26 @@ export class CourseStaff
     })
     isNew: boolean;
 
-    @RelationId((courseStaff: CourseStaff) => courseStaff.user)
-    @Column()
-    userId: string;
-
-    @RelationId((courseStaff: CourseStaff) => courseStaff.timetable)
-    @Column()
-    timetableId: string;
-
-    @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.courseStaffs, {
         lazy: true,
     })
     timetable: Lazy<Timetable>;
 
+    @RelationId((courseStaff: CourseStaff) => courseStaff.timetable)
+    @Column()
+    timetableId: string;
+
     @Field(() => Role)
     @Column()
     role: Role;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.courseStaffs, { lazy: true })
     user: Lazy<User>;
 
-    @Field(() => Preference, { nullable: true })
+    @RelationId((courseStaff: CourseStaff) => courseStaff.user)
+    @Column()
+    userId: string;
+
     @OneToOne(() => Preference, (preference) => preference.courseStaff, {
         lazy: true,
         nullable: true,

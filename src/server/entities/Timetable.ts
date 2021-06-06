@@ -35,27 +35,29 @@ export class Timetable
     @Column()
     termId: string;
 
-    @Field(() => Course)
     @ManyToOne(() => Course, (course) => course.timetables, { lazy: true })
     course: Lazy<Course>;
 
-    @Field(() => Term)
     @ManyToOne(() => Term, (term) => term.timetables, { lazy: true })
     term: Lazy<Term>;
 
-    @Field(() => [CourseStaff])
     @OneToMany(() => CourseStaff, (courseStaff) => courseStaff.timetable, {
         lazy: true,
     })
     courseStaffs: Lazy<CourseStaff[]>;
 
-    @Field(() => [SessionStream])
+    @RelationId((timetable: Timetable) => timetable.courseStaffs)
+    courseStaffIds: string[];
+
     @OneToMany(
         () => SessionStream,
         (sessionStream) => sessionStream.timetable,
         { lazy: true }
     )
     sessionStreams: Lazy<SessionStream[]>;
+
+    @RelationId((timetable: Timetable) => timetable.sessionStreams)
+    sessionStreamIds: string[];
 
     @Field(() => FreezeState)
     @Column({ enum: FreezeState, default: FreezeState.FREE })

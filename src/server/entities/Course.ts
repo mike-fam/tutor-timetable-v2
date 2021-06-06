@@ -20,9 +20,4 @@ export class Course extends BaseEntity {
 
     @RelationId((course: Course) => course.timetables)
     timetableIds: string[];
-
-    // TODO: FieldResolver
-    // async getTimetables(loader: TimetableLoader) {
-    //     return await loader.loadMany(this.timetableIds);
-    // }
 }

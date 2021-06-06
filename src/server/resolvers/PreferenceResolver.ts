@@ -2,16 +2,20 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
-import { CourseStaff, Preference, User } from "../entities";
+import { Course, CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../types/context";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
+import { Service } from "typedi";
+import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 class PreferenceInput {
@@ -25,8 +29,9 @@ class PreferenceInput {
     maxWeeklyHours: number;
 }
 
-@Resolver()
-export class PreferenceResolver {
+@Service()
+@Resolver(() => Preference)
+export class PreferenceResolver extends EntityResolver {
     static async getPreference(user: User, courseId: string, termId: string) {
         return await getConnection()
             .getRepository(Preference)
@@ -103,5 +108,13 @@ export class PreferenceResolver {
             preference.maxContigHours = maxContigHours;
         }
         return Preference.save(preference);
+    }
+
+    @FieldResolver(() => CourseStaff)
+    async courseStaff(
+        @Root() root: Preference,
+        @Ctx() { req }: MyContext
+    ): Promise<CourseStaff> {
+        return this.courseStaffModel.getById(root.courseStaffId, req.user);
     }
 }

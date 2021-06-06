@@ -29,7 +29,6 @@ import { RequestType } from "../types/request";
 export class Offer
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
-    @Field(() => StaffRequest)
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
         onDelete: "CASCADE",
@@ -40,7 +39,6 @@ export class Offer
     @Column()
     requestId: string;
 
-    @Field(() => User)
     @ManyToOne(() => User, (user) => user.offers, { lazy: true })
     user: Lazy<User>;
 
@@ -48,8 +46,7 @@ export class Offer
     @Column()
     userId: string;
 
-    @Field(() => [Session])
-    @ManyToMany(() => Session, (session) => session.offerPreferences, {
+    @ManyToMany(() => Session, (session) => session.preferredSwapOffers, {
         lazy: true,
         cascade: true,
     })
@@ -63,7 +60,6 @@ export class Offer
     @Column({ enum: OfferStatus, default: OfferStatus.OPEN })
     status: OfferStatus;
 
-    @Field(() => [Session])
     @ManyToOne(() => Session, (session) => session.acceptedOffers, {
         lazy: true,
         nullable: true,

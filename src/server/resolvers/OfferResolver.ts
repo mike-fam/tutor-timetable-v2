@@ -3,15 +3,18 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
 import { In, MoreThanOrEqual } from "typeorm";
 import {
     Offer,
+    Preference,
     Session,
     SessionAllocation,
     StaffRequest,
@@ -20,6 +23,8 @@ import {
 } from "../entities";
 import { MyContext } from "../types/context";
 import { RequestStatus, RequestType } from "../types/request";
+import { Service } from "typedi";
+import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 class OfferInputType {
@@ -41,8 +46,9 @@ class EditOfferInputType {
     sessionPreferences: string[];
 }
 
-@Resolver()
-export class OfferResolver {
+@Service()
+@Resolver(() => Offer)
+export class OfferResolver extends EntityResolver {
     @Mutation(() => Offer)
     async createOffer(
         @Arg("offerDetails", () => OfferInputType)
@@ -266,6 +272,41 @@ export class OfferResolver {
         }
 
         throw new Error("Something went wrong.");
+    }
+
+    @FieldResolver(() => StaffRequest)
+    async request(
+        @Root() root: Offer,
+        @Ctx() { req }: MyContext
+    ): Promise<StaffRequest> {
+        return this.staffRequestModel.getById(root.requestId, req.user);
+    }
+
+    @FieldResolver(() => User)
+    async user(@Root() root: Offer, @Ctx() { req }: MyContext): Promise<User> {
+        return this.userModel.getById(root.userId, req.user);
+    }
+
+    @FieldResolver(() => [Preference])
+    async preferences(
+        @Root() root: Offer,
+        @Ctx() { req }: MyContext
+    ): Promise<Preference[]> {
+        return this.preferenceModel.getByIds(
+            root.preferenceSessionIds,
+            req.user
+        );
+    }
+
+    @FieldResolver(() => Session, { nullable: true })
+    async acceptedSession(
+        @Root() root: Offer,
+        @Ctx() { req }: MyContext
+    ): Promise<Session | null> {
+        if (!root.acceptedSessionId) {
+            return null;
+        }
+        return this.sessionModel.getById(root.acceptedSessionId, req.user);
     }
 }
 

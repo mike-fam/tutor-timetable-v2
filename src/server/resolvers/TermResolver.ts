@@ -2,14 +2,20 @@ import {
     Arg,
     Args,
     ArgsType,
+    Ctx,
     Field,
+    FieldResolver,
     Int,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
-import { Term } from "../entities";
+import { Term, Timetable } from "../entities";
 import { TermType } from "../types/term";
+import { EntityResolver } from "./EntityResolver";
+import { MyContext } from "../types/context";
+import { Service } from "typedi";
 
 @ArgsType()
 class TermArgs {
@@ -29,8 +35,9 @@ class TermArgs {
     weekNames: Array<string>;
 }
 
+@Service()
 @Resolver(() => Term)
-export class TermResolver {
+export class TermResolver extends EntityResolver {
     @Query(() => [Term])
     async terms(): Promise<Term[]> {
         return await Term.find({});
@@ -53,5 +60,13 @@ export class TermResolver {
         const terms = await Term.findByIds(termIds);
         terms.forEach((term) => term.remove());
         return terms;
+    }
+
+    @FieldResolver(() => [Timetable])
+    async timetables(
+        @Root() root: Term,
+        @Ctx() { req }: MyContext
+    ): Promise<Timetable[]> {
+        return this.timetableModel.getByIds(root.timetableIds, req.user);
     }
 }

@@ -31,7 +31,6 @@ export class Preference
     @Column()
     maxWeeklyHours: number;
 
-    @Field(() => CourseStaff)
     @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference, {
         lazy: true,
     })

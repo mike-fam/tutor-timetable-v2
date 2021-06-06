@@ -2,17 +2,21 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     registerEnumType,
     Resolver,
+    Root,
 } from "type-graphql";
-import { Timeslot } from "../entities";
+import { Timeslot, User } from "../entities";
 import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { getConnection } from "typeorm";
+import { Service } from "typedi";
+import { EntityResolver } from "./EntityResolver";
 
 export enum AvailabilityModificationType {
     UNCHANGED,
@@ -44,8 +48,9 @@ class TimeslotInput {
     modificationType: AvailabilityModificationType;
 }
 
-@Resolver()
-export class AvailabilityResolver {
+@Service()
+@Resolver(() => Timeslot)
+export class AvailabilityResolver extends EntityResolver {
     @Query(() => [Timeslot])
     async myAvailability(@Ctx() ctx: MyContext): Promise<Timeslot[]> {
         return await Timeslot.find({ user: ctx.req.user });
@@ -96,5 +101,13 @@ export class AvailabilityResolver {
             }));
         await getConnection().getRepository(Timeslot).save(updatedTimeslots);
         return await Timeslot.find({ user: req.user });
+    }
+
+    @FieldResolver(() => User)
+    async user(
+        @Root() root: Timeslot,
+        @Ctx() { req }: MyContext
+    ): Promise<User> {
+        return this.userModel.getById(root.userId, req.user);
     }
 }

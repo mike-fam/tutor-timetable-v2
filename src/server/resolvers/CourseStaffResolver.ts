@@ -1,5 +1,15 @@
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
-import { CourseStaff, Timetable, User } from "../entities";
+import {
+    Arg,
+    Ctx,
+    Field,
+    FieldResolver,
+    InputType,
+    Mutation,
+    Query,
+    Resolver,
+    Root,
+} from "type-graphql";
+import { CourseStaff, Preference, Timetable, User } from "../entities";
 import { Role } from "../types/user";
 import { CourseTermIdInput } from "./CourseTermId";
 import { getConnection } from "typeorm";
@@ -7,6 +17,10 @@ import { redacted } from "../constants";
 import { getOrCreateUsersByUsernames } from "../utils/user";
 import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
+import { MyContext } from "../types/context";
+import { TimetableModel } from "../models/TimetableModel";
+import { Service } from "typedi";
+import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 export class CourseStaffInput extends CourseTermIdInput {
@@ -23,8 +37,9 @@ export class CourseStaffUserInput extends CourseStaffInput {
     username: string;
 }
 
-@Resolver()
-export class CourseStaffResolver {
+@Service()
+@Resolver(() => CourseStaff)
+export class CourseStaffResolver extends EntityResolver {
     @Mutation(() => CourseStaff)
     async addCourseStaff(
         @Arg("courseStaffUserInput")
@@ -112,5 +127,29 @@ export class CourseStaffResolver {
         } catch (e) {
             throw new Error("Could not remove this staff member");
         }
+    }
+
+    @FieldResolver(() => Timetable)
+    async timetable(
+        @Root() root: CourseStaff,
+        @Ctx() { req }: MyContext
+    ): Promise<Timetable> {
+        return this.timetableModel.getById(root.timetableId, req.user);
+    }
+
+    @FieldResolver(() => User)
+    async user(
+        @Root() root: CourseStaff,
+        @Ctx() { req }: MyContext
+    ): Promise<User> {
+        return this.userModel.getById(root.userId, req.user);
+    }
+
+    @FieldResolver(() => Preference)
+    async preference(
+        @Root() root: CourseStaff,
+        @Ctx() { req }: MyContext
+    ): Promise<Preference> {
+        return this.preferenceModel.getById(root.preferenceId, req.user);
     }
 }

@@ -35,7 +35,6 @@ import isBefore from "date-fns/isBefore";
 export class Session
     extends BaseEntity
     implements CourseRelatedEntity, TermRelatedEntity {
-    @Field(() => SessionStream)
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,
     })
@@ -53,7 +52,6 @@ export class Session
     @Column()
     week: number;
 
-    @Field(() => [SessionAllocation])
     @OneToMany(
         () => SessionAllocation,
         (sessionAllocation) => sessionAllocation.session,
@@ -64,23 +62,31 @@ export class Session
     @RelationId((session: Session) => session.sessionAllocations)
     allocationIds: string;
 
-    @Field(() => [StaffRequest])
     @OneToMany(() => StaffRequest, (request) => request.session, { lazy: true })
     requests: Lazy<StaffRequest[]>;
 
-    @Field(() => [StaffRequest])
+    @RelationId((session: Session) => session.requests)
+    requestIds: string[];
+
     @ManyToMany(() => StaffRequest, (request) => request.swapPreference, {
         lazy: true,
     })
-    preferredSwaps: Lazy<StaffRequest[]>;
+    preferredSwapRequests: Lazy<StaffRequest[]>;
 
-    @Field(() => [Offer])
+    @RelationId((session: Session) => session.preferredSwapRequests)
+    preferredSwapRequestIds: string[];
+
     @ManyToMany(() => Offer, (offer) => offer.preferences, { lazy: true })
-    offerPreferences: Lazy<Offer[]>;
+    preferredSwapOffers: Lazy<Offer[]>;
 
-    @Field(() => Offer)
+    @RelationId((session: Session) => session.preferredSwapOffers)
+    preferredSwapOfferIds: string[];
+
     @OneToMany(() => Offer, (offer) => offer.acceptedSession, { lazy: true })
     acceptedOffers: Lazy<Offer[]>;
+
+    @RelationId((session: Session) => session.acceptedOffers)
+    acceptedOfferIds: string[];
 
     public async getCourse(): Promise<Course> {
         const loaders = Utils.loaders;

@@ -8,7 +8,6 @@ import { Utils } from "../utils/Util";
 @ObjectType()
 @Entity()
 export class UserSettings extends BaseEntity {
-    @Field(() => User)
     @OneToOne(() => User, (user) => user.settings, { lazy: true })
     user: Lazy<User>;
 
