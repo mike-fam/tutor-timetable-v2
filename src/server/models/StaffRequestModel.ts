@@ -15,6 +15,119 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
     }
 
     /**
+     * A user can delete a request if EITHER
+     * They are admin
+     * OR
+     * They are the requester and the request has not had an accepted offer yet
+     * @param request
+     * @param user
+     */
+    public async canDelete(
+        request: StaffRequest,
+        user: User
+    ): Promise<PermissionState> {
+        if (request.requesterId !== user.id) {
+            return { hasPerm: false };
+        }
+        if ((await request.getAcceptedOffer()) === null) {
+            return { hasPerm: false };
+        }
+        return { hasPerm: true };
+    }
+
+    /**
+     * A user can create a request if EITHER
+     * they are admin
+     * OR
+     * ALL of the following applies
+     *      * The requester has to be themself
+     *      * They are allocated to the session the request points to
+     *      * They are not allocated to any of the swapPreference
+     * @param request
+     * @param user
+     */
+    public async canCreate(
+        request: StaffRequest,
+        user: User
+    ): Promise<PermissionState> {
+        let requesterId;
+        if (request.requesterId) {
+            requesterId = request.requesterId;
+        } else if (request.requester) {
+            requesterId = (await request.requester).id;
+        } else {
+            return {
+                hasPerm: false,
+                errMsg: "Requester field missing",
+            };
+        }
+        if (requesterId !== user.id) {
+            return {
+                hasPerm: false,
+                errMsg: "The requester must be yourself",
+            };
+        }
+        let session;
+        if (request.sessionId) {
+            session = await Utils.loaders.session.load(request.sessionId);
+        } else if (request.session) {
+            session = await request.session;
+        } else {
+            return {
+                hasPerm: false,
+                errMsg: "Session field missing",
+            };
+        }
+        const course = await session.getCourse();
+        const term = await session.getTerm();
+        const allocatedSessions = await user.allocatedSessions(course, term);
+        const allocatedSessionIds = allocatedSessions.map(
+            (session) => session.id
+        );
+        if (!allocatedSessionIds.includes(session.id)) {
+            return {
+                hasPerm: false,
+                errMsg: "You are not allocated to that session",
+            };
+        }
+        let swapPreferenceIds;
+        if (request.swapPreference) {
+            swapPreferenceIds = ((await request.swapPreference) as Session[]).map(
+                (session) => session.id
+            );
+        } else if (request.swapPreferenceSessionIds) {
+            swapPreferenceIds = request.swapPreferenceSessionIds;
+        }
+        if (swapPreferenceIds) {
+            if (
+                swapPreferenceIds.some((sessionId) =>
+                    allocatedSessionIds.includes(sessionId)
+                )
+            ) {
+                return {
+                    hasPerm: false,
+                    errMsg:
+                        "You already work on one of the sessions in your swap" +
+                        " preferences",
+                };
+            }
+        }
+        if (await request.offers) {
+            return {
+                hasPerm: false,
+                errMsg: "New requests should not have any offer",
+            };
+        }
+        if (request.finaliserId || (await request.finaliser)) {
+            return {
+                hasPerm: false,
+                errMsg: "New requests should not have a finaliser",
+            };
+        }
+        return { hasPerm: true };
+    }
+
+    /**
      * A user can read a request if EITHER
      * they are admin
      * OR
@@ -171,118 +284,5 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
             return { hasPerm: true };
         }
         return { hasPerm: false };
-    }
-
-    /**
-     * A user can delete a request if EITHER
-     * They are admin
-     * OR
-     * They are the requester and the request has not had an accepted offer yet
-     * @param request
-     * @param user
-     */
-    public async canDelete(
-        request: StaffRequest,
-        user: User
-    ): Promise<PermissionState> {
-        if (request.requesterId !== user.id) {
-            return { hasPerm: false };
-        }
-        if ((await request.getAcceptedOffer()) === null) {
-            return { hasPerm: false };
-        }
-        return { hasPerm: true };
-    }
-
-    /**
-     * A user can create a request if EITHER
-     * they are admin
-     * OR
-     * ALL of the following applies
-     *      * The requester has to be themself
-     *      * They are allocated to the session the request points to
-     *      * They are not allocated to any of the swapPreference
-     * @param request
-     * @param user
-     */
-    public async canCreate(
-        request: StaffRequest,
-        user: User
-    ): Promise<PermissionState> {
-        let requesterId;
-        if (request.requesterId) {
-            requesterId = request.requesterId;
-        } else if (request.requester) {
-            requesterId = (await request.requester).id;
-        } else {
-            return {
-                hasPerm: false,
-                errMsg: "Requester field missing",
-            };
-        }
-        if (requesterId !== user.id) {
-            return {
-                hasPerm: false,
-                errMsg: "The requester must be yourself",
-            };
-        }
-        let session;
-        if (request.sessionId) {
-            session = await Utils.loaders.session.load(request.sessionId);
-        } else if (request.session) {
-            session = await request.session;
-        } else {
-            return {
-                hasPerm: false,
-                errMsg: "Session field missing",
-            };
-        }
-        const course = await session.getCourse();
-        const term = await session.getTerm();
-        const allocatedSessions = await user.allocatedSessions(course, term);
-        const allocatedSessionIds = allocatedSessions.map(
-            (session) => session.id
-        );
-        if (!allocatedSessionIds.includes(session.id)) {
-            return {
-                hasPerm: false,
-                errMsg: "You are not allocated to that session",
-            };
-        }
-        let swapPreferenceIds;
-        if (request.swapPreference) {
-            swapPreferenceIds = ((await request.swapPreference) as Session[]).map(
-                (session) => session.id
-            );
-        } else if (request.swapPreferenceSessionIds) {
-            swapPreferenceIds = request.swapPreferenceSessionIds;
-        }
-        if (swapPreferenceIds) {
-            if (
-                swapPreferenceIds.some((sessionId) =>
-                    allocatedSessionIds.includes(sessionId)
-                )
-            ) {
-                return {
-                    hasPerm: false,
-                    errMsg:
-                        "You already work on one of the sessions in your swap" +
-                        " preferences",
-                };
-            }
-        }
-        if (await request.offers) {
-            return {
-                hasPerm: false,
-                errMsg: "New requests should not have any offer",
-            };
-        }
-        if (request.finaliserId || (await request.finaliser)) {
-            return {
-                hasPerm: false,
-                errMsg: "New requests should not have a finaliser",
-            };
-        }
-        return { hasPerm: true };
     }
 }

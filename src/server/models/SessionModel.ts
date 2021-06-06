@@ -1,7 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { Offer, Session, StaffRequest, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { DeepPartial } from "typeorm";
 import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import { PERM_ERR } from "../constants";
@@ -45,7 +44,7 @@ export class SessionModel extends BaseModel<Session> {
      */
     protected async canUpdate(
         session: Session,
-        updatedFields: DeepPartial<Session>,
+        updatedFields: Partial<Session>,
         user: User
     ): Promise<PermissionState> {
         const course = await session.getCourse();

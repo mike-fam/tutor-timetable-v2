@@ -1,5 +1,5 @@
 import { Check, Column, Entity, ManyToOne, RelationId } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import { IsoDay } from "../../types/date";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { User } from "./User";
@@ -21,7 +21,7 @@ export class Timeslot extends BaseEntity implements UserRelatedEntity {
     @Column("float")
     endTime: number;
 
-    @Field()
+    @Field(() => Int)
     @Column("int")
     day: IsoDay;
 

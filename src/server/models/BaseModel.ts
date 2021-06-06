@@ -19,7 +19,7 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     public async permUpdate(
         toUpdate: T,
-        updatedFields: DeepPartial<T>,
+        updatedFields: Partial<T>,
         user: User
     ): Promise<PermissionState> {
         if (user.isAdmin) {
@@ -40,32 +40,6 @@ export abstract class BaseModel<T extends BaseEntity> {
             return { hasPerm: true };
         }
         return await this.canCreate(toCreate, user);
-    }
-
-    protected async canRead(obj: T, user: User): Promise<PermissionState> {
-        return { hasPerm: user.isAdmin };
-    }
-
-    protected async canUpdate(
-        toUpdate: T,
-        updatedFields: DeepPartial<T>,
-        user: User
-    ): Promise<PermissionState> {
-        return { hasPerm: user.isAdmin };
-    }
-
-    protected async canDelete(
-        toDelete: T,
-        user: User
-    ): Promise<PermissionState> {
-        return { hasPerm: user.isAdmin };
-    }
-
-    protected async canCreate(
-        toCreate: T,
-        user: User
-    ): Promise<PermissionState> {
-        return { hasPerm: user.isAdmin };
     }
 
     public async get(entityLike: DeepPartial<T>, user: User): Promise<T> {
@@ -126,7 +100,7 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     public async update(
         toUpdateFind: DeepPartial<T>,
-        updatedFields: DeepPartial<T>,
+        updatedFields: Partial<T>,
         user: User
     ): Promise<T> {
         const updateCandidates: T[] = (this.entityCls as any).find(
@@ -180,5 +154,31 @@ export abstract class BaseModel<T extends BaseEntity> {
             return await toDelete.remove();
         }
         throw new Error(errMsg || PERM_ERR);
+    }
+
+    protected async canRead(obj: T, user: User): Promise<PermissionState> {
+        return { hasPerm: user.isAdmin };
+    }
+
+    protected async canUpdate(
+        toUpdate: T,
+        updatedFields: Partial<T>,
+        user: User
+    ): Promise<PermissionState> {
+        return { hasPerm: user.isAdmin };
+    }
+
+    protected async canDelete(
+        toDelete: T,
+        user: User
+    ): Promise<PermissionState> {
+        return { hasPerm: user.isAdmin };
+    }
+
+    protected async canCreate(
+        toCreate: T,
+        user: User
+    ): Promise<PermissionState> {
+        return { hasPerm: user.isAdmin };
     }
 }

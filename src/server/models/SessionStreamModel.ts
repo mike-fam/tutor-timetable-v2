@@ -1,7 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { SessionStream, Timetable, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { DeepPartial } from "typeorm";
 import { Utils } from "../utils/Util";
 
 export class SessionStreamModel extends BaseModel<SessionStream> {
@@ -52,7 +51,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      */
     protected async canUpdate(
         stream: SessionStream,
-        updatedFields: DeepPartial<SessionStream>,
+        updatedFields: Partial<SessionStream>,
         user: User
     ): Promise<PermissionState> {
         const course = await stream.getCourse();
@@ -156,4 +155,3 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
         return { hasPerm: await user.isCoordinatorOf(course, term) };
     }
 }
-

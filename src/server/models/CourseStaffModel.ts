@@ -1,6 +1,5 @@
 import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, Timetable, User } from "../entities";
-import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
 import { Utils } from "../utils/Util";
 
@@ -52,7 +51,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
      */
     protected async canUpdate(
         toUpdate: CourseStaff,
-        updatedFields: DeepPartial<CourseStaff>,
+        updatedFields: Partial<CourseStaff>,
         user: User
     ): Promise<PermissionState> {
         const course = await toUpdate.getCourse();

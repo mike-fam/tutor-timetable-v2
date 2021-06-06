@@ -6,7 +6,6 @@ import { TermType } from "../types/term";
 import { BaseEntity } from "./BaseEntity";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

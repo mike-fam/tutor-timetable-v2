@@ -1,7 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { DeepPartial } from "typeorm";
 import { Utils } from "../utils/Util";
 
 export class PreferenceModel extends BaseModel<Preference> {
@@ -52,7 +51,7 @@ export class PreferenceModel extends BaseModel<Preference> {
      */
     protected async canUpdate(
         preference: Preference,
-        updatedFields: DeepPartial<Preference>,
+        updatedFields: Partial<Preference>,
         user: User
     ): Promise<PermissionState> {
         const owner = await preference.getOwner();

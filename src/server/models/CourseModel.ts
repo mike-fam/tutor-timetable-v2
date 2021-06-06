@@ -1,6 +1,5 @@
 import { BaseModel } from "./BaseModel";
 import { Course, Term, User } from "../entities";
-import { DeepPartial } from "typeorm";
 import { PermissionState } from "../types/permission";
 import { Utils } from "../utils/Util";
 import { Service } from "typedi";
@@ -46,7 +45,7 @@ export class CourseModel extends BaseModel<Course> {
      */
     protected async canUpdate(
         course: Course,
-        updatedFields: DeepPartial<Course>,
+        updatedFields: Partial<Course>,
         user: User
     ): Promise<PermissionState> {
         // Check if user is course coordinator of course

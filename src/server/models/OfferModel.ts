@@ -25,6 +25,22 @@ export class OfferModel extends BaseModel<Offer> {
         this.loader = Utils.loaders.offer;
     }
 
+    public async update(
+        toUpdateFind: DeepPartial<Offer>,
+        updatedFields: Partial<Offer>,
+        user: User
+    ): Promise<Offer> {
+        const offer = await Offer.findOne(toUpdateFind);
+        if (
+            offer &&
+            offer.status !== OfferStatus.ACCEPTED &&
+            updatedFields.status === OfferStatus.ACCEPTED
+        ) {
+            updatedFields.acceptedDate = new Date();
+        }
+        return await super.update(toUpdateFind, updatedFields, user);
+    }
+
     /**
      * A user can read an offer entry if they are admin OR
      * they work in the same course as the offer maker
@@ -71,7 +87,7 @@ export class OfferModel extends BaseModel<Offer> {
      */
     protected async canUpdate(
         offer: Offer,
-        updatedFields: DeepPartial<Offer>,
+        updatedFields: Partial<Offer>,
         user: User
     ): Promise<PermissionState> {
         const request = await Utils.loaders.staffRequest.load(offer.requestId);
@@ -480,21 +496,5 @@ export class OfferModel extends BaseModel<Offer> {
             }
         }
         return { hasPerm: true };
-    }
-
-    public async update(
-        toUpdateFind: DeepPartial<Offer>,
-        updatedFields: DeepPartial<Offer>,
-        user: User
-    ): Promise<Offer> {
-        const offer = await Offer.findOne(toUpdateFind);
-        if (
-            offer &&
-            offer.status !== OfferStatus.ACCEPTED &&
-            updatedFields.status === OfferStatus.ACCEPTED
-        ) {
-            updatedFields.acceptedDate = new Date();
-        }
-        return await super.update(toUpdateFind, updatedFields, user);
     }
 }
