@@ -8,6 +8,7 @@ class ErrorType {
     @Field()
     message: string;
 }
+
 @ObjectType({ isAbstract: true })
 abstract class ResponseWithErrorClass {
     @Field(() => ErrorType, { nullable: true })
@@ -22,6 +23,7 @@ export const SingleItemResponseWithError = <ItemType>(
         @Field(() => itemType, { nullable: true })
         item?: ItemType;
     }
+
     return SingleItemResponseWithErrorClass;
 };
 
@@ -33,5 +35,6 @@ export const MultipleItemResponseWithErrors = <ItemType>(
         @Field(() => [itemType], { nullable: true })
         items?: Array<ItemType>;
     }
+
     return MultipleItemResponseWithErrorClass;
 };

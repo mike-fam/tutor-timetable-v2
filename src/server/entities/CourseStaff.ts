@@ -21,7 +21,6 @@ import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

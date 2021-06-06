@@ -6,7 +6,6 @@ import { User } from "./User";
 import { BaseEntity } from "./BaseEntity";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

@@ -6,5 +6,4 @@ export class HelloResolver {
     async hello(): Promise<string> {
         return "Hello world";
     }
-
 }

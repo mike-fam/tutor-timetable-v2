@@ -9,7 +9,6 @@ import { BaseEntity } from "./BaseEntity";
 import { TermRelatedEntity } from "./TermRelatedEntity";
 import { Term } from "./Term";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

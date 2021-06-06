@@ -27,7 +27,6 @@ import {
     User,
 } from "../entities";
 import { MyContext } from "../types/context";
-import { UserModel } from "../models/UserModel";
 import { EntityResolver } from "./EntityResolver";
 
 @InputType()

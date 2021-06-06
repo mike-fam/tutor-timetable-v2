@@ -11,7 +11,6 @@ import { Term } from "./Term";
 import { UserRelatedEntity } from "./UserRelatedEntity";
 import { User } from "./User";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

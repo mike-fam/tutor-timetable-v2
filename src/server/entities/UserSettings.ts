@@ -4,7 +4,6 @@ import { User } from "./User";
 import { Lazy } from "../utils/query";
 import { BaseEntity } from "./BaseEntity";
 import { Utils } from "../utils/Util";
-import { DataLoaderKey } from "../types/dataloaders";
 
 @ObjectType()
 @Entity()

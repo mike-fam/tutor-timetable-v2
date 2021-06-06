@@ -6,7 +6,7 @@ import {
     Int,
     Mutation,
     Query,
-    Resolver
+    Resolver,
 } from "type-graphql";
 import { Term } from "../entities";
 import { TermType } from "../types/term";

@@ -27,7 +27,7 @@ export const canMakeNewOffer = (
     request: StaffRequest,
     timetable: Timetable
 ): boolean => {
-	return checkFreezeState(request, timetable, FreezeState.LOCK, true);
+    return checkFreezeState(request, timetable, FreezeState.LOCK, true);
 };
 
 export const canRequestForApproval = (
