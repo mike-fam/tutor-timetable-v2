@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Map, Set } from "immutable";
 import { CheckboxList } from "./CheckBoxList";
-import { v4 as uuid } from "uuid";
 
 type Props<T extends string> = {
     elements: T[];
@@ -41,7 +40,7 @@ export const SimpleCheckboxList = <T extends string>({
     // setup props to pass to checkbox list
     useEffect(() => {
         elements.forEach((element, index) => {
-            const key = uuid();
+            const key = String(index);
             setElementMap((prev) => prev.set(key, element));
             setHelpTextMap((prev) => prev.set(key, helpTexts?.[index]));
             if (defaultSelectedAll && setupDefault) {

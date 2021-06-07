@@ -216,7 +216,7 @@ export abstract class BaseModel<T extends BaseEntity> {
         deleteCriteria: FindConditions<T>,
         user: User
     ): Promise<T[]> {
-        const deleteCandidates: T[] = (this.entityCls as any).find(
+        const deleteCandidates: T[] = await (this.entityCls as any).find(
             deleteCriteria
         );
         for (const toDelete of deleteCandidates) {

@@ -7,6 +7,7 @@ import omit from "lodash/omit";
 import isEmpty from "lodash/isEmpty";
 import { asyncSome } from "../../utils/array";
 import { DataLoaders } from "../types/dataloaders";
+import isBefore from "date-fns/isBefore";
 
 export class StaffRequestModel extends BaseModel<StaffRequest> {
     public constructor(loaders: DataLoaders) {
@@ -45,6 +46,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      *      * They are allocated to the session the request points to
      *      * They are not allocated to any of the swapPreference
      *      * They have not made a request for the same session
+     *      * The session is not in the past
      *      * The request does not conflict with the freeze state
      * @param request
      * @param user
@@ -81,6 +83,14 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
             return {
                 hasPerm: false,
                 errMsg: "Session field missing",
+            };
+        }
+        // Check if session is in the past
+        const sessionDate = await session.date();
+        if (isBefore(sessionDate, new Date())) {
+            return {
+                hasPerm: false,
+                errMsg: "This session is in the past"
             };
         }
         // Check if user actually works on the session on the request
