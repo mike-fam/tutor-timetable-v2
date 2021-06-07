@@ -7,18 +7,16 @@ import {
     User,
 } from "../entities";
 import { PermissionState } from "../types/permission";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
 import asyncFilter from "node-filter-async";
 import { OfferStatus } from "../types/offer";
 import { PERM_ERR } from "../constants";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class SessionStreamModel extends BaseModel<SessionStream> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = SessionStream;
-        this.loader = Utils.loaders.sessionStream;
+        this.loader = loaders.sessionStream;
     }
 
     /**
@@ -157,7 +155,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
     ): Promise<PermissionState> {
         let timetable: Timetable;
         if (stream.timetableId) {
-            timetable = await Utils.loaders.timetable.load(stream.timetableId);
+            timetable = await this.loaders.timetable.load(stream.timetableId);
         } else {
             timetable = await stream.timetable;
         }
@@ -186,7 +184,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
     ): Promise<void> {
         const course = await stream.getCourse();
         const term = await stream.getTerm();
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             stream.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -244,8 +242,8 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
         staff: User,
         user: User
     ): Promise<void> {
-        const loaders = Utils.loaders;
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const loaders = this.loaders;
+        const allocatedUsers = (await this.loaders.user.loadMany(
             stream.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -336,7 +334,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
     ) {
         const course = await stream.getCourse();
         const term = await stream.getTerm();
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             stream.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -384,7 +382,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
         staff: User,
         user: User
     ): Promise<void> {
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             stream.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -396,7 +394,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
             if (!allocatedUserIds.includes(user.id)) {
                 throw new Error(`You are not allocated to ${stream.name}`);
             }
-            const requestsOfUser = (await Utils.loaders.staffRequest.loadMany(
+            const requestsOfUser = (await this.loaders.staffRequest.loadMany(
                 user.requestIds
             )) as StaffRequest[];
             const requestsOfSession = await asyncFilter(
@@ -410,7 +408,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
                 (offerIds, request) => [...offerIds, ...request.offerIds],
                 []
             );
-            const offersOfRequests = (await Utils.loaders.offer.loadMany(
+            const offersOfRequests = (await this.loaders.offer.loadMany(
                 offerIdsOfRequests
             )) as Offer[];
             const acceptedOffers = offersOfRequests.filter(
@@ -424,7 +422,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
             // User deallocates another user from their session because they
             // accept the offer of that user
             // Get offers of that user
-            const offers = (await Utils.loaders.offer.loadMany(
+            const offers = (await this.loaders.offer.loadMany(
                 staff.offerIds
             )) as Offer[];
             const acceptedOffers = await asyncFilter(

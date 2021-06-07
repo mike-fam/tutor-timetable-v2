@@ -1,15 +1,13 @@
 import { BaseModel } from "./BaseModel";
 import { Timetable, User } from "../entities";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
 import { PermissionState } from "../types/permission";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class TimetableModel extends BaseModel<Timetable> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = Timetable;
-        this.loader = Utils.loaders.timetable;
+        this.loader = loaders.timetable;
     }
 
     /**

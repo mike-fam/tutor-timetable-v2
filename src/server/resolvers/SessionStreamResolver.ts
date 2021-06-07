@@ -13,12 +13,9 @@ import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 import { MyContext } from "../types/context";
-import { EntityResolver } from "./EntityResolver";
-import { Service } from "typedi";
 
-@Service()
 @Resolver(() => SessionStream)
-export class SessionStreamResolver extends EntityResolver {
+export class SessionStreamResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
         @Arg("termId") termId: string,
@@ -89,25 +86,22 @@ export class SessionStreamResolver extends EntityResolver {
         @Arg("streamId") streamId: string,
         @Arg("newStaffs", () => [String]) newStaffs: string[],
         @Arg("updateSessions", () => Boolean) updateSessions: boolean,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream> {
-        const stream = await this.streamModel.getById(streamId, req.user);
-        const usersToAllocate = await this.userModel.getByIds(
-            newStaffs,
-            req.user
-        );
-        await this.streamModel.allocateMultiple(
+        const stream = await models.sessionStream.getById(streamId, req.user);
+        const usersToAllocate = await models.user.getByIds(newStaffs, req.user);
+        await models.sessionStream.allocateMultiple(
             stream,
             usersToAllocate,
             req.user
         );
         if (updateSessions) {
-            const sessions = await this.sessionModel.getByIds(
+            const sessions = await models.session.getByIds(
                 stream.sessionIds,
                 req.user
             );
             for (const session of sessions) {
-                await this.sessionModel.allocateMultiple(
+                await models.session.allocateMultiple(
                     session,
                     usersToAllocate,
                     req.user
@@ -120,17 +114,17 @@ export class SessionStreamResolver extends EntityResolver {
     @Mutation(() => [Session])
     async generateSessions(
         @Arg("sessionStreamId") sessionStreamId: string,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        const stream = await this.streamModel.getById(
+        const stream = await models.sessionStream.getById(
             sessionStreamId,
             req.user
         );
-        const allocatedUsers = await this.userModel.getByIds(
+        const allocatedUsers = await models.user.getByIds(
             stream.allocatedUserIds,
             req.user
         );
-        return await this.sessionModel.createMany(
+        return await models.session.createMany(
             stream.weeks.map((week) => ({
                 week,
                 location: stream.location,
@@ -144,43 +138,46 @@ export class SessionStreamResolver extends EntityResolver {
     @FieldResolver(() => Timetable)
     async timetable(
         @Root() root: SessionStream,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
-        return this.timetableModel.getById(root.timetableId, req.user);
+        return await models.timetable.getById(root.timetableId, req.user);
     }
 
     @FieldResolver(() => [Session])
     async sessions(
         @Root() root: SessionStream,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        return this.sessionModel.getByIds(root.sessionIds, req.user);
+        return await models.session.getByIds(root.sessionIds, req.user);
     }
 
     @FieldResolver(() => [SessionStream])
     async basedStreams(
         @Root() root: SessionStream,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
-        return this.streamModel.getByIds(root.basedStreamIds, req.user);
+        return await models.sessionStream.getByIds(
+            root.basedStreamIds,
+            req.user
+        );
     }
 
     @FieldResolver(() => SessionStream, { nullable: true })
     async based(
         @Root() root: SessionStream,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream | null> {
         if (!root.basedId) {
             return null;
         }
-        return this.streamModel.getById(root.basedId, req.user);
+        return await models.sessionStream.getById(root.basedId, req.user);
     }
 
     @FieldResolver(() => [User])
     async allocatedUsers(
         @Root() root: SessionStream,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User[]> {
-        return this.userModel.getByIds(root.allocatedUserIds, req.user);
+        return await models.user.getByIds(root.allocatedUserIds, req.user);
     }
 }

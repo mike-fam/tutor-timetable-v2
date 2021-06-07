@@ -27,7 +27,6 @@ import {
     User,
 } from "../entities";
 import { MyContext } from "../types/context";
-import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 class RequestFormInputType {
@@ -84,7 +83,7 @@ class EditRequestFormInputType {
 }
 
 @Resolver(() => StaffRequest)
-export class StaffRequestResolver extends EntityResolver {
+export class StaffRequestResolver {
     @Mutation(() => StaffRequest)
     async createRequest(
         @Arg("requestDetails", () => RequestFormInputType)
@@ -95,9 +94,9 @@ export class StaffRequestResolver extends EntityResolver {
             description,
             sessionId,
         }: RequestFormInputType,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest> {
-        return await this.staffRequestModel.create(
+        return await models.staffRequest.create(
             {
                 title,
                 type,
@@ -121,7 +120,7 @@ export class StaffRequestResolver extends EntityResolver {
     // Used for displaying all requests associated with the user for a given term
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         const user = req.user!;
         return await StaffRequest.find({ requester: user });
@@ -132,7 +131,7 @@ export class StaffRequestResolver extends EntityResolver {
     @Query(() => [StaffRequest])
     async getRequestsByTermId(
         @Arg("termId") termId: string,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         const myCourseStaffs = await req.user!.courseStaffs;
         const myTimetables = await Timetable.find({
@@ -202,7 +201,7 @@ export class StaffRequestResolver extends EntityResolver {
 
     @Mutation(() => String)
     async deleteRequestById(
-        @Ctx() { req }: MyContext,
+        @Ctx() { req, models }: MyContext,
         @Arg("requestId") requestId: string
     ): Promise<string> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
@@ -219,46 +218,43 @@ export class StaffRequestResolver extends EntityResolver {
     @FieldResolver(() => User)
     async requester(
         @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User> {
-        return await this.userModel.getById(root.requesterId, req.user);
+        return await models.user.getById(root.requesterId, req.user);
     }
 
     @FieldResolver(() => User, { nullable: true })
     async finaliser(
         @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User | null> {
         if (!root.finaliserId) {
             return null;
         }
-        return this.userModel.getById(root.finaliserId, req.user);
+        return models.user.getById(root.finaliserId, req.user);
     }
 
     @FieldResolver(() => Session)
     async session(
         @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Session> {
-        return this.sessionModel.getById(root.sessionId, req.user);
+        return models.session.getById(root.sessionId, req.user);
     }
 
     @FieldResolver(() => [Session])
     async swapPreference(
         @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        return this.sessionModel.getByIds(
-            root.swapPreferenceSessionIds,
-            req.user
-        );
+        return models.session.getByIds(root.swapPreferenceSessionIds, req.user);
     }
 
     @FieldResolver(() => [Offer])
     async offers(
         @Root() root: StaffRequest,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        return this.offerModel.getByIds(root.offerIds, req.user);
+        return models.offer.getByIds(root.offerIds, req.user);
     }
 }

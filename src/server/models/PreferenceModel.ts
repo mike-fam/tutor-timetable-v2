@@ -1,15 +1,13 @@
 import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class PreferenceModel extends BaseModel<Preference> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = Preference;
-        this.loader = Utils.loaders.preference;
+        this.loader = loaders.preference;
     }
 
     /**
@@ -114,7 +112,7 @@ export class PreferenceModel extends BaseModel<Preference> {
     ): Promise<PermissionState> {
         const courseStaff =
             (await preference.courseStaff) ||
-            (await Utils.loaders.preference.load(preference.courseStaffId));
+            (await this.loaders.preference.load(preference.courseStaffId));
         const course = await courseStaff.getCourse();
         const term = await courseStaff.getTerm();
         if (!(await user.isCoordinatorOf(course, term))) {

@@ -1,15 +1,13 @@
 import { BaseModel } from "./BaseModel";
 import { CourseStaff, Preference, Timetable, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class CourseStaffModel extends BaseModel<CourseStaff> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = CourseStaff;
-        this.loader = Utils.loaders.courseStaff;
+        this.loader = loaders.courseStaff;
     }
 
     /**
@@ -27,7 +25,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
         if (user.isAdmin) {
             return { hasPerm: true };
         }
-        const loaders = Utils.loaders;
+        const loaders = this.loaders;
         const userRoles: CourseStaff[] = (await loaders.courseStaff.loadMany(
             user.courseStaffIds
         )) as CourseStaff[];
@@ -118,7 +116,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
         user: User
     ): Promise<PermissionState> {
         // Cannot use course and term directly, have to use timetableId here
-        const loaders = Utils.loaders;
+        const loaders = this.loaders;
         const timetable =
             (toCreate.timetable as Timetable) ||
             (await loaders.timetable.load(toCreate.timetableId));

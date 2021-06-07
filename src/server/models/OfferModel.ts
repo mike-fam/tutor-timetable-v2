@@ -16,15 +16,13 @@ import {
     canMakeNewOffer,
     canRequestForApproval,
 } from "../utils/requests";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class OfferModel extends BaseModel<Offer> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = Offer;
-        this.loader = Utils.loaders.offer;
+        this.loader = loaders.offer;
     }
 
     public async update(
@@ -92,7 +90,7 @@ export class OfferModel extends BaseModel<Offer> {
         updatedFields: Partial<Offer>,
         user: User
     ): Promise<PermissionState> {
-        const request = await Utils.loaders.staffRequest.load(offer.requestId);
+        const request = await this.loaders.staffRequest.load(offer.requestId);
         const course = await offer.getCourse();
         const term = await offer.getTerm();
         const timetable = await Timetable.fromCourseTerm(course, term);
@@ -241,7 +239,7 @@ export class OfferModel extends BaseModel<Offer> {
                     };
                 }
                 // Prevent user from accepting multiple offers
-                const otherOffers = (await Utils.loaders.offer.loadMany(
+                const otherOffers = (await this.loaders.offer.loadMany(
                     request.offerIds
                 )) as Offer[];
                 if (
@@ -276,7 +274,7 @@ export class OfferModel extends BaseModel<Offer> {
                 // that's not one of the offerer's preferences
                 let acceptedSession: Session;
                 if (updatedFields.acceptedSessionId) {
-                    acceptedSession = await Utils.loaders.session.load(
+                    acceptedSession = await this.loaders.session.load(
                         updatedFields.acceptedSessionId
                     );
                 } else {
@@ -385,7 +383,7 @@ export class OfferModel extends BaseModel<Offer> {
         offer: Offer,
         user: User
     ): Promise<PermissionState> {
-        const loaders = Utils.loaders;
+        const loaders = this.loaders;
         // Check if user on offer and user making request are the same person
         if (offer.userId && offer.userId !== user.id) {
             return {

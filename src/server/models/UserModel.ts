@@ -1,18 +1,16 @@
 import { BaseModel } from "./BaseModel";
 import { User } from "../entities";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
 import { PermissionState } from "../types/permission";
 import intersection from "lodash/intersection";
 import omit from "lodash/omit";
 import isEmpty from "lodash/isEmpty";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class UserModel extends BaseModel<User> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = User;
-        this.loader = Utils.loaders.user;
+        this.loader = loaders.user;
     }
 
     /**

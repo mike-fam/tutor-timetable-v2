@@ -1,20 +1,18 @@
 import { BaseModel } from "./BaseModel";
 import { Session, StaffRequest, User } from "../entities";
-import { Utils } from "../utils/Util";
 import { PermissionState } from "../types/permission";
 import { DeepPartial } from "typeorm";
 import { RequestStatus } from "../types/request";
 import omit from "lodash/omit";
 import isEmpty from "lodash/isEmpty";
-import { Service } from "typedi";
 import { asyncSome } from "../../utils/array";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class StaffRequestModel extends BaseModel<StaffRequest> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = StaffRequest;
-        this.loader = Utils.loaders.staffRequest;
+        this.loader = loaders.staffRequest;
     }
 
     /**
@@ -76,7 +74,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
         // Check if session field provided
         let session: Session;
         if (request.sessionId) {
-            session = await Utils.loaders.session.load(request.sessionId);
+            session = await this.loaders.session.load(request.sessionId);
         } else if (request.session) {
             session = await request.session;
         } else {

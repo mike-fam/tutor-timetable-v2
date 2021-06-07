@@ -1,5 +1,6 @@
-import { gql } from "@apollo/client";
 import * as Apollo from "@apollo/client";
+import { gql } from "@apollo/client";
+
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
     [K in keyof T]: T[K];
@@ -1293,6 +1294,7 @@ export function useUpdateDetailsMutation(
         UpdateDetailsMutationVariables
     >(UpdateDetailsDocument, baseOptions);
 }
+
 export type UpdateDetailsMutationHookResult = ReturnType<
     typeof useUpdateDetailsMutation
 >;
@@ -1348,6 +1350,7 @@ export function useAcceptOfferMutation(
         AcceptOfferMutationVariables
     >(AcceptOfferDocument, baseOptions);
 }
+
 export type AcceptOfferMutationHookResult = ReturnType<
     typeof useAcceptOfferMutation
 >;
@@ -1399,6 +1402,7 @@ export function useAddAvailabilitiesMutation(
         AddAvailabilitiesMutationVariables
     >(AddAvailabilitiesDocument, baseOptions);
 }
+
 export type AddAvailabilitiesMutationHookResult = ReturnType<
     typeof useAddAvailabilitiesMutation
 >;
@@ -1476,6 +1480,7 @@ export function useRequestAllocationMutation(
         RequestAllocationMutationVariables
     >(RequestAllocationDocument, baseOptions);
 }
+
 export type RequestAllocationMutationHookResult = ReturnType<
     typeof useRequestAllocationMutation
 >;
@@ -1523,6 +1528,7 @@ export function useApplyAllocationMutation(
         ApplyAllocationMutationVariables
     >(ApplyAllocationDocument, baseOptions);
 }
+
 export type ApplyAllocationMutationHookResult = ReturnType<
     typeof useApplyAllocationMutation
 >;
@@ -1564,6 +1570,7 @@ export function useCourseQuery(
         baseOptions
     );
 }
+
 export function useCourseLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>
 ) {
@@ -1572,6 +1579,7 @@ export function useCourseLazyQuery(
         baseOptions
     );
 }
+
 export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
 export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
 export type CourseQueryResult = Apollo.QueryResult<
@@ -1620,6 +1628,7 @@ export function useCourseStaffsQuery(
         baseOptions
     );
 }
+
 export function useCourseStaffsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         CourseStaffsQuery,
@@ -1631,6 +1640,7 @@ export function useCourseStaffsLazyQuery(
         baseOptions
     );
 }
+
 export type CourseStaffsQueryHookResult = ReturnType<
     typeof useCourseStaffsQuery
 >;
@@ -1695,6 +1705,7 @@ export function useAddCourseStaffMutation(
         AddCourseStaffMutationVariables
     >(AddCourseStaffDocument, baseOptions);
 }
+
 export type AddCourseStaffMutationHookResult = ReturnType<
     typeof useAddCourseStaffMutation
 >;
@@ -1741,6 +1752,7 @@ export function useRemoveCourseStaffMutation(
         RemoveCourseStaffMutationVariables
     >(RemoveCourseStaffDocument, baseOptions);
 }
+
 export type RemoveCourseStaffMutationHookResult = ReturnType<
     typeof useRemoveCourseStaffMutation
 >;
@@ -1799,6 +1811,7 @@ export function useCreateOfferMutation(
         CreateOfferMutationVariables
     >(CreateOfferDocument, baseOptions);
 }
+
 export type CreateOfferMutationHookResult = ReturnType<
     typeof useCreateOfferMutation
 >;
@@ -1904,6 +1917,7 @@ export function useCreateRequestMutation(
         CreateRequestMutationVariables
     >(CreateRequestDocument, baseOptions);
 }
+
 export type CreateRequestMutationHookResult = ReturnType<
     typeof useCreateRequestMutation
 >;
@@ -1950,6 +1964,7 @@ export function useDeleteRequestMutation(
         DeleteRequestMutationVariables
     >(DeleteRequestDocument, baseOptions);
 }
+
 export type DeleteRequestMutationHookResult = ReturnType<
     typeof useDeleteRequestMutation
 >;
@@ -2023,6 +2038,7 @@ export function useGetOfferByIdQuery(
         baseOptions
     );
 }
+
 export function useGetOfferByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetOfferByIdQuery,
@@ -2034,6 +2050,7 @@ export function useGetOfferByIdLazyQuery(
         baseOptions
     );
 }
+
 export type GetOfferByIdQueryHookResult = ReturnType<
     typeof useGetOfferByIdQuery
 >;
@@ -2095,6 +2112,7 @@ export function useGetOffersByRequestIdQuery(
         GetOffersByRequestIdQueryVariables
     >(GetOffersByRequestIdDocument, baseOptions);
 }
+
 export function useGetOffersByRequestIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetOffersByRequestIdQuery,
@@ -2106,6 +2124,7 @@ export function useGetOffersByRequestIdLazyQuery(
         GetOffersByRequestIdQueryVariables
     >(GetOffersByRequestIdDocument, baseOptions);
 }
+
 export type GetOffersByRequestIdQueryHookResult = ReturnType<
     typeof useGetOffersByRequestIdQuery
 >;
@@ -2208,6 +2227,7 @@ export function useGetRequestByIdQuery(
         baseOptions
     );
 }
+
 export function useGetRequestByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestByIdQuery,
@@ -2219,6 +2239,7 @@ export function useGetRequestByIdLazyQuery(
         GetRequestByIdQueryVariables
     >(GetRequestByIdDocument, baseOptions);
 }
+
 export type GetRequestByIdQueryHookResult = ReturnType<
     typeof useGetRequestByIdQuery
 >;
@@ -2320,6 +2341,7 @@ export function useGetRequestsByUserIdQuery(
         GetRequestsByUserIdQueryVariables
     >(GetRequestsByUserIdDocument, baseOptions);
 }
+
 export function useGetRequestsByUserIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestsByUserIdQuery,
@@ -2331,6 +2353,7 @@ export function useGetRequestsByUserIdLazyQuery(
         GetRequestsByUserIdQueryVariables
     >(GetRequestsByUserIdDocument, baseOptions);
 }
+
 export type GetRequestsByUserIdQueryHookResult = ReturnType<
     typeof useGetRequestsByUserIdQuery
 >;
@@ -2433,6 +2456,7 @@ export function useGetRequestsByTermIdQuery(
         GetRequestsByTermIdQueryVariables
     >(GetRequestsByTermIdDocument, baseOptions);
 }
+
 export function useGetRequestsByTermIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestsByTermIdQuery,
@@ -2444,6 +2468,7 @@ export function useGetRequestsByTermIdLazyQuery(
         GetRequestsByTermIdQueryVariables
     >(GetRequestsByTermIdDocument, baseOptions);
 }
+
 export type GetRequestsByTermIdQueryHookResult = ReturnType<
     typeof useGetRequestsByTermIdQuery
 >;
@@ -2501,6 +2526,7 @@ export function useGetSessionStreamsQuery(
         GetSessionStreamsQueryVariables
     >(GetSessionStreamsDocument, baseOptions);
 }
+
 export function useGetSessionStreamsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionStreamsQuery,
@@ -2512,6 +2538,7 @@ export function useGetSessionStreamsLazyQuery(
         GetSessionStreamsQueryVariables
     >(GetSessionStreamsDocument, baseOptions);
 }
+
 export type GetSessionStreamsQueryHookResult = ReturnType<
     typeof useGetSessionStreamsQuery
 >;
@@ -2580,6 +2607,7 @@ export function useGetSessionsQuery(
         baseOptions
     );
 }
+
 export function useGetSessionsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionsQuery,
@@ -2591,6 +2619,7 @@ export function useGetSessionsLazyQuery(
         baseOptions
     );
 }
+
 export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
 export type GetSessionsLazyQueryHookResult = ReturnType<
     typeof useGetSessionsLazyQuery
@@ -2655,6 +2684,7 @@ export function useGetSessionByIdQuery(
         baseOptions
     );
 }
+
 export function useGetSessionByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionByIdQuery,
@@ -2666,6 +2696,7 @@ export function useGetSessionByIdLazyQuery(
         GetSessionByIdQueryVariables
     >(GetSessionByIdDocument, baseOptions);
 }
+
 export type GetSessionByIdQueryHookResult = ReturnType<
     typeof useGetSessionByIdQuery
 >;
@@ -2705,6 +2736,7 @@ export function useHelloQuery(
         baseOptions
     );
 }
+
 export function useHelloLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>
 ) {
@@ -2713,6 +2745,7 @@ export function useHelloLazyQuery(
         baseOptions
     );
 }
+
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
 export type HelloQueryResult = Apollo.QueryResult<
@@ -2750,6 +2783,7 @@ export function useMeQuery(
 ) {
     return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
 }
+
 export function useMeLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
 ) {
@@ -2758,6 +2792,7 @@ export function useMeLazyQuery(
         baseOptions
     );
 }
+
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
@@ -2798,6 +2833,7 @@ export function useMyAvailabilityQuery(
         baseOptions
     );
 }
+
 export function useMyAvailabilityLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyAvailabilityQuery,
@@ -2809,6 +2845,7 @@ export function useMyAvailabilityLazyQuery(
         MyAvailabilityQueryVariables
     >(MyAvailabilityDocument, baseOptions);
 }
+
 export type MyAvailabilityQueryHookResult = ReturnType<
     typeof useMyAvailabilityQuery
 >;
@@ -2865,6 +2902,7 @@ export function useMyCoursesQuery(
         baseOptions
     );
 }
+
 export function useMyCoursesLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyCoursesQuery,
@@ -2876,6 +2914,7 @@ export function useMyCoursesLazyQuery(
         baseOptions
     );
 }
+
 export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
 export type MyCoursesLazyQueryHookResult = ReturnType<
     typeof useMyCoursesLazyQuery
@@ -2926,6 +2965,7 @@ export function useMyPreferenceQuery(
         baseOptions
     );
 }
+
 export function useMyPreferenceLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyPreferenceQuery,
@@ -2937,6 +2977,7 @@ export function useMyPreferenceLazyQuery(
         baseOptions
     );
 }
+
 export type MyPreferenceQueryHookResult = ReturnType<
     typeof useMyPreferenceQuery
 >;
@@ -2993,6 +3034,7 @@ export function usePreferenceByUsernameQuery(
         PreferenceByUsernameQueryVariables
     >(PreferenceByUsernameDocument, baseOptions);
 }
+
 export function usePreferenceByUsernameLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         PreferenceByUsernameQuery,
@@ -3004,6 +3046,7 @@ export function usePreferenceByUsernameLazyQuery(
         PreferenceByUsernameQueryVariables
     >(PreferenceByUsernameDocument, baseOptions);
 }
+
 export type PreferenceByUsernameQueryHookResult = ReturnType<
     typeof usePreferenceByUsernameQuery
 >;
@@ -3051,6 +3094,7 @@ export function useTermsQuery(
         baseOptions
     );
 }
+
 export function useTermsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<TermsQuery, TermsQueryVariables>
 ) {
@@ -3059,6 +3103,7 @@ export function useTermsLazyQuery(
         baseOptions
     );
 }
+
 export type TermsQueryHookResult = ReturnType<typeof useTermsQuery>;
 export type TermsLazyQueryHookResult = ReturnType<typeof useTermsLazyQuery>;
 export type TermsQueryResult = Apollo.QueryResult<
@@ -3103,6 +3148,7 @@ export function useTermQuery(
         baseOptions
     );
 }
+
 export function useTermLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>
 ) {
@@ -3111,6 +3157,7 @@ export function useTermLazyQuery(
         baseOptions
     );
 }
+
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
@@ -3157,6 +3204,7 @@ export function useUpdateAvailabilitiesMutation(
         UpdateAvailabilitiesMutationVariables
     >(UpdateAvailabilitiesDocument, baseOptions);
 }
+
 export type UpdateAvailabilitiesMutationHookResult = ReturnType<
     typeof useUpdateAvailabilitiesMutation
 >;
@@ -3214,6 +3262,7 @@ export function useUpdatePreferenceMutation(
         UpdatePreferenceMutationVariables
     >(UpdatePreferenceDocument, baseOptions);
 }
+
 export type UpdatePreferenceMutationHookResult = ReturnType<
     typeof useUpdatePreferenceMutation
 >;
@@ -3276,6 +3325,7 @@ export function useEditRequestMutation(
         EditRequestMutationVariables
     >(EditRequestDocument, baseOptions);
 }
+
 export type EditRequestMutationHookResult = ReturnType<
     typeof useEditRequestMutation
 >;

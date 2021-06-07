@@ -7,7 +7,7 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { defaultInt, defaultStr } from "../../constants";
+import { defaultInt } from "../../constants";
 import range from "lodash/range";
 import { UserContext } from "../../utils/user";
 import { SessionResponseType, SessionTheme } from "../../types/session";

@@ -9,13 +9,11 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
-import { Service } from "typedi";
-import { EntityResolver } from "./EntityResolver";
+
 import { MyContext } from "../types/context";
 
-@Service()
 @Resolver(() => Session)
-export class SessionResolver extends EntityResolver {
+export class SessionResolver {
     @Query(() => [Session])
     async sessions(
         @Arg("termId") termId: string,
@@ -44,33 +42,36 @@ export class SessionResolver extends EntityResolver {
     @FieldResolver(() => SessionStream)
     async sessionStream(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream> {
-        return this.streamModel.getById(root.sessionStreamId, req.user);
+        return await models.sessionStream.getById(
+            root.sessionStreamId,
+            req.user
+        );
     }
 
     @FieldResolver(() => [User])
     async allocatedUsers(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User[]> {
-        return this.userModel.getByIds(root.allocatedUserIds, req.user);
+        return await models.user.getByIds(root.allocatedUserIds, req.user);
     }
 
     @FieldResolver(() => [StaffRequest])
     async requests(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
-        return this.staffRequestModel.getByIds(root.requestIds, req.user);
+        return await models.staffRequest.getByIds(root.requestIds, req.user);
     }
 
     @FieldResolver(() => [StaffRequest])
     async preferredSwapRequests(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
-        return this.staffRequestModel.getByIds(
+        return await models.staffRequest.getByIds(
             root.preferredSwapRequestIds,
             req.user
         );
@@ -79,16 +80,19 @@ export class SessionResolver extends EntityResolver {
     @FieldResolver(() => [Offer])
     async preferredSwapOffers(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        return this.offerModel.getByIds(root.preferredSwapOfferIds, req.user);
+        return await models.offer.getByIds(
+            root.preferredSwapOfferIds,
+            req.user
+        );
     }
 
     @FieldResolver(() => [Offer])
     async acceptedOffers(
         @Root() root: Session,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        return this.offerModel.getByIds(root.acceptedOfferIds, req.user);
+        return await models.offer.getByIds(root.acceptedOfferIds, req.user);
     }
 }

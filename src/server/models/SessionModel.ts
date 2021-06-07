@@ -5,16 +5,14 @@ import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import { PERM_ERR } from "../constants";
 import { OfferStatus } from "../types/offer";
-import { Utils } from "../utils/Util";
 import asyncFilter from "node-filter-async";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class SessionModel extends BaseModel<Session> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = Session;
-        this.loader = Utils.loaders.session;
+        this.loader = loaders.session;
     }
 
     /**
@@ -97,7 +95,7 @@ export class SessionModel extends BaseModel<Session> {
     ): Promise<PermissionState> {
         const sessionStream =
             (await session.sessionStream) ||
-            (await Utils.loaders.sessionStream.load(session.sessionStreamId));
+            (await this.loaders.sessionStream.load(session.sessionStreamId));
         const course = await sessionStream.getCourse();
         const term = await sessionStream.getTerm();
         if (!(await user.isCoordinatorOf(course, term))) {
@@ -128,7 +126,7 @@ export class SessionModel extends BaseModel<Session> {
     ): Promise<void> {
         const course = await session.getCourse();
         const term = await session.getTerm();
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -188,7 +186,7 @@ export class SessionModel extends BaseModel<Session> {
         staff: User,
         user: User
     ): Promise<void> {
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -199,7 +197,7 @@ export class SessionModel extends BaseModel<Session> {
             );
         }
         // Get requests of this user
-        const loaders = Utils.loaders;
+        const loaders = this.loaders;
         const userRequests = (await loaders.staffRequest.loadMany(
             user.requestIds
         )) as StaffRequest[];
@@ -283,7 +281,7 @@ export class SessionModel extends BaseModel<Session> {
     ) {
         const course = await session.getCourse();
         const term = await session.getTerm();
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -331,7 +329,7 @@ export class SessionModel extends BaseModel<Session> {
         staff: User,
         user: User
     ): Promise<void> {
-        const allocatedUsers = (await Utils.loaders.user.loadMany(
+        const allocatedUsers = (await this.loaders.user.loadMany(
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
@@ -340,7 +338,7 @@ export class SessionModel extends BaseModel<Session> {
         }
         if (staff.id === user.id) {
             // User deallocates themself after accepting an offer
-            const requestsOfUser = (await Utils.loaders.staffRequest.loadMany(
+            const requestsOfUser = (await this.loaders.staffRequest.loadMany(
                 user.requestIds
             )) as StaffRequest[];
             const requestsOfSession = await asyncFilter(
@@ -354,7 +352,7 @@ export class SessionModel extends BaseModel<Session> {
                 (offerIds, request) => [...offerIds, ...request.offerIds],
                 []
             );
-            const offersOfRequests = (await Utils.loaders.offer.loadMany(
+            const offersOfRequests = (await this.loaders.offer.loadMany(
                 offerIdsOfRequests
             )) as Offer[];
             const acceptedOffers = offersOfRequests.filter(
@@ -368,7 +366,7 @@ export class SessionModel extends BaseModel<Session> {
             // User deallocates another user from their session because they
             // accept the offer of that user
             // Get offers of that user
-            const offers = (await Utils.loaders.offer.loadMany(
+            const offers = (await this.loaders.offer.loadMany(
                 staff.offerIds
             )) as Offer[];
             const acceptedOffers = await asyncFilter(

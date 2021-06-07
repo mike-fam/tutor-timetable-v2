@@ -20,7 +20,6 @@ import {
 } from "../entities";
 import { MyContext } from "../types/context";
 import { Service } from "typedi";
-import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 export class UpdateDetailsInputType {
@@ -33,17 +32,16 @@ export class UpdateDetailsInputType {
     name: string;
 }
 
-@Service()
 @Resolver(() => User)
-export class UserResolver extends EntityResolver {
+export class UserResolver {
     @Query(() => User)
-    async me(@Ctx() { req }: MyContext): Promise<User> {
+    async me(@Ctx() { req, models }: MyContext): Promise<User> {
         return req.user;
     }
 
     @Mutation(() => User)
     async updateDetails(
-        @Ctx() { req }: MyContext,
+        @Ctx() { req, models }: MyContext,
         @Arg("details") { name, email }: UpdateDetailsInputType
     ): Promise<User> {
         const user = req.user!;
@@ -55,40 +53,40 @@ export class UserResolver extends EntityResolver {
     @FieldResolver(() => [CourseStaff])
     async courseStaffs(
         @Root() root: User,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
-        return this.courseStaffModel.getByIds(root.courseStaffIds, req.user);
+        return await models.courseStaff.getByIds(root.courseStaffIds, req.user);
     }
 
     @FieldResolver(() => [StaffRequest])
     async requests(
         @Root() root: User,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
-        return this.staffRequestModel.getByIds(root.requestIds, req.user);
+        return await models.staffRequest.getByIds(root.requestIds, req.user);
     }
 
     @FieldResolver(() => [Timeslot])
     async availabilities(
         @Root() root: User,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
-        return this.timeslotModel.getByIds(root.timeslotIds, req.user);
+        return await models.timeslot.getByIds(root.timeslotIds, req.user);
     }
 
     @FieldResolver(() => [Offer])
     async offers(
         @Root() root: User,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        return this.offerModel.getByIds(root.offerIds, req.user);
+        return await models.offer.getByIds(root.offerIds, req.user);
     }
 
     @FieldResolver(() => UserSettings)
     async settings(
         @Root() root: User,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<UserSettings> {
-        return this.userSettingsModel.getById(root.settingsId, req.user);
+        return await models.userSettings.getById(root.settingsId, req.user);
     }
 }

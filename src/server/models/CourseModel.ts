@@ -1,20 +1,19 @@
 import { BaseModel } from "./BaseModel";
 import { Course, Term, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { Utils } from "../utils/Util";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
 /**
  * Manages course-related permissions
  * Only admins can create and delete courses
  * Read and update permissions are described below
  */
-@Service()
+
 export class CourseModel extends BaseModel<Course> {
-    public constructor() {
-        super();
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
         this.entityCls = Course;
-        this.loader = Utils.loaders.course;
+        this.loader = loaders.course;
     }
 
     /**

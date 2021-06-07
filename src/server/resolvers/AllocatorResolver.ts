@@ -133,7 +133,7 @@ export class AllocatorResolver {
         @Arg("staffIds", () => [String]) staffIds: string[],
         @Arg("newThreshold", () => Float, { nullable: true })
         newThreshold: number | undefined,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
         const timetable = await Timetable.findOneOrFail({
             courseId,
@@ -256,7 +256,7 @@ export class AllocatorResolver {
     async applyAllocation(
         @Arg("allocationToken") token: string,
         @Arg("override", () => Boolean) override: boolean,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<boolean> {
         const allocationEntry = allocationTokenManager.get(token);
         if (!allocationEntry) {

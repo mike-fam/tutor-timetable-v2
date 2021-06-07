@@ -9,7 +9,7 @@ import { ErrorContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
 import { Footer } from "../Footer";
-import { footerHeight, defaultStr } from "../constants";
+import { defaultStr, footerHeight } from "../constants";
 import { SessionsContext, useSessionUtils } from "../hooks/useSessionUtils";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import {

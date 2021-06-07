@@ -15,7 +15,6 @@ import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
 import { Service } from "typedi";
-import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 class PreferenceInput {
@@ -29,9 +28,8 @@ class PreferenceInput {
     maxWeeklyHours: number;
 }
 
-@Service()
 @Resolver(() => Preference)
-export class PreferenceResolver extends EntityResolver {
+export class PreferenceResolver {
     static async getPreference(user: User, courseId: string, termId: string) {
         return await getConnection()
             .getRepository(Preference)
@@ -50,7 +48,7 @@ export class PreferenceResolver extends EntityResolver {
     async myPreference(
         @Arg("preferenceFindInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Preference | undefined> {
         return await PreferenceResolver.getPreference(
             req.user!,
@@ -78,7 +76,7 @@ export class PreferenceResolver extends EntityResolver {
         { courseId, termId }: CourseTermIdInput,
         @Arg("preference", () => PreferenceInput)
         { sessionType, maxContigHours, maxWeeklyHours }: PreferenceInput,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Preference> {
         let preference = await PreferenceResolver.getPreference(
             req.user!,
@@ -113,8 +111,8 @@ export class PreferenceResolver extends EntityResolver {
     @FieldResolver(() => CourseStaff)
     async courseStaff(
         @Root() root: Preference,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff> {
-        return this.courseStaffModel.getById(root.courseStaffId, req.user);
+        return models.courseStaff.getById(root.courseStaffId, req.user);
     }
 }

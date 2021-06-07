@@ -16,7 +16,6 @@ import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { In } from "typeorm";
 import { Service } from "typedi";
-import { EntityResolver } from "./EntityResolver";
 
 export enum AvailabilityModificationType {
     UNCHANGED,
@@ -48,20 +47,21 @@ class TimeslotInput {
     modificationType: AvailabilityModificationType;
 }
 
-@Service()
 @Resolver(() => Timeslot)
-export class AvailabilityResolver extends EntityResolver {
+export class AvailabilityResolver {
     @Query(() => [Timeslot])
-    async myAvailability(@Ctx() { req }: MyContext): Promise<Timeslot[]> {
+    async myAvailability(
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timeslot[]> {
         const user = req.user;
-        return await this.timeslotModel.getMany({ user }, user);
+        return await models.timeslot.getMany({ user }, user);
     }
 
     @Mutation(() => [Timeslot])
     async updateAvailabilities(
         @Arg("timeslots", () => [TimeslotInput])
         timeslots: TimeslotInput[],
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
         const user = req.user;
         const newSessions = timeslots
@@ -97,13 +97,13 @@ export class AvailabilityResolver extends EntityResolver {
                         AvailabilityModificationType.REMOVED_MODIFIED
             )
             .map((timeslot) => timeslot.id!);
-        await this.timeslotModel.deleteMany(
+        await models.timeslot.deleteMany(
             {
                 id: In(removedTimeslotIds),
             },
             user
         );
-        return await this.timeslotModel.save(
+        return await models.timeslot.save(
             [...newSessions, ...updatedTimeslots],
             user
         );
@@ -112,8 +112,8 @@ export class AvailabilityResolver extends EntityResolver {
     @FieldResolver(() => User)
     async user(
         @Root() root: Timeslot,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User> {
-        return this.userModel.getById(root.userId, req.user);
+        return models.user.getById(root.userId, req.user);
     }
 }

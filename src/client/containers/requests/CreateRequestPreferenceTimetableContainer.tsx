@@ -6,7 +6,7 @@ import React, {
     useState,
 } from "react";
 import { Set } from "immutable";
-import { defaultInt, defaultStr } from "../../constants";
+import { defaultInt } from "../../constants";
 import { UserContext } from "../../utils/user";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import {

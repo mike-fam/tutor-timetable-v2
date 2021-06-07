@@ -1,12 +1,16 @@
 import { BaseModel } from "./BaseModel";
 import { Course, CourseStaff, Term, Timeslot, User } from "../entities";
 import { PermissionState } from "../types/permission";
-import { Utils } from "../utils/Util";
 import { asyncMap, asyncSome } from "../../utils/array";
-import { Service } from "typedi";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class TimeslotModel extends BaseModel<Timeslot> {
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
+        this.entityCls = Timeslot;
+        this.loader = loaders.timeslot;
+    }
+
     /**
      * A user can read a timeslot entry if EITHER
      * they are admin
@@ -22,7 +26,7 @@ export class TimeslotModel extends BaseModel<Timeslot> {
         user: User
     ): Promise<PermissionState> {
         const owner = await timeslot.getOwner();
-        const staff = (await Utils.loaders.courseStaff.loadMany(
+        const staff = (await this.loaders.courseStaff.loadMany(
             owner.courseStaffIds
         )) as CourseStaff[];
         const courseTerm: [Course, Term][] = await asyncMap(

@@ -19,7 +19,6 @@ import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
 import { MyContext } from "../types/context";
 import { Service } from "typedi";
-import { EntityResolver } from "./EntityResolver";
 
 @InputType()
 export class CourseStaffInput extends CourseTermIdInput {
@@ -36,9 +35,8 @@ export class CourseStaffUserInput extends CourseStaffInput {
     username: string;
 }
 
-@Service()
 @Resolver(() => CourseStaff)
-export class CourseStaffResolver extends EntityResolver {
+export class CourseStaffResolver {
     @Mutation(() => CourseStaff)
     async addCourseStaff(
         @Arg("courseStaffUserInput")
@@ -131,24 +129,24 @@ export class CourseStaffResolver extends EntityResolver {
     @FieldResolver(() => Timetable)
     async timetable(
         @Root() root: CourseStaff,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
-        return this.timetableModel.getById(root.timetableId, req.user);
+        return models.timetable.getById(root.timetableId, req.user);
     }
 
     @FieldResolver(() => User)
     async user(
         @Root() root: CourseStaff,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<User> {
-        return this.userModel.getById(root.userId, req.user);
+        return models.user.getById(root.userId, req.user);
     }
 
     @FieldResolver(() => Preference)
     async preference(
         @Root() root: CourseStaff,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Preference> {
-        return this.preferenceModel.getById(root.preferenceId, req.user);
+        return models.preference.getById(root.preferenceId, req.user);
     }
 }

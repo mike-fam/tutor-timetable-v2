@@ -13,7 +13,6 @@ import {
 } from "type-graphql";
 import { Term, Timetable } from "../entities";
 import { TermType } from "../types/term";
-import { EntityResolver } from "./EntityResolver";
 import { MyContext } from "../types/context";
 import { Service } from "typedi";
 
@@ -35,9 +34,8 @@ class TermArgs {
     weekNames: Array<string>;
 }
 
-@Service()
 @Resolver(() => Term)
-export class TermResolver extends EntityResolver {
+export class TermResolver {
     @Query(() => [Term])
     async terms(): Promise<Term[]> {
         return await Term.find({});
@@ -65,8 +63,8 @@ export class TermResolver extends EntityResolver {
     @FieldResolver(() => [Timetable])
     async timetables(
         @Root() root: Term,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timetable[]> {
-        return this.timetableModel.getByIds(root.timetableIds, req.user);
+        return await models.timetable.getByIds(root.timetableIds, req.user);
     }
 }

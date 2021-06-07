@@ -6,12 +6,15 @@ import asyncFilter from "node-filter-async";
 import { PermissionState } from "../types/permission";
 import DataLoader from "dataloader";
 import has from "lodash/has";
+import { DataLoaders } from "../types/dataloaders";
 
 type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
 
 export abstract class BaseModel<T extends BaseEntity> {
     protected loader: DataLoader<string, T>;
     protected entityCls: ObjectType<T>;
+
+    protected constructor(protected loaders: DataLoaders) {}
 
     public async permRead(obj: T, user: User): Promise<PermissionState> {
         if (user.isAdmin) {

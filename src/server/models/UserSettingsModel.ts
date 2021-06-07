@@ -1,10 +1,15 @@
 import { BaseModel } from "./BaseModel";
 import { User, UserSettings } from "../entities";
-import { Service } from "typedi";
 import { PermissionState } from "../types/permission";
+import { DataLoaders } from "../types/dataloaders";
 
-@Service()
 export class UserSettingsModel extends BaseModel<UserSettings> {
+    public constructor(loaders: DataLoaders) {
+        super(loaders);
+        this.entityCls = UserSettings;
+        this.loader = loaders.userSettings;
+    }
+
     /**
      * A user can read a user settings if they are admin or are the owner of the
      * settings entry

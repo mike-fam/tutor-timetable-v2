@@ -11,7 +11,7 @@ import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
 import { defaultInt, defaultStr } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
 import { RequestContext } from "../../hooks/useRequestUtils";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 import { UserContext } from "../../utils/user";
 import minBy from "lodash/minBy";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
@@ -19,7 +19,6 @@ import range from "lodash/range";
 import parseISO from "date-fns/parseISO";
 import { addDays, addWeeks, startOfISOWeek } from "date-fns";
 import { IsoDay } from "../../../types/date";
-import { SessionTheme } from "../../types/session";
 import uniq from "lodash/uniq";
 
 type Props = {

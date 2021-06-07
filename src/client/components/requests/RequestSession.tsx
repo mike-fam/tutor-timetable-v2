@@ -1,8 +1,10 @@
 import React from "react";
-import { Props as TimetableSessionProps } from "../timetable/TimetableSession";
+import {
+    Props as TimetableSessionProps,
+    TimetableSession,
+} from "../timetable/TimetableSession";
 import { Props as SessionProps } from "../timetable/Session";
 import { useColorMode } from "@chakra-ui/react";
-import { TimetableSession } from "../timetable/TimetableSession";
 import { SessionTheme } from "../../types/session";
 
 export type RequestSessionProps = {
