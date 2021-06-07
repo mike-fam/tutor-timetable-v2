@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export type UserState = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     email: string;

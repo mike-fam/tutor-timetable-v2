@@ -12,17 +12,17 @@ export enum SessionAvailabilityStatus {
     UNDERTERMINED,
 }
 
-export type SessionMap = Map<number, SessionResponseType>;
+export type SessionMap = Map<string, SessionResponseType>;
 export type SessionUtil = {
     sessions: SessionMap;
     setSessions: Dispatch<SetStateAction<SessionMap>>;
     sessionsData?: GetSessionsQuery;
     fetchSessions: (
-        termId: number,
-        courseId: number,
+        termId: string,
+        courseId: string,
         chosenWeek: number
     ) => void;
-    fetchSessionById: (sessionId: number) => void;
+    fetchSessionById: (sessionId: string) => void;
     loading: boolean;
 };
 

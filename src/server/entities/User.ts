@@ -1,6 +1,8 @@
 import {
     Column,
     Entity,
+    JoinColumn,
+    JoinTable,
     ManyToMany,
     OneToMany,
     OneToOne,
@@ -71,14 +73,17 @@ export class User extends BaseEntity {
     offerIds: string[];
 
     @OneToOne(() => UserSettings, (settings) => settings.user, { lazy: true })
-    settings: Lazy<User>;
+    @JoinColumn()
+    settings: Lazy<UserSettings>;
 
     @RelationId((user: User) => user.settings)
+    @Column({ nullable: true })
     settingsId: string;
 
     @ManyToMany(() => Session, (session) => session.allocatedUsers, {
         lazy: true,
     })
+    @JoinTable()
     allocatedSessions: Promise<Session[]>;
 
     @RelationId((user: User) => user.allocatedSessions)
@@ -87,6 +92,7 @@ export class User extends BaseEntity {
     @ManyToMany(() => SessionStream, (stream) => stream.allocatedUsers, {
         lazy: true,
     })
+    @JoinTable()
     allocatedStreams: Promise<SessionStream[]>;
 
     @RelationId((user: User) => user.allocatedStreams)
@@ -144,7 +150,8 @@ export class User extends BaseEntity {
         term: Term
     ): Promise<Session[]> {
         const sessions = (await Utils.loaders.session.loadMany(
-            this.allocatedSessionIds
+            // this.allocatedSessionIds
+            []
         )) as Session[];
         return asyncFilter(
             sessions,

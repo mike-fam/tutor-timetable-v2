@@ -4,8 +4,8 @@ import { BaseEntity } from "../entities/BaseEntity";
 
 export const createLoader = <T extends BaseEntity>(
     type: ObjectType<T>
-): DataLoader<BaseEntity["id"], T> =>
-    new DataLoader<string, T>(async (ids) => {
+): DataLoader<BaseEntity["id"], T> => {
+    return new DataLoader<string, T>(async (ids) => {
         const objects: T[] = await (type as any).findByIds(ids as string[]);
         const objectMap: Record<string, T> = {};
         objects.forEach((u) => {
@@ -13,3 +13,4 @@ export const createLoader = <T extends BaseEntity>(
         });
         return ids.map((id) => objectMap[id]);
     });
+};

@@ -96,7 +96,7 @@ export class AvailabilityResolver extends EntityResolver {
                     timeslot.modificationType ===
                         AvailabilityModificationType.REMOVED_MODIFIED
             )
-            .map((timeslot) => timeslot.id);
+            .map((timeslot) => timeslot.id!);
         await this.timeslotModel.deleteMany(
             {
                 id: In(removedTimeslotIds),

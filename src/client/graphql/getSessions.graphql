@@ -18,11 +18,9 @@ query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
         }
         location
         week
-        sessionAllocations {
-            user {
-                username
-                name
-            }
+        allocatedUsers {
+            username
+            name
         }
     }
 }
@@ -47,11 +45,9 @@ query GetSessionById($sessionId: String!) {
         }
         location
         week
-        sessionAllocations {
-            user {
-                username
-                name
-            }
+        allocatedUsers {
+            username
+            name
         }
     }
 }

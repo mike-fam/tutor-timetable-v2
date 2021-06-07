@@ -11,7 +11,7 @@ import {
 import { createContext, useCallback, useEffect, useState } from "react";
 import { RequestMap, RequestUtil } from "../types/requests";
 import { Map } from "immutable";
-import { notSet } from "../constants";
+import { defaultStr } from "../constants";
 
 export const RequestContext = createContext<RequestUtil>({
     requests: Map(),
@@ -37,8 +37,8 @@ export const useRequestUtils = (): RequestUtil => {
         { data: newRequestData, loading: newLoading },
     ] = useMutationWithError(useCreateRequestMutation);
     const fetchRequests = useCallback(
-        (termId: number) => {
-            if (termId === notSet) {
+        (termId: string) => {
+            if (termId === defaultStr) {
                 return;
             }
             getRequests({
@@ -50,7 +50,7 @@ export const useRequestUtils = (): RequestUtil => {
         [getRequests]
     );
     const fetchRequestById = useCallback(
-        (requestId: number) => {
+        (requestId: string) => {
             getRequestById({
                 variables: {
                     requestId,

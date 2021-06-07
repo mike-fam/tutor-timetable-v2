@@ -31,11 +31,9 @@ mutation CreateRequest($requestDetails: RequestFormInputType!) {
                 }
             }
             week
-            sessionAllocations {
-                user {
-                    username
-                    name
-                }
+            allocatedUsers {
+                username
+                name
             }
         }
         swapPreference {

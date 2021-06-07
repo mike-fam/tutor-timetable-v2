@@ -8,7 +8,7 @@ import { OfferPreferenceTimetableContainer } from "./OfferPreferenceTimetableCon
 import { useToast } from "@chakra-ui/react";
 
 type Props = {
-    requestId: number;
+    requestId: string;
     isOpen: boolean;
     onClose: () => void;
 };
@@ -21,7 +21,7 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
         useCreateOfferMutation
     );
     const toast = useToast();
-    const [chosenSessions, setChosenSessions] = useState<Array<number>>([]);
+    const [chosenSessions, setChosenSessions] = useState<Array<string>>([]);
     const chooseSession = useCallback(
         (sessionId) => {
             if (chosenSessions.includes(sessionId)) {

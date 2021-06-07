@@ -6,7 +6,7 @@ import { TimetableSession } from "../timetable/TimetableSession";
 import { SessionTheme } from "../../types/session";
 
 export type RequestSessionProps = {
-    onClick: (sessionId: number) => void;
+    onClick: (sessionId: string) => void;
     theme: SessionTheme;
     disabled: boolean;
 } & Omit<TimetableSessionProps, keyof SessionProps>;

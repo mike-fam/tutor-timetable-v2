@@ -3,7 +3,7 @@ import { useTermQuery } from "../generated/graphql";
 import { useMemo } from "react";
 import { getCurrentWeek, getWeeksNum } from "../utils/term";
 import { TermResponseType } from "../types/term";
-import { notSet } from "../constants";
+import { defaultStr } from "../constants";
 
 type TermData = {
     chosenTerm: TermResponseType | undefined;
@@ -11,9 +11,9 @@ type TermData = {
     weekNum: number;
 };
 
-export const useTermMetadata = (chosenTermId?: number): TermData => {
+export const useTermMetadata = (chosenTermId?: string): TermData => {
     const { data } = useQueryWithError(useTermQuery, {
-        termId: chosenTermId || notSet,
+        termId: chosenTermId || defaultStr,
     });
     const currentWeek = useMemo(() => getCurrentWeek(data?.term), [data?.term]);
     const weekNum = useMemo(() => getWeeksNum(data?.term), [data?.term]);

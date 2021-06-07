@@ -34,8 +34,8 @@ export const getSessionsOfUser = (
 ) => {
     return sessions.filter(
         (session) =>
-            session.sessionAllocations
-                .map((allocation) => allocation.user.username)
+            session.allocatedUsers
+                .map((allocatedUser) => allocatedUser.username)
                 .includes(username) === !inverted
     );
 };

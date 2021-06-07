@@ -16,7 +16,7 @@ import {
     TabPanels,
     Tabs,
 } from "@chakra-ui/react";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { getCurrentTerm } from "../../utils/term";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -26,7 +26,7 @@ import { ViewRequestTimetableContainer } from "./ViewRequestTimetableContainer";
 import { OfferListContainer } from "./OfferListContainer";
 
 type Props = {
-    requestId: number;
+    requestId: string;
     isOpen: boolean;
     onClose: () => void;
 };
@@ -43,12 +43,12 @@ export const ViewMyRequestModalContainer: React.FC<Props> = ({
         requestId,
     ]);
     useEffect(() => {
-        if (!request && requestId !== notSet) {
+        if (!request && requestId !== defaultStr) {
             fetchRequestById(requestId);
         }
     }, [requestId, request, fetchRequestById]);
     const currentTerm = useMemo(() => {
-        return termsData ? getCurrentTerm(termsData.terms).id : notSet;
+        return termsData ? getCurrentTerm(termsData.terms).id : defaultStr;
     }, [termsData]);
     const formState = useRequestFormState();
     const {

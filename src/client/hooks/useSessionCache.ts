@@ -9,11 +9,11 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { QueryLazyOptions } from "@apollo/client/react/types/types";
 
-type SessionMap = Map<number, SessionResponseType>;
+type SessionMap = Map<string, SessionResponseType>;
 
 export type SessionCache = {
     sessions: SessionMap;
-    getSession: (sessionId: number) => SessionResponseType | undefined;
+    getSession: (sessionId: string) => SessionResponseType | undefined;
     fetchSessions: (
         options?: QueryLazyOptions<GetSessionsQueryVariables>
     ) => void;
@@ -28,7 +28,7 @@ export const useSessionCache = (): SessionCache => {
         useGetSessionByIdLazyQuery
     );
     const getSession = useCallback(
-        (sessionId: number) => {
+        (sessionId: string) => {
             const session = sessions.get(sessionId);
             if (!session) {
                 fetchSessionById({

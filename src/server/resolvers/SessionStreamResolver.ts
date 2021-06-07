@@ -8,7 +8,7 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import { Session, SessionStream, Timetable } from "../entities";
+import { Session, SessionStream, Timetable, User } from "../entities";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
@@ -22,7 +22,7 @@ export class SessionStreamResolver extends EntityResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
         @Arg("termId") termId: string,
-        @Arg("courseIds", () => [Int]) courseIds: string[]
+        @Arg("courseIds", () => [String]) courseIds: string[]
     ): Promise<SessionStream[]> {
         if (courseIds.length === 0) {
             return [];
@@ -174,5 +174,13 @@ export class SessionStreamResolver extends EntityResolver {
             return null;
         }
         return this.streamModel.getById(root.basedId, req.user);
+    }
+
+    @FieldResolver(() => [User])
+    async allocatedUsers(
+        @Root() root: SessionStream,
+        @Ctx() { req }: MyContext
+    ): Promise<User[]> {
+        return this.userModel.getByIds(root.allocatedUserIds, req.user);
     }
 }

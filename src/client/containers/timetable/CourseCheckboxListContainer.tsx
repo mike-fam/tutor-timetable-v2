@@ -12,9 +12,9 @@ import { Loadable } from "../../components/helpers/Loadable";
 import { CheckboxList } from "../../components/helpers/CheckBoxList";
 
 type Props = {
-    chosenCourses: Set<number>;
-    setChosenCourses: Dispatch<SetStateAction<Set<number>>>;
-    chosenTermId: number;
+    chosenCourses: Set<string>;
+    setChosenCourses: Dispatch<SetStateAction<Set<string>>>;
+    chosenTermId: string;
 };
 
 export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
@@ -23,7 +23,7 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
     chosenTermId,
 }) => {
     const { data } = useQueryWithError(useMyCoursesQuery, {});
-    const [courses, setCourses] = useState(Map<number, string>());
+    const [courses, setCourses] = useState(Map<string, string>());
     useEffect(() => {
         if (!data?.me?.courseStaffs || data.me.courseStaffs.length === 0) {
             return;
@@ -44,7 +44,7 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
         }
     }, [data, chosenTermId, setChosenCourses]);
     const selectCourse = useCallback(
-        (courseId: number, selected: boolean) => {
+        (courseId: string, selected: boolean) => {
             setChosenCourses((prev) =>
                 selected ? prev.add(courseId) : prev.remove(courseId)
             );

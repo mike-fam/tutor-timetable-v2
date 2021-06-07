@@ -1,4 +1,4 @@
-import { ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, OneToOne, RelationId } from "typeorm";
 import { User } from "./User";
 import { Lazy } from "../utils/query";
@@ -12,8 +12,11 @@ export class UserSettings extends BaseEntity {
     user: Lazy<User>;
 
     @RelationId((settings: UserSettings) => settings.user)
-    @Column()
     userId: string;
+
+    @Field()
+    @Column()
+    showMySessions: boolean;
 
     public async getOwner(): Promise<User> {
         const loaders = Utils.loaders;

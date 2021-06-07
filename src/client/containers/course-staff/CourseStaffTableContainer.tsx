@@ -3,17 +3,17 @@ import { IconButton, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { BsX } from "react-icons/bs";
 import { Icon } from "@chakra-ui/icons";
 import { CourseStaffsQuery } from "../../generated/graphql";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { capitalCase } from "change-case";
 import sortBy from "lodash/sortBy";
 import { HelpIcon } from "../../components/helpers/HelpIcon";
 import { redacted } from "../../../server/constants";
 
 type Props = {
-    term: number;
-    course: number;
+    term: string;
+    course: string;
     courseStaffs: CourseStaffsQuery["courseStaffs"];
-    removeCourseStaff: (courseStaffId: number) => void;
+    removeCourseStaff: (courseStaffId: string) => void;
 };
 
 export const CourseStaffTableContainer: React.FC<Props> = ({
@@ -22,7 +22,7 @@ export const CourseStaffTableContainer: React.FC<Props> = ({
     removeCourseStaff,
     courseStaffs,
 }) => {
-    if (term === notSet || course === notSet) {
+    if (term === defaultStr || course === defaultStr) {
         return null;
     }
     return (

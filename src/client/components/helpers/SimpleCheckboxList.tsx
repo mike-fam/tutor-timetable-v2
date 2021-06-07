@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Map, Set } from "immutable";
 import { CheckboxList } from "./CheckBoxList";
+import { v4 as uuid } from "uuid";
 
 type Props<T extends string> = {
     elements: T[];
@@ -20,15 +21,15 @@ export const SimpleCheckboxList = <T extends string>({
     textDisplayed,
 }: Props<T>) => {
     const [setupDefault, setSetupDefault] = useState(true);
-    const [elementMap, setElementMap] = useState(Map<number, T>());
+    const [elementMap, setElementMap] = useState(Map<string, T>());
     const [helpTextMap, setHelpTextMap] = useState(
-        Map<number, string | undefined>()
+        Map<string, string | undefined>()
     );
 
-    const [selectedElements, setSelectedElements] = useState(Set<number>());
+    const [selectedElements, setSelectedElements] = useState(Set<string>());
 
     const selectElement = useCallback(
-        (elementId: number, selected: boolean = true) => {
+        (elementId: string, selected: boolean = true) => {
             setSelectedElements((prev) =>
                 selected ? prev.add(elementId) : prev.remove(elementId)
             );
@@ -39,9 +40,10 @@ export const SimpleCheckboxList = <T extends string>({
 
     // setup props to pass to checkbox list
     useEffect(() => {
-        elements.forEach((element, key) => {
+        elements.forEach((element, index) => {
+            const key = uuid();
             setElementMap((prev) => prev.set(key, element));
-            setHelpTextMap((prev) => prev.set(key, helpTexts?.[key]));
+            setHelpTextMap((prev) => prev.set(key, helpTexts?.[index]));
             if (defaultSelectedAll && setupDefault) {
                 selectFunc(element, true);
                 setSelectedElements((prev) => prev.add(key));

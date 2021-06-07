@@ -29,5 +29,7 @@ export abstract class EntityResolver {
         protected timetableModel: TimetableModel,
         protected userModel: UserModel,
         protected userSettingsModel: UserSettingsModel
-    ) {}
+    ) {
+        console.log("Initializing resolver");
+    }
 }

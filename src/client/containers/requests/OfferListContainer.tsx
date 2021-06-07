@@ -26,7 +26,7 @@ import {
     useGetOffersByRequestIdLazyQuery,
     useTermsQuery,
 } from "../../generated/graphql";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { getCurrentTerm } from "../../utils/term";
@@ -34,7 +34,7 @@ import { isoNumberToDay } from "../../../utils/date";
 import { IsoDay } from "../../../types/date";
 
 type Props = {
-    requestId: number;
+    requestId: string;
     closeModal: () => void;
 };
 
@@ -59,7 +59,7 @@ export const OfferListContainer: React.FC<Props> = ({
     ] = useMutationWithError(useAcceptOfferMutation);
     const { requests, fetchRequestById } = useContext(RequestContext);
     useEffect(() => {
-        if (requestId === notSet) {
+        if (requestId === defaultStr) {
             return;
         }
         getOffers({
@@ -78,7 +78,7 @@ export const OfferListContainer: React.FC<Props> = ({
         }
     }, [request, fetchRequestById, requestId]);
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const [termId, setTermId] = useState(notSet);
+    const [termId, setTermId] = useState(defaultStr);
     useEffect(() => {
         if (!termsData) {
             return;

@@ -7,13 +7,13 @@ import React, {
 } from "react";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import range from "lodash/range";
 import { SessionResponseType, SessionTheme } from "../../types/session";
 
 type Props = {
-    requestId: number;
+    requestId: string;
 };
 
 export const ViewRequestTimetableContainer: React.FC<Props> = ({
@@ -33,14 +33,16 @@ export const ViewRequestTimetableContainer: React.FC<Props> = ({
         }
     }, [requestId, request, fetchRequestById]);
     const chosenCourseIds = useMemo(
-        () => [request?.session.sessionStream.timetable.course.id || notSet],
+        () => [
+            request?.session.sessionStream.timetable.course.id || defaultStr,
+        ],
         [request]
     );
     const chosenTermId = useMemo(
-        () => request?.session.sessionStream.timetable.term.id || notSet,
+        () => request?.session.sessionStream.timetable.term.id || defaultStr,
         [request]
     );
-    const [chosenWeek, chooseWeek] = useState(notSet);
+    const [chosenWeek, chooseWeek] = useState(defaultInt);
     const disabledWeeks = useMemo(() => {
         const everyWeek = range(0, weekNum);
         if (!request) {

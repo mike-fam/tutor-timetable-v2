@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import {
     RequestStatus,
     RequestType,
@@ -27,9 +27,9 @@ import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
 export const RequestPageContainer: React.FunctionComponent = () => {
     // Get Current Term
     const { data: termsData } = useTermsQuery();
-    const [chosenTerm, setChosenTerm] = useState(notSet);
+    const [chosenTerm, setChosenTerm] = useState(defaultStr);
     const [termIsSet, setTermIsSet] = useState(false);
-    const [chosenCourses, setChosenCourses] = useState<Set<number>>(Set());
+    const [chosenCourses, setChosenCourses] = useState<Set<string>>(Set());
     const { user } = useContext(UserContext);
     const requestUtils = useRequestUtils();
     const {

@@ -15,12 +15,12 @@ import { SessionsContext } from "../../hooks/useSessionUtils";
 import { SessionResponseType, SessionTheme } from "../../types/session";
 
 type Props = {
-    chosenCourses: number[];
-    chosenTerm: number;
+    chosenCourses: string[];
+    chosenTerm: string;
     chosenWeek: number;
     checkDisabled: (session: SessionResponseType) => boolean;
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
-    chooseSession: (sessionId: number) => void;
+    chooseSession: (sessionId: string) => void;
     sessionFilter?: (sessions: SessionResponseType) => boolean;
     displayedDays?: IsoDay[];
 };
@@ -44,7 +44,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         ? displayedDayProps
         : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
-        Map<number, RequestSessionProps>
+        Map<string, RequestSessionProps>
     >(Map());
     const { fetchSessions, sessions: sessionMap } = useContext(SessionsContext);
     const [timetableSessions, setTimetableSessions] = useState<
@@ -65,9 +65,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
                     disabled: checkDisabled(session),
                     theme: getSessionTheme(session),
                     location: session.location,
-                    allocation: session.sessionAllocations.map(
-                        (allocation) => allocation.user.name
-                    ),
+                    allocation: session.allocatedUsers.map((user) => user.name),
                 })
             );
         });

@@ -6,7 +6,7 @@ import {
     useGetSessionByIdLazyQuery,
     useGetSessionsLazyQuery,
 } from "../generated/graphql";
-import { notSet } from "../constants";
+import { defaultInt, defaultStr } from "../constants";
 
 export const SessionsContext = createContext<SessionUtil>({
     sessions: Map(),
@@ -27,11 +27,11 @@ export const useSessionUtils = (): SessionUtil => {
         { data: sessionData, loading: getSessionByIdLoading },
     ] = useLazyQueryWithError(useGetSessionByIdLazyQuery);
     const fetchSessions = useCallback(
-        (termId: number, courseId: number, chosenWeek: number) => {
+        (termId: string, courseId: string, chosenWeek: number) => {
             if (
-                termId === notSet ||
-                courseId === notSet ||
-                chosenWeek === notSet
+                termId === defaultStr ||
+                courseId === defaultStr ||
+                chosenWeek === defaultInt
             ) {
                 return;
             }
@@ -46,8 +46,8 @@ export const useSessionUtils = (): SessionUtil => {
         [getSession]
     );
     const fetchSessionById = useCallback(
-        (sessionId: number) => {
-            if (sessionId === notSet) {
+        (sessionId: string) => {
+            if (sessionId === defaultStr) {
                 return;
             }
             getSessionById({

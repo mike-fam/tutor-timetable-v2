@@ -20,13 +20,13 @@ import {
 import { RequestResponse } from "../../types/requests";
 import { UserContext } from "../../utils/user";
 import { RequestStatus } from "../../generated/graphql";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 
 type Props = {
     requestList: Array<RequestResponse>;
-    openOfferModal: (requestId: number) => void;
-    openViewRequestModal: (requestId: number) => void;
-    deleteRequest: (requestId: number) => void;
+    openOfferModal: (requestId: string) => void;
+    openViewRequestModal: (requestId: string) => void;
+    deleteRequest: (requestId: string) => void;
     deleteLoading: boolean;
 };
 
@@ -37,7 +37,7 @@ export const RequestTable: React.FC<Props> = ({
     deleteLoading,
     deleteRequest,
 }) => {
-    const [requestId, setRequestId] = useState(notSet);
+    const [requestId, setRequestId] = useState(defaultStr);
     const tableBorder = useColorModeValue("gray.400", "gray.600");
     const { user } = useContext(UserContext);
     const cancelRef = useRef<HTMLButtonElement>(null);

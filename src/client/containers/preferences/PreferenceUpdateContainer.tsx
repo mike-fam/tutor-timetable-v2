@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import {
     Preference,
     useGetSessionStreamsQuery,
@@ -22,8 +22,8 @@ import { Button, Divider } from "@chakra-ui/react";
 const NO_PREFERENCE = "No Preference";
 
 type Props = {
-    courseId: number;
-    termId: number;
+    courseId: string;
+    termId: string;
 };
 
 export const PreferenceUpdateContainer: React.FC<Props> = ({
@@ -73,7 +73,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         });
     }, [updatePreferenceData]);
     useEffect(() => {
-        if (courseId === notSet || termId === notSet) {
+        if (courseId === defaultStr || termId === defaultStr) {
             return;
         }
         const variables = {
@@ -102,7 +102,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                 preferenceData.myPreference.sessionType || NO_PREFERENCE,
         });
     }, [preferenceData, courseId, termId]);
-    if (courseId === notSet || termId === notSet) {
+    if (courseId === defaultStr || termId === defaultStr) {
         return null;
     }
     return (

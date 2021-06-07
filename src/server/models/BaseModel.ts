@@ -70,7 +70,7 @@ export abstract class BaseModel<T extends BaseEntity> {
     public async getById(entityId: string, user: User): Promise<T> {
         let result: T;
         try {
-            result = (await this.loader.load(entityId)) as T;
+            result = await this.loader.load(entityId);
         } catch (e) {
             throw new Error(CANT_FIND + this.entityCls.name);
         }

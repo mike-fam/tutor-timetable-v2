@@ -17,7 +17,7 @@ export const WeekNavContainer: React.FunctionComponent<Props> = () => {
     const { data, loading } = useQueryWithError(useTermsQuery, {});
     const [weeksNum, setWeeksNum] = useState(0);
     const [termMap, setTermMap] = useState(
-        Map<number, Omit<Term, "timetables">>()
+        Map<string, Omit<Term, "timetables">>()
     );
     useEffect(() => {
         if (loading || !data) {

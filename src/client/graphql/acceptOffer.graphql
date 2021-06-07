@@ -1,3 +1,8 @@
 mutation AcceptOffer($offerId: String!, $offerSessionSwapId: String) {
-    acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId)
+    acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId) {
+        id
+        acceptedSession {
+            id
+        }
+    }
 }

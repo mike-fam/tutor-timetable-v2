@@ -14,7 +14,7 @@ export type Props<T> = {
     endTime: number;
     renderTimeSlot: (key: number, time: number, day: number) => ReactElement;
     sessions: Array<TimetableSessionType>;
-    getSessionProps: (sessionId: number) => T;
+    getSessionProps: (sessionId: string) => T;
     renderSession: (
         sessionProps: SessionProps,
         key: number,

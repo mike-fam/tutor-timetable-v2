@@ -14,7 +14,7 @@ import {
 } from "../../utils/timetable";
 import { Set } from "immutable";
 import { parseISO } from "date-fns";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import { getCurrentTerm, getCurrentWeek } from "../../utils/term";
 import {
     firstLineHeight,
@@ -26,9 +26,9 @@ type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
     document.title = "Tutor Timetable";
-    const [chosenTerm, setChosenTerm] = useState(notSet);
-    const [chosenWeek, setChosenWeek] = useState(notSet);
-    const [chosenCourses, setChosenCourses] = useState(() => Set<number>());
+    const [chosenTerm, setChosenTerm] = useState(defaultStr);
+    const [chosenWeek, setChosenWeek] = useState(defaultInt);
+    const [chosenCourses, setChosenCourses] = useState(() => Set<string>());
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
     const { data: termsData, loading: termsLoading } = useQueryWithError(
         useTermsQuery,
@@ -61,7 +61,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
         setChosenWeek(
             startDate < today && today < endDate
                 ? getCurrentWeek(chosenTerm)
-                : notSet
+                : defaultInt
         );
     }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
 

@@ -7,8 +7,8 @@ import { sentenceCase } from "change-case";
 import { getCurrentTerm } from "../utils/term";
 
 type Props = {
-    chooseTerm: (termId: number) => void;
-    chosenTerm: number;
+    chooseTerm: (termId: string) => void;
+    chosenTerm: string;
     maxW?: number | string;
 };
 
@@ -18,7 +18,7 @@ export const TermSelectContainer: React.FC<Props> = ({
     maxW,
 }) => {
     const { loading, data } = useTermsQuery();
-    const [termsMap, setTermsMap] = useState(Map<number, string>());
+    const [termsMap, setTermsMap] = useState(Map<string, string>());
     useEffect(() => {
         if (loading || !data) {
             return;
@@ -38,7 +38,7 @@ export const TermSelectContainer: React.FC<Props> = ({
     return (
         <Loadable isLoading={data === undefined}>
             <Dropdown
-                onChange={(e) => chooseTerm(Number(e.target.value))}
+                onChange={(e) => chooseTerm(e.target.value)}
                 value={chosenTerm}
                 options={termsMap}
                 maxW={maxW}

@@ -18,10 +18,10 @@ import { ContextMenuItem } from "../helpers/ContextMenuItem";
 import { AvailabilityModificationType } from "../../generated/graphql";
 
 export type AvailabilitySessionProps = {
-    updateSession: (sessionId: number, newProps: ModifyTimeslotParams) => void;
-    removeSession: (sessionId: number) => void;
-    restoreSession: (sessionId: number) => void;
-    editSession: (sessionId: number) => void;
+    updateSession: (sessionId: string, newProps: ModifyTimeslotParams) => void;
+    removeSession: (sessionId: string) => void;
+    restoreSession: (sessionId: string) => void;
+    editSession: (sessionId: string) => void;
     modificationType: AvailabilityModificationType;
 };
 

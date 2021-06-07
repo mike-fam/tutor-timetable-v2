@@ -4,7 +4,7 @@ import { OfferRequestModalContainer } from "../../containers/requests/OfferReque
 import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
 import { RequestTable } from "./RequestTable";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { ViewMyRequestModalContainer } from "../../containers/requests/ViewMyRequestModalContainer";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
 import { useDeleteRequestMutation } from "../../generated/graphql";
@@ -31,16 +31,16 @@ export const RequestList: React.FunctionComponent<Props> = ({
     } = useDisclosure();
     const toast = useToast();
     const { requests, setRequests } = useContext(RequestContext);
-    const [selectedRequest, setSelectedRequest] = useState(notSet);
+    const [selectedRequest, setSelectedRequest] = useState(defaultStr);
     const openOfferModal = useCallback(
-        (requestId: number) => {
+        (requestId: string) => {
             setSelectedRequest(requestId);
             onOpenOffer();
         },
         [setSelectedRequest, onOpenOffer]
     );
     const openRequestView = useCallback(
-        (requestId: number) => {
+        (requestId: string) => {
             setSelectedRequest(requestId);
             onOpenRequestView();
         },
@@ -51,7 +51,7 @@ export const RequestList: React.FunctionComponent<Props> = ({
         { data: deleteRequestData, loading: deleteLoading },
     ] = useMutationWithError(useDeleteRequestMutation);
     const deleteRequest = useCallback(
-        (requestId: number) => {
+        (requestId: string) => {
             deleteRequestMutation({
                 variables: {
                     requestId,

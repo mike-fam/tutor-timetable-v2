@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { TermSelectContainer } from "../TermSelectContainer";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { AllocatorStaffCheckboxList } from "./AllocatorStaffCheckboxList";
 import { AllocatorTimetableContainer } from "./AllocatorTimetableContainer";
@@ -36,6 +36,7 @@ import {
     AllocatorTable,
 } from "../../components/allocator/AllocatorTable";
 import { SessionTheme } from "../../types/session";
+import { isNumeric } from "../../../utils/string";
 
 type Props = {};
 
@@ -43,7 +44,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     const { termId, changeTerm, courseId, changeCourse } = useTermCourse();
     const [showing, setShowing] = useState<"default" | "generated">("default");
     const [sessions, setSessions] = useState<TimetableSessionType[]>([]);
-    const [selectedStaff, setSelectedStaff] = useState<Set<number>>(Set());
+    const [selectedStaff, setSelectedStaff] = useState<Set<string>>(Set());
     const [override, setOverride] = useState(false);
     const toast = useToast();
     const {
@@ -62,7 +63,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
 
     // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
-        Map<number, TimetableSessionProps>
+        Map<string, TimetableSessionProps>
     >(Map());
 
     const [
@@ -115,7 +116,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     }, [requestAllocationData]);
     // Get timetable data on term and course changing
     useEffect(() => {
-        if (termId === notSet || courseId === notSet) {
+        if (termId === defaultStr || courseId === defaultStr) {
             return;
         }
         getSessionStream({
@@ -158,8 +159,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,
                             allocation: staff.map((staff) => staff.name),
-                            theme: staff.some(
-                                (staffMember) => staffMember.id < 0
+                            theme: staff.some((staffMember) =>
+                                isNumeric(staffMember.id)
                             )
                                 ? SessionTheme.ERROR
                                 : SessionTheme.PRIMARY,
@@ -215,8 +216,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                 setSessionsInfo((prev) =>
                     prev.set(sessionStream.id, {
                         location: sessionStream.location,
-                        allocation: sessionStream.streamAllocations.map(
-                            (allocation) => allocation.user.name
+                        allocation: sessionStream.allocatedUsers.map(
+                            (user) => user.name
                         ),
                     })
                 );
@@ -246,7 +247,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                             coordinatorOnly={true}
                         />
                     </HStack>
-                    {courseId !== notSet && termId !== notSet && (
+                    {courseId !== defaultStr && termId !== defaultStr && (
                         <>
                             <Text
                                 fontSize="2xl"

@@ -7,7 +7,7 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import range from "lodash/range";
 import { UserContext } from "../../utils/user";
 import { SessionResponseType, SessionTheme } from "../../types/session";
@@ -16,10 +16,10 @@ import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourseId: number;
-    chosenTermId: number;
-    chosenSession: number;
-    chooseSession: Dispatch<SetStateAction<number>>;
+    chosenCourseId: string;
+    chosenTermId: string;
+    chosenSession: string;
+    chooseSession: Dispatch<SetStateAction<string>>;
 };
 
 export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
@@ -28,7 +28,7 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
     chooseSession,
     chosenSession,
 }) => {
-    const [chosenWeek, chooseWeek] = useState(notSet);
+    const [chosenWeek, chooseWeek] = useState(defaultInt);
     const { chosenTerm, weekNum, currentWeek } = useTermMetadata(chosenTermId);
     const { user } = useContext(UserContext);
     const disabledWeeks = useMemo(
@@ -42,8 +42,8 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
             if (session.week !== chosenWeek) {
                 return false;
             }
-            return session.sessionAllocations.some(
-                (allocation) => allocation.user.username === user.username
+            return session.allocatedUsers.some(
+                (allocatedUser) => allocatedUser.username === user.username
             );
         },
         [chosenWeek, user.username]
@@ -63,7 +63,7 @@ export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
         [chosenSession]
     );
     useEffect(() => {
-        if (chosenWeek !== notSet) {
+        if (chosenWeek !== defaultInt) {
             return;
         }
         chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));

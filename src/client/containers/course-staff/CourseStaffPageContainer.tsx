@@ -30,7 +30,7 @@ import { Wrapper } from "../../components/helpers/Wrapper";
 import { capitalCase } from "change-case";
 import { CourseStaffTableContainer } from "./CourseStaffTableContainer";
 import { AddCourseStaffModal } from "./AddCourseStaffModal";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import {
     CourseStaffResponseType,
     StaffSeniority,
@@ -59,7 +59,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
         { data: getCourseStaffData },
     ] = useLazyQueryWithError(useCourseStaffsLazyQuery);
     useEffect(() => {
-        if (termId === notSet || courseId === notSet) {
+        if (termId === defaultStr || courseId === defaultStr) {
             return;
         }
         getCourseStaff({
@@ -72,7 +72,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
         });
     }, [termId, courseId, getCourseStaff]);
     const removeCourseStaff = useCallback(
-        (courseStaffId: number) => {
+        (courseStaffId: string) => {
             removeCourseStaffMutation({
                 variables: {
                     courseStaffId,
@@ -82,7 +82,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
         [removeCourseStaffMutation]
     );
     const [courseStaff, setCourseStaff] = useState<
-        Map<number, CourseStaffResponseType>
+        Map<string, CourseStaffResponseType>
     >(Map());
     useEffect(() => {
         if (!addCourseStaffData) {
@@ -164,13 +164,13 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
                     />
                 </FormControl>
                 <Stack direction="row" justifyContent="flex-end">
-                    {courseId !== notSet && termId !== notSet && (
+                    {courseId !== defaultStr && termId !== defaultStr && (
                         <Button colorScheme="green" onClick={onOpen}>
                             Add Staff
                         </Button>
                     )}
                 </Stack>
-                {termId !== notSet && courseId !== notSet && (
+                {termId !== defaultStr && courseId !== defaultStr && (
                     <Loadable isLoading={!getCourseStaffData}>
                         <Box h="80vh" overflow="auto">
                             <CourseStaffTableContainer

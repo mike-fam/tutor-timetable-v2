@@ -1,10 +1,10 @@
 import { createContext } from "react";
 import { UserContextType } from "../types/user";
-import { notSet } from "../constants";
+import { defaultStr } from "../constants";
 
 export const UserContext = createContext<UserContextType>({
     user: {
-        id: notSet,
+        id: defaultStr,
         username: "",
         name: "",
         email: "",

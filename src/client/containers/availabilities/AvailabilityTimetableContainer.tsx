@@ -23,6 +23,8 @@ import {
     useMyAvailabilityQuery,
 } from "../../generated/graphql";
 import { TimeslotModal } from "../../components/availabilities/TimeslotModal";
+import { isNumeric } from "../../../utils/string";
+import { defaultInt, defaultStr } from "../../constants";
 
 type Props = {};
 
@@ -32,7 +34,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
         TimetableSettingsContext
     );
     // Generate ids for added timeslots
-    const [tempAddIndex, setTempAddIndex] = useState(-1);
+    const [tempAddIndex, setTempAddIndex] = useState(defaultInt);
 
     // Availability state and handlers
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
@@ -43,7 +45,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
         onClose: closeModal,
         onOpen: openModal,
     } = useDisclosure();
-    const [editedSessionId, setEditedSessionId] = useState(0);
+    const [editedSessionId, setEditedSessionId] = useState(defaultStr);
 
     const { data: myTimeslots, loading } = useQueryWithError(
         useMyAvailabilityQuery,
@@ -75,25 +77,25 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
     const addTempTimeslot = useCallback(
         (timeslot: Omit<TempTimeslot, "id">) => {
             setTimeslots((prev) =>
-                prev.set(tempAddIndex, {
+                prev.set(String(tempAddIndex), {
                     ...timeslot,
-                    id: tempAddIndex,
+                    id: String(tempAddIndex),
                     modificationType: AvailabilityModificationType.Added,
                 })
             );
-            setTempAddIndex((prev) => prev - 1);
+            setTempAddIndex((prev) => prev + 1);
         },
         [tempAddIndex, setTimeslots]
     );
 
     const modifySession = useCallback(
-        (timeslotId: number, newTimeslotProps: ModifyTimeslotParams) => {
+        (timeslotId: string, newTimeslotProps: ModifyTimeslotParams) => {
             const session = timeslots.get(timeslotId);
             if (!session) {
                 return;
             }
             if (
-                timeslotId > 0 &&
+                !isNumeric(timeslotId) &&
                 session.modificationType ===
                     AvailabilityModificationType.Unchanged
             ) {
@@ -198,17 +200,15 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                             />
                         )}
                         key={key}
-                        getSessionProps={(sessionId) => ({
+                        getSessionProps={(timeslotId) => ({
                             updateSession: modifySession,
                             removeSession,
                             restoreSession,
                             editSession,
-                            modificationType:
-                                sessionId < 0
-                                    ? AvailabilityModificationType.Added
-                                    : timeslots.get(sessionId)
-                                          ?.modificationType ||
-                                      AvailabilityModificationType.Unchanged,
+                            modificationType: isNumeric(timeslotId)
+                                ? AvailabilityModificationType.Added
+                                : timeslots.get(timeslotId)?.modificationType ||
+                                  AvailabilityModificationType.Unchanged,
                         })}
                     />
                 )}
