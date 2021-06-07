@@ -9,7 +9,7 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import { Course, CourseStaff, Preference, User } from "../entities";
+import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../types/context";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";

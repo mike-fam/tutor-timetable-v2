@@ -1,7 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import {
     Offer,
-    Session,
     SessionStream,
     StaffRequest,
     Timetable,
@@ -214,6 +213,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
         }
         await stream.allocate(...staff);
     }
+
     /**
      * A user can allocate a single staff member to a stream if EITHER
      * they are admin

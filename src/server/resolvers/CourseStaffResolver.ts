@@ -18,7 +18,6 @@ import { getOrCreateUsersByUsernames } from "../utils/user";
 import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
 import { MyContext } from "../types/context";
-import { TimetableModel } from "../models/TimetableModel";
 import { Service } from "typedi";
 import { EntityResolver } from "./EntityResolver";
 

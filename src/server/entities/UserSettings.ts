@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { ObjectType } from "type-graphql";
 import { Column, Entity, OneToOne, RelationId } from "typeorm";
 import { User } from "./User";
 import { Lazy } from "../utils/query";

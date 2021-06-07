@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
-import { Session, SessionStream, Timetable, User } from "../entities";
+import { SessionStream, Timetable, User } from "../entities";
 import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
 import { MyContext } from "../types/context";
@@ -17,8 +17,6 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
 import { Role } from "../types/user";
-import { getSessionTime } from "../utils/session";
-import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
 import { isDigits } from "../utils/string";
 

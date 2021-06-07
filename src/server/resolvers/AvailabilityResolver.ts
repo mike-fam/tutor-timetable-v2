@@ -14,7 +14,7 @@ import {
 import { Timeslot, User } from "../entities";
 import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
-import { getConnection } from "typeorm";
+import { In } from "typeorm";
 import { Service } from "typedi";
 import { EntityResolver } from "./EntityResolver";
 
@@ -52,8 +52,9 @@ class TimeslotInput {
 @Resolver(() => Timeslot)
 export class AvailabilityResolver extends EntityResolver {
     @Query(() => [Timeslot])
-    async myAvailability(@Ctx() ctx: MyContext): Promise<Timeslot[]> {
-        return await Timeslot.find({ user: ctx.req.user });
+    async myAvailability(@Ctx() { req }: MyContext): Promise<Timeslot[]> {
+        const user = req.user;
+        return await this.timeslotModel.getMany({ user }, user);
     }
 
     @Mutation(() => [Timeslot])
@@ -62,20 +63,32 @@ export class AvailabilityResolver extends EntityResolver {
         timeslots: TimeslotInput[],
         @Ctx() { req }: MyContext
     ): Promise<Timeslot[]> {
+        const user = req.user;
         const newSessions = timeslots
             .filter(
                 (timeslot) =>
                     timeslot.modificationType ===
                     AvailabilityModificationType.ADDED
             )
-            .map((timeslot) => ({
-                startTime: timeslot.startTime,
-                endTime: timeslot.endTime,
-                day: timeslot.day,
-                user: req.user,
+            .map(({ startTime, endTime, day }) => ({
+                startTime,
+                endTime,
+                day,
+                user,
             }));
-        await Timeslot.save(Timeslot.create(newSessions));
-        const removedSessionIds = timeslots
+        const updatedTimeslots = timeslots
+            .filter(
+                (timeslot) =>
+                    timeslot.modificationType ===
+                    AvailabilityModificationType.MODIFIED
+            )
+            .map(({ id, startTime, endTime, day }) => ({
+                id,
+                startTime,
+                endTime,
+                day,
+            }));
+        const removedTimeslotIds = timeslots
             .filter(
                 (timeslot) =>
                     timeslot.modificationType ===
@@ -84,23 +97,16 @@ export class AvailabilityResolver extends EntityResolver {
                         AvailabilityModificationType.REMOVED_MODIFIED
             )
             .map((timeslot) => timeslot.id);
-        if (removedSessionIds.length > 0) {
-            await Timeslot.delete(removedSessionIds);
-        }
-        const updatedTimeslots = timeslots
-            .filter(
-                (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.MODIFIED
-            )
-            .map((timeslot) => ({
-                id: timeslot.id,
-                startTime: timeslot.startTime,
-                endTime: timeslot.endTime,
-                day: timeslot.day,
-            }));
-        await getConnection().getRepository(Timeslot).save(updatedTimeslots);
-        return await Timeslot.find({ user: req.user });
+        await this.timeslotModel.deleteMany(
+            {
+                id: In(removedTimeslotIds),
+            },
+            user
+        );
+        return await this.timeslotModel.save(
+            [...newSessions, ...updatedTimeslots],
+            user
+        );
     }
 
     @FieldResolver(() => User)
