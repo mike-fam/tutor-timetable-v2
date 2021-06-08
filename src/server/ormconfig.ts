@@ -6,14 +6,13 @@ import {
     Offer,
     Preference,
     Session,
-    SessionAllocation,
     SessionStream,
     StaffRequest,
-    StreamAllocation,
     Term,
     Timeslot,
     Timetable,
     User,
+    UserSettings,
 } from "./entities";
 
 export default {
@@ -25,21 +24,20 @@ export default {
         Offer,
         Preference,
         Session,
-        SessionAllocation,
         SessionStream,
         StaffRequest,
-        StreamAllocation,
         Term,
         Timeslot,
         Timetable,
         User,
+        UserSettings,
     ],
     migrations: [
         __prod__
             ? "build/server/migrations/*.js"
             : "src/server/migrations/*.ts",
     ],
-    logging: false && !__prod__ && ["error", "schema", "warn", "query"],
+    logging: !__prod__ && ["error", "schema", "warn", "query"],
     cli: {
         migrationsDir: __prod__
             ? "build/server/migrations/*.js"

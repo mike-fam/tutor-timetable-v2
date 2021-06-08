@@ -8,10 +8,10 @@ import React, {
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
 import { RequestContext } from "../../hooks/useRequestUtils";
-import { SessionResponseType } from "../../types/session";
+import { SessionResponseType, SessionTheme } from "../../types/session";
 import { UserContext } from "../../utils/user";
 import minBy from "lodash/minBy";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
@@ -19,13 +19,12 @@ import range from "lodash/range";
 import parseISO from "date-fns/parseISO";
 import { addDays, addWeeks, startOfISOWeek } from "date-fns";
 import { IsoDay } from "../../../types/date";
-import { SessionTheme } from "../../types/session";
 import uniq from "lodash/uniq";
 
 type Props = {
-    requestId: number;
-    chosenSessions: number[];
-    chooseSession: (sessionId: number) => void;
+    requestId: string;
+    chosenSessions: string[];
+    chooseSession: (sessionId: string) => void;
 };
 
 export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
@@ -40,7 +39,7 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
     ]);
     const { data: myCoursesData } = useQueryWithError(useMyCoursesQuery);
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const [week, setWeek] = useState(notSet);
+    const [week, setWeek] = useState(defaultInt);
     const { user } = useContext(UserContext);
     const [defaultWeekIsSet, setDefaultWeekIsSet] = useState(false);
     const myCourseIds = useMemo(() => {
@@ -51,7 +50,7 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             (courseStaff) => courseStaff.timetable.course.id
         );
     }, [myCoursesData]);
-    const [termId, setTermId] = useState(notSet);
+    const [termId, setTermId] = useState(defaultStr);
     const { currentWeek, weekNum } = useTermMetadata(termId);
     useEffect(() => {
         if (!termsData) {
@@ -113,8 +112,8 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             }
             // disable everything if I'm already assigned to the requester's session
             if (
-                request.session.sessionAllocations.some(
-                    (allocation) => allocation.user.username === user.username
+                request.session.allocatedUsers.some(
+                    (allocatedUser) => allocatedUser.username === user.username
                 )
             ) {
                 return true;
@@ -129,8 +128,8 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             }
             // Disable sessions that I cannot give
             if (
-                session.sessionAllocations.every(
-                    (allocation) => allocation.user.username !== user.username
+                session.allocatedUsers.every(
+                    (allocatedUser) => allocatedUser.username !== user.username
                 )
             ) {
                 return true;

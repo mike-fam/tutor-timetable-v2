@@ -1,17 +1,27 @@
-import { Arg, Int, Query, Resolver } from "type-graphql";
-import { Course } from "../entities";
+import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import { Course, Timetable } from "../entities";
+import { MyContext } from "../types/context";
 
-@Resolver()
+@Resolver(() => Course)
 export class CourseResolver {
     @Query(() => [Course])
-    async courses(): Promise<Course[]> {
-        return await Course.find({});
+    async courses(@Ctx() { req, models }: MyContext): Promise<Course[]> {
+        return models.course.getMany({}, req.user);
     }
 
     @Query(() => Course)
     async course(
-        @Arg("courseId", () => Int) courseId: number
+        @Arg("courseId") courseId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<Course> {
-        return await Course.findOneOrFail(courseId);
+        return await models.course.getById(courseId, req.user);
+    }
+
+    @FieldResolver(() => [Timetable])
+    async timetables(
+        @Root() course: Course,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable[]> {
+        return await models.timetable.getByIds(course.timetableIds, req.user);
     }
 }

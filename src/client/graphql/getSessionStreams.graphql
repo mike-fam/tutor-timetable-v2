@@ -1,4 +1,4 @@
-query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
+query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
     sessionStreams(courseIds: $courseIds, termId: $termId) {
         id
         type
@@ -8,11 +8,9 @@ query GetSessionStreams($termId: Int!, $courseIds: [Int!]!) {
         day
         location
         numberOfStaff
-        streamAllocations {
-            user {
-                name
-                username
-            }
+        allocatedUsers {
+            name
+            username
         }
     }
 }

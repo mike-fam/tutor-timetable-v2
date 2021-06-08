@@ -15,7 +15,7 @@ import { SessionTheme } from "../../types/session";
 type Props = {
     sessions: TimetableSessionType[];
     loading: boolean;
-    sessionsData: Map<number, TimetableSessionProps>;
+    sessionsData: Map<string, TimetableSessionProps>;
 };
 
 export const AllocatorTimetableContainer: React.FC<Props> = ({

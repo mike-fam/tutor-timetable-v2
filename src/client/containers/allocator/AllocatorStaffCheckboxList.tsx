@@ -7,10 +7,10 @@ import { Set } from "immutable";
 import sortBy from "lodash/sortBy";
 
 type Props = {
-    courseId: number;
-    termId: number;
-    selectedStaff: Set<number>;
-    setSelectedStaff: Dispatch<SetStateAction<Set<number>>>;
+    courseId: string;
+    termId: string;
+    selectedStaff: Set<string>;
+    setSelectedStaff: Dispatch<SetStateAction<Set<string>>>;
 };
 
 export const AllocatorStaffCheckboxList: React.FC<Props> = ({

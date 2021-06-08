@@ -12,7 +12,7 @@ type Props = {};
 
 export const AvailabilityPageContainer: React.FC<Props> = () => {
     const [existingTimeslots, setExistingTimeslots] = useState(
-        Map<number, TimeslotInput>()
+        Map<string, TimeslotInput>()
     );
     return (
         <AvailabilityContext.Provider

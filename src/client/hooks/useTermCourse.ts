@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
-import { notSet } from "../constants";
+import { defaultStr } from "../constants";
 
 export const useTermCourse = () => {
-    const [termId, setChosenTermId] = useState(notSet);
-    const [courseId, changeCourse] = useState(notSet);
+    const [termId, setChosenTermId] = useState(defaultStr);
+    const [courseId, changeCourse] = useState(defaultStr);
     const changeTerm = useCallback((termId) => {
         setChosenTermId(termId);
-        changeCourse(notSet);
+        changeCourse(defaultStr);
     }, []);
     return {
         termId,

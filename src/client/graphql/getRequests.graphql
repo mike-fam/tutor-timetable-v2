@@ -1,4 +1,4 @@
-query getRequestById($requestId: Int!) {
+query getRequestById($requestId: String!) {
     getRequestById(requestId: $requestId) {
         id
         title
@@ -31,11 +31,9 @@ query getRequestById($requestId: Int!) {
                 }
             }
             week
-            sessionAllocations {
-                user {
-                    username
-                    name
-                }
+            allocatedUsers {
+                username
+                name
             }
         }
         swapPreference {
@@ -96,11 +94,9 @@ query getRequestsByUserId {
                 }
             }
             week
-            sessionAllocations {
-                user {
-                    username
-                    name
-                }
+            allocatedUsers {
+                username
+                name
             }
         }
         swapPreference {
@@ -128,7 +124,7 @@ query getRequestsByUserId {
     }
 }
 
-query getRequestsByTermId($termId: Int!) {
+query getRequestsByTermId($termId: String!) {
     getRequestsByTermId(termId: $termId) {
         id
         title
@@ -161,11 +157,9 @@ query getRequestsByTermId($termId: Int!) {
                 }
             }
             week
-            sessionAllocations {
-                user {
-                    username
-                    name
-                }
+            allocatedUsers {
+                username
+                name
             }
         }
         swapPreference {

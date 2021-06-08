@@ -9,7 +9,7 @@ import { ErrorContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
 import { Footer } from "../Footer";
-import { footerHeight, notSet } from "../constants";
+import { defaultStr, footerHeight } from "../constants";
 import { SessionsContext, useSessionUtils } from "../hooks/useSessionUtils";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import {
@@ -47,7 +47,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         ]
     );
     const [user, setUser] = useState<UserState>({
-        id: notSet,
+        id: defaultStr,
         username: "",
         email: "",
         name: "",

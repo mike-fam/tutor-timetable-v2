@@ -1,4 +1,4 @@
-query Course($courseId: Int!) {
+query Course($courseId: String!) {
     course(courseId: $courseId) {
         code
         title

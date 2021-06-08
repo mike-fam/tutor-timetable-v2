@@ -6,9 +6,9 @@ import { Map } from "immutable";
 import { useQueryWithError } from "../hooks/useQueryWithError";
 
 type Props = {
-    chooseCourse: (termId: number) => void;
-    chosenCourse: number;
-    chosenTerm: number;
+    chooseCourse: (termId: string) => void;
+    chosenCourse: string;
+    chosenTerm: string;
     coordinatorOnly?: boolean;
     maxW?: number | string;
     editable?: boolean;
@@ -23,7 +23,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
     editable = true,
 }) => {
     const { loading, data } = useQueryWithError(useMyCoursesQuery, {});
-    const [coursesMap, setCoursesMap] = useState(Map<number, string>());
+    const [coursesMap, setCoursesMap] = useState(Map<string, string>());
     useEffect(() => {
         if (loading || !data?.me?.courseStaffs) {
             return;
@@ -51,7 +51,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
         <Loadable isLoading={data === undefined}>
             <Dropdown
                 isDisabled={!editable}
-                onChange={(e) => chooseCourse(Number(e.target.value))}
+                onChange={(e) => chooseCourse(e.target.value)}
                 value={chosenCourse}
                 options={coursesMap}
                 maxW={maxW}

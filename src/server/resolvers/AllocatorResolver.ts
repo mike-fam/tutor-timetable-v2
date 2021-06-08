@@ -3,21 +3,13 @@ import {
     Ctx,
     Field,
     Float,
-    Int,
     Mutation,
     ObjectType,
     Resolver,
 } from "type-graphql";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
-import {
-    Session,
-    SessionAllocation,
-    SessionStream,
-    StreamAllocation,
-    Timetable,
-    User,
-} from "../entities";
+import { SessionStream, Timetable, User } from "../entities";
 import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
 import { MyContext } from "../types/context";
@@ -25,13 +17,12 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
 import { Role } from "../types/user";
-import { getSessionTime } from "../utils/session";
-import asyncFilter from "node-filter-async";
 import { asyncMap } from "../../utils/array";
+import { isDigits } from "../utils/string";
 
 type WeekId = number;
-type SessionStreamId = number;
-type StaffId = number;
+type SessionStreamId = string;
+type StaffId = string;
 
 @ObjectType()
 class Allocation {
@@ -79,7 +70,7 @@ type AllocatorOutputData = {
     detail: string;
     runtime: number;
     allocations: {
-        [key: number]: Array<number>;
+        [key: string]: Array<string>;
     };
 };
 
@@ -130,7 +121,7 @@ type AllocatorInput = {
 
 const allocationTokenManager = new Map<
     string,
-    [number, number, AllocatorOutputData]
+    [string, string, AllocatorOutputData]
 >();
 
 @Resolver()
@@ -139,10 +130,10 @@ export class AllocatorResolver {
     async requestAllocation(
         @Arg("courseTermInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
-        @Arg("staffIds", () => [Int]) staffIds: number[],
+        @Arg("staffIds", () => [String]) staffIds: string[],
         @Arg("newThreshold", () => Float, { nullable: true })
         newThreshold: number | undefined,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
         const timetable = await Timetable.findOneOrFail({
             courseId,
@@ -229,8 +220,12 @@ export class AllocatorResolver {
         output.allocations = await asyncMap(
             Object.entries(allocatorOutput.data.allocations),
             async ([streamId, staffIds]) => {
-                const dummyIds = staffIds.filter((staffId) => staffId < 0);
-                const realIds = staffIds.filter((staffId) => staffId > 0);
+                const dummyIds = staffIds.filter((staffId) =>
+                    isDigits(staffId)
+                );
+                const realIds = staffIds.filter((staffId) =>
+                    dummyIds.includes(staffId)
+                );
                 return {
                     sessionStream: await SessionStream.findOneOrFail(
                         parseInt(streamId)
@@ -261,7 +256,7 @@ export class AllocatorResolver {
     async applyAllocation(
         @Arg("allocationToken") token: string,
         @Arg("override", () => Boolean) override: boolean,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<boolean> {
         const allocationEntry = allocationTokenManager.get(token);
         if (!allocationEntry) {
@@ -286,103 +281,104 @@ export class AllocatorResolver {
         ) {
             throw new Error("You don't have permission to perform this action");
         }
-        const streamAllocationsToBeSaved: StreamAllocation[] = [];
-        const sessionAllocationsToBeSaved: SessionAllocation[] = [];
-        const sessionStreams = await SessionStream.findByIds(
-            Object.keys(allocationOutput.allocations).map((id) => parseInt(id))
-        );
-        const hasAllocation = (
-            await Promise.all(
-                sessionStreams.map(
-                    async (stream) =>
-                        (await stream.streamAllocations).length > 0
-                )
-            )
-        ).some((value) => value);
-        if (!override && hasAllocation) {
-            throw new Error(
-                "This timetable already has an allocation." +
-                    " If you want to force apply this allocation" +
-                    " and override the existing timetable, set 'override' to true"
-            );
-        }
+        // const streamAllocationsToBeSaved: StreamAllocation[] = [];
+        // const sessionAllocationsToBeSaved: SessionAllocation[] = [];
+        // const sessionStreams = await SessionStream.findByIds(
+        //     Object.keys(allocationOutput.allocations).map((id) => parseInt(id))
+        // );
+        // const hasAllocation = (
+        //     await Promise.all(
+        //         sessionStreams.map(
+        //             async (stream) =>
+        //                 (await stream.streamAllocations).length > 0
+        //         )
+        //     )
+        // ).some((value) => value);
+        // if (!override && hasAllocation) {
+        //     throw new Error(
+        //         "This timetable already has an allocation." +
+        //             " If you want to force apply this allocation" +
+        //             " and override the existing timetable, set 'override' to true"
+        //     );
+        // }
         // Delete existing allocations
-        const streamAllocationToDelete = await StreamAllocation.find({
-            where: sessionStreams.map((stream) => ({
-                sessionStreamId: stream.id,
-            })),
-        });
-        if (streamAllocationToDelete.length > 0) {
-            await StreamAllocation.delete(
-                streamAllocationToDelete.map((allocation) => allocation.id)
-            );
-        }
-
-        // Create new allocation
-        for (const [sessionStreamId, staffIds] of Object.entries(
-            allocationOutput.allocations
-        )) {
-            for (const userId of staffIds) {
-                if (userId < 0) {
-                    continue;
-                }
-                streamAllocationsToBeSaved.push(
-                    StreamAllocation.create({
-                        sessionStreamId: parseInt(sessionStreamId),
-                        userId,
-                    })
-                );
-            }
-        }
-        await StreamAllocation.save(streamAllocationsToBeSaved);
-
-        // Change all affected sessions
-        const today = new Date();
-        const affectedSessions = await Session.find({
-            where: sessionStreams.map((stream) => ({
-                sessionStreamId: stream.id,
-            })),
-        });
-        const sessionsAfterToday = await asyncFilter(
-            affectedSessions,
-            async (session) => {
-                return (
-                    (await getSessionTime(session)).getTime() -
-                        today.getTime() >
-                    0
-                );
-            }
-        );
-        // Delete existing session allocations
-        const sessionAllocationToDelete = await SessionAllocation.find({
-            where: sessionsAfterToday.map((session) => ({
-                sessionId: session.id,
-            })),
-        });
-        if (sessionAllocationToDelete.length > 0) {
-            await SessionAllocation.delete(
-                sessionAllocationToDelete.map((allocation) => allocation.id)
-            );
-        }
-
-        // Create new allocation
-        for (const session of affectedSessions) {
-            const staffIds =
-                allocationOutput.allocations[session.sessionStreamId];
-            for (const userId of staffIds) {
-                if (userId < 0) {
-                    continue;
-                }
-                sessionAllocationsToBeSaved.push(
-                    SessionAllocation.create({
-                        sessionId: session.id,
-                        userId,
-                    })
-                );
-            }
-        }
-        await SessionAllocation.save(sessionAllocationsToBeSaved);
-        allocationTokenManager.delete(token);
+        // const streamAllocationToDelete = await StreamAllocation.find({
+        //     where: sessionStreams.map((stream) => ({
+        //         sessionStreamId: stream.id,
+        //     })),
+        // });
+        // if (streamAllocationToDelete.length > 0) {
+        //     await StreamAllocation.delete(
+        //         streamAllocationToDelete.map((allocation) => allocation.id)
+        //     );
+        // }
+        //
+        // // Create new allocation
+        // for (const [sessionStreamId, staffIds] of Object.entries(
+        //     allocationOutput.allocations
+        // )) {
+        //     for (const userId of staffIds) {
+        //         // skip dummy users
+        //         if (isDigits(userId)) {
+        //             continue;
+        //         }
+        //         streamAllocationsToBeSaved.push(
+        //             StreamAllocation.create({
+        //                 sessionStreamId: sessionStreamId,
+        //                 userId,
+        //             })
+        //         );
+        //     }
+        // }
+        // await StreamAllocation.save(streamAllocationsToBeSaved);
+        //
+        // // Change all affected sessions
+        // const today = new Date();
+        // const affectedSessions = await Session.find({
+        //     where: sessionStreams.map((stream) => ({
+        //         sessionStreamId: stream.id,
+        //     })),
+        // });
+        // const sessionsAfterToday = await asyncFilter(
+        //     affectedSessions,
+        //     async (session) => {
+        //         return (
+        //             (await getSessionTime(session)).getTime() -
+        //                 today.getTime() >
+        //             0
+        //         );
+        //     }
+        // );
+        // // Delete existing session allocations
+        // const sessionAllocationToDelete = await SessionAllocation.find({
+        //     where: sessionsAfterToday.map((session) => ({
+        //         sessionId: session.id,
+        //     })),
+        // });
+        // if (sessionAllocationToDelete.length > 0) {
+        //     await SessionAllocation.delete(
+        //         sessionAllocationToDelete.map((allocation) => allocation.id)
+        //     );
+        // }
+        //
+        // // Create new allocation
+        // for (const session of affectedSessions) {
+        //     const staffIds =
+        //         allocationOutput.allocations[session.sessionStreamId];
+        //     for (const userId of staffIds) {
+        //         if (isDigits(userId)) {
+        //             continue;
+        //         }
+        //         sessionAllocationsToBeSaved.push(
+        //             SessionAllocation.create({
+        //                 sessionId: session.id,
+        //                 userId,
+        //             })
+        //         );
+        //     }
+        // }
+        // await SessionAllocation.save(sessionAllocationsToBeSaved);
+        // allocationTokenManager.delete(token);
         return true;
     }
 }

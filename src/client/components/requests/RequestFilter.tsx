@@ -8,9 +8,9 @@ import { capitalCase } from "change-case";
 import { WhoseRequest } from "../../types/requests";
 
 type Props = {
-    chosenTerm: number;
-    chosenCourses: Set<number>;
-    setChosenCourses: Dispatch<SetStateAction<Set<number>>>;
+    chosenTerm: string;
+    chosenCourses: Set<string>;
+    setChosenCourses: Dispatch<SetStateAction<Set<string>>>;
     selectType: (type: RequestType, selected: boolean) => void;
     selectStatus: (status: RequestStatus, selected: boolean) => void;
     selectWhoseRequest: (whose: WhoseRequest, selected: boolean) => void;

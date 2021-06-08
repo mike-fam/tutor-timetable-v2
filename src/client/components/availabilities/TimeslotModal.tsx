@@ -24,7 +24,7 @@ type Props = {
     close: () => void;
     timeslot?: TimeslotInput;
     updateTimeslot: (
-        timeslotId: number,
+        timeslotId: string,
         newTimeslotProps: ModifyTimeslotParams
     ) => void;
 };
@@ -49,7 +49,7 @@ export const TimeslotModal: React.FC<Props> = ({
     const formState = useMemo(() => {
         if (!timeslot) {
             return {
-                id: 0,
+                id: "",
                 startTime: "0",
                 endTime: "24",
                 day: IsoDay.MON,

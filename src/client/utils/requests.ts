@@ -6,9 +6,9 @@ import {
 import { RequestStatus, RequestType } from "../generated/graphql";
 import { Set } from "immutable";
 
-export const requestCourseFilter: RequestFilterFunction<Set<number>> = (
+export const requestCourseFilter: RequestFilterFunction<Set<string>> = (
     request: RequestResponse,
-    courseIds: Set<number>
+    courseIds: Set<string>
 ) => {
     return courseIds.includes(
         request.session.sessionStream.timetable.course.id

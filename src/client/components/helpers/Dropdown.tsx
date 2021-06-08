@@ -1,11 +1,11 @@
 import React, { SelectHTMLAttributes } from "react";
 import { Select, SelectProps } from "@chakra-ui/react";
 import { Map } from "immutable";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement> &
     Partial<SelectProps> & {
-        options: Map<number, string>;
+        options: Map<string, string>;
         size?: string;
     };
 
@@ -15,7 +15,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
 }) => {
     return (
         <Select {...props}>
-            <option disabled value={notSet}>
+            <option disabled value={defaultStr}>
                 Select a value
             </option>
             {options.toArray().map(([id, optionString]) => (

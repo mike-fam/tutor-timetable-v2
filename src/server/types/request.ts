@@ -8,10 +8,10 @@ export enum RequestStatus {
     CLOSED = "Closed",
 }
 
-export enum RequestFormOptions {
-    TITLE = "Title",
-    DESCRIPTION = "Description",
-    COURSE = "Course",
-    SESSION = "Session",
-    DURATION = "Duration",
-}
+export const TEMPORARY_LOCK_MESSAGE =
+    "Temporary requests are currently frozen. " +
+    "Please contact your supervisor.";
+
+export const PERMANENT_LOCK_MESSAGE =
+    "Permanent requests are currently frozen. " +
+    "Please contact your supervisor.";

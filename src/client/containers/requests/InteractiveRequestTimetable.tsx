@@ -9,10 +9,10 @@ import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    chosenCourseIds: number[];
-    chosenTermId: number;
+    chosenCourseIds: string[];
+    chosenTermId: string;
     chosenWeek: number;
-    chooseSession: (sessionId: number) => void;
+    chooseSession: (sessionId: string) => void;
     chooseWeek: Dispatch<SetStateAction<number>>;
     disabledWeeks: number[];
     sessionFilter: (sessions: SessionResponseType) => boolean;

@@ -3,7 +3,7 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
 import { useTermsQuery } from "../../generated/graphql";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
@@ -22,7 +22,7 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const {
         title,
         description,
-        duration,
+        type,
         course,
         preferences,
         addPreference,
@@ -36,9 +36,9 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
         (step: number) => {
             switch (step) {
                 case 0:
-                    return title.length !== 0 && course !== notSet;
+                    return title.length !== 0 && course !== defaultStr;
                 case 1:
-                    return session !== notSet;
+                    return session !== defaultStr;
                 case 2:
                 case 3:
                     return true;
@@ -50,7 +50,7 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
     );
 
     const currentTerm = useMemo(() => {
-        return termsData ? getCurrentTerm(termsData.terms).id : notSet;
+        return termsData ? getCurrentTerm(termsData.terms).id : defaultStr;
     }, [termsData]);
     const { createNewRequest, loading } = useContext(RequestContext);
 
@@ -64,9 +64,9 @@ export const CreateRequestButtonContainer: React.FC<Props> = () => {
                     await createNewRequest({
                         title,
                         description,
-                        duration,
+                        type,
                         preferences: preferences.toArray(),
-                        termId: currentTerm,
+                        // termId: currentTerm,
                         sessionId: session,
                     });
                 }}

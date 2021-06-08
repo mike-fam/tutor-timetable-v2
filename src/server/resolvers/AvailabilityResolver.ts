@@ -2,17 +2,20 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     registerEnumType,
     Resolver,
+    Root,
 } from "type-graphql";
-import { Timeslot } from "../entities";
+import { Timeslot, User } from "../entities";
 import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
-import { getConnection } from "typeorm";
+import { In } from "typeorm";
+import { Service } from "typedi";
 
 export enum AvailabilityModificationType {
     UNCHANGED,
@@ -28,8 +31,8 @@ registerEnumType(AvailabilityModificationType, {
 
 @InputType()
 class TimeslotInput {
-    @Field(() => Int)
-    id: number;
+    @Field()
+    id: string;
 
     @Field()
     startTime: number;
@@ -44,33 +47,48 @@ class TimeslotInput {
     modificationType: AvailabilityModificationType;
 }
 
-@Resolver()
+@Resolver(() => Timeslot)
 export class AvailabilityResolver {
     @Query(() => [Timeslot])
-    async myAvailability(@Ctx() ctx: MyContext): Promise<Timeslot[]> {
-        return await Timeslot.find({ user: ctx.req.user });
+    async myAvailability(
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timeslot[]> {
+        const user = req.user;
+        return await models.timeslot.getMany({ user }, user);
     }
 
     @Mutation(() => [Timeslot])
     async updateAvailabilities(
         @Arg("timeslots", () => [TimeslotInput])
         timeslots: TimeslotInput[],
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
+        const user = req.user;
         const newSessions = timeslots
             .filter(
                 (timeslot) =>
                     timeslot.modificationType ===
                     AvailabilityModificationType.ADDED
             )
-            .map((timeslot) => ({
-                startTime: timeslot.startTime,
-                endTime: timeslot.endTime,
-                day: timeslot.day,
-                user: req.user,
+            .map(({ startTime, endTime, day }) => ({
+                startTime,
+                endTime,
+                day,
+                user,
             }));
-        await Timeslot.save(Timeslot.create(newSessions));
-        const removedSessionIds = timeslots
+        const updatedTimeslots = timeslots
+            .filter(
+                (timeslot) =>
+                    timeslot.modificationType ===
+                    AvailabilityModificationType.MODIFIED
+            )
+            .map(({ id, startTime, endTime, day }) => ({
+                id,
+                startTime,
+                endTime,
+                day,
+            }));
+        const removedTimeslotIds = timeslots
             .filter(
                 (timeslot) =>
                     timeslot.modificationType ===
@@ -78,23 +96,24 @@ export class AvailabilityResolver {
                     timeslot.modificationType ===
                         AvailabilityModificationType.REMOVED_MODIFIED
             )
-            .map((timeslot) => timeslot.id);
-        if (removedSessionIds.length > 0) {
-            await Timeslot.delete(removedSessionIds);
-        }
-        const updatedTimeslots = timeslots
-            .filter(
-                (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.MODIFIED
-            )
-            .map((timeslot) => ({
-                id: timeslot.id,
-                startTime: timeslot.startTime,
-                endTime: timeslot.endTime,
-                day: timeslot.day,
-            }));
-        await getConnection().getRepository(Timeslot).save(updatedTimeslots);
-        return await Timeslot.find({ user: req.user });
+            .map((timeslot) => timeslot.id!);
+        await models.timeslot.deleteMany(
+            {
+                id: In(removedTimeslotIds),
+            },
+            user
+        );
+        return await models.timeslot.save(
+            [...newSessions, ...updatedTimeslots],
+            user
+        );
+    }
+
+    @FieldResolver(() => User)
+    async user(
+        @Root() root: Timeslot,
+        @Ctx() { req, models }: MyContext
+    ): Promise<User> {
+        return models.user.getById(root.userId, req.user);
     }
 }

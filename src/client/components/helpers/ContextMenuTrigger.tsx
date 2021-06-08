@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import React, { useContext, MouseEvent } from "react";
+import React, { MouseEvent, useContext } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 
 type Props = {};

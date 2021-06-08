@@ -1,10 +1,10 @@
-import { Field, InputType, Int } from "type-graphql";
+import { Field, InputType } from "type-graphql";
 
 @InputType()
 export class CourseTermIdInput {
-    @Field(() => Int)
-    courseId: number;
+    @Field()
+    courseId: string;
 
-    @Field(() => Int)
-    termId: number;
+    @Field()
+    termId: string;
 }

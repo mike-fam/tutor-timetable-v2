@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
 import { RequestResponse } from "../../types/requests";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { RequestContext } from "../../hooks/useRequestUtils";
 
 // TODO: Needs user data and update filter function.
 type Props = {
     filters: Array<(request: RequestResponse) => boolean>;
-    termId: number;
+    termId: string;
 };
 
 export const RequestListContainer: React.FunctionComponent<Props> = ({
@@ -16,7 +16,7 @@ export const RequestListContainer: React.FunctionComponent<Props> = ({
 }) => {
     const { requests, fetchRequests, loading } = useContext(RequestContext);
     useEffect(() => {
-        if (termId === notSet) {
+        if (termId === defaultStr) {
             return;
         }
         fetchRequests(termId);

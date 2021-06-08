@@ -8,20 +8,23 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
 import { In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
 import {
+    Offer,
     Session,
-    SessionAllocation,
     SessionStream,
     StaffRequest,
     Timetable,
+    User,
 } from "../entities";
 import { MyContext } from "../types/context";
 
@@ -32,29 +35,26 @@ class RequestFormInputType {
     title: string;
 
     // Sessions the user wants to switch into.
-    @Field(() => [Int])
+    @Field(() => [String])
     @ArrayUnique()
-    preferences: number[];
+    preferences: string[];
 
     @Field(() => RequestType)
-    duration: RequestType;
+    type: RequestType;
 
     @Field({ nullable: true })
     @IsString()
     description: string;
 
-    @Field(() => Int)
-    termId: number;
-
     // Session user wants to switch out of.
-    @Field(() => Int)
-    sessionId: number;
+    @Field()
+    sessionId: string;
 }
 
 @InputType()
 class EditRequestFormInputType {
-    @Field(() => Int)
-    requestId: number;
+    @Field()
+    requestId: string;
 
     @Field({ nullable: true })
     @IsNotEmpty()
@@ -64,7 +64,7 @@ class EditRequestFormInputType {
     @Field(() => [Int], { nullable: true })
     @ArrayNotEmpty()
     @ArrayUnique()
-    preferences: number[];
+    preferences: string[];
 
     @Field(() => RequestType, { nullable: true })
     @IsNotEmpty()
@@ -75,14 +75,14 @@ class EditRequestFormInputType {
     description: string;
 
     // Session user wants to switch out of.
-    @Field(() => Int, { nullable: true })
-    sessionId: number;
+    @Field({ nullable: true })
+    sessionId: string;
 
     @Field(() => Boolean)
     closeRequest: boolean;
 }
 
-@Resolver()
+@Resolver(() => StaffRequest)
 export class StaffRequestResolver {
     @Mutation(() => StaffRequest)
     async createRequest(
@@ -90,100 +90,29 @@ export class StaffRequestResolver {
         {
             title,
             preferences,
-            duration,
+            type,
             description,
             sessionId,
-            termId,
         }: RequestFormInputType,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest> {
-        const requester = req.user!;
-        const session = await Session.findOneOrFail({ id: sessionId });
-        const userSessions = await requester.sessionAllocations;
-        const userSessionStream = await session.sessionStream;
-        // Ensures session is for a valid timetable and session is for the current term.
-        await Timetable.findOneOrFail({
-            id: userSessionStream.timetableId,
-            termId: termId,
-        });
-
-        // Temporary freeze on permanent requests.
-        if (duration === RequestType.PERMANENT) {
-            throw new Error("Permanent requests are currently frozen.");
-        }
-
-        // Checks if user is in session.
-        if (
-            (await SessionAllocation.find({ sessionId, userId: requester.id }))
-                .length === 0
-        ) {
-            throw new Error(
-                "You cannot switch out of a session you are not in"
-            );
-        }
-
-        // Checks if session is in preferences.
-        if (preferences.includes(sessionId)) {
-            throw new Error("Your session cannot be in your preferences");
-        }
-
-        // Checks if user is trying to switch into a session they are already in.
-        if (
-            userSessions.filter(
-                (item) => preferences.indexOf(item.sessionId) > -1
-            ).length !== 0
-        ) {
-            throw new Error(
-                "Your cannot switch into a session you are already in"
-            );
-        }
-
-        // TODO: optimise db calls
-        // Checks session preferences exist and if they are part of the correct timetable.
-        let swapPreference: Array<Session> = [];
-        for (let sid of preferences) {
-            const sessionQuery = await Session.findOneOrFail({ id: sid });
-            const sessionStreamQuery = await SessionStream.findOneOrFail({
-                id: sessionQuery.sessionStreamId,
-            });
-            // Checks each preference is for a valid timetable and each preference is for the current term.
-            await Timetable.findOneOrFail({
-                id: sessionStreamQuery.timetableId,
-                termId: termId,
-            });
-            swapPreference.push(sessionQuery);
-        }
-
-        // Checks for duplicate requests of a session.
-        if (
-            (
-                await StaffRequest.find({
-                    requesterId: requester.id,
-                    sessionId: session.id,
-                })
-            ).length > 0
-        ) {
-            throw new Error(
-                `You have already made a request for ${userSessionStream.name} on that week`
-            );
-        }
-
-        const request = StaffRequest.create({
-            title,
-            description,
-            type: duration,
-            status: RequestStatus.OPEN,
-        });
-        request.requester = Promise.resolve(requester);
-        request.session = Promise.resolve(session);
-        request.swapPreference = Promise.resolve(swapPreference);
-        return await request.save();
+        return await models.staffRequest.create(
+            {
+                title,
+                type,
+                description,
+                swapPreferenceSessionIds: preferences,
+                sessionId,
+                status: RequestStatus.OPEN,
+            },
+            req.user
+        );
     }
 
     // Used for displaying requests in modal.
     @Query(() => StaffRequest)
     async getRequestById(
-        @Arg("requestId", () => Int) requestId: number
+        @Arg("requestId") requestId: string
     ): Promise<StaffRequest> {
         return await StaffRequest.findOneOrFail({ id: requestId });
     }
@@ -191,7 +120,7 @@ export class StaffRequestResolver {
     // Used for displaying all requests associated with the user for a given term
     @Query(() => [StaffRequest])
     async getRequestsByUserId(
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         const user = req.user!;
         return await StaffRequest.find({ requester: user });
@@ -201,8 +130,8 @@ export class StaffRequestResolver {
     // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
     async getRequestsByTermId(
-        @Arg("termId", () => Int) termId: number,
-        @Ctx() { req }: MyContext
+        @Arg("termId") termId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         const myCourseStaffs = await req.user!.courseStaffs;
         const myTimetables = await Timetable.find({
@@ -253,7 +182,7 @@ export class StaffRequestResolver {
         if (preferences) {
             // Checks to make sure each session id exists.
             let swapPreference: Array<Session> = [];
-            for (let sid of preferences) {
+            for (const sid of preferences) {
                 swapPreference.push(await Session.findOneOrFail({ id: sid }));
             }
             request.swapPreference = swapPreference;
@@ -270,11 +199,11 @@ export class StaffRequestResolver {
         return request.save();
     }
 
-    @Mutation(() => Int)
+    @Mutation(() => String)
     async deleteRequestById(
-        @Ctx() { req }: MyContext,
-        @Arg("requestId", () => Int) requestId: number
-    ): Promise<number> {
+        @Ctx() { req, models }: MyContext,
+        @Arg("requestId") requestId: string
+    ): Promise<string> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         const user = req.user!;
 
@@ -284,5 +213,48 @@ export class StaffRequestResolver {
         const id = request.id;
         await request.remove();
         return id;
+    }
+
+    @FieldResolver(() => User)
+    async requester(
+        @Root() root: StaffRequest,
+        @Ctx() { req, models }: MyContext
+    ): Promise<User> {
+        return await models.user.getById(root.requesterId, req.user);
+    }
+
+    @FieldResolver(() => User, { nullable: true })
+    async finaliser(
+        @Root() root: StaffRequest,
+        @Ctx() { req, models }: MyContext
+    ): Promise<User | null> {
+        if (!root.finaliserId) {
+            return null;
+        }
+        return models.user.getById(root.finaliserId, req.user);
+    }
+
+    @FieldResolver(() => Session)
+    async session(
+        @Root() root: StaffRequest,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session> {
+        return models.session.getById(root.sessionId, req.user);
+    }
+
+    @FieldResolver(() => [Session])
+    async swapPreference(
+        @Root() root: StaffRequest,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        return models.session.getByIds(root.swapPreferenceSessionIds, req.user);
+    }
+
+    @FieldResolver(() => [Offer])
+    async offers(
+        @Root() root: StaffRequest,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Offer[]> {
+        return models.offer.getByIds(root.offerIds, req.user);
     }
 }

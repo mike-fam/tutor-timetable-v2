@@ -1,7 +1,15 @@
-import { Arg, Query, Resolver } from "type-graphql";
-import { Timetable } from "../entities";
+import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import {
+    Course,
+    CourseStaff,
+    SessionStream,
+    Term,
+    Timetable,
+} from "../entities";
 
-@Resolver()
+import { MyContext } from "../types/context";
+
+@Resolver(() => Timetable)
 export class TimetableResolver {
     @Query(() => [Timetable])
     async timetables(): Promise<Timetable[]> {
@@ -10,14 +18,49 @@ export class TimetableResolver {
 
     @Query(() => Timetable, { nullable: true })
     async timetable(
-        @Arg("courseId") courseId: number,
-        @Arg("termId") termId: number
+        @Arg("courseId") courseId: string,
+        @Arg("termId") termId: string
     ): Promise<Timetable | undefined> {
         return await Timetable.findOne({ courseId, termId });
     }
 
     @Query(() => Timetable, { nullable: true })
-    async timetableById(@Arg("id") id: number): Promise<Timetable | undefined> {
+    async timetableById(@Arg("id") id: string): Promise<Timetable | undefined> {
         return await Timetable.findOne({ id });
+    }
+
+    @FieldResolver(() => Course)
+    async course(
+        @Root() root: Timetable,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Course> {
+        return await models.course.getById(root.courseId, req.user);
+    }
+
+    @FieldResolver(() => Term)
+    async term(
+        @Root() root: Timetable,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Term> {
+        return await models.term.getById(root.termId, req.user);
+    }
+
+    @FieldResolver(() => [CourseStaff])
+    async courseStaffs(
+        @Root() root: Timetable,
+        @Ctx() { req, models }: MyContext
+    ): Promise<CourseStaff[]> {
+        return await models.courseStaff.getByIds(root.courseStaffIds, req.user);
+    }
+
+    @FieldResolver(() => [SessionStream])
+    async sessionStreams(
+        @Root() root: Timetable,
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream[]> {
+        return await models.sessionStream.getByIds(
+            root.sessionStreamIds,
+            req.user
+        );
     }
 }

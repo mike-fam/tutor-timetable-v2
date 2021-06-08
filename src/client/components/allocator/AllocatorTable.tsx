@@ -33,8 +33,8 @@ export type AllocatedStaffData = {
 
 type Props = {
     staffMetadata: AllocatedStaffData;
-    courseId: number;
-    termId: number;
+    courseId: string;
+    termId: string;
 };
 
 export const AllocatorTable: React.FC<Props> = ({

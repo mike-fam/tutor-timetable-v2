@@ -7,7 +7,7 @@ import { StackInfo } from "../../../types/date";
 import { SessionTheme } from "../../types/session";
 
 type SessionProps = {
-    id: number;
+    id: string;
     name: string;
     startTime: number;
     endTime: number;

@@ -3,51 +3,60 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Int,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
-import { In, MoreThanOrEqual } from "typeorm";
 import {
     Offer,
     Session,
-    SessionAllocation,
+    SessionStream,
     StaffRequest,
-    StreamAllocation,
+    Timetable,
     User,
 } from "../entities";
 import { MyContext } from "../types/context";
-import { RequestStatus, RequestType } from "../types/request";
+import { RequestType } from "../types/request";
+
+import { OfferStatus } from "../types/offer";
+import {
+    canAcceptOffer,
+    canMarkOfferAwaitingForApproval,
+} from "../utils/requests";
+import { SessionModel } from "../models/SessionModel";
+import { SessionStreamModel } from "../models/SessionStreamModel";
 
 @InputType()
 class OfferInputType {
-    @Field(() => Int)
+    @Field()
     @IsNotEmpty()
-    requestId: number;
+    requestId: string;
 
-    @Field(() => [Int], { nullable: true })
+    @Field(() => [String], { nullable: true })
     @ArrayUnique()
-    sessionPreferences: number[];
+    sessionPreferences: string[];
 }
 
 @InputType()
 class EditOfferInputType {
-    @Field(() => Int)
-    offerId: number;
+    @Field()
+    offerId: string;
 
     @Field(() => [Int])
-    sessionPreferences: number[];
+    sessionPreferences: string[];
 }
 
-@Resolver()
+@Resolver(() => Offer)
 export class OfferResolver {
     @Mutation(() => Offer)
     async createOffer(
         @Arg("offerDetails", () => OfferInputType)
         { requestId, sessionPreferences }: OfferInputType,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer> {
         const user = await User.findOneOrFail(req.user);
         const request = await StaffRequest.findOneOrFail({ id: requestId });
@@ -61,8 +70,7 @@ export class OfferResolver {
             throw new Error("You cannot create an offer for a request you own");
         }
 
-        const isOfferUnique =
-            (await Offer.find({ user, request })).length > 0 ? false : true;
+        const isOfferUnique = (await Offer.find({ user, request })).length <= 0;
 
         if (!isOfferUnique) {
             throw new Error(
@@ -99,16 +107,14 @@ export class OfferResolver {
     }
 
     @Query(() => Offer)
-    async getOfferById(
-        @Arg("offerId", () => Int) offerId: number
-    ): Promise<Offer> {
+    async getOfferById(@Arg("offerId") offerId: string): Promise<Offer> {
         const offer = await Offer.findOneOrFail({ id: offerId });
         return offer;
     }
 
     @Query(() => [Offer])
     async getOffersByRequestId(
-        @Arg("requestId", () => Int) requestId: number
+        @Arg("requestId") requestId: string
     ): Promise<Offer[]> {
         const request = await StaffRequest.findOneOrFail({ id: requestId });
         return await Offer.find({ request });
@@ -122,7 +128,7 @@ export class OfferResolver {
         const offer = await Offer.findOneOrFail({ id: offerId });
 
         let preferredSessions: Array<Session> = [];
-        for (let sid of sessionPreferences) {
+        for (const sid of sessionPreferences) {
             const session = await Session.findOneOrFail({ id: sid });
             preferredSessions.push(session);
         }
@@ -134,8 +140,8 @@ export class OfferResolver {
     // TODO
     @Mutation(() => Offer)
     async removeOffer(
-        @Arg("offerId", () => Int) offerId: number,
-        @Ctx() { req }: MyContext
+        @Arg("offerId") offerId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer> {
         const offer = await Offer.findOneOrFail({ id: offerId });
         const user = await User.findOneOrFail(req.user);
@@ -146,166 +152,194 @@ export class OfferResolver {
         return await offer.remove();
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Offer)
     async acceptOffer(
-        @Arg("offerId", () => Int) offerId: number,
-        @Arg("offerSessionSwapId", () => Int, { nullable: true })
-        offerSessionSwapId: number,
-        @Ctx() { req }: MyContext
-    ): Promise<boolean> {
-        // User
-        const user = req.user!;
-        // Offer
-        const offer = await Offer.findOneOrFail({ id: offerId });
-        // Request
-        const request = await offer.request;
-        // Use who made the offer
-        const offerUser = await offer.user;
-        // Preferences of the offer made. Empty array if no preferences
-        const offerPrefs = await offer.preferences;
-        // Session requested by the requester
-        const requestedSession = await request.session;
-        // Session requester switches into if provided
-        const offerSession = await Session.findOne({
-            id: offerSessionSwapId,
-        });
-
-        // Freeze permanent requests.
-        if (request.type === RequestType.PERMANENT) {
-            throw new Error("Permanent requests are currently frozen.");
-        }
-
-        if (user.id !== (await request.requester).id) {
-            throw new Error("User ID does not match with request user ID");
-        }
-
-        if (request.status === RequestStatus.CLOSED) {
-            throw new Error("This request is closed");
-        }
-
-        if (offerPrefs.length > 0) {
-            if (offerSessionSwapId === null) {
-                throw new Error("You must provide a session preference");
-            }
-            if (
-                !offerPrefs.map((item) => item.id).includes(offerSessionSwapId)
-            ) {
-                throw new Error("session provided must be in the preferences");
-            }
-        }
-
-        if (request.type === RequestType.TEMPORARY) {
-            switchUserIntoSessionAllocation(
-                offerUser,
-                [requestedSession.id],
+        @Arg("offerId") offerId: string,
+        @Arg("offerSessionSwapId", () => String, { nullable: true })
+        offerSessionSwapId: string | null,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Offer> {
+        const { user } = req;
+        const offer = await models.offer.getById(offerId, req.user);
+        const request = await models.staffRequest.getById(
+            offer.requestId,
+            user
+        );
+        const requester = await models.user.getById(request.requesterId, user);
+        const offerMaker = await models.user.getById(offer.userId, user);
+        const course = await request.getCourse();
+        const term = await request.getTerm();
+        const timetable = await Timetable.fromCourseTerm(course, term);
+        if (canAcceptOffer(request, timetable)) {
+            const updatedOffer = await models.offer.update(
+                { id: offerId },
+                {
+                    status: OfferStatus.ACCEPTED,
+                    acceptedSessionId:
+                        offerSessionSwapId || offer.acceptedSessionId,
+                },
                 user
             );
-
-            // If swap preferences were provided in the offer.
-            if (offerPrefs.length > 0 && offerSession) {
-                switchUserIntoSessionAllocation(
-                    user,
-                    [offerSession.id],
-                    offerUser
-                );
-            }
-            acceptOfferCleanUp(request, offerUser);
-            return true;
-        } else if (request.type === RequestType.PERMANENT) {
-            // Change stream allocation for offerer.
-            const requesterStreamAlloc = await StreamAllocation.findOneOrFail({
-                userId: user.id,
-                sessionStreamId: requestedSession.sessionStreamId,
-            });
-            requesterStreamAlloc.userId = offerUser.id;
-
-            // Change all session allocations from specified week onwards.
-            const startWeek = requestedSession.week;
-
-            // Get all session IDs for weeks after starting week.
-            const sessionsToSwitchInto = (
-                await Session.find({
-                    sessionStreamId: requestedSession.sessionStreamId,
-                    week: MoreThanOrEqual(startWeek),
-                })
-            ).map((item) => item.id);
-
-            switchUserIntoSessionAllocation(
-                offerUser,
-                sessionsToSwitchInto,
+            // Allocate offer maker to session
+            const requestedSession = await models.session.getById(
+                request.sessionId,
                 user
             );
-
-            // For swaps
-            if (offerPrefs.length > 0 && offerSession) {
-                // Change stream allocation for requester
-                const offerStreamAlloc = await StreamAllocation.findOneOrFail({
-                    userId: offerUser.id,
-                    sessionStreamId: offerSession.sessionStreamId,
-                });
-                offerStreamAlloc.userId = user.id;
-
-                // Get week of the starting session
-                const startWeek = offerSession.week;
-
-                // Get all session IDs from start week onwards.
-                const sessionsToSwitchInto = (
-                    await Session.find({
-                        sessionStreamId: offerSession.sessionStreamId,
-                        week: MoreThanOrEqual(startWeek),
-                    })
-                ).map((item) => item.id);
-
-                switchUserIntoSessionAllocation(
-                    user,
-                    sessionsToSwitchInto,
-                    offerUser
+            await this.performSwap(
+                models.session,
+                requestedSession,
+                offerMaker,
+                requester,
+                user
+            );
+            // Allocate user to swapped session on offer
+            if (offerSessionSwapId) {
+                const swapSession = await models.session.getById(
+                    offerSessionSwapId,
+                    user
                 );
-                await offerStreamAlloc.save();
+                await this.performSwap(
+                    models.session,
+                    swapSession,
+                    requester,
+                    offerMaker,
+                    user
+                );
             }
-            await requesterStreamAlloc.save();
-            await acceptOfferCleanUp(request, offerUser);
-            return true;
+            // Change all subsequent sessions if request is permanent
+            if (request.type === RequestType.PERMANENT) {
+                const subsequentSessions = await requestedSession.subsequentSessions();
+                for (const subsequentSession of subsequentSessions) {
+                    await this.performSwap(
+                        models.session,
+                        subsequentSession,
+                        offerMaker,
+                        requester,
+                        user
+                    );
+                }
+                const stream = await models.sessionStream.getById(
+                    requestedSession.sessionStreamId,
+                    user
+                );
+                await this.performStreamSwap(
+                    models.sessionStream,
+                    stream,
+                    offerMaker,
+                    requester,
+                    user
+                );
+                if (offerSessionSwapId) {
+                    const swapSession = await models.session.getById(
+                        offerSessionSwapId,
+                        user
+                    );
+                    const toSwaps = await swapSession.subsequentSessions();
+                    for (const toSwap of toSwaps) {
+                        await this.performSwap(
+                            models.session,
+                            toSwap,
+                            requester,
+                            offerMaker,
+                            user
+                        );
+                    }
+                    const stream = await models.sessionStream.getById(
+                        swapSession.sessionStreamId,
+                        user
+                    );
+                    await this.performStreamSwap(
+                        models.sessionStream,
+                        stream,
+                        requester,
+                        offerMaker,
+                        user
+                    );
+                }
+            }
+            // After accepting an offer, set all other offers to rejected
+            const otherOfferIds = request.offerIds.filter(
+                (id) => id !== offerId
+            );
+            const otherOffers = await models.offer.getByIds(
+                otherOfferIds,
+                user
+            );
+            for (const otherOffer of otherOffers) {
+                await models.offer.update(
+                    otherOffer,
+                    { status: OfferStatus.REJECTED },
+                    user
+                );
+            }
+            return updatedOffer;
+        } else if (canMarkOfferAwaitingForApproval(request, timetable)) {
+            return await models.offer.update(
+                { id: offerId },
+                {
+                    status: OfferStatus.AWAITING_APPROVAL,
+                    acceptedSessionId: offerSessionSwapId,
+                },
+                req.user
+            );
         }
+        throw new Error("Something went wrong");
+    }
 
-        throw new Error("Something went wrong.");
+    private async performSwap(
+        sessionModel: SessionModel,
+        session: Session,
+        toAllocate: User,
+        toDeallocate: User,
+        performer: User
+    ): Promise<void> {
+        await sessionModel.allocateSingle(session, toAllocate, performer);
+        await sessionModel.deallocateSingle(session, toDeallocate, performer);
+    }
+
+    private async performStreamSwap(
+        streamModel: SessionStreamModel,
+        session: SessionStream,
+        toAllocate: User,
+        toDeallocate: User,
+        performer: User
+    ): Promise<void> {
+        await streamModel.allocateSingle(session, toAllocate, performer);
+        await streamModel.deallocateSingle(session, toDeallocate, performer);
+    }
+
+    @FieldResolver(() => StaffRequest)
+    async request(
+        @Root() root: Offer,
+        @Ctx() { req, models }: MyContext
+    ): Promise<StaffRequest> {
+        return models.staffRequest.getById(root.requestId, req.user);
+    }
+
+    @FieldResolver(() => User)
+    async user(
+        @Root() root: Offer,
+        @Ctx() { req, models }: MyContext
+    ): Promise<User> {
+        return models.user.getById(root.userId, req.user);
+    }
+
+    @FieldResolver(() => [Session])
+    async preferences(
+        @Root() root: Offer,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        return models.session.getByIds(root.preferenceSessionIds, req.user);
+    }
+
+    @FieldResolver(() => Session, { nullable: true })
+    async acceptedSession(
+        @Root() root: Offer,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session | null> {
+        if (!root.acceptedSessionId) {
+            return null;
+        }
+        return models.session.getById(root.acceptedSessionId, req.user);
     }
 }
-
-// User refers to the person switching into the session.
-// sessionUser refers to the user that is having their session switched into.
-const switchUserIntoSessionAllocation = async (
-    user: User,
-    sessionsToSwitchInto: Array<number>,
-    sessionUser: User
-): Promise<SessionAllocation[]> => {
-    const sessionAllocs = await SessionAllocation.find({
-        userId: sessionUser.id,
-        sessionId: In(sessionsToSwitchInto),
-    });
-
-    if (sessionAllocs.length === 0) {
-        throw new Error("No sessions were found for " + sessionUser.username);
-    }
-
-    for (let alloc of sessionAllocs) {
-        alloc.userId = user.id;
-        await alloc.save();
-    }
-
-    return sessionAllocs;
-};
-
-const acceptOfferCleanUp = async (
-    request: StaffRequest,
-    acceptor: User
-): Promise<StaffRequest> => {
-    request.acceptor = acceptor;
-    request.status = RequestStatus.CLOSED;
-    await request.save();
-
-    const offers = await Offer.find({ request: request });
-    offers.forEach(async (item) => await item.remove());
-
-    return request;
-};

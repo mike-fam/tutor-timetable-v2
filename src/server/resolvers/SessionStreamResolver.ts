@@ -1,20 +1,25 @@
-import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
 import {
-    Session,
-    SessionAllocation,
-    SessionStream,
-    StreamAllocation,
-} from "../entities";
+    Arg,
+    Ctx,
+    FieldResolver,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+    Root,
+} from "type-graphql";
+import { Session, SessionStream, Timetable, User } from "../entities";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
+import { MyContext } from "../types/context";
 
-@Resolver()
+@Resolver(() => SessionStream)
 export class SessionStreamResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
-        @Arg("termId", () => Int) termId: number,
-        @Arg("courseIds", () => [Int]) courseIds: number[]
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [String]) courseIds: string[]
     ): Promise<SessionStream[]> {
         if (courseIds.length === 0) {
             return [];
@@ -30,7 +35,7 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addBasedSessionStream(
-        @Arg("sessionStreamId", () => Int) sessionStreamId: number,
+        @Arg("sessionStreamId") sessionStreamId: number,
         @Arg("name") name: string,
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("numberOfStaff", () => Int) numberOfStaff: number
@@ -53,7 +58,7 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addSessionStream(
-        @Arg("timetableId", () => Int) timetableId: number,
+        @Arg("timetableId") timetableId: string,
         @Arg("name") name: string,
         @Arg("type", () => SessionType) type: SessionType,
         @Arg("day", () => Int) day: IsoDay,
@@ -78,72 +83,101 @@ export class SessionStreamResolver {
 
     @Mutation(() => SessionStream)
     async addStreamStaff(
-        @Arg("streamId") streamId: number,
-        @Arg("newStaffs", () => [Int]) newStaffs: number[],
-        @Arg("updateSessions", () => Boolean) updateSessions: boolean
+        @Arg("streamId") streamId: string,
+        @Arg("newStaffs", () => [String]) newStaffs: string[],
+        @Arg("updateSessions", () => Boolean) updateSessions: boolean,
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream> {
-        const stream = await SessionStream.findOneOrFail({ id: streamId });
-        const allocations = [...(await stream.streamAllocations)];
-        const newAllocations = [];
-        for (const userId of newStaffs) {
-            if (
-                allocations.some((allocation) => allocation.userId === userId)
-            ) {
-                continue;
-            }
-            newAllocations.push(
-                StreamAllocation.create({ userId, sessionStreamId: streamId })
-            );
-        }
-        await StreamAllocation.save(newAllocations);
+        const stream = await models.sessionStream.getById(streamId, req.user);
+        const usersToAllocate = await models.user.getByIds(newStaffs, req.user);
+        await models.sessionStream.allocateMultiple(
+            stream,
+            usersToAllocate,
+            req.user
+        );
         if (updateSessions) {
-            const sessions = await stream.sessions;
-            const newSessionAllocations = [];
+            const sessions = await models.session.getByIds(
+                stream.sessionIds,
+                req.user
+            );
             for (const session of sessions) {
-                const sessionAllocations = await session.sessionAllocations;
-                for (const userId of newStaffs) {
-                    if (
-                        sessionAllocations.some(
-                            (allocation) => allocation.userId === userId
-                        )
-                    ) {
-                        continue;
-                    }
-                    newSessionAllocations.push(
-                        SessionAllocation.create({
-                            userId,
-                            sessionId: session.id,
-                        })
-                    );
-                }
+                await models.session.allocateMultiple(
+                    session,
+                    usersToAllocate,
+                    req.user
+                );
             }
-            await SessionAllocation.save(newSessionAllocations);
         }
         return stream;
     }
 
     @Mutation(() => [Session])
     async generateSessions(
-        @Arg("sessionStreamId", () => Int) sessionStreamId: number
+        @Arg("sessionStreamId") sessionStreamId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        const stream = await SessionStream.findOneOrFail({
-            id: sessionStreamId,
-        });
-        const allocations = await stream.streamAllocations;
-        const sessions = Session.create(
+        const stream = await models.sessionStream.getById(
+            sessionStreamId,
+            req.user
+        );
+        const allocatedUsers = await models.user.getByIds(
+            stream.allocatedUserIds,
+            req.user
+        );
+        return await models.session.createMany(
             stream.weeks.map((week) => ({
                 week,
                 location: stream.location,
                 sessionStream: stream,
-                sessionAllocations: Promise.resolve(
-                    SessionAllocation.create(
-                        allocations.map((allocation) => ({
-                            user: allocation.user,
-                        }))
-                    )
-                ),
-            }))
+                allocatedUsers,
+            })),
+            req.user
         );
-        return await Session.save(sessions);
+    }
+
+    @FieldResolver(() => Timetable)
+    async timetable(
+        @Root() root: SessionStream,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
+        return await models.timetable.getById(root.timetableId, req.user);
+    }
+
+    @FieldResolver(() => [Session])
+    async sessions(
+        @Root() root: SessionStream,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        return await models.session.getByIds(root.sessionIds, req.user);
+    }
+
+    @FieldResolver(() => [SessionStream])
+    async basedStreams(
+        @Root() root: SessionStream,
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream[]> {
+        return await models.sessionStream.getByIds(
+            root.basedStreamIds,
+            req.user
+        );
+    }
+
+    @FieldResolver(() => SessionStream, { nullable: true })
+    async based(
+        @Root() root: SessionStream,
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream | null> {
+        if (!root.basedId) {
+            return null;
+        }
+        return await models.sessionStream.getById(root.basedId, req.user);
+    }
+
+    @FieldResolver(() => [User])
+    async allocatedUsers(
+        @Root() root: SessionStream,
+        @Ctx() { req, models }: MyContext
+    ): Promise<User[]> {
+        return await models.user.getByIds(root.allocatedUserIds, req.user);
     }
 }

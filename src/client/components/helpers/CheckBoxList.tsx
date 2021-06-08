@@ -4,10 +4,10 @@ import { Map, Set } from "immutable";
 
 type Props<T extends string> = {
     selectAllLabel?: string;
-    elements: Map<number, T>;
-    helpTexts?: Map<number, string | undefined>;
-    selectedElements: Set<number>;
-    selectElement: (elementId: number, selected: boolean) => void;
+    elements: Map<string, T>;
+    helpTexts?: Map<string, string | undefined>;
+    selectedElements: Set<string>;
+    selectElement: (elementId: string, selected: boolean) => void;
     textDisplayed?: (element: T) => string;
 };
 

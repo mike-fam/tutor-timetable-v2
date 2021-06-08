@@ -1,19 +1,27 @@
 import {
-    BaseEntity,
     Check,
     Column,
     Entity,
+    JoinTable,
+    ManyToMany,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn,
+    RelationId,
 } from "typeorm";
 import { Timetable } from "./Timetable";
 import { SessionType } from "../types/session";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { IsoDay } from "../../types/date";
 import { Session } from "./Session";
-import { StreamAllocation } from "./StreamAllocation";
 import { Field, Int, ObjectType } from "type-graphql";
+import { CourseRelatedEntity } from "./CourseRelatedEntity";
+import { Course } from "./Course";
+import { BaseEntity } from "./BaseEntity";
+import { TermRelatedEntity } from "./TermRelatedEntity";
+import { Term } from "./Term";
+import { Utils } from "../utils/Util";
+import { User } from "./User";
+import differenceBy from "lodash/differenceBy";
 
 @ObjectType()
 @Entity()
@@ -21,16 +29,13 @@ import { Field, Int, ObjectType } from "type-graphql";
 @Check(checkFieldValueInEnum(SessionType, "type"))
 // Day is a valid Iso Day number
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
-export class SessionStream extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Field(() => Int)
+export class SessionStream
+    extends BaseEntity
+    implements CourseRelatedEntity, TermRelatedEntity {
+    @RelationId((stream: SessionStream) => stream.timetable)
     @Column()
-    timetableId: number;
+    timetableId: string;
 
-    @Field(() => Timetable)
     @ManyToOne(() => Timetable, (timetable) => timetable.sessionStreams, {
         lazy: true,
     })
@@ -68,17 +73,73 @@ export class SessionStream extends BaseEntity {
     @Column("int")
     numberOfStaff: number;
 
-    @Field(() => [Session])
     @OneToMany(() => Session, (session) => session.sessionStream, {
         lazy: true,
     })
     sessions: Lazy<Session[]>;
 
-    @Field(() => [StreamAllocation])
-    @OneToMany(
-        () => StreamAllocation,
-        (streamAllocation) => streamAllocation.sessionStream,
-        { lazy: true, cascade: ["insert"] }
-    )
-    streamAllocations: Lazy<StreamAllocation[]>;
+    @RelationId((stream: SessionStream) => stream.sessions)
+    sessionIds: string[];
+
+    @OneToMany(() => SessionStream, (stream) => stream.based, {
+        lazy: true,
+    })
+    basedStreams: Lazy<SessionStream[]>;
+
+    @RelationId((stream: SessionStream) => stream.basedStreams)
+    basedStreamIds: string[];
+
+    @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
+        lazy: true,
+        nullable: true,
+    })
+    based: Lazy<SessionStream>;
+
+    @RelationId((stream: SessionStream) => stream.based)
+    @Column({ nullable: true })
+    basedId: string | null;
+
+    @ManyToMany(() => User, (user) => user.allocatedStreams, { lazy: true })
+    @JoinTable()
+    allocatedUsers: Lazy<User[]>;
+
+    @RelationId((stream: SessionStream) => stream.allocatedUsers)
+    allocatedUserIds: string[];
+
+    public async getCourse(): Promise<Course> {
+        const loaders = Utils.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await timetable.getCourse();
+    }
+
+    public async getTerm(): Promise<Term> {
+        const loaders = Utils.loaders;
+        const timetable = await loaders.timetable.load(this.timetableId);
+        return await timetable.getTerm();
+    }
+
+    public async allocate(...users: User[]): Promise<void> {
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            this.allocatedUserIds
+        )) as User[];
+        this.allocatedUsers = [...allocatedUsers, ...users];
+        await this.save();
+    }
+
+    public async deallocate(...users: User[]): Promise<void> {
+        const allocatedUsers = (await Utils.loaders.user.loadMany(
+            this.allocatedUserIds
+        )) as User[];
+        this.allocatedUsers = differenceBy(
+            allocatedUsers,
+            users,
+            (user) => user.id
+        );
+        await this.save();
+    }
+
+    public async clearAllocation(): Promise<void> {
+        this.allocatedUsers = [];
+        await this.save();
+    }
 }

@@ -14,7 +14,7 @@ import { RequestFormState } from "../../types/requests";
 
 type Props = Pick<
     RequestFormState,
-    "title" | "description" | "course" | "duration"
+    "title" | "description" | "course" | "type"
 > &
     Partial<
         Pick<
@@ -22,7 +22,7 @@ type Props = Pick<
             "setTitle" | "setDescription" | "setDuration" | "setCourse"
         >
     > & {
-        currentTerm: number;
+        currentTerm: string;
         editable?: boolean;
     };
 
@@ -30,7 +30,7 @@ export const RequestFormV3: React.FC<Props> = ({
     title,
     description,
     course,
-    duration,
+    type,
     setTitle,
     setDescription,
     setCourse,
@@ -74,7 +74,7 @@ export const RequestFormV3: React.FC<Props> = ({
             <FormControl mt={4} isDisabled={!editable}>
                 <FormLabel>Request Duration:</FormLabel>
                 <RadioGroup
-                    value={duration}
+                    value={type}
                     onChange={(value) => {
                         setDuration?.(value as RequestType);
                     }}

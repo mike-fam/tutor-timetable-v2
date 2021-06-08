@@ -25,6 +25,36 @@ import { StaffRequestResolver } from "./resolvers/StaffRequestResolver";
 import { CourseResolver } from "./resolvers/CourseResolver";
 import { OfferResolver } from "./resolvers/OfferResolver";
 import * as path from "path";
+import { createLoader } from "./dataloaders/createLoader";
+import {
+    Course,
+    CourseStaff,
+    Offer,
+    Preference,
+    Session,
+    SessionStream,
+    StaffRequest,
+    Term,
+    Timeslot,
+    Timetable,
+    User,
+    UserSettings,
+} from "./entities";
+import { LoadersInjector } from "./middlewares/loaders-injection";
+import { Container } from "typedi";
+import { UserSettingsResolver } from "./resolvers/UserSettingsResolver";
+import { CourseModel } from "./models/CourseModel";
+import { UserModel } from "./models/UserModel";
+import { StaffRequestModel } from "./models/StaffRequestModel";
+import { UserSettingsModel } from "./models/UserSettingsModel";
+import { TimeslotModel } from "./models/TimeslotModel";
+import { SessionModel } from "./models/SessionModel";
+import { CourseStaffModel } from "./models/CourseStaffModel";
+import { OfferModel } from "./models/OfferModel";
+import { SessionStreamModel } from "./models/SessionStreamModel";
+import { TimetableModel } from "./models/TimetableModel";
+import { PreferenceModel } from "./models/PreferenceModel";
+import { TermModel } from "./models/TermModel";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -60,10 +90,46 @@ const main = async () => {
                 StaffRequestResolver,
                 AllocatorResolver,
                 OfferResolver,
+                UserSettingsResolver,
             ],
             dateScalarMode: "isoDate",
+            globalMiddlewares: [LoadersInjector],
         }),
-        context: ({ req, res }): MyContext => ({ req, res }),
+        context: ({ req, res }): MyContext => {
+            const loaders = {
+                course: createLoader(Course),
+                courseStaff: createLoader(CourseStaff),
+                offer: createLoader(Offer),
+                preference: createLoader(Preference),
+                session: createLoader(Session),
+                staffRequest: createLoader(StaffRequest),
+                sessionStream: createLoader(SessionStream),
+                term: createLoader(Term),
+                timeslot: createLoader(Timeslot),
+                timetable: createLoader(Timetable),
+                user: createLoader(User),
+                userSettings: createLoader(UserSettings),
+            };
+            return {
+                req,
+                res,
+                loaders,
+                models: {
+                    course: new CourseModel(loaders),
+                    courseStaff: new CourseStaffModel(loaders),
+                    offer: new OfferModel(loaders),
+                    preference: new PreferenceModel(loaders),
+                    session: new SessionModel(loaders),
+                    staffRequest: new StaffRequestModel(loaders),
+                    sessionStream: new SessionStreamModel(loaders),
+                    term: new TermModel(loaders),
+                    timeslot: new TimeslotModel(loaders),
+                    timetable: new TimetableModel(loaders),
+                    user: new UserModel(loaders),
+                    userSettings: new UserSettingsModel(loaders),
+                },
+            };
+        },
     });
 
     apolloServer.applyMiddleware({ app });

@@ -8,20 +8,20 @@ import React, {
 } from "react";
 import { OfferDayTimetablePreview } from "./OfferDayTimetablePreview";
 import { RequestContext } from "../../hooks/useRequestUtils";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import { RequestType } from "../../generated/graphql";
 import { BsChevronLeft, BsChevronRight } from "react-icons/all";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
 type Props = {
-    requestId: number;
+    requestId: string;
 };
 
 export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
-    const [sessionId, setSessionId] = useState(notSet);
-    const [week, setWeek] = useState(notSet);
+    const [sessionId, setSessionId] = useState(defaultStr);
+    const [week, setWeek] = useState(defaultInt);
     const { sessions, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
         if (!requests.get(requestId)) {
@@ -39,11 +39,14 @@ export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
         if (!request) {
             return;
         }
-        if (week === notSet) {
+        if (week === defaultInt) {
             setWeek(request.session.week);
         }
         // Temporary request
-        if (request.type === RequestType.Temporary || sessionId === notSet) {
+        if (
+            request.type === RequestType.Temporary ||
+            sessionId === defaultStr
+        ) {
             setSessionId(request.session.id);
             return;
         }
@@ -133,7 +136,7 @@ export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
                         />
                     )}
                 </HStack>
-                {chosenTerm && week !== notSet && (
+                {chosenTerm && week !== defaultInt && (
                     <Box alignSelf="center">{chosenTerm.weekNames[week]}</Box>
                 )}
             </Stack>

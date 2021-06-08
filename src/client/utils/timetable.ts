@@ -5,14 +5,8 @@ import * as CSS from "csstype";
 import React from "react";
 import { Set } from "immutable";
 import { TimetableSettings, TimetableState } from "../types/timetable";
-import {
-    populateTreeDepth,
-    populateTreeHeight,
-    preOrderTraversal,
-    Tree,
-    TreeNode,
-} from "../../utils/tree";
-import { notSet } from "../constants";
+import { populateTreeDepth, populateTreeHeight, preOrderTraversal, Tree, TreeNode } from "../../utils/tree";
+import { defaultInt, defaultStr } from "../constants";
 
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
@@ -166,9 +160,9 @@ export const getClashedRanges = (
 };
 
 export const TimetableContext = React.createContext<TimetableState>({
-    chosenWeek: notSet,
-    chosenCourses: Set<number>(),
-    chosenTermId: 1,
+    chosenWeek: defaultInt,
+    chosenCourses: Set<string>(),
+    chosenTermId: defaultStr,
     chooseWeek: () => {},
     setChosenCourses: () => {},
     chooseTerm: () => {},

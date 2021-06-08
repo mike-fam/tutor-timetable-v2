@@ -4,22 +4,22 @@ import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
 import { useCourseLazyQuery } from "../../generated/graphql";
 import { capitalCase } from "change-case";
 import { SessionsContext } from "../../hooks/useSessionUtils";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { RequestFormState } from "../../types/requests";
 
 type Props = Pick<
     RequestFormState,
-    "title" | "course" | "description" | "session" | "duration" | "preferences"
+    "title" | "course" | "description" | "session" | "type" | "preferences"
 > & {
-    termId: number;
+    termId: string;
 };
 
 export const RequestReviewContainer: React.FC<Props> = ({
     title,
     course,
     description,
-    duration,
+    type,
     session,
     preferences,
     termId,
@@ -30,7 +30,7 @@ export const RequestReviewContainer: React.FC<Props> = ({
     const { chosenTerm } = useTermMetadata(termId);
     const { sessions, fetchSessionById } = useContext(SessionsContext);
     useEffect(() => {
-        if (course === notSet) {
+        if (course === defaultStr) {
             return;
         }
         fetchCourse({
@@ -63,7 +63,7 @@ export const RequestReviewContainer: React.FC<Props> = ({
             <Text fontWeight="bold">Course:</Text>
             <Text>{courseData?.course.code}</Text>
             <Text fontWeight="bold">Type:</Text>
-            <Text>{capitalCase(duration)}</Text>
+            <Text>{capitalCase(type)}</Text>
             <Text fontWeight="bold">Session:</Text>
             <Text fontWeight="bold">
                 {sessions.get(session)?.sessionStream.name} on{" "}

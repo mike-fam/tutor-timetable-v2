@@ -6,9 +6,9 @@ import { MyAvailabilityQuery, TimeslotInput } from "../generated/graphql";
 export type TempTimeslot = Omit<TimetableSessionType, "name">;
 
 export type AvailabilityState = {
-    timeslots: Map<number, TimeslotInput>;
+    timeslots: Map<string, TimeslotInput>;
     setTimeslots: React.Dispatch<
-        React.SetStateAction<Map<number, TimeslotInput>>
+        React.SetStateAction<Map<string, TimeslotInput>>
     >;
 };
 

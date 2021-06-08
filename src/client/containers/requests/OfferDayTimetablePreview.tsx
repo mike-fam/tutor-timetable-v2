@@ -9,12 +9,12 @@ import { Timetable } from "../../components/timetable/Timetable";
 import { SimpleSession } from "../../components/timetable/SimpleSession";
 import { UserContext } from "../../utils/user";
 import { requestTimeslotHeight } from "../../constants/requests";
-import { notSet } from "../../constants";
+import { defaultStr } from "../../constants";
 import { SessionTheme } from "../../types/session";
 import { Loadable } from "../../components/helpers/Loadable";
 
 type Props = {
-    sessionId: number;
+    sessionId: string;
 };
 
 export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
@@ -27,7 +27,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
     } = useSessionUtils();
     const { user } = useContext(UserContext);
     useEffect(() => {
-        if (sessionId === notSet) {
+        if (sessionId === defaultStr) {
             return;
         }
         if (!sessions.get(sessionId)) {
@@ -68,8 +68,8 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                 ) {
                     return false;
                 }
-                return otherSession.sessionAllocations.some(
-                    (allocation) => allocation.user.username === user.username
+                return otherSession.allocatedUsers.some(
+                    (allocatedUser) => allocatedUser.username === user.username
                 );
             }),
         [sessions, user.username, session]
@@ -141,7 +141,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                 sessions={[
                     ...timetableSessionsOnDay,
                     {
-                        id: session?.id || notSet,
+                        id: session?.id || defaultStr,
                         startTime: session?.sessionStream.startTime || 0,
                         endTime: session?.sessionStream.endTime || 0,
                         name: session?.sessionStream.name || "",

@@ -1,21 +1,12 @@
-import {
-    BaseEntity,
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, RelationId } from "typeorm";
 import { Timetable } from "./Timetable";
 import { Lazy } from "../utils/query";
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
+import { BaseEntity } from "./BaseEntity";
 
 @ObjectType()
 @Entity()
 export class Course extends BaseEntity {
-    @Field(() => Int)
-    @PrimaryGeneratedColumn()
-    id: number;
-
     @Field()
     @Column("varchar", { length: 20, unique: true })
     code: string;
@@ -24,7 +15,9 @@ export class Course extends BaseEntity {
     @Column("varchar", { length: 100 })
     title: string;
 
-    @Field(() => [Timetable])
     @OneToMany(() => Timetable, (timetable) => timetable.course, { lazy: true })
     timetables: Lazy<Timetable[]>;
+
+    @RelationId((course: Course) => course.timetables)
+    timetableIds: string[];
 }

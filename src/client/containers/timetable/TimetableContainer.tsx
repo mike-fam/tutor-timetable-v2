@@ -15,7 +15,7 @@ import {
     TimetableSessionProps,
 } from "../../components/timetable/TimetableSession";
 import { Map } from "immutable";
-import { notSet } from "../../constants";
+import { defaultInt, defaultStr } from "../../constants";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { UserContext } from "../../utils/user";
 import { SessionTheme } from "../../types/session";
@@ -24,7 +24,7 @@ type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
-        Map<number, TimetableSessionProps>
+        Map<string, TimetableSessionProps>
     >(Map());
     const {
         displayedDays,
@@ -46,16 +46,16 @@ export const TimetableContainer: React.FC<Props> = () => {
         courseIds: chosenCourses.toArray(),
     });
     const sessions = useMemo(() => {
-        if (chosenWeek === notSet) {
+        if (chosenWeek === defaultInt) {
             if (sessionStreamsLoading || !sessionStreamsData) {
                 return [];
             }
             return sessionStreamsData.sessionStreams
                 .filter(
                     (stream) =>
-                        stream.streamAllocations.some(
-                            (allocation) =>
-                                allocation.user.username === user.username
+                        stream.allocatedUsers.some(
+                            (allocatedUser) =>
+                                allocatedUser.username === user.username
                         ) || !displayMySessionsOnly
                 )
                 .map((sessionStream) => ({
@@ -72,9 +72,9 @@ export const TimetableContainer: React.FC<Props> = () => {
             return sessionsData.sessions
                 .filter(
                     (session) =>
-                        session.sessionAllocations.some(
-                            (allocation) =>
-                                allocation.user.username === user.username
+                        session.allocatedUsers.some(
+                            (allocatedUser) =>
+                                allocatedUser.username === user.username
                         ) || !displayMySessionsOnly
                 )
                 .map((session) => ({
@@ -95,9 +95,9 @@ export const TimetableContainer: React.FC<Props> = () => {
     ]);
     useEffect(() => {
         if (
-            chosenTermId === notSet ||
+            chosenTermId === defaultStr ||
             chosenCourses.size === 0 ||
-            chosenWeek === notSet
+            chosenWeek === defaultInt
         ) {
             return;
         }
@@ -106,16 +106,16 @@ export const TimetableContainer: React.FC<Props> = () => {
         });
     }, [chosenTermId, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
-        if (chosenWeek === notSet) {
+        if (chosenWeek === defaultInt) {
             sessionStreamsData?.sessionStreams.forEach((sessionStream) => {
                 setSessionsInfo((prev) =>
                     prev.set(sessionStream.id, {
                         location: sessionStream.location,
-                        allocation: sessionStream.streamAllocations.map(
-                            (allocation) => allocation.user.name
+                        allocation: sessionStream.allocatedUsers.map(
+                            (allocatedUser) => allocatedUser.name
                         ),
                         theme:
-                            sessionStream.streamAllocations.length <
+                            sessionStream.allocatedUsers.length <
                             sessionStream.numberOfStaff
                                 ? SessionTheme.WARNING
                                 : SessionTheme.PRIMARY,
@@ -127,8 +127,8 @@ export const TimetableContainer: React.FC<Props> = () => {
                 setSessionsInfo((prev) =>
                     prev.set(session.id, {
                         location: session.location,
-                        allocation: session.sessionAllocations.map(
-                            (allocation) => allocation.user.name
+                        allocation: session.allocatedUsers.map(
+                            (allocatedUser) => allocatedUser.name
                         ),
                     })
                 );
@@ -138,7 +138,7 @@ export const TimetableContainer: React.FC<Props> = () => {
     return (
         <Loadable
             isLoading={
-                chosenWeek === notSet
+                chosenWeek === defaultInt
                     ? sessionStreamsData === undefined
                     : sessionsData === undefined
             }

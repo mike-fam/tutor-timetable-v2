@@ -1,6 +1,6 @@
 mutation RequestAllocation(
     $courseTerm: CourseTermIdInput!
-    $staffIds: [Int!]!
+    $staffIds: [String!]!
     $newThreshold: Float
 ) {
     requestAllocation(

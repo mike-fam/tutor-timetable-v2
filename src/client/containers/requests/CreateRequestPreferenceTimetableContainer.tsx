@@ -6,7 +6,7 @@ import React, {
     useState,
 } from "react";
 import { Set } from "immutable";
-import { notSet } from "../../constants";
+import { defaultInt } from "../../constants";
 import { UserContext } from "../../utils/user";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
 import {
@@ -24,12 +24,12 @@ import { Text } from "@chakra-ui/react";
 import { RequestTimetableLegends } from "../../components/requests/RequestTimetableLegends";
 
 type Props = {
-    chosenCourseId: number;
-    chosenTermId: number;
-    chosenSession: number;
-    preferences: Set<number>;
-    addPreference: (sessionId: number) => void;
-    removePreference: (sessionId: number) => void;
+    chosenCourseId: string;
+    chosenTermId: string;
+    chosenSession: string;
+    preferences: Set<string>;
+    addPreference: (sessionId: string) => void;
+    removePreference: (sessionId: string) => void;
 };
 
 export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
@@ -40,7 +40,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     addPreference,
     removePreference,
 }) => {
-    const [chosenWeek, chooseWeek] = useState(notSet);
+    const [chosenWeek, chooseWeek] = useState(defaultInt);
     const { user } = useContext(UserContext);
     const { currentWeek, weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     const { data: availabilityData } = useQueryWithError(
@@ -62,7 +62,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         // [user.username]
     );
     const chooseSession = useCallback(
-        (sessionId: number) => {
+        (sessionId: string) => {
             preferences.includes(sessionId)
                 ? removePreference(sessionId)
                 : addPreference(sessionId);
@@ -77,8 +77,8 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     const checkSessionDisabled = useCallback(
         (session: SessionResponseType) => {
             // return session.id === chosenSession;
-            return session.sessionAllocations.some(
-                (allocation) => allocation.user.username === user.username
+            return session.allocatedUsers.some(
+                (allocatedUser) => allocatedUser.username === user.username
             );
         },
         // [chosenSession]
@@ -113,7 +113,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
         [preferences, availabilityData, sessions, user.username, chosenSession]
     );
     useEffect(() => {
-        if (chosenWeek !== notSet) {
+        if (chosenWeek !== defaultInt) {
             return;
         }
         chooseWeek(Math.min(Math.max(0, currentWeek), weekNum));

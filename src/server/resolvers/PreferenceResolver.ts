@@ -2,16 +2,19 @@ import {
     Arg,
     Ctx,
     Field,
+    FieldResolver,
     InputType,
     Mutation,
     Query,
     Resolver,
+    Root,
 } from "type-graphql";
 import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../types/context";
 import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
+import { Service } from "typedi";
 
 @InputType()
 class PreferenceInput {
@@ -25,9 +28,9 @@ class PreferenceInput {
     maxWeeklyHours: number;
 }
 
-@Resolver()
+@Resolver(() => Preference)
 export class PreferenceResolver {
-    static async getPreference(user: User, courseId: number, termId: number) {
+    static async getPreference(user: User, courseId: string, termId: string) {
         return await getConnection()
             .getRepository(Preference)
             .createQueryBuilder("preference")
@@ -45,7 +48,7 @@ export class PreferenceResolver {
     async myPreference(
         @Arg("preferenceFindInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Preference | undefined> {
         return await PreferenceResolver.getPreference(
             req.user!,
@@ -73,7 +76,7 @@ export class PreferenceResolver {
         { courseId, termId }: CourseTermIdInput,
         @Arg("preference", () => PreferenceInput)
         { sessionType, maxContigHours, maxWeeklyHours }: PreferenceInput,
-        @Ctx() { req }: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<Preference> {
         let preference = await PreferenceResolver.getPreference(
             req.user!,
@@ -103,5 +106,13 @@ export class PreferenceResolver {
             preference.maxContigHours = maxContigHours;
         }
         return Preference.save(preference);
+    }
+
+    @FieldResolver(() => CourseStaff)
+    async courseStaff(
+        @Root() root: Preference,
+        @Ctx() { req, models }: MyContext
+    ): Promise<CourseStaff> {
+        return models.courseStaff.getById(root.courseStaffId, req.user);
     }
 }
