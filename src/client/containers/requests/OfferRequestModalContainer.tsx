@@ -55,6 +55,7 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
                         offerDetails: {
                             requestId,
                             sessionPreferences: chosenSessions,
+                            mustSwap: false, // TODO: make this dynamic
                         },
                     },
                 });

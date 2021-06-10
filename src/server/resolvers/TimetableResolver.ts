@@ -26,9 +26,10 @@ export class TimetableResolver {
     }
 
     @Query(() => Timetable)
-    async timetableById(@Arg("id") id: string,
-                        @Ctx() { req, models }: MyContext
-                        ): Promise<Timetable> {
+    async timetableById(
+        @Arg("id") id: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
         return await models.timetable.getById(id, req.user);
     }
 

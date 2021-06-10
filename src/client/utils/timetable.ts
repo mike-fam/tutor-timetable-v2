@@ -5,7 +5,13 @@ import * as CSS from "csstype";
 import React from "react";
 import { Set } from "immutable";
 import { TimetableSettings, TimetableState } from "../types/timetable";
-import { populateTreeDepth, populateTreeHeight, preOrderTraversal, Tree, TreeNode } from "../../utils/tree";
+import {
+    populateTreeDepth,
+    populateTreeHeight,
+    preOrderTraversal,
+    Tree,
+    TreeNode,
+} from "../../utils/tree";
 import { defaultInt, defaultStr } from "../constants";
 
 /**

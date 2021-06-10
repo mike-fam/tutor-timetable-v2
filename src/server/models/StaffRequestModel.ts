@@ -90,7 +90,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
         if (isBefore(sessionDate, new Date())) {
             return {
                 hasPerm: false,
-                errMsg: "This session is in the past"
+                errMsg: "This session is in the past",
             };
         }
         // Check if user actually works on the session on the request
