@@ -7,7 +7,6 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import { getConnection } from "typeorm";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 
 import { MyContext } from "../types/context";
@@ -18,25 +17,44 @@ export class SessionResolver {
     async sessions(
         @Arg("termId") termId: string,
         @Arg("courseIds", () => [String]) courseIds: string[],
-        @Arg("week", () => Int) week: number
+        @Arg("week", () => Int) week: number,
+        @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        if (courseIds.length === 0) {
-            return [];
-        }
-        return await getConnection()
-            .getRepository(Session)
-            .createQueryBuilder("session")
-            .innerJoinAndSelect("session.sessionStream", "sessionStream")
-            .innerJoinAndSelect("sessionStream.timetable", "timetable")
-            .where("timetable.termId = :termId", { termId })
-            .andWhere("session.week = :week", { week })
-            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
-            .getMany();
+        // TODO: Check
+        return await models.session.getMany(
+            {
+                where: courseIds.map((courseId) => ({
+                    sessionStream: {
+                        timetable: {
+                            termId,
+                            courseId,
+                        },
+                    },
+                    week,
+                })),
+            },
+            req.user
+        );
+        // if (courseIds.length === 0) {
+        //     return [];
+        // }
+        // return await getConnection()
+        //     .getRepository(Session)
+        //     .createQueryBuilder("session")
+        //     .innerJoinAndSelect("session.sessionStream", "sessionStream")
+        //     .innerJoinAndSelect("sessionStream.timetable", "timetable")
+        //     .where("timetable.termId = :termId", { termId })
+        //     .andWhere("session.week = :week", { week })
+        //     .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
+        //     .getMany();
     }
 
     @Query(() => Session)
-    async sessionById(@Arg("sessionId") sessionId: string): Promise<Session> {
-        return await Session.findOneOrFail({ id: sessionId });
+    async sessionById(
+        @Arg("sessionId") sessionId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session> {
+        return await models.session.getById(sessionId, req.user);
     }
 
     @FieldResolver(() => SessionStream)

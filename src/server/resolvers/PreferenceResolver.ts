@@ -11,10 +11,9 @@ import {
 } from "type-graphql";
 import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../types/context";
-import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
-import { Service } from "typedi";
+import { PreferenceModel } from "../models/PreferenceModel";
 
 @InputType()
 class PreferenceInput {
@@ -30,18 +29,25 @@ class PreferenceInput {
 
 @Resolver(() => Preference)
 export class PreferenceResolver {
-    static async getPreference(user: User, courseId: string, termId: string) {
-        return await getConnection()
-            .getRepository(Preference)
-            .createQueryBuilder("preference")
-            .innerJoinAndSelect("preference.courseStaff", "courseStaff")
-            .innerJoinAndSelect("courseStaff.timetable", "timetable")
-            .where("timetable.courseId = :courseId", { courseId })
-            .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userId = :userId", {
-                userId: user.id,
-            })
-            .getOne();
+    static async getPreference(
+        owner: User,
+        courseId: string,
+        termId: string,
+        model: PreferenceModel,
+        user: User
+    ) {
+        return await model.getIfExists(
+            {
+                courseStaff: {
+                    timetable: {
+                        termId,
+                        courseId,
+                    },
+                    userId: owner.id,
+                },
+            },
+            user
+        );
     }
 
     @Query(() => Preference, { nullable: true })
@@ -49,11 +55,13 @@ export class PreferenceResolver {
         @Arg("preferenceFindInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
         @Ctx() { req, models }: MyContext
-    ): Promise<Preference | undefined> {
+    ): Promise<Preference | null> {
         return await PreferenceResolver.getPreference(
-            req.user!,
+            req.user,
             courseId,
-            termId
+            termId,
+            models.preference,
+            req.user
         );
     }
 
@@ -62,12 +70,17 @@ export class PreferenceResolver {
     async preferenceByUsername(
         @Arg("username") username: string,
         @Arg("courseTermId", () => CourseTermIdInput)
-        { courseId, termId }: CourseTermIdInput
-    ): Promise<Preference | undefined> {
-        const user = await User.findOneOrFail({
-            username,
-        });
-        return await PreferenceResolver.getPreference(user, courseId, termId);
+        { courseId, termId }: CourseTermIdInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Preference | null> {
+        const user = await models.user.get({ username }, req.user);
+        return await PreferenceResolver.getPreference(
+            user,
+            courseId,
+            termId,
+            models.preference,
+            req.user
+        );
     }
 
     @Mutation(() => Preference)
@@ -79,33 +92,39 @@ export class PreferenceResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Preference> {
         let preference = await PreferenceResolver.getPreference(
-            req.user!,
+            req.user,
             courseId,
-            termId
+            termId,
+            models.preference,
+            req.user
         );
-        const courseStaff = await getConnection()
-            .getRepository(CourseStaff)
-            .createQueryBuilder("courseStaff")
-            .innerJoinAndSelect("courseStaff.timetable", "timetable")
-            .where("timetable.courseId = :courseId", { courseId })
-            .andWhere("timetable.termId = :termId", { termId })
-            .andWhere("courseStaff.userId = :userId", {
-                userId: req.user!.id,
-            })
-            .getOne();
         if (!preference) {
-            preference = Preference.create({
-                sessionType,
-                maxContigHours,
-                maxWeeklyHours,
-                courseStaff,
-            });
+            const courseStaff = await models.courseStaff.get(
+                {
+                    timetable: {
+                        courseId,
+                        termId,
+                    },
+                    user: req.user,
+                },
+                req.user
+            );
+            return await models.preference.create(
+                {
+                    sessionType,
+                    maxContigHours,
+                    maxWeeklyHours,
+                    courseStaff,
+                },
+                req.user
+            );
         } else {
-            preference.sessionType = sessionType;
-            preference.maxWeeklyHours = maxWeeklyHours;
-            preference.maxContigHours = maxContigHours;
+            return await models.preference.update(
+                preference,
+                { sessionType, maxContigHours, maxWeeklyHours },
+                req.user
+            );
         }
-        return Preference.save(preference);
     }
 
     @FieldResolver(() => CourseStaff)

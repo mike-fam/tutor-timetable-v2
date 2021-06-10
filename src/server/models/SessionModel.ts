@@ -388,4 +388,21 @@ export class SessionModel extends BaseModel<Session> {
             await session.deallocate(staff);
         }
     }
+
+    /**
+     * A user can clear an allocation of a session if EITHER
+     * They are admin
+     * OR
+     * They are course coordinator of the stream
+     * @param session
+     * @param user
+     */
+    public async clearAllocation(session: Session, user: User): Promise<void> {
+        const course = await session.getCourse();
+        const term = await session.getTerm();
+        if (!(await user.isCoordinatorOf(course, term))) {
+            throw new Error(PERM_ERR);
+        }
+        await session.clearAllocation();
+    }
 }

@@ -18,15 +18,9 @@ export class CourseModel extends BaseModel<Course> {
 
     /**
      * Anyone can read any course
-     * TODO: Fill parameters
-     * @param course
-     * @param user
      * @protected
      */
-    protected async canRead(
-        course: Course,
-        user: User
-    ): Promise<PermissionState> {
+    protected async canRead(): Promise<PermissionState> {
         return {
             hasPerm: true,
         };

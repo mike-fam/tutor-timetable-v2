@@ -15,7 +15,6 @@ import { Timeslot, User } from "../entities";
 import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { In } from "typeorm";
-import { Service } from "typedi";
 
 export enum AvailabilityModificationType {
     UNCHANGED,

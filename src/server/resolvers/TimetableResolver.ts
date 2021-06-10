@@ -12,21 +12,24 @@ import { MyContext } from "../types/context";
 @Resolver(() => Timetable)
 export class TimetableResolver {
     @Query(() => [Timetable])
-    async timetables(): Promise<Timetable[]> {
-        return await Timetable.find({});
+    async timetables(@Ctx() { req, models }: MyContext): Promise<Timetable[]> {
+        return await models.timetable.getMany({}, req.user);
     }
 
-    @Query(() => Timetable, { nullable: true })
+    @Query(() => Timetable)
     async timetable(
         @Arg("courseId") courseId: string,
-        @Arg("termId") termId: string
-    ): Promise<Timetable | undefined> {
-        return await Timetable.findOne({ courseId, termId });
+        @Arg("termId") termId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
+        return await models.timetable.get({ courseId, termId }, req.user);
     }
 
-    @Query(() => Timetable, { nullable: true })
-    async timetableById(@Arg("id") id: string): Promise<Timetable | undefined> {
-        return await Timetable.findOne({ id });
+    @Query(() => Timetable)
+    async timetableById(@Arg("id") id: string,
+                        @Ctx() { req, models }: MyContext
+                        ): Promise<Timetable> {
+        return await models.timetable.getById(id, req.user);
     }
 
     @FieldResolver(() => Course)

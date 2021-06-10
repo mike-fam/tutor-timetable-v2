@@ -39,6 +39,9 @@ class OfferInputType {
     @Field(() => [String], { nullable: true })
     @ArrayUnique()
     sessionPreferences: string[];
+
+    @Field()
+    mustSwap: boolean;
 }
 
 @InputType()
@@ -55,101 +58,55 @@ export class OfferResolver {
     @Mutation(() => Offer)
     async createOffer(
         @Arg("offerDetails", () => OfferInputType)
-        { requestId, sessionPreferences }: OfferInputType,
+        { requestId, sessionPreferences, mustSwap }: OfferInputType,
         @Ctx() { req, models }: MyContext
     ): Promise<Offer> {
-        const user = await User.findOneOrFail(req.user);
-        const request = await StaffRequest.findOneOrFail({ id: requestId });
-
-        // Freeze permanent requests.
-        if (request.type === RequestType.PERMANENT) {
-            throw new Error("Permanent requests are currently frozen.");
-        }
-
-        if ((await request.requester).id === user.id) {
-            throw new Error("You cannot create an offer for a request you own");
-        }
-
-        const isOfferUnique = (await Offer.find({ user, request })).length <= 0;
-
-        if (!isOfferUnique) {
-            throw new Error(
-                "You cannot make multiple offers for the same request"
-            );
-        }
-
-        let preferredSessions: Array<Session> = [];
-        if (sessionPreferences.length > 0) {
-            const requestPreferenceIds = (
-                await request.swapPreference
-            ).filter((session) => sessionPreferences.includes(session.id));
-            if (requestPreferenceIds.length === 0) {
-                throw new Error(
-                    "One or more preferences are not in the requested sessions."
-                );
-            }
-            for (let sid of sessionPreferences) {
-                const session = await Session.findOneOrFail({ id: sid });
-                preferredSessions.push(session);
-            }
-        }
-
-        const newOffer = Offer.create({
-            user,
-            request,
-        });
-
-        if (preferredSessions.length > 0) {
-            newOffer.preferences = preferredSessions;
-        }
-
-        return await newOffer.save();
+        return await models.offer.create(
+            {
+                requestId,
+                preferenceSessionIds: sessionPreferences,
+                mustSwap,
+                user: req.user,
+            },
+            req.user
+        );
     }
 
     @Query(() => Offer)
-    async getOfferById(@Arg("offerId") offerId: string): Promise<Offer> {
-        const offer = await Offer.findOneOrFail({ id: offerId });
-        return offer;
+    async getOfferById(
+        @Arg("offerId") offerId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Offer> {
+        return await models.offer.getById(offerId, req.user);
     }
 
     @Query(() => [Offer])
     async getOffersByRequestId(
-        @Arg("requestId") requestId: string
+        @Arg("requestId") requestId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        const request = await StaffRequest.findOneOrFail({ id: requestId });
-        return await Offer.find({ request });
+        return await models.offer.getMany({ requestId }, req.user);
     }
 
     @Mutation(() => Offer)
     async editExistingOffer(
         @Arg("editDetails", () => EditOfferInputType)
-        { offerId, sessionPreferences }: EditOfferInputType
+        { offerId, sessionPreferences }: EditOfferInputType,
+        @Ctx() { req, models }: MyContext
     ): Promise<Offer> {
-        const offer = await Offer.findOneOrFail({ id: offerId });
-
-        let preferredSessions: Array<Session> = [];
-        for (const sid of sessionPreferences) {
-            const session = await Session.findOneOrFail({ id: sid });
-            preferredSessions.push(session);
-        }
-
-        offer.preferences = preferredSessions;
-        return offer.save();
+        return await models.offer.update(
+            { id: offerId },
+            { preferenceSessionIds: sessionPreferences },
+            req.user
+        );
     }
 
-    // TODO
     @Mutation(() => Offer)
     async removeOffer(
         @Arg("offerId") offerId: string,
         @Ctx() { req, models }: MyContext
     ): Promise<Offer> {
-        const offer = await Offer.findOneOrFail({ id: offerId });
-        const user = await User.findOneOrFail(req.user);
-        if (user.id !== (await offer.user).id) {
-            throw new Error("User ID does not match offer user ID.");
-        }
-
-        return await offer.remove();
+        return await models.offer.delete({ id: offerId }, req.user);
     }
 
     @Mutation(() => Offer)
@@ -185,7 +142,7 @@ export class OfferResolver {
                 request.sessionId,
                 user
             );
-            await this.performSwap(
+            await OfferResolver.performSwap(
                 models.session,
                 requestedSession,
                 offerMaker,
@@ -198,7 +155,7 @@ export class OfferResolver {
                     offerSessionSwapId,
                     user
                 );
-                await this.performSwap(
+                await OfferResolver.performSwap(
                     models.session,
                     swapSession,
                     requester,
@@ -210,7 +167,7 @@ export class OfferResolver {
             if (request.type === RequestType.PERMANENT) {
                 const subsequentSessions = await requestedSession.subsequentSessions();
                 for (const subsequentSession of subsequentSessions) {
-                    await this.performSwap(
+                    await OfferResolver.performSwap(
                         models.session,
                         subsequentSession,
                         offerMaker,
@@ -222,7 +179,7 @@ export class OfferResolver {
                     requestedSession.sessionStreamId,
                     user
                 );
-                await this.performStreamSwap(
+                await OfferResolver.performStreamSwap(
                     models.sessionStream,
                     stream,
                     offerMaker,
@@ -236,7 +193,7 @@ export class OfferResolver {
                     );
                     const toSwaps = await swapSession.subsequentSessions();
                     for (const toSwap of toSwaps) {
-                        await this.performSwap(
+                        await OfferResolver.performSwap(
                             models.session,
                             toSwap,
                             requester,
@@ -248,7 +205,7 @@ export class OfferResolver {
                         swapSession.sessionStreamId,
                         user
                     );
-                    await this.performStreamSwap(
+                    await OfferResolver.performStreamSwap(
                         models.sessionStream,
                         stream,
                         requester,
@@ -286,7 +243,7 @@ export class OfferResolver {
         throw new Error("Something went wrong");
     }
 
-    private async performSwap(
+    private static async performSwap(
         sessionModel: SessionModel,
         session: Session,
         toAllocate: User,
@@ -297,7 +254,7 @@ export class OfferResolver {
         await sessionModel.deallocateSingle(session, toDeallocate, performer);
     }
 
-    private async performStreamSwap(
+    private static async performStreamSwap(
         streamModel: SessionStreamModel,
         session: SessionStream,
         toAllocate: User,

@@ -14,7 +14,7 @@ import {
 import { Term, Timetable } from "../entities";
 import { TermType } from "../types/term";
 import { MyContext } from "../types/context";
-import { Service } from "typedi";
+import { In } from "typeorm";
 
 @ArgsType()
 class TermArgs {
@@ -37,27 +37,35 @@ class TermArgs {
 @Resolver(() => Term)
 export class TermResolver {
     @Query(() => [Term])
-    async terms(): Promise<Term[]> {
-        return await Term.find({});
+    async terms(@Ctx() { req, models }: MyContext): Promise<Term[]> {
+        return await models.term.getMany({}, req.user);
     }
 
     @Query(() => Term)
-    async term(@Arg("termId") termId: string): Promise<Term> {
-        return await Term.findOneOrFail(termId);
+    async term(
+        @Arg("termId") termId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Term> {
+        return await models.term.getById(termId, req.user);
     }
 
     @Mutation(() => Term)
-    async addTerm(@Args() termArgs: TermArgs): Promise<Term> {
-        return await Term.create(termArgs).save();
+    async addTerm(
+        @Args() termArgs: TermArgs,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Term> {
+        return await models.term.create(termArgs, req.user);
     }
 
     @Mutation(() => [Term])
     async deleteTerms(
-        @Arg("id", () => [Int]) termIds: Array<number>
+        @Arg("id", () => [String]) termIds: Array<string>,
+        @Ctx() { req, models }: MyContext
     ): Promise<Term[]> {
-        const terms = await Term.findByIds(termIds);
-        terms.forEach((term) => term.remove());
-        return terms;
+        return await models.term.deleteMany({ id: In(termIds) }, req.user);
+        // const terms = await Term.findByIds(termIds);
+        // terms.forEach((term) => term.remove());
+        // return terms;
     }
 
     @FieldResolver(() => [Timetable])
@@ -66,5 +74,10 @@ export class TermResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable[]> {
         return await models.timetable.getByIds(root.timetableIds, req.user);
+    }
+
+    @FieldResolver(() => Int)
+    async numberOfWeeks(@Root() root: Term): Promise<number> {
+        return root.numberOfWeeks();
     }
 }

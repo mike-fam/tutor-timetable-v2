@@ -7,6 +7,7 @@ import { PermissionState } from "../types/permission";
 import DataLoader from "dataloader";
 import has from "lodash/has";
 import { DataLoaders } from "../types/dataloaders";
+import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
 
 type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
 
@@ -62,7 +63,30 @@ export abstract class BaseModel<T extends BaseEntity> {
         throw new Error(errMsg || PERM_ERR);
     }
 
-    public async getMany(entityLike: DeepPartial<T>, user: User): Promise<T[]> {
+    public async getIfExists(
+        entityLike: DeepPartial<T>,
+        user: User
+    ): Promise<T | null> {
+        const result: T | undefined = await (this.entityCls as any).findOne(
+            entityLike
+        );
+        if (!result) {
+            return null;
+        }
+        const { hasPerm, errMsg } = await this.permRead(result, user);
+        if (hasPerm) {
+            return result;
+        }
+        throw new Error(errMsg || PERM_ERR);
+    }
+
+    getMany(options: FindManyOptions<T>, user: User): Promise<T[]>;
+    getMany(options: DeepPartial<T>, user: User): Promise<T[]>;
+
+    public async getMany(
+        entityLike: DeepPartial<T> | FindManyOptions<T>,
+        user: User
+    ): Promise<T[]> {
         const results = await (this.entityCls as any).find(entityLike);
         return await asyncFilter(results, async (result) => {
             const { hasPerm } = await this.permRead(result, user);
@@ -228,29 +252,48 @@ export abstract class BaseModel<T extends BaseEntity> {
         return await (this.entityCls as any).remove(deleteCandidates);
     }
 
-    protected async canRead(obj: T, user: User): Promise<PermissionState> {
+    /**
+     * Determines if a user an read an object
+     * @param _: Object to be read
+     * @param user: User performing the reading
+     * @protected
+     */
+    protected async canRead(_: T, user: User): Promise<PermissionState> {
         return { hasPerm: user.isAdmin };
     }
 
+    /**
+     * Determines if a user can update an object
+     * @param _: obj to be updated
+     * @param __: fields to be updated
+     * @param user
+     * @protected
+     */
     protected async canUpdate(
-        toUpdate: T,
-        updatedFields: Partial<T>,
+        _: T,
+        __: Partial<T>,
         user: User
     ): Promise<PermissionState> {
         return { hasPerm: user.isAdmin };
     }
 
-    protected async canDelete(
-        toDelete: T,
-        user: User
-    ): Promise<PermissionState> {
+    /**
+     * Determines if a user can delete an object
+     * @param _: object to be deleted
+     * @param user
+     * @protected
+     */
+    protected async canDelete(_: T, user: User): Promise<PermissionState> {
         return { hasPerm: user.isAdmin };
     }
 
-    protected async canCreate(
-        toCreate: T,
-        user: User
-    ): Promise<PermissionState> {
+    /**
+     * Determines if a user can create an object
+     * @param _: object to be created
+     * @param user
+     * @protected
+     */
+    protected async canCreate(_: T, user: User): Promise<PermissionState> {
         return { hasPerm: user.isAdmin };
     }
 }

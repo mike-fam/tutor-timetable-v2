@@ -19,7 +19,6 @@ import {
     UserSettings,
 } from "../entities";
 import { MyContext } from "../types/context";
-import { Service } from "typedi";
 
 @InputType()
 export class UpdateDetailsInputType {
@@ -35,7 +34,7 @@ export class UpdateDetailsInputType {
 @Resolver(() => User)
 export class UserResolver {
     @Query(() => User)
-    async me(@Ctx() { req, models }: MyContext): Promise<User> {
+    async me(@Ctx() { req }: MyContext): Promise<User> {
         return req.user;
     }
 
@@ -44,10 +43,7 @@ export class UserResolver {
         @Ctx() { req, models }: MyContext,
         @Arg("details") { name, email }: UpdateDetailsInputType
     ): Promise<User> {
-        const user = req.user!;
-        user.name = name;
-        user.email = email;
-        return await user.save();
+        return await models.user.update(req.user, { name, email }, req.user);
     }
 
     @FieldResolver(() => [CourseStaff])

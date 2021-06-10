@@ -13,3 +13,10 @@ export const asyncSome = async <T>(
 ) => {
     return (await asyncFilter(array, predicate)).length !== 0;
 };
+
+export const asyncForEach = async <T>(
+    array: Array<T>,
+    callback: (elem: T) => any
+): Promise<void> => {
+    await Promise.all(array.map(async (e) => await callback(e)));
+};

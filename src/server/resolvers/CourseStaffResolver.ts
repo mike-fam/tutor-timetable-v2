@@ -12,13 +12,8 @@ import {
 import { CourseStaff, Preference, Timetable, User } from "../entities";
 import { Role } from "../types/user";
 import { CourseTermIdInput } from "./CourseTermId";
-import { getConnection } from "typeorm";
 import { redacted } from "../constants";
-import { getOrCreateUsersByUsernames } from "../utils/user";
-import asyncFilter from "node-filter-async";
-import { asyncMap } from "../../utils/array";
 import { MyContext } from "../types/context";
-import { Service } from "typedi";
 
 @InputType()
 export class CourseStaffInput extends CourseTermIdInput {
@@ -40,90 +35,99 @@ export class CourseStaffResolver {
     @Mutation(() => CourseStaff)
     async addCourseStaff(
         @Arg("courseStaffUserInput")
-        { courseId, termId, role, isNew, username }: CourseStaffUserInput
+        { courseId, termId, role, isNew, username }: CourseStaffUserInput,
+        @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff> {
-        const timetable = await Timetable.findOneOrFail({ courseId, termId });
-        let user = await User.findOne({ username });
-        if (!user) {
-            user = await User.create({
-                username,
-                name: redacted,
-                email: redacted,
-            }).save();
+        const user = req.user;
+        const timetable = await models.timetable.get(
+            { courseId, termId },
+            user
+        );
+        let newStaff = await models.user.getIfExists({ username }, user);
+        if (!newStaff) {
+            newStaff = await models.user.create(
+                { name: redacted, email: redacted, username },
+                user
+            );
         }
-        const newCourseStaff = CourseStaff.create({
-            role,
-            isNew,
-            timetable,
-        });
-        newCourseStaff.user = Promise.resolve(user);
-        return await newCourseStaff.save();
+        const newCourseStaff = await models.courseStaff.create(
+            {
+                role,
+                isNew,
+                timetable,
+                userId: newStaff.id,
+            },
+            user
+        );
+        return newCourseStaff;
     }
 
     @Query(() => [CourseStaff])
     async courseStaffs(
         @Arg("courseTermInput", () => CourseTermIdInput)
-        { courseId, termId }: CourseTermIdInput
+        { courseId, termId }: CourseTermIdInput,
+        @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
-        return await getConnection()
-            .getRepository(CourseStaff)
-            .createQueryBuilder("courseStaff")
-            .innerJoinAndSelect("courseStaff.timetable", "timetable")
-            .where("timetable.courseId = :courseId", { courseId })
-            .andWhere("timetable.termId = :termId", { termId })
-            .getMany();
+        return await models.courseStaff.getMany(
+            {
+                timetable: {
+                    courseId,
+                    termId,
+                },
+            },
+            req.user
+        );
     }
 
     @Mutation(() => [CourseStaff])
     async addUsersToCourse(
         @Arg("courseStaffInput", () => CourseStaffInput)
         { role, isNew, termId, courseId }: CourseStaffInput,
-        @Arg("usernames", () => [String]) usernames: string[]
+        @Arg("usernames", () => [String]) usernames: string[],
+        @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
-        const timetable = await Timetable.findOneOrFail({ courseId, termId });
-        const users = await getOrCreateUsersByUsernames(usernames);
-        const existingCourseStaff = await CourseStaff.find({
-            where: users.map((user) => ({
-                timetableId: timetable.id,
-                userId: user.id,
-            })),
-        });
-        const newUsers = await asyncFilter(
-            users,
-            async (user) =>
-                !(
-                    await asyncMap(
-                        existingCourseStaff,
-                        async (courseStaff) => (await courseStaff.user).username
-                    )
-                ).includes(user.username)
+        const user = req.user;
+        const timetable = await models.timetable.get(
+            { courseId, termId },
+            user
         );
-        if (newUsers.length === 0) {
-            return [];
-        }
-        return await CourseStaff.save(
-            CourseStaff.create(
-                newUsers.map((user) => ({
-                    timetable,
-                    user,
-                    role,
-                    isNew,
-                }))
-            )
+        const users = await models.user.getOrCreateUserByUsernames(
+            usernames,
+            user
+        );
+        const existingCourseStaff = await models.courseStaff.getMany(
+            {
+                where: users.map((user) => ({
+                    timetableId: timetable.id,
+                    userId: user.id,
+                })),
+            },
+            user
+        );
+        const existingUserIds = existingCourseStaff.map(
+            (courseStaff) => courseStaff.userId
+        );
+        const newUsers = users.filter(
+            (user) => !existingUserIds.includes(user.id)
+        );
+        return await models.courseStaff.createMany(
+            newUsers.map((user) => ({
+                timetable,
+                user,
+                role,
+                isNew,
+            })),
+            user
         );
     }
 
-    // TODO: Validation
     @Mutation(() => String)
     async removeCourseStaff(
-        @Arg("courseStaffId") courseStaffId: string
+        @Arg("courseStaffId") courseStaffId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<string> {
-        try {
-            await CourseStaff.delete(courseStaffId);
-            return courseStaffId;
-        } catch (e) {
-            throw new Error("Could not remove this staff member");
-        }
+        await models.courseStaff.delete({ id: courseStaffId }, req.user);
+        return courseStaffId;
     }
 
     @FieldResolver(() => Timetable)

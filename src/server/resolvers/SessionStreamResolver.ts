@@ -9,7 +9,6 @@ import {
     Root,
 } from "type-graphql";
 import { Session, SessionStream, Timetable, User } from "../entities";
-import { getConnection } from "typeorm";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 import { MyContext } from "../types/context";
@@ -19,41 +18,59 @@ export class SessionStreamResolver {
     @Query(() => [SessionStream])
     async sessionStreams(
         @Arg("termId") termId: string,
-        @Arg("courseIds", () => [String]) courseIds: string[]
+        @Arg("courseIds", () => [String]) courseIds: string[],
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
-        if (courseIds.length === 0) {
-            return [];
-        }
-        return await getConnection()
-            .getRepository(SessionStream)
-            .createQueryBuilder("sessionStream")
-            .innerJoinAndSelect("sessionStream.timetable", "timetable")
-            .where("timetable.termId = :termId", { termId })
-            .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
-            .getMany();
+        return await models.sessionStream.getMany(
+            {
+                where: courseIds.map((courseId) => ({
+                    timetable: {
+                        termId,
+                        courseId,
+                    },
+                })),
+            },
+            req.user
+        );
+        // if (courseIds.length === 0) {
+        //     return [];
+        // }
+        // return await getConnection()
+        //     .getRepository(SessionStream)
+        //     .createQueryBuilder("sessionStream")
+        //     .innerJoinAndSelect("sessionStream.timetable", "timetable")
+        //     .where("timetable.termId = :termId", { termId })
+        //     .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
+        //     .getMany();
     }
 
     @Mutation(() => SessionStream)
     async addBasedSessionStream(
-        @Arg("sessionStreamId") sessionStreamId: number,
+        @Arg("sessionStreamId") sessionStreamId: string,
         @Arg("name") name: string,
         @Arg("weeks", () => [Int]) weeks: number[],
-        @Arg("numberOfStaff", () => Int) numberOfStaff: number
+        @Arg("numberOfStaff", () => Int) numberOfStaff: number,
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream> {
-        const sessionStream = await SessionStream.findOneOrFail(
-            sessionStreamId
+        const sessionStream = await models.sessionStream.getById(
+            sessionStreamId,
+            req.user
         );
-        return await SessionStream.create({
-            name,
-            weeks,
-            numberOfStaff,
-            day: sessionStream.day,
-            timetableId: sessionStream.timetableId,
-            type: sessionStream.type,
-            startTime: sessionStream.startTime,
-            endTime: sessionStream.endTime,
-            location: sessionStream.location,
-        }).save();
+        return await models.sessionStream.create(
+            {
+                name,
+                weeks,
+                numberOfStaff,
+                day: sessionStream.day,
+                timetableId: sessionStream.timetableId,
+                type: sessionStream.type,
+                startTime: sessionStream.startTime,
+                endTime: sessionStream.endTime,
+                location: sessionStream.location,
+                based: sessionStream,
+            },
+            req.user
+        );
     }
 
     @Mutation(() => SessionStream)
@@ -66,19 +83,23 @@ export class SessionStreamResolver {
         @Arg("endTime") endTime: number,
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("location") location: string,
-        @Arg("numberOfStaff", () => Int) numberOfStaff: number
+        @Arg("numberOfStaff", () => Int) numberOfStaff: number,
+        @Ctx() { req, models }: MyContext
     ): Promise<SessionStream> {
-        return await SessionStream.create({
-            timetableId,
-            name,
-            type,
-            day,
-            startTime,
-            endTime,
-            weeks,
-            location,
-            numberOfStaff,
-        }).save();
+        return await models.sessionStream.create(
+            {
+                timetableId,
+                name,
+                type,
+                day,
+                startTime,
+                endTime,
+                weeks,
+                location,
+                numberOfStaff,
+            },
+            req.user
+        );
     }
 
     @Mutation(() => SessionStream)

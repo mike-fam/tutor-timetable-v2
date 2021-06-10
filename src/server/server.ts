@@ -41,7 +41,6 @@ import {
     UserSettings,
 } from "./entities";
 import { LoadersInjector } from "./middlewares/loaders-injection";
-import { Container } from "typedi";
 import { UserSettingsResolver } from "./resolvers/UserSettingsResolver";
 import { CourseModel } from "./models/CourseModel";
 import { UserModel } from "./models/UserModel";

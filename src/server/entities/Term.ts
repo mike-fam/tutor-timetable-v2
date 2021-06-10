@@ -6,6 +6,7 @@ import { TermType } from "../types/term";
 import { BaseEntity } from "./BaseEntity";
 import isBefore from "date-fns/isBefore";
 import isAfter from "date-fns/isAfter";
+import differenceInDays from "date-fns/differenceInDays";
 
 @ObjectType()
 @Entity()
@@ -63,5 +64,9 @@ export class Term extends BaseEntity {
             "No active term. There must be EXACTLY ONE " +
                 "active term to perform this action."
         );
+    }
+
+    public numberOfWeeks(): number {
+        return Math.ceil(differenceInDays(this.endDate, this.startDate) / 7);
     }
 }

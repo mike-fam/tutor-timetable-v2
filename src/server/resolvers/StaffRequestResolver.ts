@@ -16,16 +16,8 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import { In } from "typeorm";
 import { RequestStatus, RequestType } from "../types/request";
-import {
-    Offer,
-    Session,
-    SessionStream,
-    StaffRequest,
-    Timetable,
-    User,
-} from "../entities";
+import { Offer, Session, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
 
 @InputType()
@@ -112,9 +104,10 @@ export class StaffRequestResolver {
     // Used for displaying requests in modal.
     @Query(() => StaffRequest)
     async getRequestById(
-        @Arg("requestId") requestId: string
+        @Arg("requestId") requestId: string,
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest> {
-        return await StaffRequest.findOneOrFail({ id: requestId });
+        return await models.staffRequest.getById(requestId, req.user);
     }
 
     // Used for displaying all requests associated with the user for a given term
@@ -122,35 +115,47 @@ export class StaffRequestResolver {
     async getRequestsByUserId(
         @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
-        const user = req.user!;
-        return await StaffRequest.find({ requester: user });
+        const user = req.user;
+        return await models.staffRequest.getMany({ requester: user }, user);
     }
 
     // Get all requests related to user given term
-    // TODO: NEEDS TO MAKE SURE THE CORRECT TERM IS BEING USED.
     @Query(() => [StaffRequest])
     async getRequestsByTermId(
         @Arg("termId") termId: string,
         @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
-        const myCourseStaffs = await req.user!.courseStaffs;
-        const myTimetables = await Timetable.find({
-            id: In(
-                myCourseStaffs.map((courseStaff) => courseStaff.timetableId)
-            ),
-            termId,
-        });
-        const sessionStreams = await SessionStream.find({
-            timetableId: In(myTimetables.map((timetable) => timetable.id)),
-        });
-        const sessions = await Session.find({
-            sessionStreamId: In(
-                sessionStreams.map((sessionStream) => sessionStream.id)
-            ),
-        });
-        return await StaffRequest.find({
-            sessionId: In(sessions.map((session) => session.id)),
-        });
+        // TODO: check
+        return await models.staffRequest.getMany(
+            {
+                session: {
+                    sessionStream: {
+                        timetable: {
+                            termId,
+                        },
+                    },
+                },
+            },
+            req.user
+        );
+        // const myCourseStaffs = await req.user!.courseStaffs;
+        // const myTimetables = await Timetable.find({
+        //     id: In(
+        //         myCourseStaffs.map((courseStaff) => courseStaff.timetableId)
+        //     ),
+        //     termId,
+        // });
+        // const sessionStreams = await SessionStream.find({
+        //     timetableId: In(myTimetables.map((timetable) => timetable.id)),
+        // });
+        // const sessions = await Session.find({
+        //     sessionStreamId: In(
+        //         sessionStreams.map((sessionStream) => sessionStream.id)
+        //     ),
+        // });
+        // return await StaffRequest.find({
+        //     sessionId: In(sessions.map((session) => session.id)),
+        // });
     }
 
     // Needs testing. Only pass in values that needs changing.
@@ -165,38 +170,57 @@ export class StaffRequestResolver {
             sessionId,
             requestId,
             closeRequest,
-        }: EditRequestFormInputType
+        }: EditRequestFormInputType,
+        @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest> {
-        const request = await StaffRequest.findOneOrFail({ id: requestId });
+        const user = req.user;
+        const request = await models.staffRequest.getById(requestId, user);
 
         if (closeRequest) {
-            request.status = RequestStatus.CLOSED;
-            return request.save();
+            return await models.staffRequest.update(
+                request,
+                {
+                    status: RequestStatus.CLOSED,
+                },
+                user
+            );
         }
 
+        return await models.staffRequest.update(
+            request,
+            {
+                sessionId: sessionId || request.sessionId,
+                swapPreferenceSessionIds:
+                    preferences || request.swapPreferenceSessionIds,
+                title: title || request.title,
+                description: description || request.description,
+                type: duration || request.type,
+            },
+            user
+        );
         // I think there is a better way to implement this.
-        if (sessionId) {
-            const session = await Session.findOneOrFail({ id: sessionId });
-            request.session = session;
-        }
-        if (preferences) {
-            // Checks to make sure each session id exists.
-            let swapPreference: Array<Session> = [];
-            for (const sid of preferences) {
-                swapPreference.push(await Session.findOneOrFail({ id: sid }));
-            }
-            request.swapPreference = swapPreference;
-        }
-        if (title) {
-            request.title = title;
-        }
-        if (duration) {
-            request.type = duration;
-        }
-        if (description) {
-            request.description = description;
-        }
-        return request.save();
+        // if (sessionId) {
+        //     const session = await Session.findOneOrFail({ id: sessionId });
+        //     request.session = session;
+        // }
+        // if (preferences) {
+        //     // Checks to make sure each session id exists.
+        //     let swapPreference: Array<Session> = [];
+        //     for (const sid of preferences) {
+        //         swapPreference.push(await Session.findOneOrFail({ id: sid }));
+        //     }
+        //     request.swapPreference = swapPreference;
+        // }
+        // if (title) {
+        //     request.title = title;
+        // }
+        // if (duration) {
+        //     request.type = duration;
+        // }
+        // if (description) {
+        //     request.description = description;
+        // }
+        // return request.save();
     }
 
     @Mutation(() => String)
@@ -204,15 +228,17 @@ export class StaffRequestResolver {
         @Ctx() { req, models }: MyContext,
         @Arg("requestId") requestId: string
     ): Promise<string> {
-        const request = await StaffRequest.findOneOrFail({ id: requestId });
-        const user = req.user!;
-
-        if ((await request.requester).id !== user.id) {
-            throw new Error("User ID does not match request user ID");
-        }
-        const id = request.id;
-        await request.remove();
-        return id;
+        await models.staffRequest.delete({ id: requestId }, req.user);
+        return requestId;
+        // const request = await StaffRequest.findOneOrFail({ id: requestId });
+        // const user = req.user!;
+        //
+        // if ((await request.requester).id !== user.id) {
+        //     throw new Error("User ID does not match request user ID");
+        // }
+        // const id = request.id;
+        // await request.remove();
+        // return id;
     }
 
     @FieldResolver(() => User)

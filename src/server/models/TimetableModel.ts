@@ -85,14 +85,9 @@ export class TimetableModel extends BaseModel<Timetable> {
 
     /**
      * A user can create a timetable if they are admin
-     * @param timetable
-     * @param user
      * @protected
      */
-    protected async canCreate(
-        timetable: Timetable,
-        user: User
-    ): Promise<PermissionState> {
+    protected async canCreate(): Promise<PermissionState> {
         return { hasPerm: false };
     }
 }

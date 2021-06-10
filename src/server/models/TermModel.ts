@@ -1,5 +1,5 @@
 import { BaseModel } from "./BaseModel";
-import { Term, User } from "../entities";
+import { Term } from "../entities";
 import { PermissionState } from "../types/permission";
 import { DataLoaders } from "../types/dataloaders";
 
@@ -16,10 +16,8 @@ export class TermModel extends BaseModel<Term> {
 
     /**
      * Everyone can read a term entry
-     * @param term
-     * @param user
      */
-    protected async canRead(term: Term, user: User): Promise<PermissionState> {
+    protected async canRead(): Promise<PermissionState> {
         return { hasPerm: true };
     }
 }
