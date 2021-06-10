@@ -113,4 +113,9 @@ export class SessionResolver {
     ): Promise<Offer[]> {
         return await models.offer.getByIds(root.acceptedOfferIds, req.user);
     }
+
+    @FieldResolver(() => Date)
+    async date(@Root() root: Session): Promise<Date> {
+        return root.date();
+    }
 }
