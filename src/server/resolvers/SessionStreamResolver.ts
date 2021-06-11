@@ -30,22 +30,10 @@ export class SessionStreamResolver {
             },
             req.user
         );
-        const streams = await models.sessionStream.getMany(
+        return await models.sessionStream.getMany(
             { timetableId: timetable.id },
             req.user
         );
-        // console.log(streams);
-        return streams;
-        // if (courseIds.length === 0) {
-        //     return [];
-        // }
-        // return await getConnection()
-        //     .getRepository(SessionStream)
-        //     .createQueryBuilder("sessionStream")
-        //     .innerJoinAndSelect("sessionStream.timetable", "timetable")
-        //     .where("timetable.termId = :termId", { termId })
-        //     .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
-        //     .getMany();
     }
 
     @Mutation(() => SessionStream)

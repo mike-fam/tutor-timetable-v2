@@ -38,18 +38,6 @@ export class SessionResolver {
             },
             req.user
         );
-        // if (courseIds.length === 0) {
-        //     return [];
-        // }
-        // return await getConnection()
-        //     .getRepository(Session)
-        //     .createQueryBuilder("session")
-        //     .innerJoinAndSelect("session.sessionStream", "sessionStream")
-        //     .innerJoinAndSelect("sessionStream.timetable", "timetable")
-        //     .where("timetable.termId = :termId", { termId })
-        //     .andWhere("session.week = :week", { week })
-        //     .andWhere("timetable.courseId IN (:...courseIds)", { courseIds })
-        //     .getMany();
     }
 
     @Query(() => Session)
