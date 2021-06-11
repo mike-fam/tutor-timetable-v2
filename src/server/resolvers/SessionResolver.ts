@@ -20,16 +20,19 @@ export class SessionResolver {
         @Arg("week", () => Int) week: number,
         @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        // TODO: Check
-        return await models.session.getMany(
+        const timetable = await models.timetable.get(
             {
                 where: courseIds.map((courseId) => ({
-                    sessionStream: {
-                        timetable: {
-                            termId,
-                            courseId,
-                        },
-                    },
+                    termId,
+                    courseId,
+                })),
+            },
+            req.user
+        );
+        return await models.session.getMany(
+            {
+                where: timetable.sessionStreamIds.map((sessionStreamId) => ({
+                    sessionStreamId,
                     week,
                 })),
             },

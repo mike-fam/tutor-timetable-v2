@@ -8,6 +8,7 @@ import DataLoader from "dataloader";
 import has from "lodash/has";
 import { DataLoaders } from "../types/dataloaders";
 import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
+import * as util from "util";
 
 type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
 
@@ -49,7 +50,13 @@ export abstract class BaseModel<T extends BaseEntity> {
         return await this.canCreate(toCreate, user);
     }
 
-    public async get(entityLike: DeepPartial<T>, user: User): Promise<T> {
+    get(options: FindManyOptions<T>, user: User): Promise<T>;
+    get(options: DeepPartial<T>, user: User): Promise<T>;
+
+    public async get(
+        entityLike: DeepPartial<T> | FindManyOptions<T>,
+        user: User
+    ): Promise<T> {
         const result: T | undefined = await (this.entityCls as any).findOne(
             entityLike
         );
@@ -88,6 +95,10 @@ export abstract class BaseModel<T extends BaseEntity> {
         user: User
     ): Promise<T[]> {
         const results = await (this.entityCls as any).find(entityLike);
+        console.log(results);
+        console.log(util.inspect(entityLike, false, null, true));
+
+        console.log("inside get many ", this.entityCls.name);
         return await asyncFilter(results, async (result) => {
             const { hasPerm } = await this.permRead(result, user);
             return hasPerm;

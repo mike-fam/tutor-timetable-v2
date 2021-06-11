@@ -21,17 +21,21 @@ export class SessionStreamResolver {
         @Arg("courseIds", () => [String]) courseIds: string[],
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
-        return await models.sessionStream.getMany(
+        const timetable = await models.timetable.get(
             {
                 where: courseIds.map((courseId) => ({
-                    timetable: {
-                        termId,
-                        courseId,
-                    },
+                    termId,
+                    courseId,
                 })),
             },
             req.user
         );
+        const streams = await models.sessionStream.getMany(
+            { timetableId: timetable.id },
+            req.user
+        );
+        // console.log(streams);
+        return streams;
         // if (courseIds.length === 0) {
         //     return [];
         // }
