@@ -15,8 +15,11 @@ export class TimetableModel extends BaseModel<Timetable> {
      * they are admin
      * OR
      * they are staff of that timetable
-     * @param timetable
-     * @param user
+     *
+     * @param {Timetable} timetable timetable object to read
+     * @param {User} user user performing read operation
+     * @returns {PermissionState} object specifying if they have permission for
+     *      this action
      */
     protected async canRead(
         timetable: Timetable,
@@ -35,10 +38,13 @@ export class TimetableModel extends BaseModel<Timetable> {
      * OR
      * They are course coordinator of that timetable, AND ALL of the following
      * conditions hold
-     *      * They don't change the course and the term of the timetable
-     * @param timetable
-     * @param updatedFields
-     * @param user
+     *      They don't change the course and the term of the timetable
+     *
+     * @param {Timetable} timetable timetable object to update
+     * @param {Partial<Timetable>} updatedFields fields to update
+     * @param {User} user user performing the action
+     * @returns {PermissionState} specifies if user can perform this action
+     * @protected
      */
     protected async canUpdate(
         timetable: Timetable,
@@ -72,8 +78,10 @@ export class TimetableModel extends BaseModel<Timetable> {
 
     /**
      * A user can delete a timetable if they are admin
-     * @param timetable
-     * @param user
+     *
+     * @param {Timetable} timetable timetable object to delete
+     * @param {User} user user performing the delete action
+     * @returns {PermissionState} specifies if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -85,6 +93,8 @@ export class TimetableModel extends BaseModel<Timetable> {
 
     /**
      * A user can create a timetable if they are admin
+     *
+     * @returns {PermissionState} specifies if user can perform this action
      * @protected
      */
     protected async canCreate(): Promise<PermissionState> {

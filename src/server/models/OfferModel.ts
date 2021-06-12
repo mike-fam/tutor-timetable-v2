@@ -44,8 +44,10 @@ export class OfferModel extends BaseModel<Offer> {
     /**
      * A user can read an offer entry if they are admin OR
      * they work in the same course as the offer maker
-     * @param offer
-     * @param user
+     *
+     * @param {Offer} offer offer object to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -60,14 +62,14 @@ export class OfferModel extends BaseModel<Offer> {
     /**
      * A user can update an offer if they are admin or the offer maker.
      * The offer maker can NOT change ANY of these fields
-     *      * the request or requestId of the offer.
-     *      * the creator of the offer (i.e. themselves)
-     *      * the status of the offer (it has to be changed by the original
+     *      the request or requestId of the offer.
+     *      the creator of the offer (i.e. themselves)
+     *      the status of the offer (it has to be changed by the original
      *          requester when accepting or rejecting the offer.
      * The offer maker CAN make changes to the preferences, but it has to
      * satisfy ALL of the following constraints
-     *      * preference MUST only contain ONLY sessions they are assigned to
-     *      * ALL sessions must be of the same course and term
+     *      preference MUST only contain ONLY sessions they are assigned to
+     *      ALL sessions must be of the same course and term
      *
      * The original requester CAN ONLY make changes to the offer status
      * and NO OTHER field.
@@ -80,9 +82,10 @@ export class OfferModel extends BaseModel<Offer> {
      * Course coordinators can change the state of the offer status from
      * AWAITING_APPROVAL to ACCEPTED or REJECTED
      *
-     * @param offer
-     * @param updatedFields
-     * @param user
+     * @param {Offer} offer offer object to update
+     * @param {Partial} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -331,8 +334,10 @@ export class OfferModel extends BaseModel<Offer> {
      * they are course coordinator (i.e. supervisor) of the offer maker
      * OR
      * they are the offer maker AND the status of the offer is not ACCEPTED
-     * @param offer
-     * @param user
+     *
+     * @param {Offer} offer offer object to delete
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -363,20 +368,22 @@ export class OfferModel extends BaseModel<Offer> {
      * A user can create an offer if they are admin,
      * OR
      * if ALL of these conditions hold
-     *      * They are the maker of the offer, i.e. the user field has to refer
+     *      They are the maker of the offer, i.e. the user field has to refer
      *          to themself
-     *      * They are a staff member of the same course and term of the request
+     *      They are a staff member of the same course and term of the request
      *          maker
-     *      * The offer is not for one of their own requests
-     *      * They have not already made an offer for said request
-     *      * That request is not frozen
-     *      * if that request has `allowNonPrefOffers` set to false,
+     *      The offer is not for one of their own requests
+     *      They have not already made an offer for said request
+     *      That request is not frozen
+     *      if that request has `allowNonPrefOffers` set to false,
      *          all sessions specified in the `preferences` field have to
      *          be in the `swapPreference` field of the request.
-     *      * That user has not already worked on the session on the request
-     *      * The swap preference only contains sessions that they work on
-     * @param offer
-     * @param user
+     *      That user has not already worked on the session on the request
+     *      The swap preference only contains sessions that they work on
+     *
+     * @param {Offer} offer offer object to create
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(

@@ -25,8 +25,10 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * they are admin
      * OR
      * they are a staff member of the course the stream belongs to
-     * @param stream
-     * @param user
+     *
+     * @param {SessionStream} stream stream to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -49,13 +51,15 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * They are the course coordinator of the session stream
      *
      * If they are the course coordinator, ALL of the following conditions apply
-     *      * If the session stream is based on another stream, they cannot
+     *      If the session stream is based on another stream, they cannot
      *          modify the startTime, endTime, day and type of that stream
      *          WITHOUT setting based to null first
-     *      * They cannot change the timetable of the stream
-     * @param stream
-     * @param updatedFields
-     * @param user
+     *      They cannot change the timetable of the stream
+     *
+     * @param {SessionStream} stream stream to be updated
+     * @param {Partial} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -124,8 +128,10 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * they are admin
      * OR
      * they are course coordinator of the course and term of that stream
-     * @param stream
-     * @param user
+     *
+     * @param {SessionStream} stream stream to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -145,8 +151,10 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * OR
      * they are course coordinator of the course and term of that stream AND
      * IF the stream is based
-     * @param stream
-     * @param user
+     *
+     * @param {SessionStream} stream stream to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(
@@ -170,11 +178,12 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * They are admin
      * OR
      * They are course coordinator of the session, AND ALL of the following hold
-     *      * The staff member has to work in the same course in the same term
-     *      * The staff member is not already on that session
-     * @param staff
-     * @param stream
-     * @param user
+     *      The staff member has to work in the same course in the same term
+     *      The staff member is not already on that session
+     *
+     * @param {SessionStream} stream stream to allocate users to
+     * @param {User[]} staff users to allocate to stream
+     * @param {User} user user performing this action
      * @protected
      */
     public async allocateMultiple(
@@ -217,24 +226,25 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * they are admin
      * OR
      * They are a staff member of this session, AND ALL of the following hold
-     *      * There is a PERMANENT request that points to a session of this
+     *      There is a PERMANENT request that points to a session of this
      *          stream
-     *      * They are the requester
-     *      * There is an offer of the request that has a status of ACCEPTED
-     *      * That offer has to be the offer that's accepted most recently
-     *      * The allocated staff is the offer maker
+     *      They are the requester
+     *      There is an offer of the request that has a status of ACCEPTED
+     *      That offer has to be the offer that's accepted most recently
+     *      The allocated staff is the offer maker
      * OR
      * They are a staff member of this session, AND ALL of the following hold
-     *      * There is an accepted offer with the acceptedSession field pointing
+     *      There is an accepted offer with the acceptedSession field pointing
      *          to a session of this stream
-     *      * The request of that offer is of type PERMANENT
-     *      * The request of that offer is made by user
-     *      * That offer is the most recently accepted offer that points to
+     *      The request of that offer is of type PERMANENT
+     *      The request of that offer is made by user
+     *      That offer is the most recently accepted offer that points to
      *          that session
-     *      * The staff member allocated to session must be the user
-     * @param stream
-     * @param staff
-     * @param user
+     *      The staff member allocated to session must be the user
+     *
+     * @param {SessionStream} stream stream to allocate user to
+     * @param {User} staff user to be allocated to stream
+     * @param {User} user user performing this action
      * @protected
      */
     public async allocateSingle(
@@ -322,10 +332,11 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * OR
      * They are course coordinator of the course of this session, AND ALL of
      * the following conditions hold
-     *      * The staff member has to be working on said session
-     * @param stream
-     * @param staff
-     * @param user
+     *      The staff member has to be working on said session
+     *
+     * @param {SessionStream} stream stream to deallocate users from
+     * @param {User[]} staff users to be deallocated from stream
+     * @param {User} user user performing this action
      */
     public async deallocateMultiple(
         stream: SessionStream,
@@ -357,24 +368,25 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * OR
      * They are a staff member of the course of this session, AND ALL of the
      * following conditions hold
-     *      * There is an offer that points to one of their requests
-     *      * The request is for a session of stream and the request is of type
+     *      There is an offer that points to one of their requests
+     *      The request is for a session of stream and the request is of type
      *          PERMANENT
-     *      * The offer status is ACCEPTED
-     *      * The deallocated staff is the user themself
+     *      The offer status is ACCEPTED
+     *      The deallocated staff is the user themself
      * OR
      * They are staff member of the course of this session, AND ALL of the
      * following conditions hold
-     *      * There is an offer that points to one of their requests
-     *      * The acceptedSession field points to this session, OR
-     *          * The request is of type PERMANENT and the acceptedSession field
+     *      There is an offer that points to one of their requests
+     *      The acceptedSession field points to this session, OR
+     *          The request is of type PERMANENT and the acceptedSession field
      *            points to a session of the same stream that precedes
      *            this session
-     *      * The offer status is ACCEPTED
-     *      * The deallocated staff is the offer maker
-     * @param stream
-     * @param staff
-     * @param user
+     *      The offer status is ACCEPTED
+     *      The deallocated staff is the offer maker
+     *
+     * @param {SessionStream} stream stream to deallocate user from
+     * @param {User} staff user to deallocate from stream
+     * @param {User} user user performing this action
      * @protected
      */
     public async deallocateSingle(
@@ -450,8 +462,10 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * They are admin
      * OR
      * They are course coordinator of the stream
-     * @param stream
-     * @param user
+     *
+     * @param {SessionStream} stream stream of which the allocation is to be
+     *      cleared
+     * @param {User} user user performing this action
      */
     public async clearAllocation(
         stream: SessionStream,

@@ -7,6 +7,10 @@ import { defaultStr } from "../constants";
 /**
  * Note: This might not be the best way to store data
  * I personally like to store the id with the course/session/request entries
+ *
+ * @param {Partial<RequestFormState>} initialState optional initial state of
+ *      request
+ * @returns {RequestFormState} request form state used for management.
  */
 export const useRequestFormState = (
     initialState?: Partial<

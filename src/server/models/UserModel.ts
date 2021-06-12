@@ -20,8 +20,10 @@ export class UserModel extends BaseModel<User> {
      * they are admin
      * OR
      * they work in a same course as this user
-     * @param toRead
-     * @param user
+     *
+     * @param {User} toRead user to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -42,18 +44,13 @@ export class UserModel extends BaseModel<User> {
      * they are admin
      * OR
      * they are the user AND ALL of the following hold
-     *      * They only change their name
+     *      They only change their name
      *
-     * @param toUpdate
-     * @param _
-     * @param __
+     * @param {User} toUpdate user to be updated
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
-    protected async canUpdate(
-        toUpdate: User,
-        _: Partial<User>,
-        __: User
-    ): Promise<PermissionState> {
+    protected async canUpdate(toUpdate: User): Promise<PermissionState> {
         const disallowedFields = omit(toUpdate, "name");
         return {
             hasPerm: isEmpty(disallowedFields),
@@ -62,8 +59,10 @@ export class UserModel extends BaseModel<User> {
 
     /**
      * A user can delete another user entry if they are admin
-     * @param toDelete
-     * @param user
+     *
+     * @param {User} toDelete user to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -77,9 +76,11 @@ export class UserModel extends BaseModel<User> {
      * A user can create another user entry if EITHER
      * they are admin
      * OR
-     * their name and emails are redacted (i.e. a dummy user)
-     * @param toCreate
-     * @param user
+     * the name and email of the created user are redacted (i.e. a dummy user)
+     *
+     * @param {User} toCreate user to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(

@@ -10,7 +10,8 @@
         "prettier",
         "prettier/@typescript-eslint",
         "prettier/react",
-        "prettier/standard"
+        "prettier/standard",
+        "plugin:jsdoc/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "ignorePatterns": ["config/**", "node_modules"],

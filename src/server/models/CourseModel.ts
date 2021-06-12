@@ -8,7 +8,6 @@ import { DataLoaders } from "../types/dataloaders";
  * Only admins can create and delete courses
  * Read and update permissions are described below
  */
-
 export class CourseModel extends BaseModel<Course> {
     public constructor(loaders: DataLoaders) {
         super(loaders);
@@ -18,6 +17,8 @@ export class CourseModel extends BaseModel<Course> {
 
     /**
      * Anyone can read any course
+     *
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(): Promise<PermissionState> {
@@ -30,10 +31,11 @@ export class CourseModel extends BaseModel<Course> {
      * Checks if a user can update a course
      * Only CURRENT course coordinators or admins can update courses.
      * Only admins can change the course code
-     * TODO: Fill parameters
-     * @param course
-     * @param updatedFields
-     * @param user
+     *
+     * @param {Course} course course object to be updated
+     * @param {Partial<Course>} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(

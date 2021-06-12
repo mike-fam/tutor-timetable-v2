@@ -1,4 +1,4 @@
-import { Mutation, Query, Resolver } from "type-graphql";
+import { Query, Resolver } from "type-graphql";
 
 @Resolver()
 export class HelloResolver {
@@ -6,6 +6,4 @@ export class HelloResolver {
     async hello(): Promise<string> {
         return "Hello world";
     }
-
-    // @Mutation()
 }

@@ -18,8 +18,10 @@ export class PreferenceModel extends BaseModel<Preference> {
      * they are the owner of the preference
      * OR
      * they are course coordinator of the course the preference belongs to
-     * @param preference
-     * @param user
+     *
+     * @param {Preference} preference preference to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -43,10 +45,12 @@ export class PreferenceModel extends BaseModel<Preference> {
      * they are admin
      * OR
      * they are the preference owner AND
-     *      * they don't modify the course staff of the preference
-     * @param preference
-     * @param updatedFields
-     * @param user
+     *      they don't modify the course staff of the preference
+     *
+     * @param {Preference} preference preference to be read
+     * @param {Partial} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -84,8 +88,10 @@ export class PreferenceModel extends BaseModel<Preference> {
     /**
      * Only admins can delete preferences (Hopefully they know what they do)
      * Users cannot delete their own preferences. They can only update them
-     * @param preference
-     * @param user
+     *
+     * @param {Preference} preference preference object to delete
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -102,8 +108,10 @@ export class PreferenceModel extends BaseModel<Preference> {
      * they are admin
      * OR
      * they are course coordinator of the course and term of the preference
-     * @param preference
-     * @param user
+     *
+     * @param {Preference} preference preference object to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(

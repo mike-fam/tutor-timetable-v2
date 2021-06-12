@@ -8,10 +8,12 @@ import DataLoader from "dataloader";
 import has from "lodash/has";
 import { DataLoaders } from "../types/dataloaders";
 import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
-import * as util from "util";
 
 type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
 
+/**
+ * @template T entity type of model
+ */
 export abstract class BaseModel<T extends BaseEntity> {
     protected loader: DataLoader<string, T>;
     protected entityCls: ObjectType<T>;
@@ -261,8 +263,10 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     /**
      * Determines if a user an read an object
-     * @param _: Object to be read
-     * @param user: User performing the reading
+     *
+     * @param {T} _ Object to be read
+     * @param {User} user user performing this action: User performing the reading
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(_: T, user: User): Promise<PermissionState> {
@@ -271,9 +275,11 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     /**
      * Determines if a user can update an object
-     * @param _: obj to be updated
-     * @param __: fields to be updated
-     * @param user
+     *
+     * @param {T} _ object to be updated
+     * @param {Partial<T>} __ updated fields
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -286,8 +292,10 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     /**
      * Determines if a user can delete an object
-     * @param _: object to be deleted
-     * @param user
+     *
+     * @param {T} _ object to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(_: T, user: User): Promise<PermissionState> {
@@ -296,8 +304,10 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     /**
      * Determines if a user can create an object
-     * @param _: object to be created
-     * @param user
+     *
+     * @param {T} _ object to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(_: T, user: User): Promise<PermissionState> {

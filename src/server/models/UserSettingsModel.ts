@@ -13,8 +13,10 @@ export class UserSettingsModel extends BaseModel<UserSettings> {
     /**
      * A user can read a user settings if they are admin or are the owner of the
      * settings entry
-     * @param settings
-     * @param user
+     *
+     * @param {UserSettings} settings settings to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -31,9 +33,11 @@ export class UserSettingsModel extends BaseModel<UserSettings> {
      * they are admin
      * OR
      * they are the owner of the settings and they don't change the owner field
-     * @param settings
-     * @param updatedFields
-     * @param user
+     *
+     * @param {UserSettings} settings settings to be updated
+     * @param {Partial} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -55,8 +59,10 @@ export class UserSettingsModel extends BaseModel<UserSettings> {
 
     /**
      * Only admins can delete user settings
-     * @param toDelete
-     * @param user
+     *
+     * @param {UserSettings} toDelete settings to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -68,8 +74,10 @@ export class UserSettingsModel extends BaseModel<UserSettings> {
 
     /**
      * Only admins can create user settings
-     * @param toCreate
-     * @param user
+     *
+     * @param {UserSettings} toCreate object to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(

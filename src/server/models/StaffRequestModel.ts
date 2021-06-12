@@ -21,8 +21,11 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * They are admin
      * OR
      * They are the requester and the request has not had an accepted offer yet
-     * @param request
-     * @param user
+     *
+     * @param {StaffRequest} request request to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
+     * @protected
      */
     protected async canDelete(
         request: StaffRequest,
@@ -42,14 +45,17 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * they are admin
      * OR
      * ALL of the following applies
-     *      * The requester has to be themself
-     *      * They are allocated to the session the request points to
-     *      * They are not allocated to any of the swapPreference
-     *      * They have not made a request for the same session
-     *      * The session is not in the past
-     *      * The request does not conflict with the freeze state
-     * @param request
-     * @param user
+     *      The requester has to be themself
+     *      They are allocated to the session the request points to
+     *      They are not allocated to any of the swapPreference
+     *      They have not made a request for the same session
+     *      The session is not in the past
+     *      The request does not conflict with the freeze state
+     *
+     * @param {StaffRequest} request request to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
+     * @protected
      */
     protected async canCreate(
         request: StaffRequest,
@@ -166,8 +172,10 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * they are admin
      * OR
      * they work on the same course and term of the request
-     * @param request
-     * @param user
+     *
+     * @param {StaffRequest} request request to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -187,19 +195,21 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
      * OR
      * They are the course coordinator of the person making the request, AND ALL
      * of the following conditions hold
-     *      * They can only change the status from OPEN to CLOSED
-     *      * They can change the finaliser to themself
-     *      * They cannot change ANY other field
+     *      They can only change the status from OPEN to CLOSED
+     *      They can change the finaliser to themself
+     *      They cannot change ANY other field
      * OR
      * They are the requester and ALL of the following conditions hold
-     *      * They cannot change the session the request points to
-     *      * They cannot change the finaliser or the offers
-     *      * They can change the request status to closed IFF
-     *          * The request has an offer with the status of ACCEPTED
-     *      * They don't work on any of the swap preference
-     * @param request
-     * @param updatedField
-     * @param user
+     *      They cannot change the session the request points to
+     *      They cannot change the finaliser or the offers
+     *      They can change the request status to closed IFF
+     *          The request has an offer with the status of ACCEPTED
+     *      They don't work on any of the swap preference
+     *
+     * @param {StaffRequest} request staff request to update
+     * @param {Partial<StaffRequest>} updatedField fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(

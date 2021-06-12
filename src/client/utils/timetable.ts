@@ -14,14 +14,22 @@ import {
 } from "../../utils/tree";
 import { defaultInt, defaultStr } from "../constants";
 
+type SessionStyle = {
+    topPx: CSS.Property.Top<number>;
+    heightPx: CSS.Property.Height<number>;
+    top: number;
+    height: number;
+    display: CSS.Property.Display;
+    width: CSS.Property.Width;
+    left: CSS.Property.Left;
+};
+
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
- * @param startTime: Session start time, in hours
- * @param endTime: Session end time, in hours
- * @param startDay: start hour of day, as int
- * @param endDay: end hour of day, as int
- * @param stackSize: number of clashing sessions
- * @param stackIndex: index of this session relative to other clashing sessions
+ *
+ * @param {Omit<SessionProps, "name">} sessionProps properties of session to get
+ *      style from
+ * @returns {SessionStyle} Style information of session
  */
 export const sessionStyleFromProps = ({
     startTime,
@@ -84,15 +92,19 @@ export const sessionStyleFromProps = ({
 /**
  * Return all ranges with clashed information
  * 2 ranges clash if a range starts later than the other's start, but earlier than its end.
- * @param ranges: array of ranges. A range is an array with the structure [id, start, end]
- * @returns array of objects holding clashed info. Each object has the following structure
+ *
+ * @param {TimeRange} ranges array of ranges. A range is an array with the
+ *      structure [id, start, end]
+ * @returns { {string: StackInfo} } object holding clashed info. Each value has the
+ *     following structure
  *      {
  *          stacked: int,
  *          stackStart: int
  *          stackEnd: int
  *      }
  *      where stacked represents the number of ranges this range clashes with
- *            stackIndex represents the index of this range relative to its clashing range.
+ *      stackIndex represents the index of this range relative to its clashing
+ *      range.
  */
 export const getClashedRanges = (
     ranges: Array<TimeRange>

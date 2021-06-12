@@ -14,8 +14,10 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
      * A user can read a course staff entry if they are a staff of the same
      * course in the same term
      * TODO Fill parameters
-     * @param courseStaff
-     * @param user
+     *
+     * @param {CourseStaff} courseStaff course staff object to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -43,10 +45,10 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
      * The course coordinator can NOT change the timetable or the preference
      * of the course staff entry
      *
-     * TODO Fill parameters
-     * @param toUpdate
-     * @param updatedFields
-     * @param user
+     * @param {CourseStaff} toUpdate course staff object to be updated
+     * @param {Partial<CourseStaff>} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -89,9 +91,10 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
     /**
      * A user can delete a course staff entry if they are admin or the coordinator
      * of that course in that term
-     * TODO Fill parameters
-     * @param toDelete
-     * @param user
+     *
+     * @param {CourseStaff} toDelete course staff object to delete
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -106,9 +109,10 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
     /**
      * A user can create a new course staff entry if they are admin or course
      * coordinator of that course
-     * TODO: Fill in parameters
-     * @param toCreate
-     * @param user
+     *
+     * @param {CourseStaff} toCreate course staff object to create
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(

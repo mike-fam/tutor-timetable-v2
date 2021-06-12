@@ -5,8 +5,10 @@ import { IsoDay, IsoDayFormatting } from "../types/date";
 
 /**
  * Converts an iso week day number to the name of that week day
- * @param isoDay ISO number representation of a week day
- * @param isoDayFormat format to display the day in, see date-fns format documentation
+ *
+ * @param {IsoDay} isoDay ISO number representation of a week day
+ * @param {IsoDayFormatting} isoDayFormat format to display the day in, see date-fns format documentation
+ * @returns {string} the day of a week in the given format
  */
 export const isoNumberToDay = (
     isoDay: IsoDay,

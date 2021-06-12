@@ -18,8 +18,10 @@ export class SessionModel extends BaseModel<Session> {
     /**
      * A user can read a session if they are admin OR
      * they work in the same course that the session belongs to
-     * @param session
-     * @param user
+     *
+     * @param {Session} session session to read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canRead(
@@ -37,9 +39,11 @@ export class SessionModel extends BaseModel<Session> {
      * OR
      * They are the course coordinator AND they only make change to the location
      * (For updating the allocation, see the allocate and deallocate methods)
-     * @param session
-     * @param updatedFields
-     * @param user
+     *
+     * @param {Session} session session to update
+     * @param {Partial<Session>} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -64,8 +68,10 @@ export class SessionModel extends BaseModel<Session> {
     /**
      * A user can delete a session if they are course coordinator of that
      * session
-     * @param session
-     * @param user
+     *
+     * @param {Session} session session to delete
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -85,8 +91,10 @@ export class SessionModel extends BaseModel<Session> {
      * they are admin
      * OR
      * they are course coordinator of that session
-     * @param session
-     * @param user
+     *
+     * @param {Session} session session to create
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(
@@ -112,11 +120,12 @@ export class SessionModel extends BaseModel<Session> {
      * They are admin
      * OR
      * They are course coordinator of the session, AND ALL of the following hold
-     *      * The staff member has to work in the same course in the same term
-     *      * The staff member is not already on that session
-     * @param staff
-     * @param session
-     * @param user
+     *      The staff member has to work in the same course in the same term
+     *      The staff member is not already on that session
+     *
+     * @param {Session} session session to allocate users to
+     * @param {User} staff users to allocate to sessions
+     * @param {User} user user performing this action
      * @protected
      */
     public async allocateMultiple(
@@ -159,26 +168,27 @@ export class SessionModel extends BaseModel<Session> {
      * they are admin
      * OR
      * They are a staff member of this session, AND ALL of the following hold
-     *      * There is a request that points to this session OR
-     *          * The request is of type PERMANENT and points to a session of
+     *      There is a request that points to this session OR
+     *          The request is of type PERMANENT and points to a session of
      *            the same stream that precedes this session
-     *      * They are the requester
-     *      * There is an offer of the request that has a status of ACCEPTED
-     *      * That offer has to be the offer that's accepted most recently
-     *      * The allocated staff is the offer maker
+     *      They are the requester
+     *      There is an offer of the request that has a status of ACCEPTED
+     *      That offer has to be the offer that's accepted most recently
+     *      The allocated staff is the offer maker
      * OR
      * They are a staff member of this session, AND ALL of the following hold
-     *      * There is an accepted offer with the acceptedSession field pointing
+     *      There is an accepted offer with the acceptedSession field pointing
      *          to this session OR
-     *          * The request of the offer is of type PERMANENT and session is
+     *          The request of the offer is of type PERMANENT and session is
      *              subsequent to the offer's session's
-     *      * The request of that offer is made by user
-     *      * That offer is the most recently accepted offer that points to
+     *      The request of that offer is made by user
+     *      That offer is the most recently accepted offer that points to
      *          that session
-     *      * The staff member allocated to session must be the user
-     * @param session
-     * @param staff
-     * @param user
+     *      The staff member allocated to session must be the user
+     *
+     * @param {Session} session session to allocate user to
+     * @param {User} staff user to be allocated to session
+     * @param {User} user user performing this action
      * @protected
      */
     public async allocateSingle(
@@ -269,10 +279,11 @@ export class SessionModel extends BaseModel<Session> {
      * OR
      * They are course coordinator of the course of this session, AND ALL of
      * the following conditions hold
-     *      * The staff member has to be working on said session
-     * @param session
-     * @param staff
-     * @param user
+     *      The staff member has to be working on said session
+     *
+     * @param {Session} session session to deallocate users from
+     * @param {User[]} staff users to deallocate from session
+     * @param {User} user user performing this action
      */
     public async deallocateMultiple(
         session: Session,
@@ -303,25 +314,26 @@ export class SessionModel extends BaseModel<Session> {
      * OR
      * They are a staff member of the course of this session, AND ALL of the
      * following conditions hold
-     *      * There is an offer that points to one of their requests
-     *      * The request is of this session, OR
-     *          * The request is of type PERMANENT and is of a session of the
+     *      There is an offer that points to one of their requests
+     *      The request is of this session, OR
+     *          The request is of type PERMANENT and is of a session of the
      *            same stream that precedes this session
-     *      * The offer status is ACCEPTED
-     *      * The deallocated staff is the user themself
+     *      The offer status is ACCEPTED
+     *      The deallocated staff is the user themself
      * OR
      * They are staff member of the course of this session, AND ALL of the
      * following conditions hold
-     *      * There is an offer that points to one of their requests
-     *      * The acceptedSession field points to this session, OR
-     *          * The request is of type PERMANENT and the acceptedSession field
+     *      There is an offer that points to one of their requests
+     *      The acceptedSession field points to this session, OR
+     *          The request is of type PERMANENT and the acceptedSession field
      *            points to a session of the same stream that precedes
      *            this session
-     *      * The offer status is ACCEPTED
-     *      * The deallocated staff is the offer maker
-     * @param session
-     * @param staff
-     * @param user
+     *      The offer status is ACCEPTED
+     *      The deallocated staff is the offer maker
+     *
+     * @param {Session} session session to deallocate user from
+     * @param {User} staff user to be deallocated
+     * @param {User} user user performing this action
      * @protected
      */
     public async deallocateSingle(
@@ -394,8 +406,9 @@ export class SessionModel extends BaseModel<Session> {
      * They are admin
      * OR
      * They are course coordinator of the stream
-     * @param session
-     * @param user
+     *
+     * @param {Session} session session to clear the allocation of
+     * @param {User} user user performing this action
      */
     public async clearAllocation(session: Session, user: User): Promise<void> {
         const course = await session.getCourse();

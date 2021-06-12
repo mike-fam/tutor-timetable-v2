@@ -16,6 +16,9 @@ export class TermModel extends BaseModel<Term> {
 
     /**
      * Everyone can read a term entry
+     *
+     * @returns {PermissionState} indicates if user can perform this action
+     * @protected
      */
     protected async canRead(): Promise<PermissionState> {
         return { hasPerm: true };

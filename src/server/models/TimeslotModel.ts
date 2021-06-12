@@ -18,8 +18,11 @@ export class TimeslotModel extends BaseModel<Timeslot> {
      * they are the owner of that timeslot
      * OR
      * they are the course coordinator of that owner
-     * @param timeslot
-     * @param user
+     *
+     * @param {Timeslot} timeslot timeslot to be read
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
+     * @protected
      */
     protected async canRead(
         timeslot: Timeslot,
@@ -52,10 +55,12 @@ export class TimeslotModel extends BaseModel<Timeslot> {
      * They are admin
      * OR
      * They are the owner of the timeslot, AND
-     *      * They cannot change the user of the timeslot
-     * @param timeslot
-     * @param updatedFields
-     * @param user
+     *      They cannot change the user of the timeslot
+     *
+     * @param {Timeslot} timeslot timeslot to be updated
+     * @param {Partial} updatedFields fields to be updated
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canUpdate(
@@ -80,8 +85,10 @@ export class TimeslotModel extends BaseModel<Timeslot> {
      * they are admin
      * OR
      * they are the owner of that timeslot
-     * @param timeslot
-     * @param user
+     *
+     * @param {Timeslot} timeslot timeslot to be deleted
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canDelete(
@@ -96,8 +103,10 @@ export class TimeslotModel extends BaseModel<Timeslot> {
      * they are admin
      * OR
      * they are the owner of that timeslot
-     * @param timeslot
-     * @param user
+     *
+     * @param {Timeslot} timeslot timeslot to be created
+     * @param {User} user user performing this action
+     * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */
     protected async canCreate(
