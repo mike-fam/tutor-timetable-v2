@@ -1,0 +1,27 @@
+version: 3.7
+
+services:
+    web:
+        image: node:latest
+        command:
+        ports:
+            - 3000:3000
+        working_dir: /app
+        volumes:
+            - ./:/app
+        environment:
+            DB_URL: "${DB_URL}" 
+            CORS_ORIGIN: "${CORS_ORIGIN}"
+            ALLOCATOR_URL: "${ALLOCATOR_URL}"
+            NODE_ENV: "${NODE_ENV}"
+            MAIL_SERVER: "${MAIL_SERVER}"
+            MAIL_PORT: "${MAIL_PORT}"
+    postgres:
+        image: postgres:latest
+        volumes:
+            - tutor-timetable-postgres:/var/lib/postgresql/data
+        restart: always
+        ports:
+            - 5432:5432
+volumes:
+    tutor-timetable-postgres:
