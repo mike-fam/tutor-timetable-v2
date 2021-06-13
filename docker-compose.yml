@@ -1,27 +1,29 @@
-version: 3.7
+version: "3.7"
 
 services:
-    web:
+    dev:
         image: node:latest
-        command:
+        command: "cp .env.docker .env && ./wait-for postgres:5431 -- yarn dev"
         ports:
             - 3000:3000
+            - 5000:5000
         working_dir: /app
         volumes:
             - ./:/app
-        environment:
-            DB_URL: "${DB_URL}" 
-            CORS_ORIGIN: "${CORS_ORIGIN}"
-            ALLOCATOR_URL: "${ALLOCATOR_URL}"
-            NODE_ENV: "${NODE_ENV}"
-            MAIL_SERVER: "${MAIL_SERVER}"
-            MAIL_PORT: "${MAIL_PORT}"
+#        env_file: .env.docker
+        depends_on:
+            - postgres
     postgres:
         image: postgres:latest
         volumes:
             - tutor-timetable-postgres:/var/lib/postgresql/data
         restart: always
         ports:
-            - 5432:5432
+            - 5431:5432
+        environment:
+
+#    postgres-seed:
+
+
 volumes:
     tutor-timetable-postgres:
