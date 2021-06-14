@@ -17,7 +17,10 @@ import {
 
 export default {
     type: "postgres",
-    url: process.env.DB_URL,
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    password: process.env.DB_PW,
     entities: [
         Course,
         CourseStaff,
