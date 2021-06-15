@@ -92,6 +92,14 @@ export class SessionStreamResolver {
         );
     }
 
+    /**
+     * Add new merged session streams in a front-end friendly structure
+     *
+     * @param {MergedStreamInput[]} streamInputs session stream inputs with
+     *      merged allocation information
+     * @param {MyContext} context context passed from apollo server
+     * @returns {Promise<SessionStream[]>} session streams created
+     */
     @Mutation(() => [SessionStream])
     async addMergedSessionStreams(
         @Arg("sessionStreams", () => [MergedStreamInput])
