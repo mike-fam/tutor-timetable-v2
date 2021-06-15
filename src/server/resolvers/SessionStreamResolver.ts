@@ -117,11 +117,6 @@ export class SessionStreamResolver {
                 { courseId, termId },
                 user
             );
-            if (startTime >= endTime) {
-                throw new Error(
-                    "Start time of a session has to be less than end time"
-                );
-            }
             // map in { numStaff: week[] } format
             const numberOfStaffWeekMap: Map<number, number[]> = new Map();
             // set of all weeks
@@ -171,7 +166,7 @@ export class SessionStreamResolver {
                     startTime,
                     weeks,
                     location,
-                    numberOfStaff,
+                    numberOfStaff: numberOfStaff - minStaffNum,
                     basedId: rootStream.id,
                 });
             }
