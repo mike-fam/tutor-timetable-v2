@@ -21,6 +21,7 @@ services:
         image: postgres:latest
         volumes:
             - tutor-timetable-postgres:/var/lib/postgresql/data
+            - ./bootstrap/data:/docker-entrypoint-initdb.d
         restart: always
 #        ports:
 #            - 5431:5432
@@ -28,7 +29,7 @@ services:
         environment:
             POSTGRES_USER: "${DB_USER}"
             POSTGRES_PASSWORD: "${DB_PW}"
-            POSTGRES_DB: "${DB_NAME}"
+#            POSTGRES_DB: "${DB_NAME}"
 #    postgres-seed:
 
 
