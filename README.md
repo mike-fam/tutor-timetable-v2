@@ -9,10 +9,5 @@ Proposed timetabling platform designed for UQ casual tutors, now in TypeScript
 To set up the dev environment, you have to clone this repo and run these commands
 ```shell
 yarn
-yarn server-dev
+docker compose up -d
 ```
-And then run this command on another terminal
-```shell
-yarn client-dev
-```
-
