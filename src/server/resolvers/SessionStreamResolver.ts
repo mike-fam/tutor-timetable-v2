@@ -1,17 +1,10 @@
-import {
-    Arg,
-    Ctx,
-    FieldResolver,
-    Int,
-    Mutation,
-    Query,
-    Resolver,
-    Root,
-} from "type-graphql";
+import { Arg, Ctx, FieldResolver, Int, Mutation, Query, Resolver, Root } from "type-graphql";
 import { Session, SessionStream, Timetable, User } from "../entities";
 import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 import { MyContext } from "../types/context";
+import { Models } from "../types/models";
+import { Request } from "express";
 
 @Resolver(() => SessionStream)
 export class SessionStreamResolver {
@@ -19,7 +12,7 @@ export class SessionStreamResolver {
     async sessionStreams(
         @Arg("termId") termId: string,
         @Arg("courseIds", () => [String]) courseIds: string[],
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream[]> {
         const timetable = await models.timetable.get(
             {
@@ -28,11 +21,11 @@ export class SessionStreamResolver {
                     courseId,
                 })),
             },
-            req.user
+            req.user,
         );
         return await models.sessionStream.getMany(
             { timetableId: timetable.id },
-            req.user
+            req.user,
         );
     }
 
@@ -42,13 +35,13 @@ export class SessionStreamResolver {
         @Arg("name") name: string,
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("numberOfStaff", () => Int) numberOfStaff: number,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream> {
         const sessionStream = await models.sessionStream.getById(
             sessionStreamId,
-            req.user
+            req.user,
         );
-        return await models.sessionStream.create(
+        const newStream = await models.sessionStream.create(
             {
                 name,
                 weeks,
@@ -61,8 +54,10 @@ export class SessionStreamResolver {
                 location: sessionStream.location,
                 based: sessionStream,
             },
-            req.user
+            req.user,
         );
+        await this.generateSessions(newStream, req, models);
+        return newStream;
     }
 
     @Mutation(() => SessionStream)
@@ -76,9 +71,9 @@ export class SessionStreamResolver {
         @Arg("weeks", () => [Int]) weeks: number[],
         @Arg("location") location: string,
         @Arg("numberOfStaff", () => Int) numberOfStaff: number,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream> {
-        return await models.sessionStream.create(
+        const newStream = await models.sessionStream.create(
             {
                 timetableId,
                 name,
@@ -90,8 +85,10 @@ export class SessionStreamResolver {
                 location,
                 numberOfStaff,
             },
-            req.user
+            req.user,
         );
+        await this.generateSessions(newStream, req, models);
+        return newStream;
     }
 
     @Mutation(() => SessionStream)
@@ -99,43 +96,39 @@ export class SessionStreamResolver {
         @Arg("streamId") streamId: string,
         @Arg("newStaffs", () => [String]) newStaffs: string[],
         @Arg("updateSessions", () => Boolean) updateSessions: boolean,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream> {
         const stream = await models.sessionStream.getById(streamId, req.user);
         const usersToAllocate = await models.user.getByIds(newStaffs, req.user);
         await models.sessionStream.allocateMultiple(
             stream,
             usersToAllocate,
-            req.user
+            req.user,
         );
         if (updateSessions) {
             const sessions = await models.session.getByIds(
                 stream.sessionIds,
-                req.user
+                req.user,
             );
             for (const session of sessions) {
                 await models.session.allocateMultiple(
                     session,
                     usersToAllocate,
-                    req.user
+                    req.user,
                 );
             }
         }
         return stream;
     }
 
-    @Mutation(() => [Session])
     async generateSessions(
-        @Arg("sessionStreamId") sessionStreamId: string,
-        @Ctx() { req, models }: MyContext
+        stream: SessionStream,
+        req: Request,
+        models: Models,
     ): Promise<Session[]> {
-        const stream = await models.sessionStream.getById(
-            sessionStreamId,
-            req.user
-        );
         const allocatedUsers = await models.user.getByIds(
             stream.allocatedUserIds,
-            req.user
+            req.user,
         );
         return await models.session.createMany(
             stream.weeks.map((week) => ({
@@ -144,14 +137,14 @@ export class SessionStreamResolver {
                 sessionStream: stream,
                 allocatedUsers,
             })),
-            req.user
+            req.user,
         );
     }
 
     @FieldResolver(() => Timetable)
     async timetable(
         @Root() root: SessionStream,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<Timetable> {
         return await models.timetable.getById(root.timetableId, req.user);
     }
@@ -159,7 +152,7 @@ export class SessionStreamResolver {
     @FieldResolver(() => [Session])
     async sessions(
         @Root() root: SessionStream,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<Session[]> {
         return await models.session.getByIds(root.sessionIds, req.user);
     }
@@ -167,18 +160,18 @@ export class SessionStreamResolver {
     @FieldResolver(() => [SessionStream])
     async basedStreams(
         @Root() root: SessionStream,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream[]> {
         return await models.sessionStream.getByIds(
             root.basedStreamIds,
-            req.user
+            req.user,
         );
     }
 
     @FieldResolver(() => SessionStream, { nullable: true })
     async based(
         @Root() root: SessionStream,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<SessionStream | null> {
         if (!root.basedId) {
             return null;
@@ -189,7 +182,7 @@ export class SessionStreamResolver {
     @FieldResolver(() => [User])
     async allocatedUsers(
         @Root() root: SessionStream,
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models }: MyContext,
     ): Promise<User[]> {
         return await models.user.getByIds(root.allocatedUserIds, req.user);
     }
