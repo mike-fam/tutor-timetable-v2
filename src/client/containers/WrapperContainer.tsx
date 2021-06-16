@@ -51,6 +51,8 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         username: "",
         email: "",
         name: "",
+        isAdmin: false,
+        courseStaffs: [],
     });
     const [showMySessionsOnly, setShowMySessionsOnly] = useLocalStorage(
         showMySessionsKeys,

@@ -8,6 +8,8 @@ export const UserContext = createContext<UserContextType>({
         username: "",
         name: "",
         email: "",
+        isAdmin: false,
+        courseStaffs: [],
     },
     setUser: () => {},
 });

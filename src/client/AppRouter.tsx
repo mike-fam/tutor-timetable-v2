@@ -7,6 +7,9 @@ import { AvailabilityPageContainer } from "./containers/availabilities/Availabil
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
 import { AllocatorPageContainer } from "./containers/allocator/AllocatorPageContainer";
 import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffPageContainer";
+import { PermissionDenied } from "./PermissionDenied";
+import { SecretRoute } from "./components/helpers/SecretRoute";
+import { Role } from "./generated/graphql";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -14,19 +17,35 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
             <NavBar />
             <Switch>
                 <Route path="/" component={TimetablePageContainer} exact />
-                <Route path="/requests" component={RequestPageContainer} />
                 <Route
+                    path="/permission-denied"
+                    component={PermissionDenied}
+                    exact
+                />
+                <SecretRoute
+                    path="/requests"
+                    component={RequestPageContainer}
+                    exact
+                />
+                <SecretRoute
                     path="/availabilities"
                     component={AvailabilityPageContainer}
+                    exact
                 />
-                <Route
+                <SecretRoute
                     path="/preferences"
                     component={PreferencePageContainer}
+                    exact
                 />
-                <Route path="/allocator" component={AllocatorPageContainer} />
-                <Route
+                <SecretRoute
+                    path="/allocator"
+                    component={AllocatorPageContainer}
+                    allowedRoles={[Role.CourseCoordinator]}
+                />
+                <SecretRoute
                     path="/course-staff"
                     component={CourseStaffPageContainer}
+                    allowedRoles={[Role.CourseCoordinator]}
                 />
             </Switch>
         </BrowserRouter>
