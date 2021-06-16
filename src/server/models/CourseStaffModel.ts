@@ -24,11 +24,7 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
         courseStaff: CourseStaff,
         user: User
     ): Promise<PermissionState> {
-        if (user.isAdmin) {
-            return { hasPerm: true };
-        }
-        const loaders = this.loaders;
-        const userRoles: CourseStaff[] = (await loaders.courseStaff.loadMany(
+        const userRoles = (await this.loaders.courseStaff.loadMany(
             user.courseStaffIds
         )) as CourseStaff[];
 
@@ -120,10 +116,9 @@ export class CourseStaffModel extends BaseModel<CourseStaff> {
         user: User
     ): Promise<PermissionState> {
         // Cannot use course and term directly, have to use timetableId here
-        const loaders = this.loaders;
         const timetable =
-            (toCreate.timetable as Timetable) ||
-            (await loaders.timetable.load(toCreate.timetableId));
+            ((await toCreate.timetable) as Timetable) ||
+            (await this.loaders.timetable.load(toCreate.timetableId || ""));
         const course = await timetable.getCourse();
         const term = await timetable.getTerm();
         return { hasPerm: await user.isCoordinatorOf(course, term) };
