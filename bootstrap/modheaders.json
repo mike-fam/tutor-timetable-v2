@@ -1598,38 +1598,5 @@
     "shortTitle": "NB",
     "title": "Nelson Brown",
     "urlReplacements": []
-  },
-  {
-    "appendMode": false,
-    "backgroundColor": "#3aab8d",
-    "filters": [
-      {
-        "comment": "",
-        "enabled": true,
-        "resourceType": [],
-        "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
-      }
-    ],
-    "headers": [
-      {
-        "comment": "",
-        "enabled": true,
-        "name": "X-Uq-User",
-        "value": "uqmpham6"
-      },
-      {
-        "comment": "",
-        "enabled": true,
-        "name": "X-Kvd-Payload",
-        "value": "{\"email\": \"nelson.brown@example.com\", \"name\": \"Nelson Brown\"}"
-      }
-    ],
-    "hideComment": true,
-    "respHeaders": [],
-    "shortTitle": "1",
-    "textColor": "#ffffff",
-    "title": "M",
-    "urlReplacements": []
   }
 ]
