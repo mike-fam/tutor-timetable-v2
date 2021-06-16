@@ -22,6 +22,7 @@ import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
 import { EditUserDetailsModalContainer } from "../containers/navbar/EditUserDetailsModalContainer";
 import { TimetableSettingsModal } from "../containers/TimetableSettingsModal";
+import { Role } from "../generated/graphql";
 
 type Props = {};
 
@@ -58,27 +59,32 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                     <RouterLink to="/preferences" style={{ height: "100%" }}>
                         <NavBarMenuButton>Preferences</NavBarMenuButton>
                     </RouterLink>
-                    <Menu>
-                        <MenuButton
-                            as={NavBarMenuButton}
-                            rightIcon={<ChevronDownIcon />}
-                            style={{ cursor: "pointer" }}
-                        >
-                            Tools
-                        </MenuButton>
-                        <MenuList style={{ margin: 0 }}>
-                            <MenuItem>
-                                <RouterLink to="/allocator">
-                                    Allocator
-                                </RouterLink>
-                            </MenuItem>
-                            <MenuItem>
-                                <RouterLink to="/course-staff">
-                                    Course Staff
-                                </RouterLink>
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
+                    {user.courseStaffs.some(
+                        (courseStaff) =>
+                            courseStaff.role === Role.CourseCoordinator
+                    ) && (
+                        <Menu>
+                            <MenuButton
+                                as={NavBarMenuButton}
+                                rightIcon={<ChevronDownIcon />}
+                                style={{ cursor: "pointer" }}
+                            >
+                                Tools
+                            </MenuButton>
+                            <MenuList style={{ margin: 0 }}>
+                                <MenuItem>
+                                    <RouterLink to="/allocator">
+                                        Allocator
+                                    </RouterLink>
+                                </MenuItem>
+                                <MenuItem>
+                                    <RouterLink to="/course-staff">
+                                        Course Staff
+                                    </RouterLink>
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    )}
                     <Menu>
                         <MenuButton
                             as={NavBarMenuButton}
