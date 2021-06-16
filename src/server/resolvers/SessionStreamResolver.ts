@@ -158,6 +158,7 @@ export class SessionStreamResolver {
                     weeks: Array.from(allWeeks),
                     location,
                     numberOfStaff: minStaffNum,
+                    allocatedUserIds: [],
                 },
                 user
             );
@@ -172,10 +173,12 @@ export class SessionStreamResolver {
                     type,
                     day,
                     startTime,
+                    endTime,
                     weeks,
                     location,
                     numberOfStaff: numberOfStaff - minStaffNum,
                     basedId: rootStream.id,
+                    allocatedUserIds: [],
                 });
             }
         }
@@ -289,7 +292,7 @@ export class SessionStreamResolver {
         models: Models
     ): Promise<Session[]> {
         const allocatedUsers = await models.user.getByIds(
-            stream.allocatedUserIds,
+            stream.allocatedUserIds || [],
             req.user
         );
         return await models.session.createMany(

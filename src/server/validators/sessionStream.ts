@@ -10,7 +10,10 @@ export const UniqueWeeks = (validationOptions?: ValidationOptions) => {
             name: "uniqueWeeks",
             target: object.constructor,
             propertyName: propertyName,
-            options: validationOptions,
+            options: {
+                ...validationOptions,
+                message: "Multiple of the same weeks specified",
+            },
             validator: {
                 validate(value: MergedStreamTutorNumbers[]) {
                     const weeks = value.map((tutorNumber) => tutorNumber.week);
