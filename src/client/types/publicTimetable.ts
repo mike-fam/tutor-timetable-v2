@@ -1,3 +1,7 @@
+export type PublicTimetableData = {
+    [key: string]: CourseOffering;
+};
+
 export interface CourseOffering {
     subject_code: string;
     callista_code: string;
