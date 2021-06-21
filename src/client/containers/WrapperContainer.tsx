@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, useToast } from "@chakra-ui/react";
+import { Box, Center, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
 import { IsoDay } from "../../types/date";
 import { useQueryWithError } from "../hooks/useQueryWithError";
@@ -16,6 +16,7 @@ import {
     displayedDaysKey,
     showMySessionsKeys,
 } from "../constants/localStorageKeys";
+import { LoadingSpinner } from "../components/helpers/LoadingSpinner";
 
 type Props = {};
 
@@ -48,9 +49,9 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
     );
     const [user, setUser] = useState<UserState>({
         id: defaultStr,
-        username: "",
-        email: "",
-        name: "",
+        username: defaultStr,
+        email: defaultStr,
+        name: defaultStr,
         isAdmin: false,
         courseStaffs: [],
     });
@@ -60,7 +61,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
     );
     const [dayStartTime, setDayStartTime] = useState(7);
     const [dayEndTime, setDayEndTime] = useState(20);
-    const { data } = useQueryWithError(useMeQuery);
+    const { data, loading } = useQueryWithError(useMeQuery);
     const sessionsUtil = useSessionUtils();
 
     useEffect(() => {
@@ -69,6 +70,14 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         }
         setUser(data.me);
     }, [data]);
+    if (!data?.me || loading || !user.id) {
+        console.log("No data yet");
+        return (
+            <Center>
+                <LoadingSpinner />
+            </Center>
+        );
+    }
     return (
         <UserContext.Provider
             value={{

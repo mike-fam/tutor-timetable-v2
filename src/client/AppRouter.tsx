@@ -10,6 +10,7 @@ import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffP
 import { PermissionDenied } from "./PermissionDenied";
 import { SecretRoute } from "./components/helpers/SecretRoute";
 import { Role } from "./generated/graphql";
+import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -45,6 +46,11 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 <SecretRoute
                     path="/course-staff"
                     component={CourseStaffPageContainer}
+                    allowedRoles={[Role.CourseCoordinator]}
+                />
+                <SecretRoute
+                    path="/session-settings"
+                    component={SessionSettingsPageContainer}
                     allowedRoles={[Role.CourseCoordinator]}
                 />
             </Switch>

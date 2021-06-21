@@ -16,6 +16,8 @@ export const SecretRoute: React.FC<Props> = ({
         return <Route {...props} />;
     }
     if (user.courseStaffs.length === 0) {
+        console.log("No course staff");
+        console.log(user);
         return <Redirect to="/permission-denied" />;
     }
     if (
@@ -23,6 +25,7 @@ export const SecretRoute: React.FC<Props> = ({
             allowedRoles.includes(courseStaff.role)
         ).length === 0
     ) {
+        console.log("No suitable roles");
         return <Redirect to="/permission-denied" />;
     }
     return <Route {...props} />;

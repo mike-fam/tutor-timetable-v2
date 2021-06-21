@@ -2,6 +2,9 @@ import { Course, Term, TermType } from "../generated/graphql";
 import axios from "axios";
 import { PublicTimetableData } from "../types/publicTimetable";
 
+type TermLike = Partial<Term> & Pick<Term, "id" | "year" | "type">;
+type CourseLike = Partial<Course> & Pick<Course, "id" | "code">;
+
 export const termTypeToTimetableParam = (termType: TermType): string => {
     switch (termType) {
         case TermType.Semester_1:
@@ -22,19 +25,18 @@ export const termTypeToTimetableParam = (termType: TermType): string => {
     }
 };
 
-export const getPublicTimetableData = async (term: Term, course: Course) => {
+export const getPublicTimetableData = async (
+    term: TermLike,
+    course: CourseLike
+) => {
     const url = `https://timetable.my.uq.edu.au/${
         term.year % 2 === 0 ? "even" : "odd"
     }/rest/timetable/subjects`;
     const defaultConfig = {
         headers: {
             Accept: "application/json, text/javascript, */*; q=0.01",
-            DNT: "1",
             "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Dest": "empty",
         },
     };
     const data = {
