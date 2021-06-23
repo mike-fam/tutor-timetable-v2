@@ -68,14 +68,14 @@ export class CourseStaffResolver {
         { courseId, termId }: CourseTermIdInput,
         @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
+        const user = req.user;
+        const timetable = await models.timetable.get(
+            { courseId, termId },
+            user
+        );
         return await models.courseStaff.getMany(
-            {
-                timetable: {
-                    courseId,
-                    termId,
-                },
-            },
-            req.user
+            { timetableId: timetable.id },
+            user
         );
     }
 
