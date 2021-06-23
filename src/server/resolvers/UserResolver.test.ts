@@ -20,7 +20,6 @@ beforeEach(async () => {
 const meQuery = `
 query Me {
     me {
-        id
         username
         name
         email
@@ -36,7 +35,6 @@ describe("Test User Resolver", () => {
         });
         expect(me.data).toEqual({
             me: {
-                id: "52cbc02c-c5ac-401f-80ab-25eb8ff15f45",
                 username: "uqmnguy",
                 name: "Marvin Nguyen",
                 email: "marvin.nguyen@example.com",
