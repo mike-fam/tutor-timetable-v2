@@ -53,7 +53,7 @@ export class AvailabilityResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
         const user = req.user;
-        return await models.timeslot.getMany({ user }, user);
+        return await models.timeslot.getMany({ userId: user.id }, user);
     }
 
     @Mutation(() => [Timeslot])
@@ -102,10 +102,8 @@ export class AvailabilityResolver {
             },
             user
         );
-        return await models.timeslot.save(
-            [...newSessions, ...updatedTimeslots],
-            user
-        );
+        await models.timeslot.save([...newSessions, ...updatedTimeslots], user);
+        return await models.timeslot.getMany({ userId: user.id }, user);
     }
 
     @FieldResolver(() => User)
