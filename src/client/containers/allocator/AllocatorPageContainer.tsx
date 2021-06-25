@@ -36,7 +36,6 @@ import {
     AllocatorTable,
 } from "../../components/allocator/AllocatorTable";
 import { SessionTheme } from "../../types/session";
-import { isNumeric } from "../../../utils/string";
 
 type Props = {};
 
@@ -155,15 +154,15 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             );
             requestAllocationData.requestAllocation.allocations.forEach(
                 ({ sessionStream, staff }) => {
+                    console.log(staff.length);
                     setSessionsInfo((prev) =>
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,
                             allocation: staff.map((staff) => staff.name),
-                            theme: staff.some((staffMember) =>
-                                isNumeric(staffMember.id)
-                            )
-                                ? SessionTheme.ERROR
-                                : SessionTheme.PRIMARY,
+                            theme:
+                                staff.length < sessionStream.numberOfStaff
+                                    ? SessionTheme.ERROR
+                                    : SessionTheme.PRIMARY,
                         })
                     );
                 }
