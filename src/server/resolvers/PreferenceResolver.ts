@@ -14,6 +14,7 @@ import { MyContext } from "../types/context";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
 import { PreferenceModel } from "../models/PreferenceModel";
+import { Models } from "../types/models";
 
 @InputType()
 class PreferenceInput {
@@ -33,18 +34,20 @@ export class PreferenceResolver {
         owner: User,
         courseId: string,
         termId: string,
-        model: PreferenceModel,
+        models: Models,
         user: User
     ) {
-        return await model.getIfExists(
+        const timetable = await models.timetable.get(
+            { termId, courseId },
+            user
+        );
+        const courseStaff = await models.courseStaff.get(
+            { timetableId: timetable.id, userId: user.id },
+            user
+        );
+        return await models.preference.getIfExists(
             {
-                courseStaff: {
-                    timetable: {
-                        termId,
-                        courseId,
-                    },
-                    userId: owner.id,
-                },
+                courseStaffId: courseStaff.id,
             },
             user
         );
@@ -60,12 +63,11 @@ export class PreferenceResolver {
             req.user,
             courseId,
             termId,
-            models.preference,
+            models,
             req.user
         );
     }
 
-    // TODO: Only course coordinators can do this
     @Query(() => Preference)
     async preferenceByUsername(
         @Arg("username") username: string,
@@ -78,7 +80,7 @@ export class PreferenceResolver {
             user,
             courseId,
             termId,
-            models.preference,
+            models,
             req.user
         );
     }
@@ -91,38 +93,43 @@ export class PreferenceResolver {
         { sessionType, maxContigHours, maxWeeklyHours }: PreferenceInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Preference> {
+        const user = req.user;
         let preference = await PreferenceResolver.getPreference(
             req.user,
             courseId,
             termId,
-            models.preference,
-            req.user
+            models,
+            user
+        );
+        const timetable = await models.timetable.get(
+            {
+                courseId,
+                termId,
+            },
+            user
         );
         if (!preference) {
             const courseStaff = await models.courseStaff.get(
                 {
-                    timetable: {
-                        courseId,
-                        termId,
-                    },
-                    user: req.user,
+                    timetableId: timetable.id,
+                    userId: user.id,
                 },
-                req.user
+                user
             );
             return await models.preference.create(
                 {
                     sessionType,
                     maxContigHours,
                     maxWeeklyHours,
-                    courseStaff,
+                    courseStaffId: courseStaff.id,
                 },
-                req.user
+                user
             );
         } else {
             return await models.preference.update(
                 preference,
                 { sessionType, maxContigHours, maxWeeklyHours },
-                req.user
+                user
             );
         }
     }
