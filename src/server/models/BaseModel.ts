@@ -131,7 +131,6 @@ export abstract class BaseModel<T extends BaseEntity> {
     public async create(entityLike: Partial<T>, user: User): Promise<T> {
         const toCreate: T = (this.entityCls as any).create(entityLike);
         const { hasPerm, errMsg } = await this.permCreate(toCreate, user);
-        console.log(toCreate);
         if (hasPerm) {
             return await toCreate.save();
         }
