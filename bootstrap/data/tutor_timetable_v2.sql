@@ -133,9 +133,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.course (
-                               code character varying(20) NOT NULL,
-                               title character varying(100) NOT NULL,
-                               id uuid DEFAULT public.uuid_generate_v4() NOT NULL
+    code character varying(20) NOT NULL,
+    title character varying(100) NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL
 );
 
 
@@ -146,13 +146,13 @@ ALTER TABLE public.course OWNER TO postgres;
 --
 
 CREATE TABLE public.course_staff (
-                                     role character varying NOT NULL,
-                                     "isNew" boolean NOT NULL,
-                                     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                     "userId" uuid NOT NULL,
-                                     "timetableId" uuid NOT NULL,
-                                     "preferenceId" uuid,
-                                     CONSTRAINT "CHK_7134fed2fd5c843787e17ccd39" CHECK ((((role)::text = 'Course Coordinator'::text) OR ((role)::text = 'Staff'::text)))
+    role character varying NOT NULL,
+    "isNew" boolean NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "userId" uuid NOT NULL,
+    "timetableId" uuid NOT NULL,
+    "preferenceId" uuid,
+    CONSTRAINT "CHK_7134fed2fd5c843787e17ccd39" CHECK ((((role)::text = 'Course Coordinator'::text) OR ((role)::text = 'Staff'::text)))
 );
 
 
@@ -163,9 +163,9 @@ ALTER TABLE public.course_staff OWNER TO postgres;
 --
 
 CREATE TABLE public.migrations (
-                                   id integer NOT NULL,
-                                   "timestamp" bigint NOT NULL,
-                                   name character varying NOT NULL
+    id integer NOT NULL,
+    "timestamp" bigint NOT NULL,
+    name character varying NOT NULL
 );
 
 
@@ -198,14 +198,14 @@ ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 --
 
 CREATE TABLE public.offer (
-                              id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                              "requestId" uuid NOT NULL,
-                              "userId" uuid NOT NULL,
-                              status character varying DEFAULT 'OPEN'::character varying NOT NULL,
-                              "acceptedSessionId" uuid,
-                              "mustSwap" boolean DEFAULT false NOT NULL,
-                              "acceptedDate" timestamp with time zone,
-                              CONSTRAINT "CHK_3898cca51d95c3dff6602780bf" CHECK ((((status)::text = 'OPEN'::text) OR ((status)::text = 'ACCEPTED'::text) OR ((status)::text = 'REJECTED'::text) OR ((status)::text = 'AWAITING_APPROVAL'::text)))
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "requestId" uuid NOT NULL,
+    "userId" uuid NOT NULL,
+    status character varying DEFAULT 'OPEN'::character varying NOT NULL,
+    "acceptedSessionId" uuid,
+    "mustSwap" boolean DEFAULT false NOT NULL,
+    "acceptedDate" timestamp with time zone,
+    CONSTRAINT "CHK_3898cca51d95c3dff6602780bf" CHECK ((((status)::text = 'OPEN'::text) OR ((status)::text = 'ACCEPTED'::text) OR ((status)::text = 'REJECTED'::text) OR ((status)::text = 'AWAITING_APPROVAL'::text)))
 );
 
 
@@ -216,8 +216,8 @@ ALTER TABLE public.offer OWNER TO postgres;
 --
 
 CREATE TABLE public.offer_preferences_session (
-                                                  "offerId" uuid NOT NULL,
-                                                  "sessionId" uuid NOT NULL
+    "offerId" uuid NOT NULL,
+    "sessionId" uuid NOT NULL
 );
 
 
@@ -228,12 +228,12 @@ ALTER TABLE public.offer_preferences_session OWNER TO postgres;
 --
 
 CREATE TABLE public.preference (
-                                   "sessionType" character varying(15),
-                                   "maxContigHours" integer NOT NULL,
-                                   "maxWeeklyHours" integer NOT NULL,
-                                   id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                   "courseStaffId" character varying NOT NULL,
-                                   CONSTRAINT "CHK_048b5ceb22fa1888c5c49d0139" CHECK (((("sessionType")::text = 'Practical'::text) OR (("sessionType")::text = 'Tutorial'::text) OR (("sessionType")::text = 'Seminar'::text) OR (("sessionType")::text = 'Lecture'::text) OR (("sessionType")::text = 'Studio'::text)))
+    "sessionType" character varying(15),
+    "maxContigHours" integer NOT NULL,
+    "maxWeeklyHours" integer NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "courseStaffId" character varying NOT NULL,
+    CONSTRAINT "CHK_048b5ceb22fa1888c5c49d0139" CHECK (((("sessionType")::text = 'Practical'::text) OR (("sessionType")::text = 'Tutorial'::text) OR (("sessionType")::text = 'Seminar'::text) OR (("sessionType")::text = 'Lecture'::text) OR (("sessionType")::text = 'Studio'::text)))
 );
 
 
@@ -244,10 +244,10 @@ ALTER TABLE public.preference OWNER TO postgres;
 --
 
 CREATE TABLE public.session (
-                                location character varying(15) NOT NULL,
-                                week integer NOT NULL,
-                                id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                "sessionStreamId" uuid NOT NULL
+    location character varying(15) NOT NULL,
+    week integer NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "sessionStreamId" uuid NOT NULL
 );
 
 
@@ -258,9 +258,9 @@ ALTER TABLE public.session OWNER TO postgres;
 --
 
 CREATE TABLE public.session_allocation (
-                                           id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                           "sessionId" uuid NOT NULL,
-                                           "userId" uuid NOT NULL
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "sessionId" uuid NOT NULL,
+    "userId" uuid NOT NULL
 );
 
 
@@ -271,19 +271,19 @@ ALTER TABLE public.session_allocation OWNER TO postgres;
 --
 
 CREATE TABLE public.session_stream (
-                                       name character varying(32) NOT NULL,
-                                       type character varying(15) NOT NULL,
-                                       day integer NOT NULL,
-                                       "startTime" double precision NOT NULL,
-                                       "endTime" double precision NOT NULL,
-                                       weeks integer[] NOT NULL,
-                                       location character varying(15) NOT NULL,
-                                       "numberOfStaff" integer NOT NULL,
-                                       id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                       "timetableId" uuid NOT NULL,
-                                       "basedId" uuid,
-                                       CONSTRAINT "CHK_41bbf7adf43d7d31af71faabf7" CHECK (((day = 1) OR (day = 2) OR (day = 3) OR (day = 4) OR (day = 5) OR (day = 6) OR (day = 7))),
-                                       CONSTRAINT "CHK_547b21ea1dbf8d0c351c1177c4" CHECK ((((type)::text = 'Practical'::text) OR ((type)::text = 'Tutorial'::text) OR ((type)::text = 'Seminar'::text) OR ((type)::text = 'Lecture'::text) OR ((type)::text = 'Studio'::text)))
+    name character varying(32) NOT NULL,
+    type character varying(15) NOT NULL,
+    day integer NOT NULL,
+    "startTime" double precision NOT NULL,
+    "endTime" double precision NOT NULL,
+    weeks integer[] NOT NULL,
+    location character varying(15) NOT NULL,
+    "numberOfStaff" integer NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "timetableId" uuid NOT NULL,
+    "basedId" uuid,
+    CONSTRAINT "CHK_41bbf7adf43d7d31af71faabf7" CHECK (((day = 1) OR (day = 2) OR (day = 3) OR (day = 4) OR (day = 5) OR (day = 6) OR (day = 7))),
+    CONSTRAINT "CHK_547b21ea1dbf8d0c351c1177c4" CHECK ((((type)::text = 'Practical'::text) OR ((type)::text = 'Tutorial'::text) OR ((type)::text = 'Seminar'::text) OR ((type)::text = 'Lecture'::text) OR ((type)::text = 'Studio'::text)))
 );
 
 
@@ -294,8 +294,8 @@ ALTER TABLE public.session_stream OWNER TO postgres;
 --
 
 CREATE TABLE public.session_stream_allocated_users_user (
-                                                            "sessionStreamId" uuid NOT NULL,
-                                                            "userId" uuid NOT NULL
+    "sessionStreamId" uuid NOT NULL,
+    "userId" uuid NOT NULL
 );
 
 
@@ -306,16 +306,16 @@ ALTER TABLE public.session_stream_allocated_users_user OWNER TO postgres;
 --
 
 CREATE TABLE public.staff_request (
-                                      type character varying NOT NULL,
-                                      status character varying NOT NULL,
-                                      title character varying NOT NULL,
-                                      description character varying NOT NULL,
-                                      id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                      "requesterId" uuid NOT NULL,
-                                      "sessionId" uuid NOT NULL,
-                                      "finaliserId" uuid,
-                                      "allowNonPrefOffers" boolean DEFAULT false NOT NULL,
-                                      CONSTRAINT "CHK_290305054f404d50c3f1435a24" CHECK ((((type)::text = 'Permanent'::text) OR ((type)::text = 'Temporary'::text))),
+    type character varying NOT NULL,
+    status character varying NOT NULL,
+    title character varying NOT NULL,
+    description character varying NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "requesterId" uuid NOT NULL,
+    "sessionId" uuid NOT NULL,
+    "finaliserId" uuid,
+    "allowNonPrefOffers" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "CHK_290305054f404d50c3f1435a24" CHECK ((((type)::text = 'Permanent'::text) OR ((type)::text = 'Temporary'::text))),
     CONSTRAINT "CHK_a99348feda038552ca057e8cec" CHECK ((((status)::text = 'Open'::text) OR ((status)::text = 'Closed'::text)))
 );
 
@@ -327,8 +327,8 @@ ALTER TABLE public.staff_request OWNER TO postgres;
 --
 
 CREATE TABLE public.staff_request_swap_preference_session (
-                                                              "staffRequestId" uuid NOT NULL,
-                                                              "sessionId" uuid NOT NULL
+    "staffRequestId" uuid NOT NULL,
+    "sessionId" uuid NOT NULL
 );
 
 
@@ -339,9 +339,9 @@ ALTER TABLE public.staff_request_swap_preference_session OWNER TO postgres;
 --
 
 CREATE TABLE public.stream_allocation (
-                                          id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                          "sessionStreamId" uuid NOT NULL,
-                                          "userId" uuid NOT NULL
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "sessionStreamId" uuid NOT NULL,
+    "userId" uuid NOT NULL
 );
 
 
@@ -352,14 +352,14 @@ ALTER TABLE public.stream_allocation OWNER TO postgres;
 --
 
 CREATE TABLE public.term (
-                             type character varying(20) NOT NULL,
-                             year integer NOT NULL,
-                             "weekNames" character varying[] DEFAULT ARRAY[]::character varying[] NOT NULL,
-                             "startDate" timestamp without time zone NOT NULL,
-                             "endDate" timestamp without time zone NOT NULL,
-                             id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                             "isActive" boolean DEFAULT false NOT NULL,
-                             CONSTRAINT "CHK_b064a25bca4e26fd9ca3f69a13" CHECK ((((type)::text = 'Semester 1'::text) OR ((type)::text = 'Semester 2'::text) OR ((type)::text = 'Summer Semester'::text) OR ((type)::text = 'Trimester 1'::text) OR ((type)::text = 'Trimester 2'::text) OR ((type)::text = 'Trimester 3'::text)))
+    type character varying(20) NOT NULL,
+    year integer NOT NULL,
+    "weekNames" character varying[] DEFAULT ARRAY[]::character varying[] NOT NULL,
+    "startDate" timestamp without time zone NOT NULL,
+    "endDate" timestamp without time zone NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "isActive" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "CHK_b064a25bca4e26fd9ca3f69a13" CHECK ((((type)::text = 'Semester 1'::text) OR ((type)::text = 'Semester 2'::text) OR ((type)::text = 'Summer Semester'::text) OR ((type)::text = 'Trimester 1'::text) OR ((type)::text = 'Trimester 2'::text) OR ((type)::text = 'Trimester 3'::text)))
 );
 
 
@@ -370,12 +370,12 @@ ALTER TABLE public.term OWNER TO postgres;
 --
 
 CREATE TABLE public.timeslot (
-                                 day integer NOT NULL,
-                                 "startTime" double precision NOT NULL,
-                                 "endTime" double precision NOT NULL,
-                                 id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                 "userId" uuid NOT NULL,
-                                 CONSTRAINT "CHK_95c0b9a2c1c9e29b999b3fc9ab" CHECK (((day = 1) OR (day = 2) OR (day = 3) OR (day = 4) OR (day = 5) OR (day = 6) OR (day = 7)))
+    day integer NOT NULL,
+    "startTime" double precision NOT NULL,
+    "endTime" double precision NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "userId" uuid NOT NULL,
+    CONSTRAINT "CHK_95c0b9a2c1c9e29b999b3fc9ab" CHECK (((day = 1) OR (day = 2) OR (day = 3) OR (day = 4) OR (day = 5) OR (day = 6) OR (day = 7)))
 );
 
 
@@ -386,13 +386,13 @@ ALTER TABLE public.timeslot OWNER TO postgres;
 --
 
 CREATE TABLE public.timetable (
-                                  id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                  "courseId" uuid NOT NULL,
-                                  "termId" uuid NOT NULL,
-                                  "permanentRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
-                                  "temporaryRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
-                                  "allocationToken" uuid,
-                                  CONSTRAINT "CHK_46d36f57d28eb598ab672c72cd" CHECK (((("permanentRequestLock")::text = 'FREE'::text) OR (("permanentRequestLock")::text = 'LOCK'::text) OR (("permanentRequestLock")::text = 'APPROVAL_REQUIRED'::text))),
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "courseId" uuid NOT NULL,
+    "termId" uuid NOT NULL,
+    "permanentRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
+    "temporaryRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
+    "allocationToken" uuid,
+    CONSTRAINT "CHK_46d36f57d28eb598ab672c72cd" CHECK (((("permanentRequestLock")::text = 'FREE'::text) OR (("permanentRequestLock")::text = 'LOCK'::text) OR (("permanentRequestLock")::text = 'APPROVAL_REQUIRED'::text))),
     CONSTRAINT "CHK_60e32c35047968ba6f310887bf" CHECK (((("temporaryRequestLock")::text = 'FREE'::text) OR (("temporaryRequestLock")::text = 'LOCK'::text) OR (("temporaryRequestLock")::text = 'APPROVAL_REQUIRED'::text)))
 );
 
@@ -404,12 +404,12 @@ ALTER TABLE public.timetable OWNER TO postgres;
 --
 
 CREATE TABLE public."user" (
-                               username character varying(9) NOT NULL,
-                               name character varying(64) NOT NULL,
-                               email character varying(256) NOT NULL,
-                               id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                               "isAdmin" boolean DEFAULT false NOT NULL,
-                               "settingsId" uuid
+    username character varying(9) NOT NULL,
+    name character varying(64) NOT NULL,
+    email character varying(256) NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "isAdmin" boolean DEFAULT false NOT NULL,
+    "settingsId" uuid
 );
 
 
@@ -420,8 +420,8 @@ ALTER TABLE public."user" OWNER TO postgres;
 --
 
 CREATE TABLE public.user_allocated_sessions_session (
-                                                        "userId" uuid NOT NULL,
-                                                        "sessionId" uuid NOT NULL
+    "userId" uuid NOT NULL,
+    "sessionId" uuid NOT NULL
 );
 
 
@@ -432,8 +432,8 @@ ALTER TABLE public.user_allocated_sessions_session OWNER TO postgres;
 --
 
 CREATE TABLE public.user_allocated_streams_session_stream (
-                                                              "userId" uuid NOT NULL,
-                                                              "sessionStreamId" uuid NOT NULL
+    "userId" uuid NOT NULL,
+    "sessionStreamId" uuid NOT NULL
 );
 
 
@@ -444,8 +444,8 @@ ALTER TABLE public.user_allocated_streams_session_stream OWNER TO postgres;
 --
 
 CREATE TABLE public.user_settings (
-                                      id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                      "showMySessions" boolean NOT NULL
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "showMySessions" boolean NOT NULL
 );
 
 
