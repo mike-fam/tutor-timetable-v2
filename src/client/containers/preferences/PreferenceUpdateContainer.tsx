@@ -4,14 +4,12 @@ import { defaultStr } from "../../constants";
 import {
     Preference,
     useGetSessionStreamsLazyQuery,
-    useGetSessionStreamsQuery,
     useMyPreferenceLazyQuery,
     useUpdatePreferenceMutation,
 } from "../../generated/graphql";
 import {
     useLazyQueryWithError,
     useMutationWithError,
-    useQueryWithError,
 } from "../../hooks/useQueryWithError";
 import { Loadable } from "../../components/helpers/Loadable";
 import { FormikInput } from "../../components/helpers/FormikInput";
