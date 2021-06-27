@@ -16,7 +16,6 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
 import { asyncForEach, asyncMap } from "../../utils/array";
-import { isDigits } from "../utils/string";
 import { isNumeric } from "../../utils/string";
 import asyncFilter from "node-filter-async";
 
@@ -222,28 +221,12 @@ export class AllocatorResolver {
         output.allocations = await asyncMap(
             Object.entries(allocatorOutput.data.allocations),
             async ([streamId, staffIds]) => {
-                const dummyIds = staffIds.filter((staffId) =>
-                    isDigits(staffId)
-                );
-                const realIds = staffIds.filter(
-                    (staffId) => !dummyIds.includes(staffId)
-                );
                 return {
                     sessionStream: await models.sessionStream.getById(
                         streamId,
                         user
                     ),
-                    staff: [
-                        ...(await models.user.getByIds(realIds, user)),
-                        ...User.create(
-                            dummyIds.map((staffId) => ({
-                                id: staffId,
-                                username: `dummy${staffId}`,
-                                name: `Dummy Guy ${staffId}`,
-                                email: "dummy.guy@email.com",
-                            }))
-                        ),
-                    ],
+                    staff: [...(await models.user.getByIds(staffIds, user))],
                 };
             }
         );

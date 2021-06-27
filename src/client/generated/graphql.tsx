@@ -582,6 +582,7 @@ export type RequestAllocationMutation = { __typename?: "Mutation" } & {
                         | "day"
                         | "location"
                         | "weeks"
+                        | "numberOfStaff"
                     >;
                     staff: Array<
                         { __typename?: "User" } & Pick<
@@ -1280,6 +1281,7 @@ export type UpdateDetailsMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [updateDetailsMutation, { data, loading, error }] = useUpdateDetailsMutation({
  *   variables: {
@@ -1333,6 +1335,7 @@ export type AcceptOfferMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [acceptOfferMutation, { data, loading, error }] = useAcceptOfferMutation({
  *   variables: {
@@ -1384,6 +1387,7 @@ export type AddAvailabilitiesMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [addAvailabilitiesMutation, { data, loading, error }] = useAddAvailabilitiesMutation({
  *   variables: {
@@ -1434,6 +1438,7 @@ export const RequestAllocationDocument = gql`
                     day
                     location
                     weeks
+                    numberOfStaff
                 }
                 staff {
                     id
@@ -1458,6 +1463,7 @@ export type RequestAllocationMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [requestAllocationMutation, { data, loading, error }] = useRequestAllocationMutation({
  *   variables: {
@@ -1505,6 +1511,7 @@ export type ApplyAllocationMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [applyAllocationMutation, { data, loading, error }] = useApplyAllocationMutation({
  *   variables: {
@@ -1549,6 +1556,7 @@ export const CourseDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useCourseQuery({
  *   variables: {
@@ -1564,9 +1572,6 @@ export function useCourseQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useCourseLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>
 ) {
@@ -1604,6 +1609,7 @@ export const CourseStaffsDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useCourseStaffsQuery({
  *   variables: {
@@ -1622,9 +1628,6 @@ export function useCourseStaffsQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useCourseStaffsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         CourseStaffsQuery,
@@ -1680,6 +1683,7 @@ export type AddCourseStaffMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [addCourseStaffMutation, { data, loading, error }] = useAddCourseStaffMutation({
  *   variables: {
@@ -1726,6 +1730,7 @@ export type RemoveCourseStaffMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [removeCourseStaffMutation, { data, loading, error }] = useRemoveCourseStaffMutation({
  *   variables: {
@@ -1783,6 +1788,7 @@ export type CreateOfferMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [createOfferMutation, { data, loading, error }] = useCreateOfferMutation({
  *   variables: {
@@ -1887,6 +1893,7 @@ export type CreateRequestMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [createRequestMutation, { data, loading, error }] = useCreateRequestMutation({
  *   variables: {
@@ -1932,6 +1939,7 @@ export type DeleteRequestMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [deleteRequestMutation, { data, loading, error }] = useDeleteRequestMutation({
  *   variables: {
@@ -2004,6 +2012,7 @@ export const GetOfferByIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetOfferByIdQuery({
  *   variables: {
@@ -2022,9 +2031,6 @@ export function useGetOfferByIdQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useGetOfferByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetOfferByIdQuery,
@@ -2078,6 +2084,7 @@ export const GetOffersByRequestIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetOffersByRequestIdQuery({
  *   variables: {
@@ -2096,9 +2103,6 @@ export function useGetOffersByRequestIdQuery(
         GetOffersByRequestIdQueryVariables
     >(GetOffersByRequestIdDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function useGetOffersByRequestIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetOffersByRequestIdQuery,
@@ -2193,6 +2197,7 @@ export const GetRequestByIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetRequestByIdQuery({
  *   variables: {
@@ -2211,9 +2216,6 @@ export function useGetRequestByIdQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useGetRequestByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestByIdQuery,
@@ -2308,6 +2310,7 @@ export const GetRequestsByUserIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetRequestsByUserIdQuery({
  *   variables: {
@@ -2325,9 +2328,6 @@ export function useGetRequestsByUserIdQuery(
         GetRequestsByUserIdQueryVariables
     >(GetRequestsByUserIdDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function useGetRequestsByUserIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestsByUserIdQuery,
@@ -2422,6 +2422,7 @@ export const GetRequestsByTermIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetRequestsByTermIdQuery({
  *   variables: {
@@ -2440,9 +2441,6 @@ export function useGetRequestsByTermIdQuery(
         GetRequestsByTermIdQueryVariables
     >(GetRequestsByTermIdDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function useGetRequestsByTermIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetRequestsByTermIdQuery,
@@ -2491,6 +2489,7 @@ export const GetSessionStreamsDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetSessionStreamsQuery({
  *   variables: {
@@ -2510,9 +2509,6 @@ export function useGetSessionStreamsQuery(
         GetSessionStreamsQueryVariables
     >(GetSessionStreamsDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function useGetSessionStreamsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionStreamsQuery,
@@ -2571,6 +2567,7 @@ export const GetSessionsDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetSessionsQuery({
  *   variables: {
@@ -2591,9 +2588,6 @@ export function useGetSessionsQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useGetSessionsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionsQuery,
@@ -2650,6 +2644,7 @@ export const GetSessionByIdDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useGetSessionByIdQuery({
  *   variables: {
@@ -2668,9 +2663,6 @@ export function useGetSessionByIdQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useGetSessionByIdLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         GetSessionByIdQuery,
@@ -2706,6 +2698,7 @@ export const HelloDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useHelloQuery({
  *   variables: {
@@ -2720,9 +2713,6 @@ export function useHelloQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useHelloLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>
 ) {
@@ -2756,6 +2746,7 @@ export const MeDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useMeQuery({
  *   variables: {
@@ -2767,9 +2758,6 @@ export function useMeQuery(
 ) {
     return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function useMeLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
 ) {
@@ -2800,6 +2788,7 @@ export const MyAvailabilityDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useMyAvailabilityQuery({
  *   variables: {
@@ -2817,9 +2806,6 @@ export function useMyAvailabilityQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useMyAvailabilityLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyAvailabilityQuery,
@@ -2869,6 +2855,7 @@ export const MyCoursesDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useMyCoursesQuery({
  *   variables: {
@@ -2886,9 +2873,6 @@ export function useMyCoursesQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useMyCoursesLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyCoursesQuery,
@@ -2931,6 +2915,7 @@ export const MyPreferenceDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useMyPreferenceQuery({
  *   variables: {
@@ -2949,9 +2934,6 @@ export function useMyPreferenceQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useMyPreferenceLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         MyPreferenceQuery,
@@ -2999,6 +2981,7 @@ export const PreferenceByUsernameDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = usePreferenceByUsernameQuery({
  *   variables: {
@@ -3018,9 +3001,6 @@ export function usePreferenceByUsernameQuery(
         PreferenceByUsernameQueryVariables
     >(PreferenceByUsernameDocument, baseOptions);
 }
-/**
- * @param baseOptions
- */
 export function usePreferenceByUsernameLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<
         PreferenceByUsernameQuery,
@@ -3065,6 +3045,7 @@ export const TermsDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useTermsQuery({
  *   variables: {
@@ -3079,9 +3060,6 @@ export function useTermsQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useTermsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<TermsQuery, TermsQueryVariables>
 ) {
@@ -3119,6 +3097,7 @@ export const TermDocument = gql`
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
  * @example
  * const { data, loading, error } = useTermQuery({
  *   variables: {
@@ -3134,9 +3113,6 @@ export function useTermQuery(
         baseOptions
     );
 }
-/**
- * @param baseOptions
- */
 export function useTermLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>
 ) {
@@ -3172,6 +3148,7 @@ export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [updateAvailabilitiesMutation, { data, loading, error }] = useUpdateAvailabilitiesMutation({
  *   variables: {
@@ -3227,6 +3204,7 @@ export type UpdatePreferenceMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [updatePreferenceMutation, { data, loading, error }] = useUpdatePreferenceMutation({
  *   variables: {
@@ -3289,6 +3267,7 @@ export type EditRequestMutationFn = Apollo.MutationFunction<
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
  * @example
  * const [editRequestMutation, { data, loading, error }] = useEditRequestMutation({
  *   variables: {
