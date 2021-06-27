@@ -13,7 +13,6 @@ import { CourseStaff, Preference, User } from "../entities";
 import { MyContext } from "../types/context";
 import { SessionType } from "../types/session";
 import { CourseTermIdInput } from "./CourseTermId";
-import { PreferenceModel } from "../models/PreferenceModel";
 import { Models } from "../types/models";
 
 @InputType()
