@@ -37,6 +37,7 @@ export class Session
     implements CourseRelatedEntity, TermRelatedEntity {
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,
+        onDelete: "CASCADE",
     })
     sessionStream: SessionStream;
 
