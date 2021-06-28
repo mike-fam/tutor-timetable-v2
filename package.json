@@ -65,7 +65,7 @@
     "client-build": "node src/client/scripts/build.js",
     "server-build": "tsc -p tsconfig.server.json",
     "build": "yarn client-build && yarn server-build",
-    "server-test": "jest -i ./src/server",
+    "server-test": "jest -i --verbose ./src/server",
     "client-test": "echo 'client tests here'",
     "test": "concurrently 'yarn server-test' 'yarn client-test'",
     "prettier": "prettier --write src/",

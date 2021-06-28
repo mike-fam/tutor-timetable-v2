@@ -2,8 +2,9 @@ import { Connection } from "typeorm";
 import { connect } from "../test-utils/connect";
 import { seed } from "../test-utils/seed";
 import { graphql } from "../test-utils/graphql";
-import { marvinNguyen } from "../test-utils/test-users";
+import { jerryCraig, joeCraig, marvinNguyen } from "../test-utils/test-users";
 import { IsoDay } from "../../types/date";
+import { SessionStream } from "../entities";
 
 let conn: Connection;
 beforeAll(async () => {
@@ -58,6 +59,7 @@ const simpleAddMergedSessionStreamsMutation = `mutation {
   }
 }
 `;
+
 describe("Test Session Stream", () => {
     test("valid addMergedSessionStreams mutation", async () => {
         const createdStreams = await graphql({
@@ -78,5 +80,23 @@ describe("Test Session Stream", () => {
                 },
             ],
         });
+    });
+
+    test("unauthorised addMergedSessionStream mutation", async () => {
+        const result1 = await graphql({
+            source: simpleAddMergedSessionStreamsMutation,
+            user: await joeCraig(),
+        });
+        const result2 = await graphql({
+            source: simpleAddMergedSessionStreamsMutation,
+            user: await jerryCraig(),
+        });
+        expect(result1.data).toBeNull();
+        expect(result1.errors).not.toBeNull();
+        expect(result2.data).toBeNull();
+        expect(result2.errors).not.toBeNull();
+        expect(
+            await SessionStream.findOne({ name: "P100 Flexible" })
+        ).toBeUndefined();
     });
 });
