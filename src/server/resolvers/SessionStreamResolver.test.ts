@@ -47,12 +47,13 @@ const simpleAddMergedSessionStreamsMutation = `mutation {
       }
     ]
   ){
-    id
     name
     startTime
     endTime
     day
     weeks
+    location
+    type
     numberOfStaff
   }
 }
@@ -63,17 +64,19 @@ describe("Test Session Stream", () => {
             source: simpleAddMergedSessionStreamsMutation,
             user: await marvinNguyen(),
         });
-        expect(createdStreams.data).toEqual([
-            {
-                name: "P100 Flexible",
-                day: IsoDay.TUE,
-                startTime: 8,
-                endTime: 10,
-                type: "PRACTICAL",
-                location: "50-S203",
-                numberOfStaff: 4,
-                weeks: [2, 3, 4],
-            },
-        ]);
+        expect(createdStreams.data).toEqual({
+            addMergedSessionStreams: [
+                {
+                    name: "P100 Flexible",
+                    day: IsoDay.TUE,
+                    startTime: 8,
+                    endTime: 10,
+                    type: "PRACTICAL",
+                    location: "50-S203",
+                    numberOfStaff: 4,
+                    weeks: [2, 3, 4],
+                },
+            ],
+        });
     });
 });
