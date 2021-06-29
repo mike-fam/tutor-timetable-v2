@@ -1,0 +1,54 @@
+image: node:12
+
+pipelines:
+  branches:
+    development:
+      - step:
+          name: "Lint, Test and Test Build"
+          script:
+            - yarn
+            - yarn build
+            - yarn eslint-check && yarn prettier-check
+            - yarn test
+      - step:
+          name: 'Push changes back to github'
+          script:
+            # Note: I know that this is repetitive, but YAML doesn't have anyway to reduce
+            # the duplicated code :( https://github.com/yaml/yaml/issues/35
+            - SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
+            - echo "$PRIVATE_KEY_B64" | base64 --decode > "$SSH_PATH/deploy_key"
+            - chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
+            - eval $(ssh-agent)
+            - ssh-add "$SSH_PATH/deploy_key"
+            - git config user.name "Mike Pham"
+            - git config user.email "31090859+mike-fam@users.noreply.github.com"
+            - git remote add github git@github.com:mike-fam/tutor-timetable-v2.git
+            - git remote -v
+            - git push github development:main
+      - step:
+          name: 'Deployment to Staging'
+          deployment: staging
+          script:
+            - echo "Your deployment to staging script goes here..."
+      - step:
+          name: 'Deployment to Production'
+          deployment: production
+          trigger: 'manual'
+          script:
+            - SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
+            - echo "$PRIVATE_KEY_B64" | base64 --decode > "$SSH_PATH/deploy_key"
+            - chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
+            - eval $(ssh-agent)
+            - printf '%s\n' 'Host *.eait.uq.edu.au' '  StrictHostKeyChecking no' 'Host *.zones.eait.uq.edu.au' "  ProxyJump $USER@moss.labs.eait.uq.edu.au" > "$SSH_PATH/config"
+            - ssh-add "$SSH_PATH/deploy_key"
+            - >-
+              ssh -i "$SSH_PATH/deploy_key" "$USER@$HOST"
+              "cd /var/www/nodejs/tutor-timetable-v2 &&
+              git reset HEAD --hard &&
+              git checkout main &&
+              git pull && yarn &&
+              rm -rf build &&
+              yarn build &&
+              yarn migration-run &&
+              echo "$PW" | sudo -S systemctl restart nodejs &&
+              history -c"
