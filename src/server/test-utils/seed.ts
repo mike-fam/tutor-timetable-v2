@@ -11,7 +11,7 @@ export const seed = async () => {
     });
     const query = fs
         .readFileSync(
-            __dirname + "/../../../bootstrap/tutor_timetable_v2.dump",
+            __dirname + "/../../../bootstrap/data/tutor_timetable_v2.sql",
             "utf-8"
         )
         .toString();
