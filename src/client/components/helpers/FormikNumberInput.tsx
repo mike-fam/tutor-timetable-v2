@@ -8,9 +8,8 @@ import {
     NumberInputField,
     NumberInputFieldProps,
     NumberInputStepper,
-    PseudoProps,
 } from "@chakra-ui/react";
-import { FieldInputProps, useField } from "formik";
+import { useField } from "formik";
 import React from "react";
 import { camelCase, capitalCase } from "change-case";
 
@@ -21,10 +20,7 @@ type Props = {
     type?: string;
     max?: number;
     min?: number;
-} & Omit<
-    NumberInputFieldProps,
-    keyof FieldInputProps<any> | "type" | keyof PseudoProps<{}>
->;
+} & NumberInputFieldProps;
 
 export const FormikNumberInput: React.FC<Props> = ({
     name,

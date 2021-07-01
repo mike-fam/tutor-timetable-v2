@@ -165,11 +165,11 @@ export class SessionStreamResolver {
             rootStreams.push(rootStream);
             numberOfStaffWeekMap.delete(minStaffNum);
             // Create all streams based on root stream
-            const extraIndex = 1;
+            let extraIndex = 1;
             for (const [numberOfStaff, weeks] of numberOfStaffWeekMap) {
                 streamsToBeCreated.push({
                     timetableId: timetable.id,
-                    name: `${name} extra ${extraIndex}`,
+                    name: `${name} extra ${extraIndex++}`,
                     type,
                     day,
                     startTime,

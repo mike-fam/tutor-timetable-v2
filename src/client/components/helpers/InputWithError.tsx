@@ -5,10 +5,9 @@ import {
     FormLabel,
     Input,
     InputProps,
-    PseudoProps,
 } from "@chakra-ui/react";
 
-type Props = Omit<InputProps, keyof PseudoProps<HTMLInputElement>> & {
+type Props = InputProps & {
     validate: (value: string) => string;
     label: string;
 };
