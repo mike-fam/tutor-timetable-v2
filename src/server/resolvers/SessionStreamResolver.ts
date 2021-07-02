@@ -22,7 +22,14 @@ import min from "lodash/min";
 import { IsEnum, Max, Min, MinLength } from "class-validator";
 import { UniqueWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
-import { asyncForEach } from "../../utils/array";
+import { asyncForEach, getAllIndices } from "../../utils/array";
+import { PERM_ERR } from "../constants";
+import { getPublicTimetableData } from "../utils/publicTimetable";
+import parse from "date-fns/parse";
+import startOfISOWeek from "date-fns/startOfISOWeek";
+import differenceInWeeks from "date-fns/differenceInWeeks";
+import { dayToIsoNumber, timeStringToHours } from "../../utils/date";
+import { v4 as uuid } from "uuid";
 
 @InputType()
 export class MergedStreamTutorNumbers {
@@ -284,6 +291,61 @@ export class SessionStreamResolver {
             }
         }
         return stream;
+    }
+
+    @Query(() => [SessionStream])
+    async fromPublicTimetable(
+        @Arg("courseTerm", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
+        @Arg("sessionTypes", () => [SessionType])
+        sessionTypes: SessionType[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream[]> {
+        const user = req.user;
+        const course = await models.course.getById(courseId, user);
+        const term = await models.term.getById(termId, user);
+        if (!user.isAdmin && !(await user.isCoordinatorOf(course, term))) {
+            throw new Error(PERM_ERR);
+        }
+        const generatedStreams = [];
+        const timetable = await models.timetable.get(
+            { courseId, termId },
+            user
+        );
+        const courseData = await getPublicTimetableData(
+            term,
+            course,
+            sessionTypes
+        );
+        for (const courseOffering of Object.values(courseData)) {
+            for (const activity of Object.values(courseOffering.activities)) {
+                const startDate = startOfISOWeek(
+                    parse(activity.start_date, "dd/MM/yyyy", new Date())
+                );
+                const weekOffset = differenceInWeeks(term.startDate, startDate);
+                const weeks = getAllIndices(activity.week_pattern, "1");
+                const relativeWeeks = weeks.map((week) => week - weekOffset);
+                const startTime = timeStringToHours(activity.start_time);
+                const locations = Object.keys(activity.assigned_locations);
+                const newStream = SessionStream.create({
+                    id: uuid(),
+                    name: `${activity.activity_type.charAt(0)}${
+                        activity.activity_code
+                    }`,
+                    type: activity.activity_type as SessionType,
+                    day: dayToIsoNumber(activity.day_of_week),
+                    startTime,
+                    endTime: startTime + parseInt(activity.duration) / 60,
+                    weeks: relativeWeeks,
+                    location: locations.length > 0 ? locations[0] : "",
+                    numberOfStaff: 0,
+                    basedId: undefined,
+                    timetableId: timetable.id,
+                });
+                generatedStreams.push(newStream);
+            }
+        }
+        return generatedStreams;
     }
 
     async generateSessions(
