@@ -18,6 +18,7 @@ import { Models } from "../types/models";
 import { Request } from "express";
 import { CourseTermIdInput } from "./CourseTermId";
 import { Column } from "typeorm";
+import { IsNull, Not } from "typeorm";
 import min from "lodash/min";
 import { IsEnum, Max, Min, MinLength } from "class-validator";
 import { UniqueWeeks } from "../validators/sessionStream";
@@ -199,6 +200,19 @@ export class SessionStreamResolver {
             async (stream) => await this.generateSessions(stream, req, models)
         );
         return allStreams;
+    }
+    @Query(() => [SessionStream])
+    async rootSessionStreams(
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream[]> {
+        return await models.sessionStream.getMany(
+            {
+                where: {
+                    basedId: Not(IsNull()),
+                },
+            },
+            req.user
+        );
     }
 
     @Mutation(() => SessionStream)
