@@ -92,6 +92,7 @@ export class SessionStream
     @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
         lazy: true,
         nullable: true,
+        onDelete: "CASCADE",
     })
     based: Lazy<SessionStream>;
 

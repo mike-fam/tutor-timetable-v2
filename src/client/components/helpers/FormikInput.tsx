@@ -1,12 +1,11 @@
 import React from "react";
-import { Field, FieldInputProps, FieldProps } from "formik";
+import { Field, FieldProps } from "formik";
 import {
     FormControl,
     FormErrorMessage,
     FormLabel,
     Input,
     InputProps,
-    PseudoProps,
 } from "@chakra-ui/react";
 import { camelCase, capitalCase } from "change-case";
 
@@ -15,10 +14,7 @@ type Props = {
     id?: string;
     label?: string;
     type?: string;
-} & Omit<
-    InputProps,
-    keyof FieldInputProps<any> | "type" | keyof PseudoProps<{}>
->;
+} & InputProps;
 
 export const FormikInput: React.FC<Props> = ({
     name,

@@ -15,14 +15,319 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type Allocation = {
+  __typename?: 'Allocation';
+  sessionStream: SessionStream;
+  staff: Array<User>;
+};
+
+export enum AllocationStatus {
+  Optimal = 'Optimal',
+  Infeasible = 'Infeasible'
+}
+
+export enum AllocationType {
+  Success = 'Success',
+  Failed = 'Failed'
+}
+
+export type AllocatorOutput = {
+  __typename?: 'AllocatorOutput';
+  status: AllocationStatus;
+  type: AllocationType;
+  token: Scalars['String'];
+  detail: Scalars['String'];
+  runtime: Scalars['Float'];
+  allocations: Array<Allocation>;
+};
+
+export enum AvailabilityModificationType {
+  Unchanged = 'UNCHANGED',
+  Added = 'ADDED',
+  Modified = 'MODIFIED',
+  Removed = 'REMOVED',
+  RemovedModified = 'REMOVED_MODIFIED'
+}
+
+export type Course = {
+  __typename?: 'Course';
+  id: Scalars['String'];
+  code: Scalars['String'];
+  title: Scalars['String'];
+  timetables: Array<Timetable>;
+};
+
+export type CourseStaff = {
+  __typename?: 'CourseStaff';
+  id: Scalars['String'];
+  isNew: Scalars['Boolean'];
+  role: Role;
+  timetable: Timetable;
+  user: User;
+  preference: Preference;
+};
+
+export type CourseStaffInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  role: Role;
+  isNew: Scalars['Boolean'];
+};
+
+export type CourseStaffUserInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  role: Role;
+  isNew: Scalars['Boolean'];
+  username: Scalars['String'];
+};
+
+export type CourseTermIdInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+};
+
+
+export type EditOfferInputType = {
+  offerId: Scalars['String'];
+  sessionPreferences: Array<Scalars['Int']>;
+};
+
+export type EditRequestFormInputType = {
+  requestId: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  preferences?: Maybe<Array<Scalars['Int']>>;
+  duration?: Maybe<RequestType>;
+  description?: Maybe<Scalars['String']>;
+  sessionId?: Maybe<Scalars['String']>;
+  closeRequest: Scalars['Boolean'];
+};
+
+export enum FreezeState {
+  Free = 'FREE',
+  Lock = 'LOCK',
+  ApprovalRequired = 'APPROVAL_REQUIRED'
+}
+
+export type MergedStreamInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  numberOfTutorsForWeeks: Array<MergedStreamTutorNumbers>;
+};
+
+export type MergedStreamTutorNumbers = {
+  week: Scalars['Int'];
+  numberOfTutors: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  requestAllocation: AllocatorOutput;
+  applyAllocation: Scalars['Boolean'];
+  updateDetails: User;
+  addTerm: Term;
+  deleteTerms: Array<Term>;
+  addCourseStaff: CourseStaff;
+  addUsersToCourse: Array<CourseStaff>;
+  removeCourseStaff: Scalars['String'];
+  addMergedSessionStreams: Array<SessionStream>;
+  addBasedSessionStream: SessionStream;
+  addSessionStream: SessionStream;
+  addStreamStaff: SessionStream;
+  updateAvailabilities: Array<Timeslot>;
+  updatePreference: Preference;
+  createRequest: StaffRequest;
+  editExistingRequest: StaffRequest;
+  deleteRequestById: Scalars['String'];
+  createOffer: Offer;
+  editExistingOffer: Offer;
+  removeOffer: Offer;
+  acceptOffer: Offer;
+};
+
+
+export type MutationRequestAllocationArgs = {
+  newThreshold?: Maybe<Scalars['Float']>;
+  staffIds: Array<Scalars['String']>;
+  courseTermInput: CourseTermIdInput;
+};
+
+
+export type MutationApplyAllocationArgs = {
+  override: Scalars['Boolean'];
+  allocationToken: Scalars['String'];
+};
+
+
+export type MutationUpdateDetailsArgs = {
+  details: UpdateDetailsInputType;
+};
+
+
+export type MutationAddTermArgs = {
+  type: TermType;
+  year: Scalars['Float'];
+  startDate: Scalars['DateTime'];
+  endDate: Scalars['DateTime'];
+  weekNames: Array<Scalars['String']>;
+};
+
+
+export type MutationDeleteTermsArgs = {
+  id: Array<Scalars['String']>;
+};
+
+
+export type MutationAddCourseStaffArgs = {
+  courseStaffUserInput: CourseStaffUserInput;
+};
+
+
+export type MutationAddUsersToCourseArgs = {
+  usernames: Array<Scalars['String']>;
+  courseStaffInput: CourseStaffInput;
+};
+
+
+export type MutationRemoveCourseStaffArgs = {
+  courseStaffId: Scalars['String'];
+};
+
+
+export type MutationAddMergedSessionStreamsArgs = {
+  sessionStreams: Array<MergedStreamInput>;
+};
+
+
+export type MutationAddBasedSessionStreamArgs = {
+  numberOfStaff: Scalars['Int'];
+  weeks: Array<Scalars['Int']>;
+  name: Scalars['String'];
+  sessionStreamId: Scalars['String'];
+};
+
+
+export type MutationAddSessionStreamArgs = {
+  numberOfStaff: Scalars['Int'];
+  location: Scalars['String'];
+  weeks: Array<Scalars['Int']>;
+  endTime: Scalars['Float'];
+  startTime: Scalars['Float'];
+  day: Scalars['Int'];
+  type: SessionType;
+  name: Scalars['String'];
+  timetableId: Scalars['String'];
+};
+
+
+export type MutationAddStreamStaffArgs = {
+  updateSessions: Scalars['Boolean'];
+  newStaffs: Array<Scalars['String']>;
+  streamId: Scalars['String'];
+};
+
+
+export type MutationUpdateAvailabilitiesArgs = {
+  timeslots: Array<TimeslotInput>;
+};
+
+
+export type MutationUpdatePreferenceArgs = {
+  preference: PreferenceInput;
+  preferenceFind: CourseTermIdInput;
+};
+
+
+export type MutationCreateRequestArgs = {
+  requestDetails: RequestFormInputType;
+};
+
+
+export type MutationEditExistingRequestArgs = {
+  requestDetails: EditRequestFormInputType;
+};
+
+
+export type MutationDeleteRequestByIdArgs = {
+  requestId: Scalars['String'];
+};
+
+
+export type MutationCreateOfferArgs = {
+  offerDetails: OfferInputType;
+};
+
+
+export type MutationEditExistingOfferArgs = {
+  editDetails: EditOfferInputType;
+};
+
+
+export type MutationRemoveOfferArgs = {
+  offerId: Scalars['String'];
+};
+
+
+export type MutationAcceptOfferArgs = {
+  offerSessionSwapId?: Maybe<Scalars['String']>;
+  offerId: Scalars['String'];
+};
+
+export type Offer = {
+  __typename?: 'Offer';
+  id: Scalars['String'];
+  status: OfferStatus;
+  mustSwap: Scalars['Boolean'];
+  request: StaffRequest;
+  user: User;
+  preferences: Array<Session>;
+  acceptedSession?: Maybe<Session>;
+};
+
+export type OfferInputType = {
+  requestId: Scalars['String'];
+  sessionPreferences?: Maybe<Array<Scalars['String']>>;
+  mustSwap: Scalars['Boolean'];
+};
+
+export enum OfferStatus {
+  Open = 'OPEN',
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
+  AwaitingApproval = 'AWAITING_APPROVAL'
+}
+
+export type Preference = {
+  __typename?: 'Preference';
+  id: Scalars['String'];
+  sessionType?: Maybe<SessionType>;
+  maxContigHours: Scalars['Float'];
+  maxWeeklyHours: Scalars['Float'];
+  courseStaff: CourseStaff;
+};
+
+export type PreferenceInput = {
+  sessionType?: Maybe<SessionType>;
+  maxContigHours: Scalars['Float'];
+  maxWeeklyHours: Scalars['Float'];
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   me: User;
   terms: Array<Term>;
+  activeTerm: Term;
   term: Term;
   courseStaffs: Array<CourseStaff>;
   sessionStreams: Array<SessionStream>;
+  fromPublicTimetable: Array<SessionStream>;
   timetables: Array<Timetable>;
   timetable: Timetable;
   timetableById: Timetable;
@@ -55,6 +360,12 @@ export type QueryCourseStaffsArgs = {
 export type QuerySessionStreamsArgs = {
   courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
+};
+
+
+export type QueryFromPublicTimetableArgs = {
+  sessionTypes: Array<SessionType>;
+  courseTerm: CourseTermIdInput;
 };
 
 
@@ -123,58 +434,84 @@ export type QueryGetOffersByRequestIdArgs = {
   requestId: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  username: Scalars['String'];
-  name: Scalars['String'];
-  isAdmin: Scalars['Boolean'];
-  email: Scalars['String'];
-  courseStaffs: Array<CourseStaff>;
-  requests: Array<StaffRequest>;
-  availabilities: Array<Timeslot>;
-  offers: Array<Offer>;
-  settings: UserSettings;
+export type RequestFormInputType = {
+  title: Scalars['String'];
+  preferences: Array<Scalars['String']>;
+  type: RequestType;
+  description?: Maybe<Scalars['String']>;
+  sessionId: Scalars['String'];
 };
 
-export type CourseStaff = {
-  __typename?: 'CourseStaff';
-  id: Scalars['String'];
-  isNew: Scalars['Boolean'];
-  role: Role;
-  timetable: Timetable;
-  user: User;
-  preference: Preference;
-};
+export enum RequestStatus {
+  Open = 'OPEN',
+  Closed = 'CLOSED'
+}
+
+export enum RequestType {
+  Permanent = 'PERMANENT',
+  Temporary = 'TEMPORARY'
+}
 
 export enum Role {
   CourseCoordinator = 'COURSE_COORDINATOR',
   Staff = 'STAFF'
 }
 
-export type Timetable = {
-  __typename?: 'Timetable';
+export type Session = {
+  __typename?: 'Session';
   id: Scalars['String'];
-  permanentRequestLock: FreezeState;
-  temporaryRequestLock: FreezeState;
-  course: Course;
-  term: Term;
-  courseStaffs: Array<CourseStaff>;
-  sessionStreams: Array<SessionStream>;
+  location: Scalars['String'];
+  week: Scalars['Int'];
+  sessionStream: SessionStream;
+  allocatedUsers: Array<User>;
+  requests: Array<StaffRequest>;
+  preferredSwapRequests: Array<StaffRequest>;
+  preferredSwapOffers: Array<Offer>;
+  acceptedOffers: Array<Offer>;
+  date: Scalars['DateTime'];
 };
 
-export enum FreezeState {
-  Free = 'FREE',
-  Lock = 'LOCK',
-  ApprovalRequired = 'APPROVAL_REQUIRED'
+export type SessionStream = {
+  __typename?: 'SessionStream';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  weeks: Array<Scalars['Int']>;
+  location: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  timetable: Timetable;
+  sessions: Array<Session>;
+  basedStreams: Array<SessionStream>;
+  based?: Maybe<SessionStream>;
+  allocatedUsers: Array<User>;
+};
+
+export enum SessionType {
+  Contact = 'CONTACT',
+  Practical = 'PRACTICAL',
+  Tutorial = 'TUTORIAL',
+  Seminar = 'SEMINAR',
+  Lecture = 'LECTURE',
+  Studio = 'STUDIO',
+  Workshop = 'WORKSHOP'
 }
 
-export type Course = {
-  __typename?: 'Course';
+export type StaffRequest = {
+  __typename?: 'StaffRequest';
   id: Scalars['String'];
-  code: Scalars['String'];
+  type: RequestType;
   title: Scalars['String'];
-  timetables: Array<Timetable>;
+  description: Scalars['String'];
+  status: RequestStatus;
+  allowNonPrefOffers: Scalars['Boolean'];
+  requester: User;
+  finaliser?: Maybe<User>;
+  session: Session;
+  swapPreference: Array<Session>;
+  offers: Array<Offer>;
 };
 
 export type Term = {
@@ -199,99 +536,6 @@ export enum TermType {
   Trimester_3 = 'TRIMESTER_3'
 }
 
-
-export type SessionStream = {
-  __typename?: 'SessionStream';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  weeks: Array<Scalars['Int']>;
-  location: Scalars['String'];
-  numberOfStaff: Scalars['Int'];
-  timetable: Timetable;
-  sessions: Array<Session>;
-  basedStreams: Array<SessionStream>;
-  based?: Maybe<SessionStream>;
-  allocatedUsers: Array<User>;
-};
-
-export enum SessionType {
-  Practical = 'PRACTICAL',
-  Tutorial = 'TUTORIAL',
-  Seminar = 'SEMINAR',
-  Lecture = 'LECTURE',
-  Studio = 'STUDIO'
-}
-
-export type Session = {
-  __typename?: 'Session';
-  id: Scalars['String'];
-  location: Scalars['String'];
-  week: Scalars['Int'];
-  sessionStream: SessionStream;
-  allocatedUsers: Array<User>;
-  requests: Array<StaffRequest>;
-  preferredSwapRequests: Array<StaffRequest>;
-  preferredSwapOffers: Array<Offer>;
-  acceptedOffers: Array<Offer>;
-  date: Scalars['DateTime'];
-};
-
-export type StaffRequest = {
-  __typename?: 'StaffRequest';
-  id: Scalars['String'];
-  type: RequestType;
-  title: Scalars['String'];
-  description: Scalars['String'];
-  status: RequestStatus;
-  allowNonPrefOffers: Scalars['Boolean'];
-  requester: User;
-  finaliser?: Maybe<User>;
-  session: Session;
-  swapPreference: Array<Session>;
-  offers: Array<Offer>;
-};
-
-export enum RequestType {
-  Permanent = 'PERMANENT',
-  Temporary = 'TEMPORARY'
-}
-
-export enum RequestStatus {
-  Open = 'OPEN',
-  Closed = 'CLOSED'
-}
-
-export type Offer = {
-  __typename?: 'Offer';
-  id: Scalars['String'];
-  status: OfferStatus;
-  mustSwap: Scalars['Boolean'];
-  request: StaffRequest;
-  user: User;
-  preferences: Array<Session>;
-  acceptedSession?: Maybe<Session>;
-};
-
-export enum OfferStatus {
-  Open = 'OPEN',
-  Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED',
-  AwaitingApproval = 'AWAITING_APPROVAL'
-}
-
-export type Preference = {
-  __typename?: 'Preference';
-  id: Scalars['String'];
-  sessionType?: Maybe<SessionType>;
-  maxContigHours: Scalars['Float'];
-  maxWeeklyHours: Scalars['Float'];
-  courseStaff: CourseStaff;
-};
-
 export type Timeslot = {
   __typename?: 'Timeslot';
   id: Scalars['String'];
@@ -299,217 +543,6 @@ export type Timeslot = {
   endTime: Scalars['Float'];
   day: Scalars['Int'];
   user: User;
-};
-
-export type UserSettings = {
-  __typename?: 'UserSettings';
-  id: Scalars['String'];
-  showMySessions: Scalars['Boolean'];
-  user: User;
-};
-
-export type CourseTermIdInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  requestAllocation: AllocatorOutput;
-  applyAllocation: Scalars['Boolean'];
-  updateDetails: User;
-  addTerm: Term;
-  deleteTerms: Array<Term>;
-  addCourseStaff: CourseStaff;
-  addUsersToCourse: Array<CourseStaff>;
-  removeCourseStaff: Scalars['String'];
-  addBasedSessionStream: SessionStream;
-  addSessionStream: SessionStream;
-  addStreamStaff: SessionStream;
-  generateSessions: Array<Session>;
-  updateAvailabilities: Array<Timeslot>;
-  updatePreference: Preference;
-  createRequest: StaffRequest;
-  editExistingRequest: StaffRequest;
-  deleteRequestById: Scalars['String'];
-  createOffer: Offer;
-  editExistingOffer: Offer;
-  removeOffer: Offer;
-  acceptOffer: Offer;
-};
-
-
-export type MutationRequestAllocationArgs = {
-  newThreshold?: Maybe<Scalars['Float']>;
-  staffIds: Array<Scalars['String']>;
-  courseTermInput: CourseTermIdInput;
-};
-
-
-export type MutationApplyAllocationArgs = {
-  override: Scalars['Boolean'];
-  allocationToken: Scalars['String'];
-};
-
-
-export type MutationUpdateDetailsArgs = {
-  details: UpdateDetailsInputType;
-};
-
-
-export type MutationAddTermArgs = {
-  type: TermType;
-  year: Scalars['Float'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
-};
-
-
-export type MutationDeleteTermsArgs = {
-  id: Array<Scalars['String']>;
-};
-
-
-export type MutationAddCourseStaffArgs = {
-  courseStaffUserInput: CourseStaffUserInput;
-};
-
-
-export type MutationAddUsersToCourseArgs = {
-  usernames: Array<Scalars['String']>;
-  courseStaffInput: CourseStaffInput;
-};
-
-
-export type MutationRemoveCourseStaffArgs = {
-  courseStaffId: Scalars['String'];
-};
-
-
-export type MutationAddBasedSessionStreamArgs = {
-  numberOfStaff: Scalars['Int'];
-  weeks: Array<Scalars['Int']>;
-  name: Scalars['String'];
-  sessionStreamId: Scalars['String'];
-};
-
-
-export type MutationAddSessionStreamArgs = {
-  numberOfStaff: Scalars['Int'];
-  location: Scalars['String'];
-  weeks: Array<Scalars['Int']>;
-  endTime: Scalars['Float'];
-  startTime: Scalars['Float'];
-  day: Scalars['Int'];
-  type: SessionType;
-  name: Scalars['String'];
-  timetableId: Scalars['String'];
-};
-
-
-export type MutationAddStreamStaffArgs = {
-  updateSessions: Scalars['Boolean'];
-  newStaffs: Array<Scalars['String']>;
-  streamId: Scalars['String'];
-};
-
-
-export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['String'];
-};
-
-
-export type MutationUpdateAvailabilitiesArgs = {
-  timeslots: Array<TimeslotInput>;
-};
-
-
-export type MutationUpdatePreferenceArgs = {
-  preference: PreferenceInput;
-  preferenceFind: CourseTermIdInput;
-};
-
-
-export type MutationCreateRequestArgs = {
-  requestDetails: RequestFormInputType;
-};
-
-
-export type MutationEditExistingRequestArgs = {
-  requestDetails: EditRequestFormInputType;
-};
-
-
-export type MutationDeleteRequestByIdArgs = {
-  requestId: Scalars['String'];
-};
-
-
-export type MutationCreateOfferArgs = {
-  offerDetails: OfferInputType;
-};
-
-
-export type MutationEditExistingOfferArgs = {
-  editDetails: EditOfferInputType;
-};
-
-
-export type MutationRemoveOfferArgs = {
-  offerId: Scalars['String'];
-};
-
-
-export type MutationAcceptOfferArgs = {
-  offerSessionSwapId?: Maybe<Scalars['String']>;
-  offerId: Scalars['String'];
-};
-
-export type AllocatorOutput = {
-  __typename?: 'AllocatorOutput';
-  status: AllocationStatus;
-  type: AllocationType;
-  token: Scalars['String'];
-  detail: Scalars['String'];
-  runtime: Scalars['Float'];
-  allocations: Array<Allocation>;
-};
-
-export enum AllocationStatus {
-  Optimal = 'Optimal',
-  Infeasible = 'Infeasible'
-}
-
-export enum AllocationType {
-  Success = 'Success',
-  Failed = 'Failed'
-}
-
-export type Allocation = {
-  __typename?: 'Allocation';
-  sessionStream: SessionStream;
-  staff: Array<User>;
-};
-
-export type UpdateDetailsInputType = {
-  email: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type CourseStaffUserInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
-  isNew: Scalars['Boolean'];
-  username: Scalars['String'];
-};
-
-export type CourseStaffInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
-  isNew: Scalars['Boolean'];
 };
 
 export type TimeslotInput = {
@@ -520,47 +553,41 @@ export type TimeslotInput = {
   modificationType: AvailabilityModificationType;
 };
 
-export enum AvailabilityModificationType {
-  Unchanged = 'UNCHANGED',
-  Added = 'ADDED',
-  Modified = 'MODIFIED',
-  Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
-}
-
-export type PreferenceInput = {
-  sessionType?: Maybe<SessionType>;
-  maxContigHours: Scalars['Float'];
-  maxWeeklyHours: Scalars['Float'];
+export type Timetable = {
+  __typename?: 'Timetable';
+  id: Scalars['String'];
+  permanentRequestLock: FreezeState;
+  temporaryRequestLock: FreezeState;
+  course: Course;
+  term: Term;
+  courseStaffs: Array<CourseStaff>;
+  sessionStreams: Array<SessionStream>;
 };
 
-export type RequestFormInputType = {
-  title: Scalars['String'];
-  preferences: Array<Scalars['String']>;
-  type: RequestType;
-  description?: Maybe<Scalars['String']>;
-  sessionId: Scalars['String'];
+export type UpdateDetailsInputType = {
+  email: Scalars['String'];
+  name: Scalars['String'];
 };
 
-export type EditRequestFormInputType = {
-  requestId: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  preferences?: Maybe<Array<Scalars['Int']>>;
-  duration?: Maybe<RequestType>;
-  description?: Maybe<Scalars['String']>;
-  sessionId?: Maybe<Scalars['String']>;
-  closeRequest: Scalars['Boolean'];
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  username: Scalars['String'];
+  name: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
+  email: Scalars['String'];
+  courseStaffs: Array<CourseStaff>;
+  requests: Array<StaffRequest>;
+  availabilities: Array<Timeslot>;
+  offers: Array<Offer>;
+  settings: UserSettings;
 };
 
-export type OfferInputType = {
-  requestId: Scalars['String'];
-  sessionPreferences?: Maybe<Array<Scalars['String']>>;
-  mustSwap: Scalars['Boolean'];
-};
-
-export type EditOfferInputType = {
-  offerId: Scalars['String'];
-  sessionPreferences: Array<Scalars['Int']>;
+export type UserSettings = {
+  __typename?: 'UserSettings';
+  id: Scalars['String'];
+  showMySessions: Scalars['Boolean'];
+  user: User;
 };
 
 export type UpdateDetailsMutationVariables = Exact<{
@@ -1047,7 +1074,21 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'email'>
+    & Pick<User, 'id' | 'username' | 'name' | 'email' | 'isAdmin'>
+    & { courseStaffs: Array<(
+      { __typename?: 'CourseStaff' }
+      & Pick<CourseStaff, 'role'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ), term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ) }
+      ) }
+    )> }
   ) }
 );
 
@@ -2257,6 +2298,19 @@ export const MeDocument = gql`
     username
     name
     email
+    isAdmin
+    courseStaffs {
+      timetable {
+        course {
+          id
+          code
+        }
+        term {
+          id
+        }
+      }
+      role
+    }
   }
 }
     `;

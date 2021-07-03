@@ -3,15 +3,18 @@ import { AppRouter } from "./AppRouter";
 import {
     ApolloClient,
     ApolloProvider,
+    from,
     HttpLink,
     InMemoryCache,
     split,
-    from,
 } from "@apollo/client";
 import { WrapperContainer } from "./containers/WrapperContainer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { RetryLink } from "@apollo/client/link/retry";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const httpLink = new HttpLink({
     uri: "/graphql",
@@ -56,10 +59,12 @@ const client = new ApolloClient({
 
 export const App: React.FunctionComponent<{}> = () => {
     return (
-        <ApolloProvider client={client}>
-            <WrapperContainer>
-                <AppRouter />
-            </WrapperContainer>
-        </ApolloProvider>
+        <QueryClientProvider client={queryClient}>
+            <ApolloProvider client={client}>
+                <WrapperContainer>
+                    <AppRouter />
+                </WrapperContainer>
+            </ApolloProvider>
+        </QueryClientProvider>
     );
 };
