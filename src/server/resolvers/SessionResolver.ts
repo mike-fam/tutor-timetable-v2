@@ -7,12 +7,138 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
+import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
-
 import { MyContext } from "../types/context";
 
 @Resolver(() => Session)
 export class SessionResolver {
+    @Query(() => [Session])
+    async mergedSessions(
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [String]) courseIds: string[],
+        @Arg("week", () => Int) week: number,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const results = [];
+        const user = req.user;
+        const timetables = await models.timetable.getMany(
+            {
+                where: courseIds.map((courseId) => ({
+                    termId,
+                    courseId,
+                })),
+            },
+            user
+        );
+        const streams = await models.sessionStream.getMany(
+            {
+                where: timetables.map((timetable) => ({
+                    timetableId: timetable.id,
+                })),
+            },
+            user
+        );
+        // get all root streams
+        const rootStreams = streams.filter((stream) => stream.basedId === null);
+        const streamMap = keyBy(streams, (stream) => stream.id);
+        // get all root sessions of specified weeks
+        const sessions = await models.session.getMany(
+            {
+                where: streams.map((stream) => ({
+                    sessionStreamId: stream.id,
+                    week,
+                })),
+            },
+            user
+        );
+        const rootSessions = sessions.filter((session) =>
+            rootStreams
+                .map((stream) => stream.id)
+                .includes(session.sessionStreamId)
+        );
+        // get related sessions (same week, same stream based id)
+        for (const rootSession of rootSessions) {
+            const rootStream = streamMap[rootSession.sessionStreamId];
+            const streamIdsToCheck = [...rootStream.basedStreamIds];
+            const visitedStreamIds: string[] = [];
+            while (streamIdsToCheck.length !== 0) {
+                const currentStreamId = streamIdsToCheck.pop()!;
+                const currentStream = streamMap[currentStreamId];
+                visitedStreamIds.push(currentStreamId);
+                streamIdsToCheck.push(...currentStream.basedStreamIds);
+            }
+            const relatedSessions = sessions.filter((session) =>
+                visitedStreamIds.includes(session.sessionStreamId)
+            );
+            const relatedAllocatedUserIds = relatedSessions.reduce<string[]>(
+                (allocatedUserIds, session) => [
+                    ...allocatedUserIds,
+                    ...session.allocatedUserIds,
+                ],
+                []
+            );
+            const relatedRequestIds = relatedSessions.reduce<string[]>(
+                (requestIds, session) => [...requestIds, ...session.requestIds],
+                []
+            );
+            const relatedPreferredSwapRequestIds = relatedSessions.reduce<
+                string[]
+            >(
+                (preferredSwapRequestIds, session) => [
+                    ...preferredSwapRequestIds,
+                    ...session.preferredSwapRequestIds,
+                ],
+                []
+            );
+            const relatedPreferredSwapOfferIds = relatedSessions.reduce<
+                string[]
+            >(
+                (preferredSwapOfferIds, session) => [
+                    ...preferredSwapOfferIds,
+                    ...session.preferredSwapOfferIds,
+                ],
+                []
+            );
+            const relatedAcceptedOfferIds = relatedSessions.reduce<string[]>(
+                (preferredSwapOfferIds, session) => [
+                    ...preferredSwapOfferIds,
+                    ...session.preferredSwapOfferIds,
+                ],
+                []
+            );
+            // add new merged session to results
+            results.push(
+                Session.create({
+                    sessionStreamId: rootSession.sessionStreamId,
+                    location: rootSession.location,
+                    week: rootSession.week,
+                    requestIds: [
+                        ...rootSession.requestIds,
+                        ...relatedRequestIds,
+                    ],
+                    preferredSwapRequestIds: [
+                        ...rootSession.preferredSwapRequestIds,
+                        ...relatedPreferredSwapRequestIds,
+                    ],
+                    preferredSwapOfferIds: [
+                        ...rootSession.preferredSwapOfferIds,
+                        ...relatedPreferredSwapOfferIds,
+                    ],
+                    acceptedOfferIds: [
+                        ...rootSession.acceptedOfferIds,
+                        ...relatedAcceptedOfferIds,
+                    ],
+                    allocatedUserIds: [
+                        ...rootSession.allocatedUserIds,
+                        ...relatedAllocatedUserIds,
+                    ],
+                })
+            );
+        }
+        return results;
+    }
+
     @Query(() => [Session])
     async sessions(
         @Arg("termId") termId: string,

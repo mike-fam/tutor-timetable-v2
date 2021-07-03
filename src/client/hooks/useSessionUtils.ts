@@ -3,8 +3,8 @@ import { Map } from "immutable";
 import { SessionMap, SessionUtil } from "../types/session";
 import { useLazyQueryWithError } from "./useQueryWithError";
 import {
+    useGetMergedSessionsLazyQuery,
     useGetSessionByIdLazyQuery,
-    useGetSessionsLazyQuery,
 } from "../generated/graphql";
 import { defaultInt, defaultStr } from "../constants";
 
@@ -21,7 +21,7 @@ export const useSessionUtils = (): SessionUtil => {
     const [
         getSession,
         { data: sessionsData, loading: getSessionsLoading },
-    ] = useLazyQueryWithError(useGetSessionsLazyQuery);
+    ] = useLazyQueryWithError(useGetMergedSessionsLazyQuery);
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },
@@ -62,7 +62,7 @@ export const useSessionUtils = (): SessionUtil => {
         if (!sessionsData) {
             return;
         }
-        sessionsData.sessions.forEach((session) => {
+        sessionsData.mergedSessions.forEach((session) => {
             setSessions((prev) => prev.set(session.id, session));
         });
     }, [sessionsData]);

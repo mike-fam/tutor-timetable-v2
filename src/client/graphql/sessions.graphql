@@ -1,0 +1,42 @@
+fragment SessionInfo on Session {
+    id
+    sessionStream {
+        id
+        name
+        startTime
+        endTime
+        day
+        timetable {
+            term {
+                id
+            }
+            course {
+                id
+            }
+        }
+    }
+    location
+    week
+    allocatedUsers {
+        username
+        name
+    }
+}
+
+query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+    sessions(termId: $termId, courseIds: $courseIds, week: $week) {
+        ...SessionInfo
+    }
+}
+
+query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+    mergedSessions(termId: $termId, courseIds: $courseIds, week: $week) {
+        ...SessionInfo
+    }
+}
+
+query GetSessionById($sessionId: String!) {
+    sessionById(sessionId: $sessionId) {
+        ...SessionInfo
+    }
+}

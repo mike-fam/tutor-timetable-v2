@@ -69,7 +69,7 @@ export const TimetableContainer: React.FC<Props> = () => {
             if (!sessionsData) {
                 return [];
             }
-            return sessionsData.sessions
+            return sessionsData.mergedSessions
                 .filter(
                     (session) =>
                         session.allocatedUsers.some(
@@ -123,7 +123,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                 );
             });
         } else {
-            sessionsData?.sessions.forEach((session) => {
+            sessionsData?.mergedSessions.forEach((session) => {
                 setSessionsInfo((prev) =>
                     prev.set(session.id, {
                         location: session.location,
