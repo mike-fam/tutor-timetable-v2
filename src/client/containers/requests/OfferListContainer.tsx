@@ -68,10 +68,10 @@ export const OfferListContainer: React.FC<Props> = ({
             },
         });
     }, [requestId, getOffers]);
-    const request = useMemo(() => requests.get(requestId), [
-        requests,
-        requestId,
-    ]);
+    const request = useMemo(
+        () => requests.get(requestId),
+        [requests, requestId]
+    );
     useEffect(() => {
         if (!request) {
             fetchRequestById(requestId);
@@ -198,7 +198,8 @@ export const OfferListContainer: React.FC<Props> = ({
                                                     await acceptOffer({
                                                         variables: {
                                                             offerId: offer.id,
-                                                            offerSessionSwapId: undefined,
+                                                            offerSessionSwapId:
+                                                                undefined,
                                                         },
                                                     });
                                                     closeModal();

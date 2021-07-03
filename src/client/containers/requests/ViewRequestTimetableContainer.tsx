@@ -20,10 +20,10 @@ export const ViewRequestTimetableContainer: React.FC<Props> = ({
     requestId,
 }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
-    const request = useMemo(() => requests.get(requestId), [
-        requests,
-        requestId,
-    ]);
+    const request = useMemo(
+        () => requests.get(requestId),
+        [requests, requestId]
+    );
     const { weekNum } = useTermMetadata(
         request?.session.sessionStream.timetable.term.id
     );

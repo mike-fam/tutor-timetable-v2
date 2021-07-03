@@ -194,8 +194,7 @@ export class OfferModel extends BaseModel<Offer> {
             if (offer.status !== OfferStatus.OPEN) {
                 return {
                     hasPerm: false,
-                    errMsg:
-                        "You cannot make changes to an offer that's not open",
+                    errMsg: "You cannot make changes to an offer that's not open",
                 };
             }
             // Always allow user to reject the offer
@@ -211,8 +210,7 @@ export class OfferModel extends BaseModel<Offer> {
                 if (request.status !== RequestStatus.OPEN) {
                     return {
                         hasPerm: false,
-                        errMsg:
-                            "You cannot accept an offer of a closed request.",
+                        errMsg: "You cannot accept an offer of a closed request.",
                     };
                 }
                 // Prevent user from marking offer as accepted when there's a
@@ -281,7 +279,8 @@ export class OfferModel extends BaseModel<Offer> {
                         updatedFields.acceptedSessionId
                     );
                 } else {
-                    acceptedSession = (await updatedFields.acceptedSession) as Session;
+                    acceptedSession =
+                        (await updatedFields.acceptedSession) as Session;
                 }
                 if (!offer.preferenceSessionIds.includes(acceptedSession.id)) {
                     return {
@@ -395,16 +394,14 @@ export class OfferModel extends BaseModel<Offer> {
         if (offer.userId && offer.userId !== user.id) {
             return {
                 hasPerm: false,
-                errMsg:
-                    "You cannot create a new offer on behalf of someone else",
+                errMsg: "You cannot create a new offer on behalf of someone else",
             };
         }
         const offerMaker = offer.user as User | undefined;
         if (offerMaker && offerMaker.id !== user.id) {
             return {
                 hasPerm: false,
-                errMsg:
-                    "You cannot create a new offer on behalf of someone else",
+                errMsg: "You cannot create a new offer on behalf of someone else",
             };
         }
 
@@ -416,8 +413,7 @@ export class OfferModel extends BaseModel<Offer> {
         if (!(await user.isStaffOf(course, term))) {
             return {
                 hasPerm: false,
-                errMsg:
-                    "You cannot make an offer for a request of another course",
+                errMsg: "You cannot make an offer for a request of another course",
             };
         }
         // Check if offer is for a request of that user

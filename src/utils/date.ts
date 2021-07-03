@@ -33,6 +33,6 @@ export const timeStringToHours = (
     timeString: string,
     formatString: string = "HH:mm"
 ): number => {
-    const date = parse(timeString, formatString, new Date())
+    const date = parse(timeString, formatString, new Date());
     return date.getHours() + date.getMinutes() / 60;
-}
+};

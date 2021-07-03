@@ -26,25 +26,18 @@ export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
         Map<string, TimetableSessionProps>
     >(Map());
-    const {
-        displayedDays,
-        dayStartTime,
-        dayEndTime,
-        displayMySessionsOnly,
-    } = useContext(TimetableSettingsContext);
-    const { chosenTermId, chosenWeek, chosenCourses } = useContext(
-        TimetableContext
-    );
+    const { displayedDays, dayStartTime, dayEndTime, displayMySessionsOnly } =
+        useContext(TimetableSettingsContext);
+    const { chosenTermId, chosenWeek, chosenCourses } =
+        useContext(TimetableContext);
     const { user } = useContext(UserContext);
     // TODO: Use lazy query
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
-    const {
-        data: sessionStreamsData,
-        loading: sessionStreamsLoading,
-    } = useQueryWithError(useGetSessionStreamsQuery, {
-        termId: chosenTermId,
-        courseIds: chosenCourses.toArray(),
-    });
+    const { data: sessionStreamsData, loading: sessionStreamsLoading } =
+        useQueryWithError(useGetSessionStreamsQuery, {
+            termId: chosenTermId,
+            courseIds: chosenCourses.toArray(),
+        });
     const sessions = useMemo(() => {
         if (chosenWeek === defaultInt) {
             if (sessionStreamsLoading || !sessionStreamsData) {

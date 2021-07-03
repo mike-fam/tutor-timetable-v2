@@ -165,7 +165,8 @@ export class OfferResolver {
             }
             // Change all subsequent sessions if request is permanent
             if (request.type === RequestType.PERMANENT) {
-                const subsequentSessions = await requestedSession.subsequentSessions();
+                const subsequentSessions =
+                    await requestedSession.subsequentSessions();
                 for (const subsequentSession of subsequentSessions) {
                     await OfferResolver.performSwap(
                         models.session,

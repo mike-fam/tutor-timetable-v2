@@ -40,15 +40,18 @@ export const getPublicTimetableData = async (
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         },
     };
-    const data = qs.stringify({
-        semester: termTypeToTimetableParam(term.type),
-        campus: "ALL",
-        type: sessionTypes,
-        days: ["1", "2", "3", "4", "5", "6", "0"],
-        "start-time": "00:00",
-        "end-time": "23:00",
-        "search-term": course.code,
-    }, {indices: false});
+    const data = qs.stringify(
+        {
+            semester: termTypeToTimetableParam(term.type),
+            campus: "ALL",
+            type: sessionTypes,
+            days: ["1", "2", "3", "4", "5", "6", "0"],
+            "start-time": "00:00",
+            "end-time": "23:00",
+            "search-term": course.code,
+        },
+        { indices: false }
+    );
     const response = await axios.post<PublicTimetableData>(
         url,
         data,

@@ -51,10 +51,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         onOpen: openConfirm,
         onClose: closeConfirm,
     } = useDisclosure();
-    const [
-        getSessionStream,
-        { data: defaultSessionData },
-    ] = useGetSessionStreamsLazyQuery();
+    const [getSessionStream, { data: defaultSessionData }] =
+        useGetSessionStreamsLazyQuery();
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
@@ -135,13 +133,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             setSessions(
                 requestAllocationData.requestAllocation.allocations.map(
                     ({ sessionStream }) => {
-                        const {
-                            id,
-                            name,
-                            startTime,
-                            endTime,
-                            day,
-                        } = sessionStream;
+                        const { id, name, startTime, endTime, day } =
+                            sessionStream;
                         return {
                             id,
                             name,
@@ -295,7 +288,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                                     courseId,
                                                     termId,
                                                 },
-                                                staffIds: selectedStaff.toArray(),
+                                                staffIds:
+                                                    selectedStaff.toArray(),
                                                 newThreshold: 0.5,
                                             },
                                         });
