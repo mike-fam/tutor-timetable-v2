@@ -25,18 +25,81 @@ fragment SessionInfo on Session {
 
 query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
     sessions(termId: $termId, courseIds: $courseIds, week: $week) {
-        ...SessionInfo
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            username
+            name
+        }
     }
 }
 
 query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
     mergedSessions(termId: $termId, courseIds: $courseIds, week: $week) {
-        ...SessionInfo
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            username
+            name
+        }
     }
 }
 
 query GetSessionById($sessionId: String!) {
     sessionById(sessionId: $sessionId) {
-        ...SessionInfo
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            username
+            name
+        }
     }
 }

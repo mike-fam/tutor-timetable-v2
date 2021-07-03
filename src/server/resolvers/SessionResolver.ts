@@ -10,6 +10,7 @@ import {
 import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
+import { v4 as uuid } from "uuid";
 
 @Resolver(() => Session)
 export class SessionResolver {
@@ -108,34 +109,36 @@ export class SessionResolver {
                 []
             );
             // add new merged session to results
-            results.push(
-                Session.create({
-                    sessionStreamId: rootSession.sessionStreamId,
-                    location: rootSession.location,
-                    week: rootSession.week,
-                    requestIds: [
-                        ...rootSession.requestIds,
-                        ...relatedRequestIds,
-                    ],
-                    preferredSwapRequestIds: [
-                        ...rootSession.preferredSwapRequestIds,
-                        ...relatedPreferredSwapRequestIds,
-                    ],
-                    preferredSwapOfferIds: [
-                        ...rootSession.preferredSwapOfferIds,
-                        ...relatedPreferredSwapOfferIds,
-                    ],
-                    acceptedOfferIds: [
-                        ...rootSession.acceptedOfferIds,
-                        ...relatedAcceptedOfferIds,
-                    ],
-                    allocatedUserIds: [
-                        ...rootSession.allocatedUserIds,
-                        ...relatedAllocatedUserIds,
-                    ],
-                })
-            );
+            console.log(rootSession.allocatedUserIds, relatedAllocatedUserIds);
+            const newSession = Session.create({
+                id: uuid(),
+                sessionStreamId: rootSession.sessionStreamId,
+                location: rootSession.location,
+                week: rootSession.week,
+            });
+            newSession.requestIds = [
+                ...rootSession.requestIds,
+                ...relatedRequestIds,
+            ];
+            newSession.preferredSwapRequestIds = [
+                ...rootSession.preferredSwapRequestIds,
+                ...relatedPreferredSwapRequestIds,
+            ];
+            newSession.preferredSwapOfferIds = [
+                ...rootSession.preferredSwapOfferIds,
+                ...relatedPreferredSwapOfferIds,
+            ];
+            newSession.acceptedOfferIds = [
+                ...rootSession.acceptedOfferIds,
+                ...relatedAcceptedOfferIds,
+            ];
+            newSession.allocatedUserIds = [
+                ...rootSession.allocatedUserIds,
+                ...relatedAllocatedUserIds,
+            ];
+            results.push(newSession);
         }
+        console.log(results);
         return results;
     }
 

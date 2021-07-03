@@ -1201,7 +1201,24 @@ export type GetSessionsQuery = (
   { __typename?: 'Query' }
   & { sessions: Array<(
     { __typename?: 'Session' }
-    & SessionInfoFragment
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
   )> }
 );
 
@@ -1216,7 +1233,24 @@ export type GetMergedSessionsQuery = (
   { __typename?: 'Query' }
   & { mergedSessions: Array<(
     { __typename?: 'Session' }
-    & SessionInfoFragment
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
   )> }
 );
 
@@ -1229,7 +1263,24 @@ export type GetSessionByIdQuery = (
   { __typename?: 'Query' }
   & { sessionById: (
     { __typename?: 'Session' }
-    & SessionInfoFragment
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
   ) }
 );
 
@@ -2502,10 +2553,31 @@ export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUse
 export const GetSessionsDocument = gql`
     query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
   sessions(termId: $termId, courseIds: $courseIds, week: $week) {
-    ...SessionInfo
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
   }
 }
-    ${SessionInfoFragmentDoc}`;
+    `;
 
 /**
  * __useGetSessionsQuery__
@@ -2537,10 +2609,31 @@ export type GetSessionsQueryResult = Apollo.QueryResult<GetSessionsQuery, GetSes
 export const GetMergedSessionsDocument = gql`
     query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
   mergedSessions(termId: $termId, courseIds: $courseIds, week: $week) {
-    ...SessionInfo
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
   }
 }
-    ${SessionInfoFragmentDoc}`;
+    `;
 
 /**
  * __useGetMergedSessionsQuery__
@@ -2572,10 +2665,31 @@ export type GetMergedSessionsQueryResult = Apollo.QueryResult<GetMergedSessionsQ
 export const GetSessionByIdDocument = gql`
     query GetSessionById($sessionId: String!) {
   sessionById(sessionId: $sessionId) {
-    ...SessionInfo
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
   }
 }
-    ${SessionInfoFragmentDoc}`;
+    `;
 
 /**
  * __useGetSessionByIdQuery__

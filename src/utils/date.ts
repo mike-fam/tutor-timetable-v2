@@ -35,4 +35,4 @@ export const timeStringToHours = (
 ): number => {
     const date = parse(timeString, formatString, new Date());
     return date.getHours() + date.getMinutes() / 60;
-}
+};
