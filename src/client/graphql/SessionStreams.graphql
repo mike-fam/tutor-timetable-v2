@@ -1,0 +1,33 @@
+query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
+    sessionStreams(courseIds: $courseIds, termId: $termId) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        location
+        numberOfStaff
+        allocatedUsers {
+            name
+            username
+        }
+    }
+}
+
+query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
+    rootSessionStreams(courseIds: $courseIds, termId: $termId) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        location
+        numberOfStaff
+        allocatedUsers {
+            name
+            username
+        }
+    }
+}

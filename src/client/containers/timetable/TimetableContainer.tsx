@@ -7,7 +7,10 @@ import {
     TimetableSettingsContext,
 } from "../../utils/timetable";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
-import { useGetSessionStreamsQuery } from "../../generated/graphql";
+import {
+    useGetRootSessionStreamsQuery,
+    useGetSessionStreamsQuery,
+} from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import {
@@ -34,7 +37,7 @@ export const TimetableContainer: React.FC<Props> = () => {
     // TODO: Use lazy query
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
     const { data: sessionStreamsData, loading: sessionStreamsLoading } =
-        useQueryWithError(useGetSessionStreamsQuery, {
+        useQueryWithError(useGetRootSessionStreamsQuery, {
             termId: chosenTermId,
             courseIds: chosenCourses.toArray(),
         });
@@ -43,7 +46,7 @@ export const TimetableContainer: React.FC<Props> = () => {
             if (sessionStreamsLoading || !sessionStreamsData) {
                 return [];
             }
-            return sessionStreamsData.sessionStreams
+            return sessionStreamsData.rootSessionStreams
                 .filter(
                     (stream) =>
                         stream.allocatedUsers.some(
@@ -100,7 +103,7 @@ export const TimetableContainer: React.FC<Props> = () => {
     }, [chosenTermId, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
         if (chosenWeek === defaultInt) {
-            sessionStreamsData?.sessionStreams.forEach((sessionStream) => {
+            sessionStreamsData?.rootSessionStreams.forEach((sessionStream) => {
                 setSessionsInfo((prev) =>
                     prev.set(sessionStream.id, {
                         location: sessionStream.location,

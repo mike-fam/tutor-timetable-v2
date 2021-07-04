@@ -109,6 +109,23 @@ export enum FreezeState {
   ApprovalRequired = 'APPROVAL_REQUIRED'
 }
 
+export type MergedStreamInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  numberOfTutorsForWeeks: Array<MergedStreamTutorNumbers>;
+};
+
+export type MergedStreamTutorNumbers = {
+  week: Scalars['Int'];
+  numberOfTutors: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   requestAllocation: AllocatorOutput;
@@ -119,10 +136,10 @@ export type Mutation = {
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
   removeCourseStaff: Scalars['String'];
+  addMergedSessionStreams: Array<SessionStream>;
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
-  generateSessions: Array<Session>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -183,6 +200,11 @@ export type MutationRemoveCourseStaffArgs = {
 };
 
 
+export type MutationAddMergedSessionStreamsArgs = {
+  sessionStreams: Array<MergedStreamInput>;
+};
+
+
 export type MutationAddBasedSessionStreamArgs = {
   numberOfStaff: Scalars['Int'];
   weeks: Array<Scalars['Int']>;
@@ -208,11 +230,6 @@ export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
-};
-
-
-export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['String'];
 };
 
 
@@ -310,6 +327,8 @@ export type Query = {
   term: Term;
   courseStaffs: Array<CourseStaff>;
   sessionStreams: Array<SessionStream>;
+  rootSessionStreams: Array<SessionStream>;
+  fromPublicTimetable: Array<SessionStream>;
   timetables: Array<Timetable>;
   timetable: Timetable;
   timetableById: Timetable;
@@ -341,6 +360,18 @@ export type QueryCourseStaffsArgs = {
 export type QuerySessionStreamsArgs = {
   courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
+};
+
+
+export type QueryRootSessionStreamsArgs = {
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+};
+
+
+export type QueryFromPublicTimetableArgs = {
+  sessionTypes: Array<SessionType>;
+  courseTerm: CourseTermIdInput;
 };
 
 
@@ -458,11 +489,13 @@ export type SessionStream = {
 };
 
 export enum SessionType {
+  Contact = 'CONTACT',
   Practical = 'PRACTICAL',
   Tutorial = 'TUTORIAL',
   Seminar = 'SEMINAR',
   Lecture = 'LECTURE',
-  Studio = 'STUDIO'
+  Studio = 'STUDIO',
+  Workshop = 'WORKSHOP'
 }
 
 export type StaffRequest = {
@@ -567,6 +600,42 @@ export type UpdateDetailsMutation = (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name' | 'email'>
   ) }
+);
+
+export type GetSessionStreamsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetSessionStreamsQuery = (
+  { __typename?: 'Query' }
+  & { sessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'username'>
+    )> }
+  )> }
+);
+
+export type GetRootSessionStreamsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetRootSessionStreamsQuery = (
+  { __typename?: 'Query' }
+  & { rootSessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'username'>
+    )> }
+  )> }
 );
 
 export type AcceptOfferMutationVariables = Exact<{
@@ -1007,24 +1076,6 @@ export type GetRequestsByTermIdQuery = (
   )> }
 );
 
-export type GetSessionStreamsQueryVariables = Exact<{
-  termId: Scalars['String'];
-  courseIds: Array<Scalars['String']>;
-}>;
-
-
-export type GetSessionStreamsQuery = (
-  { __typename?: 'Query' }
-  & { sessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'name' | 'username'>
-    )> }
-  )> }
-);
-
 export type GetSessionsQueryVariables = Exact<{
   termId: Scalars['String'];
   week: Scalars['Int'];
@@ -1308,6 +1359,96 @@ export function useUpdateDetailsMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateDetailsMutationHookResult = ReturnType<typeof useUpdateDetailsMutation>;
 export type UpdateDetailsMutationResult = Apollo.MutationResult<UpdateDetailsMutation>;
 export type UpdateDetailsMutationOptions = Apollo.BaseMutationOptions<UpdateDetailsMutation, UpdateDetailsMutationVariables>;
+export const GetSessionStreamsDocument = gql`
+    query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
+  sessionStreams(courseIds: $courseIds, termId: $termId) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    allocatedUsers {
+      name
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSessionStreamsQuery__
+ *
+ * To run a query within a React component, call `useGetSessionStreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionStreamsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+      }
+export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+        }
+export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
+export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
+export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
+export const GetRootSessionStreamsDocument = gql`
+    query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
+  rootSessionStreams(courseIds: $courseIds, termId: $termId) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    allocatedUsers {
+      name
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRootSessionStreamsQuery__
+ *
+ * To run a query within a React component, call `useGetRootSessionStreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRootSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRootSessionStreamsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetRootSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+      }
+export function useGetRootSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+        }
+export type GetRootSessionStreamsQueryHookResult = ReturnType<typeof useGetRootSessionStreamsQuery>;
+export type GetRootSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetRootSessionStreamsLazyQuery>;
+export type GetRootSessionStreamsQueryResult = Apollo.QueryResult<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>;
 export const AcceptOfferDocument = gql`
     mutation AcceptOffer($offerId: String!, $offerSessionSwapId: String) {
   acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId) {
@@ -2154,51 +2295,6 @@ export function useGetRequestsByTermIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetRequestsByTermIdQueryHookResult = ReturnType<typeof useGetRequestsByTermIdQuery>;
 export type GetRequestsByTermIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByTermIdLazyQuery>;
 export type GetRequestsByTermIdQueryResult = Apollo.QueryResult<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>;
-export const GetSessionStreamsDocument = gql`
-    query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
-  sessionStreams(courseIds: $courseIds, termId: $termId) {
-    id
-    type
-    name
-    startTime
-    endTime
-    day
-    location
-    numberOfStaff
-    allocatedUsers {
-      name
-      username
-    }
-  }
-}
-    `;
-
-/**
- * __useGetSessionStreamsQuery__
- *
- * To run a query within a React component, call `useGetSessionStreamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSessionStreamsQuery({
- *   variables: {
- *      termId: // value for 'termId'
- *      courseIds: // value for 'courseIds'
- *   },
- * });
- */
-export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
-      }
-export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
-        }
-export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
-export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
-export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
 export const GetSessionsDocument = gql`
     query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
   sessions(termId: $termId, courseIds: $courseIds, week: $week) {

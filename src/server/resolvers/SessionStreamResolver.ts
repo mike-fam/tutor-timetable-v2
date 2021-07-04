@@ -203,12 +203,24 @@ export class SessionStreamResolver {
     }
     @Query(() => [SessionStream])
     async rootSessionStreams(
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [String]) courseIds: string[],
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
+        const timetable = await models.timetable.get(
+            {
+                where: courseIds.map((courseId) => ({
+                    termId,
+                    courseId,
+                })),
+            },
+            req.user
+        );
         return await models.sessionStream.getMany(
             {
                 where: {
-                    basedId: Not(IsNull()),
+                    timetableId: timetable.id,
+                    basedId: IsNull(),
                 },
             },
             req.user
