@@ -93,6 +93,8 @@ const main = async () => {
             ],
             dateScalarMode: "isoDate",
             globalMiddlewares: [LoadersInjector],
+            authChecker: ({ context: { req } }: { context: MyContext }) =>
+                !!req.user,
         }),
         context: ({ req, res }): MyContext => {
             const loaders = {
@@ -129,9 +131,13 @@ const main = async () => {
                 },
             };
         },
+        subscriptions: {
+            path: "/graphql",
+        },
     });
 
     apolloServer.applyMiddleware({ app });
+    apolloServer.installSubscriptionHandlers(server);
 
     // Catch-all route
     app.use("*", (_, res: Response) => {

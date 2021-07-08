@@ -3,14 +3,13 @@ import React, { useEffect, useState } from "react";
 import { defaultStr } from "../../constants";
 import {
     Preference,
-    useGetSessionStreamsQuery,
+    useGetSessionStreamsLazyQuery,
     useMyPreferenceLazyQuery,
     useUpdatePreferenceMutation,
 } from "../../generated/graphql";
 import {
     useLazyQueryWithError,
     useMutationWithError,
-    useQueryWithError,
 } from "../../hooks/useQueryWithError";
 import { Loadable } from "../../components/helpers/Loadable";
 import { FormikInput } from "../../components/helpers/FormikInput";
@@ -39,12 +38,8 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         maxWeeklyHours: 100,
         sessionType: NO_PREFERENCE,
     });
-    const { data: sessionStreamData } = useQueryWithError(
-        useGetSessionStreamsQuery,
-        {
-            courseIds: [courseId],
-            termId,
-        }
+    const [getStreams, { data: sessionStreamData }] = useLazyQueryWithError(
+        useGetSessionStreamsLazyQuery
     );
     const [
         fetchMyPreference,
@@ -76,12 +71,14 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         if (courseId === defaultStr || termId === defaultStr) {
             return;
         }
+        getStreams({ variables: { termId, courseIds: [courseId] } });
         const variables = {
             preferenceFind: { termId, courseId },
         };
         if (preferenceQueryCalled) {
             refetchMyPreference!(variables);
         } else {
+            console.log("Calling fetch");
             fetchMyPreference({ variables });
         }
     }, [
@@ -90,6 +87,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         fetchMyPreference,
         preferenceQueryCalled,
         refetchMyPreference,
+        getStreams,
     ]);
     useEffect(() => {
         if (!preferenceData?.myPreference) {
