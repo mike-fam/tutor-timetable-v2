@@ -9,7 +9,7 @@ pipelines:
             - yarn
             - yarn build
             - yarn eslint-check && yarn prettier-check
-            - yarn test
+            - cp .env.docker .env && yarn docker-test
       - step:
           name: 'Push changes back to github'
           script:
