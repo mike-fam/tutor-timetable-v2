@@ -30,7 +30,7 @@ import { TimetableSessionType } from "../../types/timetable";
 import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
-import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
+import { AllocatorConfirmDialog } from "../../components/allocator/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
     AllocatorTable,

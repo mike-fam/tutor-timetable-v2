@@ -4,12 +4,14 @@
 //  Allow fetching from server
 //  Allow selecting multiple sessions streams and edit/delete those streams
 //  (Should store modification state of stream and color code)
+//  Allow user to switch between session stream and sessions view
 
 // TODO: Implementation
 //  Store selected sessions
 //  Store all sessions and their states
 //  Store previous states for undo
-//  States: Unchanged, updated, deleted, created, remove_modified
+// TODO: This should store:
+//  States: Unchanged, updated, deleted, created, remove_modified sessions
 import { useEffect, useState } from "react";
 import { defaultStr } from "../constants";
 import {
@@ -47,5 +49,12 @@ export const useSessionSettings = () => {
     // TODO: Implement week cache
     // Save it to state
     // Allow user to modify
-    // TODO: User can modify session weeks, what to do? clear allocation?
+    // TODO: User cannot modify session weeks if allocation exists
+    // TODO: User can (de)allocate other users from sessions
+    return {
+        courseId,
+        termId,
+        setCourseId,
+        setTermId
+    }
 };
