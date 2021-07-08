@@ -78,7 +78,6 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         if (preferenceQueryCalled) {
             refetchMyPreference!(variables);
         } else {
-            console.log("Calling fetch");
             fetchMyPreference({ variables });
         }
     }, [
