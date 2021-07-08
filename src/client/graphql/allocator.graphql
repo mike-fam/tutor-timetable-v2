@@ -21,6 +21,7 @@ mutation RequestAllocation(
                 day
                 location
                 weeks
+                numberOfStaff
             }
             staff {
                 id

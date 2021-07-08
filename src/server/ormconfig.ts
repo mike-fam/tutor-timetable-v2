@@ -41,7 +41,9 @@ export default {
             ? "build/server/migrations/*.js"
             : "src/server/migrations/*.ts",
     ],
-    logging: !__prod__ && ["error", "schema", "warn", "query"],
+    // Uncomment query if you want to see the queries run by TypeORM
+    // Warning: your might be overwhelmed by the output
+    logging: !__prod__ && ["error", "schema", "warn"], //, "query"],
     cli: {
         migrationsDir: __prod__
             ? "build/server/migrations/*.js"

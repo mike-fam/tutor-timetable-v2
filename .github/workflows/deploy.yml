@@ -2,8 +2,9 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]
-
+#    branches: [ main ]
+    branches-ignore:
+      - '**'
 jobs:
   build:
     name: Deploy

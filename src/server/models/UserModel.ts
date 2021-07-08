@@ -17,7 +17,7 @@ export class UserModel extends BaseModel<User> {
 
     /**
      * A user can read a user entry if EITHER
-     * they are admin
+     * they are admin or a course coordinator
      * OR
      * they work in a same course as this user
      *
@@ -30,6 +30,10 @@ export class UserModel extends BaseModel<User> {
         toRead: User,
         user: User
     ): Promise<PermissionState> {
+        const coursesUserCoordinating = await user.coursesCoordinating();
+        if (coursesUserCoordinating.length > 0) {
+            return { hasPerm: true };
+        }
         const myCourses = await user.coursesWorkingIn();
         const theirCourses = await toRead.coursesWorkingIn();
         const myCourseIds = myCourses.map((course) => course.id);
