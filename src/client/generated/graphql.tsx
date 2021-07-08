@@ -41,14 +41,6 @@ export type AllocatorOutput = {
   allocations: Array<Allocation>;
 };
 
-export enum AvailabilityModificationType {
-  Unchanged = 'UNCHANGED',
-  Added = 'ADDED',
-  Modified = 'MODIFIED',
-  Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
-}
-
 export type Course = {
   __typename?: 'Course';
   id: Scalars['String'];
@@ -109,6 +101,31 @@ export enum FreezeState {
   ApprovalRequired = 'APPROVAL_REQUIRED'
 }
 
+export type MergedStreamInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  numberOfTutorsForWeeks: Array<MergedStreamTutorNumbers>;
+};
+
+export type MergedStreamTutorNumbers = {
+  week: Scalars['Int'];
+  numberOfTutors: Scalars['Int'];
+};
+
+export enum ModificationType {
+  Unchanged = 'UNCHANGED',
+  Added = 'ADDED',
+  Modified = 'MODIFIED',
+  Removed = 'REMOVED',
+  RemovedModified = 'REMOVED_MODIFIED'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   requestAllocation: AllocatorOutput;
@@ -119,10 +136,10 @@ export type Mutation = {
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
   removeCourseStaff: Scalars['String'];
+  addMergedSessionStreams: Array<SessionStream>;
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
-  generateSessions: Array<Session>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -183,6 +200,11 @@ export type MutationRemoveCourseStaffArgs = {
 };
 
 
+export type MutationAddMergedSessionStreamsArgs = {
+  sessionStreams: Array<MergedStreamInput>;
+};
+
+
 export type MutationAddBasedSessionStreamArgs = {
   numberOfStaff: Scalars['Int'];
   weeks: Array<Scalars['Int']>;
@@ -208,11 +230,6 @@ export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
-};
-
-
-export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['String'];
 };
 
 
@@ -310,6 +327,7 @@ export type Query = {
   term: Term;
   courseStaffs: Array<CourseStaff>;
   sessionStreams: Array<SessionStream>;
+  fromPublicTimetable: Array<SessionStream>;
   timetables: Array<Timetable>;
   timetable: Timetable;
   timetableById: Timetable;
@@ -341,6 +359,12 @@ export type QueryCourseStaffsArgs = {
 export type QuerySessionStreamsArgs = {
   courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
+};
+
+
+export type QueryFromPublicTimetableArgs = {
+  sessionTypes: Array<SessionType>;
+  courseTerm: CourseTermIdInput;
 };
 
 
@@ -458,11 +482,13 @@ export type SessionStream = {
 };
 
 export enum SessionType {
+  Contact = 'CONTACT',
   Practical = 'PRACTICAL',
   Tutorial = 'TUTORIAL',
   Seminar = 'SEMINAR',
   Lecture = 'LECTURE',
-  Studio = 'STUDIO'
+  Studio = 'STUDIO',
+  Workshop = 'WORKSHOP'
 }
 
 export type StaffRequest = {
@@ -516,7 +542,7 @@ export type TimeslotInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   day: Scalars['Int'];
-  modificationType: AvailabilityModificationType;
+  modificationType: ModificationType;
 };
 
 export type Timetable = {

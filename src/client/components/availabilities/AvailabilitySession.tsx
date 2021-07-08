@@ -15,14 +15,14 @@ import { ContextMenu } from "../helpers/ContextMenu";
 import { ContextMenuTrigger } from "../helpers/ContextMenuTrigger";
 import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
-import { AvailabilityModificationType } from "../../generated/graphql";
+import { ModificationType } from "../../generated/graphql";
 
 export type AvailabilitySessionProps = {
     updateSession: (sessionId: string, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: string) => void;
     restoreSession: (sessionId: string) => void;
     editSession: (sessionId: string) => void;
-    modificationType: AvailabilityModificationType;
+    modificationType: ModificationType;
 };
 
 type Props = SessionProps & AvailabilitySessionProps;
@@ -44,8 +44,8 @@ export const AvailabilitySession: React.FC<Props> = ({
     }, [modificationType]);
     const removed = useMemo(() => {
         return (
-            modificationType === AvailabilityModificationType.RemovedModified ||
-            modificationType === AvailabilityModificationType.Removed
+            modificationType === ModificationType.RemovedModified ||
+            modificationType === ModificationType.Removed
         );
     }, [modificationType]);
     return (
