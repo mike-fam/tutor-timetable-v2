@@ -21,7 +21,7 @@ const httpLink = new HttpLink({
 const retryLink = new RetryLink();
 
 const wsLink = new WebSocketLink({
-    uri: `ws${__prod__ ? "s": ""}://${window.location.host}/graphql`,
+    uri: `ws${__prod__ ? "s" : ""}://${window.location.host}/graphql`,
     options: {
         reconnect: true,
     },
