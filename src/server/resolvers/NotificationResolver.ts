@@ -1,4 +1,4 @@
-import { Arg, Resolver, Root, Subscription } from "type-graphql";
+import { Resolver, Root, Subscription } from "type-graphql";
 import { MyContext } from "../types/context";
 import { User } from "../entities";
 
