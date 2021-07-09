@@ -55,6 +55,7 @@ import { TimetableModel } from "./models/TimetableModel";
 import { PreferenceModel } from "./models/PreferenceModel";
 import { TermModel } from "./models/TermModel";
 import { RedisPubSub } from "graphql-redis-subscriptions";
+import { NotificationResolver } from "./resolvers/NotificationResolver";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -103,6 +104,7 @@ const main = async () => {
                 AllocatorResolver,
                 OfferResolver,
                 UserSettingsResolver,
+                NotificationResolver
             ],
             pubSub,
             dateScalarMode: "isoDate",

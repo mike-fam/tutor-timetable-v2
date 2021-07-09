@@ -44,6 +44,7 @@ import { UserModel } from "../models/UserModel";
 import { UserSettingsModel } from "../models/UserSettingsModel";
 import { createLoader } from "../dataloaders/createLoader";
 import { Utils } from "../utils/Util";
+import { NotificationResolver } from "../resolvers/NotificationResolver";
 
 interface Options {
     source: string;
@@ -84,6 +85,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
                 AllocatorResolver,
                 OfferResolver,
                 UserSettingsResolver,
+                NotificationResolver,
             ],
             authChecker: ({ context: { req } }: { context: MyContext }) =>
                 !!req.user,
