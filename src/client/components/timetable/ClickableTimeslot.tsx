@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { TimeSlot } from "../timetable/TimeSlot";
+import { TimeSlot } from "./TimeSlot";
 import { TempTimeslot } from "../../types/availability";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
     day: number;
 };
 
-export const AvailabilityTimeslot: React.FC<Props> = ({
+export const ClickableTimeslot: React.FC<Props> = ({
     addNewTimeslot,
     time,
     day,

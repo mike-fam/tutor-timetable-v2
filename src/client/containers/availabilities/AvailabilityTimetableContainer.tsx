@@ -8,7 +8,7 @@ import React, {
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
 import { Props as SessionProps } from "../../components/timetable/Session";
-import { AvailabilityTimeslot } from "../../components/availabilities/AvailabilityTimeslot";
+import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { AvailabilityContext } from "../../utils/availability";
 import { ModifyTimeslotParams, TempTimeslot } from "../../types/availability";
@@ -179,7 +179,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                     <Day<AvailabilitySessionProps>
                         {...dayProps}
                         renderTimeSlot={(key, time, day) => (
-                            <AvailabilityTimeslot
+                            <ClickableTimeslot
                                 key={key}
                                 time={time}
                                 day={day}

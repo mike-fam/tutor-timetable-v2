@@ -1,9 +1,9 @@
 import React from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
-import { Heading, HStack, Stack } from "@chakra-ui/react";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
+import { Heading, HStack, Stack } from "@chakra-ui/react";
 
 type Props = {};
 
