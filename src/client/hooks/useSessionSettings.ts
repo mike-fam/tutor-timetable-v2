@@ -24,7 +24,6 @@ import { useLazyQueryWithError } from "./useQueryWithError";
 export const useSessionSettings = () => {
     const [courseId, setCourseId] = useState(defaultStr);
     const [termId, setTermId] = useState(defaultStr);
-    const [streams, setStreams] = useState<List<MergedStreamInput>>(List());
     const [fetchStream, { data: getSessionStreamsData, loading }] =
         useLazyQueryWithError(useGetSessionStreamsLazyQuery);
     // Fetch one first time
