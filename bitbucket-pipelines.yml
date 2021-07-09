@@ -1,4 +1,4 @@
-image: node:12
+image: bqmpham/node-postgresql
 
 pipelines:
   branches:
@@ -9,7 +9,7 @@ pipelines:
             - yarn
             - yarn build
             - yarn eslint-check && yarn prettier-check
-            - cp .env.docker .env && yarn docker-test
+            - cp .env.docker .env && yarn test
       - step:
           name: 'Push changes back to github'
           script:
@@ -23,7 +23,6 @@ pipelines:
             - git config user.name "Mike Pham"
             - git config user.email "31090859+mike-fam@users.noreply.github.com"
             - git remote add github git@github.com:mike-fam/tutor-timetable-v2.git
-            - git remote -v
             - git push github development:main
       - step:
           name: 'Deployment to Staging'
