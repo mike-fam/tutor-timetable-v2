@@ -45,14 +45,35 @@ export const useModificationMap = <T>() => {
         setCreated((prev) => prev.set(id || uuid(), item));
     }, []);
 
-    const updateItem = useCallback((id: string, newFields: Partial<T>) => {
-        const item = unchanged.get(id);
-        if (!item) {
-            return;
-        }
-        const newItem = { ...item, ...newFields };
-        setModified((prev) => prev.set(id, newItem));
-    }, [unchanged]);
+    const updateItem = useCallback(
+        (id: string, newFields: Partial<T>) => {
+            const item = unchanged.get(id);
+            if (!item) {
+                return;
+            }
+            const newItem = { ...item, ...newFields };
+            setModified((prev) => prev.set(id, newItem));
+        },
+        [unchanged]
+    );
+
+    const clearItems = useCallback(() => {
+        setUnchanged((prev) => prev.clear());
+        setModified((prev) => prev.clear());
+        setCreated((prev) => prev.clear());
+        setDeleted((prev) => prev.clear());
+        setDeleteModified((prev) => prev.clear());
+    }, []);
+
+    const resetItems = useCallback(
+        (newKeys: Array<[string, T]>) => {
+            clearItems();
+            newKeys.forEach(([id, obj]) => {
+                setUnchanged((prev) => prev.set(id, obj));
+            });
+        },
+        [clearItems]
+    );
 
     return {
         unchanged,
@@ -63,6 +84,8 @@ export const useModificationMap = <T>() => {
         deleteItem,
         restoreItem,
         createItem,
-        updateItem
+        updateItem,
+        clearItems,
+        resetItems
     };
 };
