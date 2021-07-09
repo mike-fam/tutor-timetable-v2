@@ -176,7 +176,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 startTime={dayStartTime}
                 endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
-                    <Day
+                    <Day<AvailabilitySessionProps>
                         {...dayProps}
                         renderTimeSlot={(key, time, day) => (
                             <AvailabilityTimeslot

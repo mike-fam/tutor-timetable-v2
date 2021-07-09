@@ -1,6 +1,6 @@
 import React from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
-import { Heading, HStack, Stack, Text } from "@chakra-ui/react";
+import { Heading, HStack, Stack } from "@chakra-ui/react";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
@@ -13,9 +13,6 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         <Wrapper>
             <Stack spacing={4}>
                 <Heading as="h1">Session Settings</Heading>
-                <Text fontSize="2xl" fontWeight="light" as="h2" pt={6}>
-                    Choose a timetable to generate allocation for:
-                </Text>
                 <HStack spacing={6}>
                     <TermSelectContainer
                         chooseTerm={setTermId}
