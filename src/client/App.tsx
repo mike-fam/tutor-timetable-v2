@@ -12,9 +12,7 @@ import { WrapperContainer } from "./containers/WrapperContainer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { RetryLink } from "@apollo/client/link/retry";
-import { QueryClient, QueryClientProvider } from "react-query";
-
-const queryClient = new QueryClient();
+import { __prod__ } from "../constants";
 
 const httpLink = new HttpLink({
     uri: "/graphql",
@@ -23,7 +21,7 @@ const httpLink = new HttpLink({
 const retryLink = new RetryLink();
 
 const wsLink = new WebSocketLink({
-    uri: `ws://${window.location.host}/graphql`,
+    uri: `ws${__prod__ ? "s" : ""}://${window.location.host}/graphql`,
     options: {
         reconnect: true,
     },
@@ -59,12 +57,10 @@ const client = new ApolloClient({
 
 export const App: React.FunctionComponent<{}> = () => {
     return (
-        <QueryClientProvider client={queryClient}>
-            <ApolloProvider client={client}>
-                <WrapperContainer>
-                    <AppRouter />
-                </WrapperContainer>
-            </ApolloProvider>
-        </QueryClientProvider>
+        <ApolloProvider client={client}>
+            <WrapperContainer>
+                <AppRouter />
+            </WrapperContainer>
+        </ApolloProvider>
     );
 };

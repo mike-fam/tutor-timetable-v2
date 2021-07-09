@@ -41,7 +41,7 @@ export class PreferenceResolver {
             user
         );
         const courseStaff = await models.courseStaff.get(
-            { timetableId: timetable.id, userId: user.id },
+            { timetableId: timetable.id, userId: owner.id },
             user
         );
         return await models.preference.getIfExists(
