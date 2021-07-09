@@ -5,7 +5,7 @@ import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-
+import Redis from "ioredis";
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
@@ -54,6 +54,7 @@ import { SessionStreamModel } from "./models/SessionStreamModel";
 import { TimetableModel } from "./models/TimetableModel";
 import { PreferenceModel } from "./models/PreferenceModel";
 import { TermModel } from "./models/TermModel";
+import { RedisPubSub } from "graphql-redis-subscriptions";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -73,6 +74,18 @@ const main = async () => {
 
     app.use(asyncHandler(uqAuthMiddleware));
 
+    const options: Redis.RedisOptions = {
+        host: process.env.REDIS_HOST || "localhost",
+        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+        retryStrategy: (times) => Math.max(times * 100, 3000),
+    };
+
+    // create Redis-based pub-sub
+    const pubSub = new RedisPubSub({
+        publisher: new Redis(options),
+        subscriber: new Redis(options),
+    });
+
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [
@@ -91,6 +104,7 @@ const main = async () => {
                 OfferResolver,
                 UserSettingsResolver,
             ],
+            pubSub,
             dateScalarMode: "isoDate",
             globalMiddlewares: [LoadersInjector],
             authChecker: ({ context: { req } }: { context: MyContext }) =>
