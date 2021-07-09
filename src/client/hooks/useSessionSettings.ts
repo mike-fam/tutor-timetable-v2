@@ -14,16 +14,26 @@
 //  States: Unchanged, updated, deleted, created, remove_modified sessions
 import { useEffect, useState } from "react";
 import { defaultStr } from "../constants";
-import {
-    MergedStreamInput,
-    useGetSessionStreamsLazyQuery,
-} from "../generated/graphql";
-import { List } from "immutable";
+import { MergedStreamInput, useGetSessionStreamsLazyQuery } from "../generated/graphql";
 import { useLazyQueryWithError } from "./useQueryWithError";
+import { useTermCourse } from "./useTermCourse";
+import { useModificationMap } from "./useModificationMap";
 
 export const useSessionSettings = () => {
-    const [courseId, setCourseId] = useState(defaultStr);
-    const [termId, setTermId] = useState(defaultStr);
+    const { courseId, termId, changeCourse, changeTerm } = useTermCourse();
+    const {
+        unchanged,
+        created,
+        deleted,
+        modified,
+        deleteModified,
+        createItem,
+        deleteItem,
+        clearItems,
+        resetItems,
+        restoreItem,
+        updateItem,
+    } = useModificationMap<MergedStreamInput>();
     const [fetchStream, { data: getSessionStreamsData, loading }] =
         useLazyQueryWithError(useGetSessionStreamsLazyQuery);
     // Fetch one first time
@@ -39,11 +49,17 @@ export const useSessionSettings = () => {
         if (!getSessionStreamsData) {
             return;
         }
-        // setStreams(
-        //     List(getSessionStreamsData.sessionStreams.map((stream) => ({
-        //
-        //     })))
-        // );
+        resetItems(getSessionStreamsData.sessionStreams.map(stream => ([stream.id, {
+            courseId,
+            termId,
+            name: stream.name,
+            type: stream.type,
+            day: stream.day,
+            startTime: stream.startTime,
+            endTime: stream.endTime,
+            location: stream.location,
+            numberOfTutorsForWeeks: [] // TODO: change
+        }])))
     }, [getSessionStreamsData]);
     // TODO: Implement week cache
     // Save it to state
@@ -53,7 +69,8 @@ export const useSessionSettings = () => {
     return {
         courseId,
         termId,
-        setCourseId,
-        setTermId
-    }
+        changeCourse,
+        changeTerm,
+        loading: loading,
+    };
 };

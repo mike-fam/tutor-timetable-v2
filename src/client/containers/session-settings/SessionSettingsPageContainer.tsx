@@ -4,30 +4,39 @@ import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Heading, HStack, Stack } from "@chakra-ui/react";
+import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
+import { Map } from "immutable";
 
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
-    const { courseId, termId, setCourseId, setTermId } = useSessionSettings();
+    const { courseId, termId, changeCourse, changeTerm } = useSessionSettings();
     return (
         <Wrapper>
             <Stack spacing={4}>
                 <Heading as="h1">Session Settings</Heading>
                 <HStack spacing={6}>
                     <TermSelectContainer
-                        chooseTerm={setTermId}
+                        chooseTerm={changeTerm}
                         chosenTerm={termId}
                         maxW="33%"
                     />
                     <CourseSelectContainer
                         chosenTerm={termId}
                         chosenCourse={courseId}
-                        chooseCourse={setCourseId}
+                        chooseCourse={changeCourse}
                         maxW="33%"
                         coordinatorOnly={true}
                     />
                 </HStack>
+                <SessionSettingsTimetableContainer
+                    sessions={[]}
+                    loading={true}
+                    sessionsData={Map()}
+                />
             </Stack>
         </Wrapper>
     );
 };
+
+// TODO: change props of timetable container
