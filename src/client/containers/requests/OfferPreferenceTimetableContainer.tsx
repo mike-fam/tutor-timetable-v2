@@ -33,10 +33,10 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
     chooseSession,
 }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
-    const request = useMemo(() => requests.get(requestId), [
-        requests,
-        requestId,
-    ]);
+    const request = useMemo(
+        () => requests.get(requestId),
+        [requests, requestId]
+    );
     const { data: myCoursesData } = useQueryWithError(useMyCoursesQuery);
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const [week, setWeek] = useState(defaultInt);

@@ -19,12 +19,8 @@ type Props = {
 
 export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
-    const {
-        sessions,
-        fetchSessions,
-        fetchSessionById,
-        loading,
-    } = useSessionUtils();
+    const { sessions, fetchSessions, fetchSessionById, loading } =
+        useSessionUtils();
     const { user } = useContext(UserContext);
     useEffect(() => {
         if (sessionId === defaultStr) {
@@ -35,10 +31,10 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
         }
     }, [sessionId, fetchSessionById, sessions]);
     // get all other sessions on the same week
-    const session = useMemo(() => sessions.get(sessionId), [
-        sessions,
-        sessionId,
-    ]);
+    const session = useMemo(
+        () => sessions.get(sessionId),
+        [sessions, sessionId]
+    );
     // Get sessions on the same week (better to just get on teh same day)
     useEffect(() => {
         if (!session) {
@@ -96,10 +92,8 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
         }
         for (const [, otherSession] of sessionsOnDay) {
             const { startTime, endTime } = session.sessionStream;
-            const {
-                startTime: otherStart,
-                endTime: otherEnd,
-            } = otherSession.sessionStream;
+            const { startTime: otherStart, endTime: otherEnd } =
+                otherSession.sessionStream;
             if (startTime <= otherStart && otherStart < endTime) {
                 return true;
             } else if (otherStart <= startTime && startTime < otherEnd) {

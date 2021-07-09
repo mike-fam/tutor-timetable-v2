@@ -28,7 +28,8 @@ import { Utils } from "../utils/Util";
 @Unique(["timetable", "user"])
 export class CourseStaff
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity
+{
     @Field(() => Boolean)
     @Column({
         type: Boolean,

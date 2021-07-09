@@ -15,7 +15,7 @@ type Props = {
     id?: string;
     options: Array<string | number>;
     optionToText?: (val: string) => string;
-} & SelectProps
+} & SelectProps;
 
 export const FormikSelect: React.FC<Props> = ({
     name,

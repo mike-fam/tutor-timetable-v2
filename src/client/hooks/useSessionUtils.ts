@@ -18,10 +18,8 @@ export const SessionsContext = createContext<SessionUtil>({
 
 export const useSessionUtils = (): SessionUtil => {
     const [sessions, setSessions] = useState<SessionMap>(Map());
-    const [
-        getSession,
-        { data: sessionsData, loading: getSessionsLoading },
-    ] = useLazyQueryWithError(useGetMergedSessionsLazyQuery);
+    const [getSession, { data: sessionsData, loading: getSessionsLoading }] =
+        useLazyQueryWithError(useGetMergedSessionsLazyQuery);
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },

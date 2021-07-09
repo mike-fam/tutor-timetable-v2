@@ -34,7 +34,8 @@ import differenceBy from "lodash/differenceBy";
 @Unique(["sessionStream", "week"])
 export class Session
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity
+{
     @ManyToOne(() => SessionStream, (sessionStream) => sessionStream.sessions, {
         lazy: true,
         onDelete: "CASCADE",

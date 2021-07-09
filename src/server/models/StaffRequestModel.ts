@@ -115,9 +115,9 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
         // Checks if user is already allocated to that session
         let swapPreferenceIds;
         if (request.swapPreference) {
-            swapPreferenceIds = ((await request.swapPreference) as Session[]).map(
-                (session) => session.id
-            );
+            swapPreferenceIds = (
+                (await request.swapPreference) as Session[]
+            ).map((session) => session.id);
         } else if (request.swapPreferenceSessionIds) {
             swapPreferenceIds = request.swapPreferenceSessionIds;
         }
@@ -299,9 +299,9 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
             }
             let swapPreferenceIds;
             if (updatedField.swapPreference) {
-                swapPreferenceIds = ((await updatedField.swapPreference) as Session[]).map(
-                    (session) => session.id
-                );
+                swapPreferenceIds = (
+                    (await updatedField.swapPreference) as Session[]
+                ).map((session) => session.id);
             } else if (updatedField.swapPreferenceSessionIds) {
                 swapPreferenceIds = updatedField.swapPreferenceSessionIds;
             }
@@ -320,8 +320,7 @@ export class StaffRequestModel extends BaseModel<StaffRequest> {
                 ) {
                     return {
                         hasPerm: false,
-                        errMsg:
-                            "You already work on one of the sessions in your swap preferences",
+                        errMsg: "You already work on one of the sessions in your swap preferences",
                     };
                 }
             }

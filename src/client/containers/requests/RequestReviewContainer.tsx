@@ -24,9 +24,8 @@ export const RequestReviewContainer: React.FC<Props> = ({
     preferences,
     termId,
 }) => {
-    const [fetchCourse, { data: courseData }] = useLazyQueryWithError(
-        useCourseLazyQuery
-    );
+    const [fetchCourse, { data: courseData }] =
+        useLazyQueryWithError(useCourseLazyQuery);
     const { chosenTerm } = useTermMetadata(termId);
     const { sessions, fetchSessionById } = useContext(SessionsContext);
     useEffect(() => {

@@ -47,8 +47,7 @@ export class CourseModel extends BaseModel<Course> {
         if (!(await user.isCoordinatorOf(course, await Term.getActiveTerm()))) {
             return {
                 hasPerm: false,
-                errMsg:
-                    "You have to be course coordinator to update this course",
+                errMsg: "You have to be course coordinator to update this course",
             };
         }
         // User is coordinator of course at this point, check if course code is

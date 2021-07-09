@@ -5,5 +5,5 @@ export enum SessionType {
     SEMINAR = "Seminar",
     LECTURE = "Lecture",
     STUDIO = "Studio",
-    WORKSHOP = "Workshop"
+    WORKSHOP = "Workshop",
 }

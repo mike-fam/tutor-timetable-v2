@@ -74,7 +74,8 @@ export class PreferenceModel extends BaseModel<Preference> {
             };
         }
         if (updatedFields.courseStaff) {
-            const updatedCourseStaff = (await updatedFields.courseStaff) as CourseStaff;
+            const updatedCourseStaff =
+                (await updatedFields.courseStaff) as CourseStaff;
             if (updatedCourseStaff.id !== preference.courseStaffId) {
                 return {
                     hasPerm: false,
