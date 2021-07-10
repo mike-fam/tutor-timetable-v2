@@ -121,7 +121,7 @@ type AllocatorInput = {
 
 @Resolver()
 export class AllocatorResolver {
-    @Mutation(() => AllocatorOutput, {nullable: true})
+    @Mutation(() => AllocatorOutput)
     async requestAllocation(
         @Arg("courseTermInput", () => CourseTermIdInput)
         { courseId, termId }: CourseTermIdInput,
@@ -208,7 +208,7 @@ export class AllocatorResolver {
                 staff: staffInput,
                 new_threshold: newThreshold,
             },
-            token
+            token,
         };
         const allocatorOutput = await axios.post<AllocatorOutputData>(
             process.env.ALLOCATOR_URL || "http://localhost:8000/allocator/",
@@ -259,7 +259,7 @@ export class AllocatorResolver {
         console.log(1);
         const { data: allocationOutput } = await axios.get<AllocatorOutputData>(
             process.env.ALLOCATOR_URL ||
-            `http://localhost:8000/allocator/${token}`,
+                `http://localhost:8000/allocator/${token}`
         );
         console.log(2);
         if (allocationOutput.type === AllocationType.Failed) {

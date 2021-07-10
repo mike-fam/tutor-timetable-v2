@@ -17,7 +17,7 @@ import {
     AvailabilitySessionProps,
 } from "../../components/availabilities/AvailabilitySession";
 import { useDisclosure } from "@chakra-ui/react";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import {
     AvailabilityModificationType,
     useMyAvailabilityQuery,

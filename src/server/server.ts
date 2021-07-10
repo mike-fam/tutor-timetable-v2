@@ -29,6 +29,7 @@ import { createLoader } from "./dataloaders/createLoader";
 import {
     Course,
     CourseStaff,
+    Notification,
     Offer,
     Preference,
     Session,
@@ -56,6 +57,7 @@ import { PreferenceModel } from "./models/PreferenceModel";
 import { TermModel } from "./models/TermModel";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { NotificationResolver } from "./resolvers/NotificationResolver";
+import { NotificationModel } from "./models/NotificationModel";
 
 const main = async () => {
     await createConnection(ormconfig);
@@ -104,7 +106,7 @@ const main = async () => {
                 AllocatorResolver,
                 OfferResolver,
                 UserSettingsResolver,
-                NotificationResolver
+                NotificationResolver,
             ],
             pubSub,
             dateScalarMode: "isoDate",
@@ -112,10 +114,11 @@ const main = async () => {
             authChecker: ({ context: { req } }: { context: MyContext }) =>
                 !!req.user,
         }),
-        context: ({ req, res }): MyContext => {
+        context: ({ req, res, connection }): MyContext => {
             const loaders = {
                 course: createLoader(Course),
                 courseStaff: createLoader(CourseStaff),
+                notification: createLoader(Notification),
                 offer: createLoader(Offer),
                 preference: createLoader(Preference),
                 session: createLoader(Session),
@@ -134,6 +137,7 @@ const main = async () => {
                 models: {
                     course: new CourseModel(loaders),
                     courseStaff: new CourseStaffModel(loaders),
+                    notification: new NotificationModel(loaders),
                     offer: new OfferModel(loaders),
                     preference: new PreferenceModel(loaders),
                     session: new SessionModel(loaders),

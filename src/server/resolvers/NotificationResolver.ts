@@ -1,23 +1,26 @@
-import { Resolver, Root, Subscription } from "type-graphql";
+import { Arg, Ctx, Resolver, Root, Subscription } from "type-graphql";
+import { Notification } from "../entities";
 import { MyContext } from "../types/context";
-import { User } from "../entities";
 
-@Resolver()
+@Resolver(() => Notification)
 export class NotificationResolver {
-    @Subscription(() => String, {
+    @Subscription(() => Notification, {
         topics: "NOTIFICATIONS",
         filter: async ({
             payload,
-            context,
+            args,
         }: {
-            payload: [string, User[]];
-            context: MyContext;
+            payload: Notification;
+            args: { key: string };
         }) => {
-            const users = payload[1];
-            return users.map((user) => user.id).includes(context.req.user.id);
+            return payload.userId === args.key;
         },
     })
-    async notifications(@Root() payload: [string, User[]]): Promise<string> {
-        return payload[0];
+    async notifications(
+        @Root() payload: Notification,
+        @Arg("key") key: string,
+        @Ctx() ctx: MyContext
+    ): Promise<Notification> {
+        return payload;
     }
 }

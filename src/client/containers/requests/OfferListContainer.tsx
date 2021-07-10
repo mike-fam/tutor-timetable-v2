@@ -19,7 +19,7 @@ import {
     useLazyQueryWithError,
     useMutationWithError,
     useQueryWithError,
-} from "../../hooks/useQueryWithError";
+} from "../../hooks/useApolloHooksWithError";
 import {
     RequestStatus,
     useAcceptOfferMutation,
@@ -50,13 +50,14 @@ export const OfferListContainer: React.FC<Props> = ({
     closeModal,
 }) => {
     const [getOffers, { data: offerData }] = useLazyQueryWithError(
-        useGetOffersByRequestIdLazyQuery
+        useGetOffersByRequestIdLazyQuery,
+        {}
     );
     const toast = useToast();
     const [
         acceptOffer,
         { data: acceptOfferData, loading: acceptOfferLoading },
-    ] = useMutationWithError(useAcceptOfferMutation);
+    ] = useMutationWithError(useAcceptOfferMutation, {});
     const { requests, fetchRequestById } = useContext(RequestContext);
     useEffect(() => {
         if (requestId === defaultStr) {
@@ -77,7 +78,7 @@ export const OfferListContainer: React.FC<Props> = ({
             fetchRequestById(requestId);
         }
     }, [request, fetchRequestById, requestId]);
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const [termId, setTermId] = useState(defaultStr);
     useEffect(() => {
         if (!termsData) {

@@ -19,6 +19,7 @@ import { Maybe } from "graphql/jsutils/Maybe";
 import {
     Course,
     CourseStaff,
+    Notification,
     Offer,
     Preference,
     Session,
@@ -56,6 +57,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
     const loaders = {
         course: createLoader(Course),
         courseStaff: createLoader(CourseStaff),
+        notification: createLoader(Notification),
         offer: createLoader(Offer),
         preference: createLoader(Preference),
         session: createLoader(Session),

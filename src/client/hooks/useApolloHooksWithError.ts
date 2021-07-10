@@ -1,5 +1,7 @@
 import * as Apollo from "@apollo/client";
 import {
+    ApolloError,
+    LazyQueryHookOptions,
     MutationHookOptions,
     MutationTuple,
     QueryHookOptions,
@@ -11,9 +13,9 @@ import { ErrorContext } from "../utils/errors";
 
 export const useQueryWithError = <T, S>(
     useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
-    args?: S
+    baseOptions: QueryHookOptions<T, S>
 ) => {
-    const queryResult = useApolloQuery({ variables: args, errorPolicy: "all" });
+    const queryResult = useApolloQuery(baseOptions);
     const { addError } = useContext(ErrorContext);
     const { error } = useMemo(() => queryResult, [queryResult]);
     useEffect(() => {
@@ -29,12 +31,9 @@ export const useMutationWithError = <T, S>(
     useApolloMutation: (
         baseOptions: MutationHookOptions<T, S>
     ) => MutationTuple<T, S>,
-    args?: S
+    baseOptions: MutationHookOptions<T, S>
 ) => {
-    const mutationResult = useApolloMutation({
-        variables: args,
-        errorPolicy: "all",
-    });
+    const mutationResult = useApolloMutation(baseOptions);
     const { addError } = useContext(ErrorContext);
     const [, { error }] = useMemo(() => mutationResult, [mutationResult]);
     useEffect(() => {
@@ -50,12 +49,9 @@ export const useLazyQueryWithError = <T, S>(
     useApolloLazyQuery: (
         baseOptions?: Apollo.LazyQueryHookOptions<T, S>
     ) => QueryTuple<T, S>,
-    args?: S
+    baseOptions: LazyQueryHookOptions<T, S>
 ) => {
-    const queryResult = useApolloLazyQuery({
-        variables: args,
-        errorPolicy: "all",
-    });
+    const queryResult = useApolloLazyQuery(baseOptions);
     const { addError } = useContext(ErrorContext);
     const [, { error }] = useMemo(() => queryResult, [queryResult]);
     useEffect(() => {
@@ -65,4 +61,27 @@ export const useLazyQueryWithError = <T, S>(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [error]);
     return queryResult;
+};
+
+export const useSubscriptionWithError = <T, S>(
+    useApolloSubscription: (
+        baseOptions: Apollo.SubscriptionHookOptions<T, S>
+    ) => {
+        variables: S | undefined;
+        loading: boolean;
+        data?: T | undefined;
+        error?: ApolloError | undefined;
+    },
+    baseOptions: Apollo.SubscriptionHookOptions<T, S>
+) => {
+    const subscriptionResult = useApolloSubscription(baseOptions);
+    const { addError } = useContext(ErrorContext);
+    const { error } = useMemo(() => subscriptionResult, [subscriptionResult]);
+    useEffect(() => {
+        if (error) {
+            addError(error);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
+    return subscriptionResult;
 };

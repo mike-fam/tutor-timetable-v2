@@ -143,6 +143,7 @@ export abstract class BaseModel<T extends BaseEntity> {
         user: User
     ): Promise<T[]> {
         const toCreate: T[] = (this.entityCls as any).create(entityLike);
+        console.log(toCreate);
         for (const obj of toCreate) {
             const { hasPerm, errMsg } = await this.permCreate(obj, user);
             if (!hasPerm) {
