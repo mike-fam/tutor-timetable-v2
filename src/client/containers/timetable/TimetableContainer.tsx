@@ -6,8 +6,14 @@ import {
     TimetableContext,
     TimetableSettingsContext,
 } from "../../utils/timetable";
-import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
-import { useGetRootSessionStreamsQuery } from "../../generated/graphql";
+import {
+    useLazyQueryWithError,
+    useQueryWithError,
+} from "../../hooks/useApolloHooksWithError";
+import {
+    useGetRootSessionStreamsLazyQuery,
+    useGetRootSessionStreamsQuery,
+} from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import {
@@ -31,17 +37,22 @@ export const TimetableContainer: React.FC<Props> = () => {
     const { chosenTermId, chosenWeek, chosenCourses } =
         useContext(TimetableContext);
     const { user } = useContext(UserContext);
-    // TODO: Use lazy query
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
-    const {
-        data: sessionStreamsData,
-        loading: sessionStreamsLoading,
-    } = useQueryWithError(useGetRootSessionStreamsQuery, {
-        variables: {
-            termId: chosenTermId,
-            courseIds: chosenCourses.toArray(),
-        },
-    });
+    const [
+        getRootSessions,
+        { data: sessionStreamsData, loading: sessionStreamsLoading },
+    ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {});
+    useEffect(() => {
+        if (chosenWeek === defaultInt) {
+            return;
+        }
+        getRootSessions({
+            variables: {
+                termId: chosenTermId,
+                courseIds: chosenCourses.toArray(),
+            },
+        });
+    }, [chosenWeek, getRootSessions, chosenCourses, chosenTermId]);
     const sessions = useMemo(() => {
         if (chosenWeek === defaultInt) {
             if (sessionStreamsLoading || !sessionStreamsData) {

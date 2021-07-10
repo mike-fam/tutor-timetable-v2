@@ -1203,12 +1203,13 @@ export type GetRootSessionStreamsQuery = (
   { __typename?: 'Query' }
   & { rootSessionStreams: Array<(
     { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
     & { allocatedUsers: Array<(
       { __typename?: 'User' }
       & Pick<User, 'name' | 'username'>
     )>, basedStreams: Array<(
       { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks'>
       & { allocatedUsers: Array<(
         { __typename?: 'User' }
         & Pick<User, 'name' | 'username'>
@@ -2623,11 +2624,13 @@ export const GetRootSessionStreamsDocument = gql`
     day
     location
     numberOfStaff
+    weeks
     allocatedUsers {
       name
       username
     }
     basedStreams {
+      weeks
       allocatedUsers {
         name
         username

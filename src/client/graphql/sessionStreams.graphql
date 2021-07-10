@@ -25,11 +25,13 @@ query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
         day
         location
         numberOfStaff
+        weeks
         allocatedUsers {
             name
             username
         }
         basedStreams {
+            weeks
             allocatedUsers {
                 name
                 username
