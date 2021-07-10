@@ -1,7 +1,7 @@
 import {
     useLazyQueryWithError,
     useMutationWithError,
-} from "./useQueryWithError";
+} from "./useApolloHooksWithError";
 import {
     RequestFormInputType,
     useCreateRequestMutation,
@@ -27,15 +27,15 @@ export const useRequestUtils = (): RequestUtil => {
     const [
         getRequests,
         { data: requestsData, loading: multipleLoading },
-    ] = useLazyQueryWithError(useGetRequestsByTermIdLazyQuery);
+    ] = useLazyQueryWithError(useGetRequestsByTermIdLazyQuery, {});
     const [
         getRequestById,
         { data: requestData, loading: singleLoading },
-    ] = useLazyQueryWithError(useGetRequestByIdLazyQuery);
+    ] = useLazyQueryWithError(useGetRequestByIdLazyQuery, {});
     const [
         createNewRequestMutation,
         { data: newRequestData, loading: newLoading },
-    ] = useMutationWithError(useCreateRequestMutation);
+    ] = useMutationWithError(useCreateRequestMutation, {});
     const fetchRequests = useCallback(
         (termId: string) => {
             if (termId === defaultStr) {

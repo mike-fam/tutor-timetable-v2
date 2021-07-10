@@ -7,7 +7,7 @@ import { CourseCheckboxListContainer } from "./CourseCheckboxListContainer";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
 import { WeekNavContainer } from "../WeekNavContainer";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import {
     TimetableContext,
     TimetableSettingsContext,

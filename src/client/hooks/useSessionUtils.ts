@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { Map } from "immutable";
 import { SessionMap, SessionUtil } from "../types/session";
-import { useLazyQueryWithError } from "./useQueryWithError";
+import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import {
     useGetSessionByIdLazyQuery,
     useGetSessionsLazyQuery,
@@ -21,11 +21,11 @@ export const useSessionUtils = (): SessionUtil => {
     const [
         getSession,
         { data: sessionsData, loading: getSessionsLoading },
-    ] = useLazyQueryWithError(useGetSessionsLazyQuery);
+    ] = useLazyQueryWithError(useGetSessionsLazyQuery, {});
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },
-    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery);
+    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery, {});
     const fetchSessions = useCallback(
         (termId: string, courseId: string, chosenWeek: number) => {
             if (

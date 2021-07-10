@@ -48,6 +48,7 @@ registerEnumType(FreezeState, {
 
 export { Course } from "./Course";
 export { CourseStaff } from "./CourseStaff";
+export { Notification } from "./Notification";
 export { Offer } from "./Offer";
 export { Preference } from "./Preference";
 export { Session } from "./Session";

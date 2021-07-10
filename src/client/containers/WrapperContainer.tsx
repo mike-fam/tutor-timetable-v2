@@ -2,8 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Box, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
 import { IsoDay } from "../../types/date";
-import { useQueryWithError } from "../hooks/useQueryWithError";
-import { useMeQuery } from "../generated/graphql";
+import {
+    useQueryWithError,
+    useSubscriptionWithError,
+} from "../hooks/useApolloHooksWithError";
+import { useMeQuery, useNotificationsSubscription } from "../generated/graphql";
 import { UserContext } from "../utils/user";
 import { ErrorContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
@@ -58,15 +61,34 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
     );
     const [dayStartTime, setDayStartTime] = useState(7);
     const [dayEndTime, setDayEndTime] = useState(20);
-    const { data } = useQueryWithError(useMeQuery);
+    const { data: meData } = useQueryWithError(useMeQuery, {});
+    const { data: notificationData } = useSubscriptionWithError(
+        useNotificationsSubscription,
+        {
+            variables: { key: meData?.me.id || defaultStr },
+        }
+    );
     const sessionsUtil = useSessionUtils();
 
     useEffect(() => {
-        if (!data?.me) {
+        if (!meData?.me) {
             return;
         }
-        setUser(data.me);
-    }, [data]);
+        setUser(meData.me);
+    }, [meData]);
+    useEffect(() => {
+        if (!notificationData) {
+            return;
+        }
+        toast({
+            id: notificationData.notifications.id,
+            title: notificationData.notifications.title,
+            description: notificationData.notifications.message,
+            duration: null,
+            isClosable: true,
+            position: "bottom",
+        });
+    }, [notificationData, toast]);
     return (
         <UserContext.Provider
             value={{

@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { usePreferenceByUsernameLazyQuery } from "../../generated/graphql";
 import { Map } from "immutable";
-import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
+import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { Loadable } from "../helpers/Loadable";
 import { capitalCase } from "change-case";
 import { PreferenceResponseType } from "../../types/preference";
@@ -55,7 +55,7 @@ export const AllocatorTable: React.FC<Props> = ({
     const [
         getStaffPreference,
         { data: staffPreferenceData },
-    ] = useLazyQueryWithError(usePreferenceByUsernameLazyQuery);
+    ] = useLazyQueryWithError(usePreferenceByUsernameLazyQuery, {});
     const [staffPreferencesMap, setStaffPreferenceMap] = useState<
         Map<string, PreferenceResponseType>
     >(Map());

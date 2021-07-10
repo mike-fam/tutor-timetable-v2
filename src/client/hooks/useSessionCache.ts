@@ -1,6 +1,6 @@
 import { Map } from "immutable";
 import { SessionResponseType } from "../types/session";
-import { useLazyQueryWithError } from "./useQueryWithError";
+import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import {
     GetSessionsQueryVariables,
     useGetSessionByIdLazyQuery,
@@ -22,10 +22,12 @@ export type SessionCache = {
 export const useSessionCache = (): SessionCache => {
     const [sessions, setSessions] = useState<SessionMap>(Map());
     const [fetchSessions, { data: sessionsData }] = useLazyQueryWithError(
-        useGetSessionsLazyQuery
+        useGetSessionsLazyQuery,
+        {}
     );
     const [fetchSessionById, { data: sessionData }] = useLazyQueryWithError(
-        useGetSessionByIdLazyQuery
+        useGetSessionByIdLazyQuery,
+        {}
     );
     const getSession = useCallback(
         (sessionId: string) => {

@@ -1,6 +1,6 @@
 import { Grid, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import React, { useContext, useEffect } from "react";
-import { useLazyQueryWithError } from "../../hooks/useQueryWithError";
+import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useCourseLazyQuery } from "../../generated/graphql";
 import { capitalCase } from "change-case";
 import { SessionsContext } from "../../hooks/useSessionUtils";
@@ -25,7 +25,8 @@ export const RequestReviewContainer: React.FC<Props> = ({
     termId,
 }) => {
     const [fetchCourse, { data: courseData }] = useLazyQueryWithError(
-        useCourseLazyQuery
+        useCourseLazyQuery,
+        {}
     );
     const { chosenTerm } = useTermMetadata(termId);
     const { sessions, fetchSessionById } = useContext(SessionsContext);

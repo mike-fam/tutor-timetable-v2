@@ -10,7 +10,7 @@ import {
 import {
     useLazyQueryWithError,
     useMutationWithError,
-} from "../../hooks/useQueryWithError";
+} from "../../hooks/useApolloHooksWithError";
 import { Loadable } from "../../components/helpers/Loadable";
 import { FormikInput } from "../../components/helpers/FormikInput";
 import { FormikSelect } from "../../components/helpers/FormikSelect";
@@ -39,7 +39,8 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
         sessionType: NO_PREFERENCE,
     });
     const [getStreams, { data: sessionStreamData }] = useLazyQueryWithError(
-        useGetSessionStreamsLazyQuery
+        useGetSessionStreamsLazyQuery,
+        {}
     );
     const [
         fetchMyPreference,
@@ -48,11 +49,11 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
             called: preferenceQueryCalled,
             refetch: refetchMyPreference,
         },
-    ] = useLazyQueryWithError(useMyPreferenceLazyQuery);
+    ] = useLazyQueryWithError(useMyPreferenceLazyQuery, {});
     const [
         updatePreference,
         { loading: updatePreferenceLoading, data: updatePreferenceData },
-    ] = useMutationWithError(useUpdatePreferenceMutation);
+    ] = useMutationWithError(useUpdatePreferenceMutation, {});
     useEffect(() => {
         if (!updatePreferenceData) {
             return;

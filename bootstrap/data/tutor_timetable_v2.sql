@@ -42,6 +42,7 @@ ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS "FK_390395c3d
 ALTER TABLE IF EXISTS ONLY public.user_allocated_sessions_session DROP CONSTRAINT IF EXISTS "FK_37f7a2c9293d636e7b3c1b0482e";
 ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "FK_2f8044368c327e2ad804dc1fe56";
 ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "FK_2e099fcbb0ffe5108a4df4b31c8";
+ALTER TABLE IF EXISTS ONLY public.notification DROP CONSTRAINT IF EXISTS "FK_1ced25315eb974b73391fb1c81b";
 ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "FK_0f5d437fc98264cfb98dafdf080";
 ALTER TABLE IF EXISTS ONLY public.user_allocated_streams_session_stream DROP CONSTRAINT IF EXISTS "FK_0c7b4b679e253d31c11e6d99341";
 ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "FK_0a9f568475b4a5401669c61333f";
@@ -76,6 +77,7 @@ ALTER TABLE IF EXISTS ONLY public.user_allocated_streams_session_stream DROP CON
 ALTER TABLE IF EXISTS ONLY public.stream_allocation DROP CONSTRAINT IF EXISTS "PK_8ec85fd9f1f15f195b27a532dd9";
 ALTER TABLE IF EXISTS ONLY public.staff_request_swap_preference_session DROP CONSTRAINT IF EXISTS "PK_8d7af521a17327e34412a71a699";
 ALTER TABLE IF EXISTS ONLY public.migrations DROP CONSTRAINT IF EXISTS "PK_8c82d7f526340ab734260ea46be";
+ALTER TABLE IF EXISTS ONLY public.notification DROP CONSTRAINT IF EXISTS "PK_705b6c7cdf9b2c2ff7ac7872cb7";
 ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "PK_6bc9388e2bf79cf6de4678dc81b";
 ALTER TABLE IF EXISTS ONLY public.preference DROP CONSTRAINT IF EXISTS "PK_5c4cbf49a1e97dcbc695bf462a6";
 ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "PK_57c6ae1abe49201919ef68de900";
@@ -105,6 +107,7 @@ DROP TABLE IF EXISTS public.session;
 DROP TABLE IF EXISTS public.preference;
 DROP TABLE IF EXISTS public.offer_preferences_session;
 DROP TABLE IF EXISTS public.offer;
+DROP TABLE IF EXISTS public.notification;
 DROP SEQUENCE IF EXISTS public.migrations_id_seq;
 DROP TABLE IF EXISTS public.migrations;
 DROP TABLE IF EXISTS public.course_staff;
@@ -192,6 +195,20 @@ ALTER TABLE public.migrations_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 
+
+--
+-- Name: notification; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.notification (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    title character varying NOT NULL,
+    message character varying NOT NULL,
+    "userId" uuid NOT NULL
+);
+
+
+ALTER TABLE public.notification OWNER TO postgres;
 
 --
 -- Name: offer; Type: TABLE; Schema: public; Owner: postgres
@@ -556,6 +573,17 @@ INSERT INTO public.migrations (id, "timestamp", name) VALUES (49, 1623063118210,
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (50, 1623066711344, 'Migration1623066711344');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (51, 1623806080691, 'Migration1623806080691');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (52, 1623806888791, 'Migration1623806888791');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (54, 1625878058947, 'Migration1625878058947');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (55, 1625879947241, 'Migration1625879947241');
+
+
+--
+-- Data for Name: notification; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.notification (id, title, message, "userId") VALUES ('638b672f-6d9c-4ec1-9dd0-5dd4d74d5a00', 'Hello world', 'Hi everyone', '52cbc02c-c5ac-401f-80ab-25eb8ff15f45');
+INSERT INTO public.notification (id, title, message, "userId") VALUES ('9b2d4004-3514-42b4-8734-92a5b25b21c4', 'Hello world', 'Hi everyone', '52cbc02c-c5ac-401f-80ab-25eb8ff15f45');
+INSERT INTO public.notification (id, title, message, "userId") VALUES ('b3b6b565-0720-4ffc-97dd-103369a860d0', 'Hello world', 'Hi everyone', '52cbc02c-c5ac-401f-80ab-25eb8ff15f45');
 
 
 --
@@ -1783,7 +1811,7 @@ INSERT INTO public.timeslot (day, "startTime", "endTime", id, "userId") VALUES (
 --
 
 INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock", "allocationToken") VALUES ('86b6d4b0-a8c5-4c42-8278-e649144f92b3', '4de5ca8e-0698-4a7d-9241-2cb9fc37b376', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE', NULL);
-INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock", "allocationToken") VALUES ('8046ee18-243f-4b89-93f2-ad56a63f133f', '0a2e6669-f8aa-45e9-8aeb-7a92ed495871', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE', '187031ae-209d-46a3-88c0-7eb248e76fa1');
+INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock", "allocationToken") VALUES ('8046ee18-243f-4b89-93f2-ad56a63f133f', '0a2e6669-f8aa-45e9-8aeb-7a92ed495871', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE', 'cc37b0b1-9f7d-498a-a8e0-0fd496e96f60');
 
 
 --
@@ -1865,7 +1893,7 @@ INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") V
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 52, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 55, true);
 
 
 --
@@ -1954,6 +1982,14 @@ ALTER TABLE ONLY public.preference
 
 ALTER TABLE ONLY public.course_staff
     ADD CONSTRAINT "PK_6bc9388e2bf79cf6de4678dc81b" PRIMARY KEY (id);
+
+
+--
+-- Name: notification PK_705b6c7cdf9b2c2ff7ac7872cb7; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT "PK_705b6c7cdf9b2c2ff7ac7872cb7" PRIMARY KEY (id);
 
 
 --
@@ -2191,7 +2227,7 @@ CREATE INDEX "IDX_e62630c379f91fe30d920b3462" ON public.session_stream_allocated
 --
 
 ALTER TABLE ONLY public.user_allocated_sessions_session
-    ADD CONSTRAINT "FK_0285bd5e90495ffd4540a213be3" FOREIGN KEY ("sessionId") REFERENCES public.session(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_0285bd5e90495ffd4540a213be3" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
 
 
 --
@@ -2207,7 +2243,7 @@ ALTER TABLE ONLY public.offer
 --
 
 ALTER TABLE ONLY public.user_allocated_streams_session_stream
-    ADD CONSTRAINT "FK_0c7b4b679e253d31c11e6d99341" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_0c7b4b679e253d31c11e6d99341" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id);
 
 
 --
@@ -2216,6 +2252,14 @@ ALTER TABLE ONLY public.user_allocated_streams_session_stream
 
 ALTER TABLE ONLY public.staff_request
     ADD CONSTRAINT "FK_0f5d437fc98264cfb98dafdf080" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
+
+
+--
+-- Name: notification FK_1ced25315eb974b73391fb1c81b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT "FK_1ced25315eb974b73391fb1c81b" FOREIGN KEY ("userId") REFERENCES public."user"(id);
 
 
 --
@@ -2239,7 +2283,7 @@ ALTER TABLE ONLY public.course_staff
 --
 
 ALTER TABLE ONLY public.user_allocated_sessions_session
-    ADD CONSTRAINT "FK_37f7a2c9293d636e7b3c1b0482e" FOREIGN KEY ("userId") REFERENCES public."user"(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_37f7a2c9293d636e7b3c1b0482e" FOREIGN KEY ("userId") REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2255,7 +2299,7 @@ ALTER TABLE ONLY public."user"
 --
 
 ALTER TABLE ONLY public.offer_preferences_session
-    ADD CONSTRAINT "FK_3a098cb4f1707a4d217954cfab9" FOREIGN KEY ("sessionId") REFERENCES public.session(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_3a098cb4f1707a4d217954cfab9" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
 
 
 --
@@ -2263,7 +2307,7 @@ ALTER TABLE ONLY public.offer_preferences_session
 --
 
 ALTER TABLE ONLY public.user_allocated_streams_session_stream
-    ADD CONSTRAINT "FK_3e1a73101620f738bc61dffa195" FOREIGN KEY ("userId") REFERENCES public."user"(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_3e1a73101620f738bc61dffa195" FOREIGN KEY ("userId") REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2319,7 +2363,7 @@ ALTER TABLE ONLY public.staff_request
 --
 
 ALTER TABLE ONLY public.session_stream_allocated_users_user
-    ADD CONSTRAINT "FK_76fe690bd48a4cd9aa58bfcb455" FOREIGN KEY ("userId") REFERENCES public."user"(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_76fe690bd48a4cd9aa58bfcb455" FOREIGN KEY ("userId") REFERENCES public."user"(id);
 
 
 --
@@ -2327,7 +2371,7 @@ ALTER TABLE ONLY public.session_stream_allocated_users_user
 --
 
 ALTER TABLE ONLY public.staff_request_swap_preference_session
-    ADD CONSTRAINT "FK_9159aa0df8131c1cd0f242c84dc" FOREIGN KEY ("staffRequestId") REFERENCES public.staff_request(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_9159aa0df8131c1cd0f242c84dc" FOREIGN KEY ("staffRequestId") REFERENCES public.staff_request(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2335,7 +2379,7 @@ ALTER TABLE ONLY public.staff_request_swap_preference_session
 --
 
 ALTER TABLE ONLY public.offer_preferences_session
-    ADD CONSTRAINT "FK_971f3356e937e94d7c26d27d15a" FOREIGN KEY ("offerId") REFERENCES public.offer(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_971f3356e937e94d7c26d27d15a" FOREIGN KEY ("offerId") REFERENCES public.offer(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2375,7 +2419,7 @@ ALTER TABLE ONLY public.stream_allocation
 --
 
 ALTER TABLE ONLY public.staff_request_swap_preference_session
-    ADD CONSTRAINT "FK_c13a3a9d35ffb7497f0a93cb570" FOREIGN KEY ("sessionId") REFERENCES public.session(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_c13a3a9d35ffb7497f0a93cb570" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
 
 
 --
@@ -2407,7 +2451,7 @@ ALTER TABLE ONLY public.session_stream
 --
 
 ALTER TABLE ONLY public.session_stream_allocated_users_user
-    ADD CONSTRAINT "FK_e62630c379f91fe30d920b34626" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_e62630c379f91fe30d920b34626" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

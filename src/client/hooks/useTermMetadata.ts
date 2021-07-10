@@ -1,4 +1,4 @@
-import { useQueryWithError } from "./useQueryWithError";
+import { useQueryWithError } from "./useApolloHooksWithError";
 import { useTermQuery } from "../generated/graphql";
 import { useMemo } from "react";
 import { getCurrentWeek, getWeeksNum } from "../utils/term";
@@ -13,7 +13,9 @@ type TermData = {
 
 export const useTermMetadata = (chosenTermId?: string): TermData => {
     const { data } = useQueryWithError(useTermQuery, {
-        termId: chosenTermId || defaultStr,
+        variables: {
+            termId: chosenTermId || defaultStr,
+        },
     });
     const currentWeek = useMemo(() => getCurrentWeek(data?.term), [data?.term]);
     const weekNum = useMemo(() => getWeeksNum(data?.term), [data?.term]);

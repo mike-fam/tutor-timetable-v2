@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { ViewRequestContainer } from "./ViewRequestContainer";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { useCreateOfferMutation } from "../../generated/graphql";
 import { OfferPreferenceTimetableContainer } from "./OfferPreferenceTimetableContainer";
 import { useToast } from "@chakra-ui/react";
@@ -18,7 +18,8 @@ export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
     requestId,
 }) => {
     const [createOffer, { data, loading }] = useMutationWithError(
-        useCreateOfferMutation
+        useCreateOfferMutation,
+        {}
     );
     const toast = useToast();
     const [chosenSessions, setChosenSessions] = useState<Array<string>>([]);

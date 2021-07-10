@@ -29,7 +29,7 @@ import {
 import { TimetableSessionType } from "../../types/timetable";
 import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
@@ -58,7 +58,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
-    ] = useMutationWithError(useRequestAllocationMutation);
+    ] = useMutationWithError(useRequestAllocationMutation, {});
 
     // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
@@ -68,7 +68,7 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     const [
         applyAllocation,
         { data: applyAllocationData, loading: applyAllocationLoading },
-    ] = useMutationWithError(useApplyAllocationMutation);
+    ] = useMutationWithError(useApplyAllocationMutation, {});
 
     // Show popup when allocation successfully applied
     useEffect(() => {

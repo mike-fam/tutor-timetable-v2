@@ -6,7 +6,7 @@ import {
     TimetableContext,
     TimetableSettingsContext,
 } from "../../utils/timetable";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useGetSessionStreamsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
@@ -42,8 +42,10 @@ export const TimetableContainer: React.FC<Props> = () => {
         data: sessionStreamsData,
         loading: sessionStreamsLoading,
     } = useQueryWithError(useGetSessionStreamsQuery, {
-        termId: chosenTermId,
-        courseIds: chosenCourses.toArray(),
+        variables: {
+            termId: chosenTermId,
+            courseIds: chosenCourses.toArray(),
+        },
     });
     const sessions = useMemo(() => {
         if (chosenWeek === defaultInt) {

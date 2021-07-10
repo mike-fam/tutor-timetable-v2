@@ -3,6 +3,7 @@ import { createConnection } from "typeorm";
 import {
     Course,
     CourseStaff,
+    Notification,
     Offer,
     Preference,
     Session,
@@ -26,6 +27,7 @@ export const connect = async () => {
         entities: [
             Course,
             CourseStaff,
+            Notification,
             Offer,
             Preference,
             Session,
