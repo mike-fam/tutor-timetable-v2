@@ -24,7 +24,7 @@ import { UserSettings } from "./UserSettings";
 import { Session } from "./Session";
 import { Utils } from "../utils/Util";
 import { SessionStream } from "./SessionStream";
-import {Notification} from "./Notification";
+import { Notification } from "./Notification";
 
 @ObjectType()
 @Entity()
@@ -101,10 +101,10 @@ export class User extends BaseEntity {
 
     @Field(() => [Notification])
     @OneToMany(() => Notification, (notification) => notification.user)
-    notifications: Lazy<Notification[]>
+    notifications: Lazy<Notification[]>;
 
     @RelationId((user: User) => user.notifications)
-    notificationIds: string[]
+    notificationIds: string[];
 
     private getCourseStaff(term?: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;

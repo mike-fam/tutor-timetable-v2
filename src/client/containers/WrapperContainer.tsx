@@ -86,7 +86,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
             description: notificationData.notifications.message,
             duration: null,
             isClosable: true,
-            position: "bottom"
+            position: "bottom",
         });
     }, [notificationData, toast]);
     return (

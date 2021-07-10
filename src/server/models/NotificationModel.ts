@@ -1,5 +1,5 @@
 import { BaseModel } from "./BaseModel";
-import { Course, CourseStaff, Notification, Term, User } from "../entities";
+import { CourseStaff, Notification, User } from "../entities";
 import { PermissionState } from "../types/permission";
 import { DataLoaders } from "../types/dataloaders";
 
@@ -13,6 +13,8 @@ export class NotificationModel extends BaseModel<Notification> {
     /**
      * Only admins or notified users can see their notification
      *
+     * @param {Notification} notification notification to be read
+     * @param {User} user user who reads the notification
      * @returns {PermissionState} indicates if user can perform this action
      * @protected
      */

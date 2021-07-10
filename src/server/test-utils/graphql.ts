@@ -46,6 +46,7 @@ import { UserSettingsModel } from "../models/UserSettingsModel";
 import { createLoader } from "../dataloaders/createLoader";
 import { Utils } from "../utils/Util";
 import { NotificationResolver } from "../resolvers/NotificationResolver";
+import { NotificationModel } from "../models/NotificationModel";
 
 interface Options {
     source: string;
@@ -102,6 +103,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
             models: {
                 course: new CourseModel(loaders),
                 courseStaff: new CourseStaffModel(loaders),
+                notification: new NotificationModel(loaders),
                 offer: new OfferModel(loaders),
                 preference: new PreferenceModel(loaders),
                 session: new SessionModel(loaders),

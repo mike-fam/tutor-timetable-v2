@@ -8,15 +8,18 @@ export class HelloResolver {
     @Query(() => String)
     async hello(
         @PubSub("NOTIFICATIONS") publish: Publisher<Notification>,
-        @Ctx() {req, models}: MyContext
+        @Ctx() { req, models }: MyContext
     ): Promise<string> {
-        await publishNotification({
-            title: "Hello world",
-            message: "Hi everyone",
-        }, models,
+        await publishNotification(
+            {
+                title: "Hello world",
+                message: "Hi everyone",
+            },
+            models,
             req.user,
             [req.user],
-            publish);
+            publish
+        );
         return "Hello world";
     }
 }

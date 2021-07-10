@@ -15,11 +15,10 @@ export class Notification extends BaseEntity {
     @Column()
     message: string;
 
-    @ManyToOne(() => User, user => user.notifications)
-    user: Lazy<User>
+    @ManyToOne(() => User, (user) => user.notifications)
+    user: Lazy<User>;
 
     @Column()
     @RelationId((notification: Notification) => notification.user)
-    userId: string
+    userId: string;
 }
-
