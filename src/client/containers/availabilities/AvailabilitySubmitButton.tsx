@@ -4,17 +4,21 @@ import {
     AvailabilityModificationType,
     useUpdateAvailabilitiesMutation,
 } from "../../generated/graphql";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { AvailabilityContext } from "../../utils/availability";
 
 type Props = {};
 
 export const AvailabilitySubmitButton: React.FC<Props> = () => {
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
-    const [updateAvailabilities, { loading: updateLoading }] =
-        useMutationWithError(useUpdateAvailabilitiesMutation, {
+    const [
+        updateAvailabilities,
+        { loading: updateLoading },
+    ] = useMutationWithError(useUpdateAvailabilitiesMutation, {
+        variables: {
             timeslots: timeslots.valueSeq().toArray(),
-        });
+        },
+    });
     const submitTimeslots = useCallback(async () => {
         try {
             const newTimeslots = await updateAvailabilities();

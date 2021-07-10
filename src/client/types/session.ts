@@ -1,5 +1,5 @@
 import { ArrayElement } from "./helpers";
-import { GetSessionsQuery } from "../generated/graphql";
+import { GetMergedSessionsQuery, GetSessionsQuery } from "../generated/graphql";
 import { Map } from "immutable";
 import { Dispatch, SetStateAction } from "react";
 
@@ -16,7 +16,7 @@ export type SessionMap = Map<string, SessionResponseType>;
 export type SessionUtil = {
     sessions: SessionMap;
     setSessions: Dispatch<SetStateAction<SessionMap>>;
-    sessionsData?: GetSessionsQuery;
+    sessionsData?: GetMergedSessionsQuery;
     fetchSessions: (
         termId: string,
         courseId: string,

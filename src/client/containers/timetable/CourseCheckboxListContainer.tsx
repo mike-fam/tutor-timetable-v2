@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { Map, Set } from "immutable";
 import { useMyCoursesQuery } from "../../generated/graphql";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { Loadable } from "../../components/helpers/Loadable";
 import { CheckboxList } from "../../components/helpers/CheckBoxList";
 

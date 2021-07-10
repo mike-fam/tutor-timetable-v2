@@ -30,9 +30,11 @@
     "framer-motion": "^4",
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",
+    "graphql-redis-subscriptions": "^2.4.0",
     "ical-generator": "^2.1.0",
     "identity-obj-proxy": "3.0.0",
     "immutable": "^4.0.0-rc.12",
+    "ioredis": "^4.27.6",
     "lodash": "^4.17.20",
     "node-filter-async": "^2.0.0",
     "pg": "^8.6.0",
@@ -80,7 +82,7 @@
     "migration-run": "ts-node ./node_modules/typeorm/cli.js migration:run -f src/server/ormconfig.ts",
     "migration-revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -f src/server/ormconfig.ts",
     "docker-dev": "docker-compose -p tutor-timetable-dev -f docker-compose.dev.yml up",
-    "docker-test": "docker-compose -p tutor-timetable-test -f docker-compose.test.yml up --force-recreate --build"
+    "docker-test": "docker-compose -p tutor-timetable-test -f docker-compose.test.yml up --force-recreate --build --abort-on-container-exit --exit-code-from test"
   },
   "eslintConfig": {
     "extends": [
@@ -118,6 +120,7 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.3.0",
     "@types/express": "^4.17.9",
+    "@types/ioredis": "^4.26.5",
     "@types/jest": "^26.0.23",
     "@types/node": "^12.0.0",
     "@types/pg": "^8.6.0",

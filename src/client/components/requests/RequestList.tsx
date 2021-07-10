@@ -6,7 +6,7 @@ import { Loadable } from "../helpers/Loadable";
 import { RequestTable } from "./RequestTable";
 import { defaultStr } from "../../constants";
 import { ViewMyRequestModalContainer } from "../../containers/requests/ViewMyRequestModalContainer";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { useDeleteRequestMutation } from "../../generated/graphql";
 import { RequestContext } from "../../hooks/useRequestUtils";
 
@@ -49,7 +49,7 @@ export const RequestList: React.FunctionComponent<Props> = ({
     const [
         deleteRequestMutation,
         { data: deleteRequestData, loading: deleteLoading },
-    ] = useMutationWithError(useDeleteRequestMutation);
+    ] = useMutationWithError(useDeleteRequestMutation, {});
     const deleteRequest = useCallback(
         (requestId: string) => {
             deleteRequestMutation({
