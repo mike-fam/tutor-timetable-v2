@@ -19,6 +19,7 @@ import { Maybe } from "graphql/jsutils/Maybe";
 import {
     Course,
     CourseStaff,
+    Notification,
     Offer,
     Preference,
     Session,
@@ -44,6 +45,8 @@ import { UserModel } from "../models/UserModel";
 import { UserSettingsModel } from "../models/UserSettingsModel";
 import { createLoader } from "../dataloaders/createLoader";
 import { Utils } from "../utils/Util";
+import { NotificationResolver } from "../resolvers/NotificationResolver";
+import { NotificationModel } from "../models/NotificationModel";
 
 interface Options {
     source: string;
@@ -55,6 +58,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
     const loaders = {
         course: createLoader(Course),
         courseStaff: createLoader(CourseStaff),
+        notification: createLoader(Notification),
         offer: createLoader(Offer),
         preference: createLoader(Preference),
         session: createLoader(Session),
@@ -84,6 +88,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
                 AllocatorResolver,
                 OfferResolver,
                 UserSettingsResolver,
+                NotificationResolver,
             ],
             authChecker: ({ context: { req } }: { context: MyContext }) =>
                 !!req.user,
@@ -98,6 +103,7 @@ export const graphql = async ({ source, variableValues, user }: Options) => {
             models: {
                 course: new CourseModel(loaders),
                 courseStaff: new CourseStaffModel(loaders),
+                notification: new NotificationModel(loaders),
                 offer: new OfferModel(loaders),
                 preference: new PreferenceModel(loaders),
                 session: new SessionModel(loaders),

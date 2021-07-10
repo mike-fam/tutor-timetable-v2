@@ -6,7 +6,7 @@ import {
     TimetableContext,
     TimetableSettingsContext,
 } from "../../utils/timetable";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useGetSessionStreamsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
@@ -25,7 +25,7 @@ type Props = {};
 export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
         Map<string, TimetableSessionProps>
-    >(Map());
+    >(Map<string, TimetableSessionProps>());
     const { displayedDays, dayStartTime, dayEndTime, displayMySessionsOnly } =
         useContext(TimetableSettingsContext);
     const { chosenTermId, chosenWeek, chosenCourses } =
@@ -33,11 +33,15 @@ export const TimetableContainer: React.FC<Props> = () => {
     const { user } = useContext(UserContext);
     // TODO: Use lazy query
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
-    const { data: sessionStreamsData, loading: sessionStreamsLoading } =
-        useQueryWithError(useGetSessionStreamsQuery, {
+    const {
+        data: sessionStreamsData,
+        loading: sessionStreamsLoading,
+    } = useQueryWithError(useGetSessionStreamsQuery, {
+        variables: {
             termId: chosenTermId,
             courseIds: chosenCourses.toArray(),
-        });
+        },
+    });
     const sessions = useMemo(() => {
         if (chosenWeek === defaultInt) {
             if (sessionStreamsLoading || !sessionStreamsData) {

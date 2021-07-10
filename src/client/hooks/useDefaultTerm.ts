@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { defaultInt, defaultStr } from "../constants";
-import { useQueryWithError } from "./useQueryWithError";
+import { useQueryWithError } from "./useApolloHooksWithError";
 import { TermQuery, useTermsQuery } from "../generated/graphql";
 import { getCurrentTerm, getCurrentWeek } from "../utils/term";
 import { parseISO } from "date-fns";

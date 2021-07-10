@@ -45,7 +45,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
         Map<string, RequestSessionProps>
-    >(Map());
+    >(Map<string, RequestSessionProps>());
     const { fetchSessions, sessions: sessionMap } = useContext(SessionsContext);
     const [timetableSessions, setTimetableSessions] = useState<
         TimetableSessionType[]

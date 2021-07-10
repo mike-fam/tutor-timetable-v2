@@ -10,10 +10,12 @@ import { SessionStreamModel } from "../models/SessionStreamModel";
 import { TimetableModel } from "../models/TimetableModel";
 import { PreferenceModel } from "../models/PreferenceModel";
 import { TermModel } from "../models/TermModel";
+import { NotificationModel } from "../models/NotificationModel";
 
 export type Models = {
     course: CourseModel;
     courseStaff: CourseStaffModel;
+    notification: NotificationModel;
     offer: OfferModel;
     preference: PreferenceModel;
     session: SessionModel;

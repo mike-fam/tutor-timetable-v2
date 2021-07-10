@@ -109,7 +109,6 @@ export class SessionResolver {
                 []
             );
             // add new merged session to results
-            console.log(rootSession.allocatedUserIds, relatedAllocatedUserIds);
             const newSession = Session.create({
                 id: uuid(),
                 sessionStreamId: rootSession.sessionStreamId,
@@ -138,7 +137,6 @@ export class SessionResolver {
             ];
             results.push(newSession);
         }
-        console.log(results);
         return results;
     }
 

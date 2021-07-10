@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { Map } from "immutable";
-import { SessionMap, SessionUtil } from "../types/session";
-import { useLazyQueryWithError } from "./useQueryWithError";
+import { SessionMap, SessionResponseType, SessionUtil } from "../types/session";
+import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import {
     useGetMergedSessionsLazyQuery,
     useGetSessionByIdLazyQuery,
@@ -9,7 +9,7 @@ import {
 import { defaultInt, defaultStr } from "../constants";
 
 export const SessionsContext = createContext<SessionUtil>({
-    sessions: Map(),
+    sessions: Map<string, SessionResponseType>(),
     setSessions: () => {},
     fetchSessions: () => {},
     fetchSessionById: () => {},
@@ -17,13 +17,15 @@ export const SessionsContext = createContext<SessionUtil>({
 });
 
 export const useSessionUtils = (): SessionUtil => {
-    const [sessions, setSessions] = useState<SessionMap>(Map());
-    const [getSession, { data: sessionsData, loading: getSessionsLoading }] =
-        useLazyQueryWithError(useGetMergedSessionsLazyQuery);
+    const [sessions, setSessions] = useState<SessionMap>(Map<string, SessionResponseType>());
+    const [
+        getSession,
+        { data: sessionsData, loading: getSessionsLoading },
+    ] = useLazyQueryWithError(useGetMergedSessionsLazyQuery, {});
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },
-    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery);
+    ] = useLazyQueryWithError(useGetSessionByIdLazyQuery, {});
     const fetchSessions = useCallback(
         (termId: string, courseId: string, chosenWeek: number) => {
             if (
