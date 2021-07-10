@@ -110,7 +110,7 @@ export class SessionResolver {
             );
             // add new merged session to results
             const newSession = Session.create({
-                id: uuid(),
+                id: rootSession.id,
                 sessionStreamId: rootSession.sessionStreamId,
                 location: rootSession.location,
                 week: rootSession.week,
