@@ -37,5 +37,15 @@ query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
                 username
             }
         }
+        timetable {
+            course {
+                id
+                code
+            }
+            term {
+                id
+                weekNames
+            }
+        }
     }
 }

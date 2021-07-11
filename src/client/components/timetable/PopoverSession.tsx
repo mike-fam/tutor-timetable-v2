@@ -1,18 +1,21 @@
-import React from "react";
-import { Props as SessionProps, Session } from "./Session";
-import { Box, Popover, PopoverContent, PopoverTrigger } from "@chakra-ui/react";
+import React, { PropsWithChildren, ReactElement } from "react";
+import { Props as SessionProps } from "./Session";
+import { Popover, PopoverContent, PopoverTrigger } from "@chakra-ui/react";
 
-type Props<T> = SessionProps<T>;
+type Props<T> = {
+    popoverContent: ReactElement;
+    sessionComponent: ReactElement<SessionProps<T>>;
+};
 
-export const PopoverSession = <T,>({ children: _, ...props }: Props<T>) => {
+export const PopoverSession = <T,>({
+    children: _,
+    popoverContent,
+    sessionComponent,
+}: PropsWithChildren<Props<T>>) => {
     return (
         <Popover trigger="hover" placement="auto">
-            <PopoverTrigger>
-                <Session {...props}>
-                    <Box p={1}>Hi</Box>
-                </Session>
-            </PopoverTrigger>
-            <PopoverContent>Hi</PopoverContent>
+            <PopoverTrigger>{sessionComponent}</PopoverTrigger>
+            <PopoverContent>{popoverContent}</PopoverContent>
         </Popover>
     );
 };

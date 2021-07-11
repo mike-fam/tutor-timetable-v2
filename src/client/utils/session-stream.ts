@@ -1,6 +1,7 @@
 export const weeksPatternRepr = (weekNames: string[], weeks: number[]) => {
     const weekRanges: string[] = [];
     const sortedWeeks = [...weeks].sort((a, b) => a - b);
+    sortedWeeks.push(Infinity);
     let lastWeek: number | undefined = undefined;
     let firstConsecutiveWeek: number | undefined = undefined;
     for (const week of sortedWeeks) {

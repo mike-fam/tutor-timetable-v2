@@ -12,13 +12,17 @@ import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import {
     TimetableCustomSessionProps,
-    TimetableSession,
-} from "../../components/timetable/TimetableSession";
+    TimetableSession2,
+} from "../../components/timetable/TimetableSession2";
 import { Map } from "immutable";
 import { defaultInt, defaultStr } from "../../constants";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { UserContext } from "../../utils/user";
 import { SessionTheme } from "../../types/session";
+import {
+    StreamCustomSessionProps,
+    TimetableStreamSession,
+} from "../../components/timetable/TimetableStreamSession";
 
 type Props = {};
 
@@ -26,6 +30,9 @@ export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
         Map<string, TimetableCustomSessionProps>
     >(Map<string, TimetableCustomSessionProps>());
+    const [streamInfo, setStreamInfo] = useState<
+        Map<string, StreamCustomSessionProps>
+    >(Map<string, StreamCustomSessionProps>());
     const { displayedDays, dayStartTime, dayEndTime, displayMySessionsOnly } =
         useContext(TimetableSettingsContext);
     const { chosenTermId, chosenWeek, chosenCourses } =
@@ -108,35 +115,46 @@ export const TimetableContainer: React.FC<Props> = () => {
         });
     }, [chosenTermId, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
-        if (chosenWeek === defaultInt) {
-            sessionStreamsData?.rootSessionStreams.forEach((sessionStream) => {
-                setSessionsInfo((prev) =>
-                    prev.set(sessionStream.id, {
-                        location: sessionStream.location,
-                        allocation: sessionStream.allocatedUsers.map(
+        sessionStreamsData?.rootSessionStreams.forEach((sessionStream) => {
+            setStreamInfo((prev) =>
+                prev.set(sessionStream.id, {
+                    location: sessionStream.location,
+                    baseAllocation: [
+                        sessionStream.weeks,
+                        sessionStream.allocatedUsers.map(
                             (allocatedUser) => allocatedUser.name
                         ),
-                        theme:
-                            sessionStream.allocatedUsers.length <
-                            sessionStream.numberOfStaff
-                                ? SessionTheme.WARNING
-                                : SessionTheme.PRIMARY,
-                    })
-                );
-            });
-        } else {
-            sessionsData?.mergedSessions.forEach((session) => {
-                setSessionsInfo((prev) =>
-                    prev.set(session.id, {
-                        location: session.location,
-                        allocation: session.allocatedUsers.map(
-                            (allocatedUser) => allocatedUser.name
-                        ),
-                    })
-                );
-            });
-        }
-    }, [chosenWeek, sessionStreamsData, sessionsData]);
+                    ],
+                    customAllocation: sessionStream.basedStreams.map(
+                        (stream) => [
+                            stream.weeks,
+                            stream.allocatedUsers.map((user) => user.name),
+                        ]
+                    ),
+                    weekNames: sessionStream.timetable.term.weekNames,
+                    theme:
+                        sessionStream.allocatedUsers.length <
+                        sessionStream.numberOfStaff
+                            ? SessionTheme.WARNING
+                            : SessionTheme.PRIMARY,
+                    courseCode: sessionStream.timetable.course.code,
+                })
+            );
+        });
+    }, [sessionStreamsData]);
+    useEffect(() => {
+        sessionsData?.mergedSessions.forEach((session) => {
+            setSessionsInfo((prev) =>
+                prev.set(session.id, {
+                    location: session.location,
+                    allocation: session.allocatedUsers.map(
+                        (allocatedUser) => allocatedUser.name
+                    ),
+                    courseCode: session.sessionStream.timetable.course.code,
+                })
+            );
+        });
+    }, [sessionsData]);
     return (
         <Loadable
             isLoading={
@@ -151,21 +169,38 @@ export const TimetableContainer: React.FC<Props> = () => {
                 startTime={dayStartTime}
                 endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
-                    <Day<TimetableCustomSessionProps>
+                    <Day
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(sessionProps, key) => (
-                            <TimetableSession
-                                {...sessionProps}
-                                key={key}
-                                custom={(sessionId) =>
-                                    sessionInfo.get(sessionId) || {
-                                        allocation: [],
-                                        location: "",
+                        renderSession={(sessionProps, key) =>
+                            chosenWeek === defaultInt ? (
+                                <TimetableStreamSession
+                                    {...sessionProps}
+                                    key={key}
+                                    custom={(streamId) =>
+                                        streamInfo.get(streamId) || {
+                                            baseAllocation: [[], []],
+                                            customAllocation: [],
+                                            location: "",
+                                            courseCode: "",
+                                            weekNames: [],
+                                        }
                                     }
-                                }
-                            />
-                        )}
+                                />
+                            ) : (
+                                <TimetableSession2
+                                    {...sessionProps}
+                                    key={key}
+                                    custom={(sessionId) =>
+                                        sessionInfo.get(sessionId) || {
+                                            allocation: [],
+                                            location: "",
+                                            courseCode: "",
+                                        }
+                                    }
+                                />
+                            )
+                        }
                         key={key}
                     />
                 )}

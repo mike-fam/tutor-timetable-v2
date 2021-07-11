@@ -1214,7 +1214,16 @@ export type GetRootSessionStreamsQuery = (
         { __typename?: 'User' }
         & Pick<User, 'name' | 'username'>
       )> }
-    )> }
+    )>, timetable: (
+      { __typename?: 'Timetable' }
+      & { course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
+      ) }
+    ) }
   )> }
 );
 
@@ -1294,7 +1303,7 @@ export type GetMergedSessionsQuery = (
           & Pick<Term, 'id'>
         ), course: (
           { __typename?: 'Course' }
-          & Pick<Course, 'id'>
+          & Pick<Course, 'id' | 'code'>
         ) }
       ) }
     ), allocatedUsers: Array<(
@@ -1324,7 +1333,7 @@ export type GetSessionByIdQuery = (
           & Pick<Term, 'id'>
         ), course: (
           { __typename?: 'Course' }
-          & Pick<Course, 'id'>
+          & Pick<Course, 'id' | 'code'>
         ) }
       ) }
     ), allocatedUsers: Array<(
@@ -2636,6 +2645,16 @@ export const GetRootSessionStreamsDocument = gql`
         username
       }
     }
+    timetable {
+      course {
+        id
+        code
+      }
+      term {
+        id
+        weekNames
+      }
+    }
   }
 }
     `;
@@ -2738,6 +2757,7 @@ export const GetMergedSessionsDocument = gql`
         }
         course {
           id
+          code
         }
       }
     }
@@ -2794,6 +2814,7 @@ export const GetSessionByIdDocument = gql`
         }
         course {
           id
+          code
         }
       }
     }

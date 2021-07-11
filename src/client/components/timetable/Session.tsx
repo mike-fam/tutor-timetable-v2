@@ -25,7 +25,7 @@ export type Props<T> = SessionProps<T> & StyleProps;
 export const Session: React.FC<Props<{}>> = forwardRef<
     HTMLDivElement,
     Props<{}>
->(({ theme = SessionTheme.PRIMARY, children, ...props }, ref) => {
+>(({ theme = SessionTheme.PRIMARY, children, custom: _, ...props }, ref) => {
     const { width, heightPx, display, left, topPx } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
@@ -33,7 +33,10 @@ export const Session: React.FC<Props<{}>> = forwardRef<
     const bg = useSessionColour(theme);
     const styleProps = useMemo(
         () =>
-            omit<Props<{}>, keyof SessionProps<{}>>(props, [
+            omit<
+                Omit<Props<{}>, "custom">,
+                keyof Omit<SessionProps<{}>, "custom">
+            >(props, [
                 "id",
                 "name",
                 "startTime",

@@ -65,6 +65,7 @@ query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
                 }
                 course {
                     id
+                    code
                 }
             }
         }
@@ -92,6 +93,7 @@ query GetSessionById($sessionId: String!) {
                 }
                 course {
                     id
+                    code
                 }
             }
         }
