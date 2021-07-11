@@ -6,19 +6,13 @@ import {
     TimetableContext,
     TimetableSettingsContext,
 } from "../../utils/timetable";
-import {
-    useLazyQueryWithError,
-    useQueryWithError,
-} from "../../hooks/useApolloHooksWithError";
-import {
-    useGetRootSessionStreamsLazyQuery,
-    useGetRootSessionStreamsQuery,
-} from "../../generated/graphql";
+import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
+import { useGetRootSessionStreamsLazyQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { IsoDay } from "../../../types/date";
 import {
+    TimetableCustomSessionProps,
     TimetableSession,
-    TimetableSessionProps,
 } from "../../components/timetable/TimetableSession";
 import { Map } from "immutable";
 import { defaultInt, defaultStr } from "../../constants";
@@ -30,8 +24,8 @@ type Props = {};
 
 export const TimetableContainer: React.FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
-        Map<string, TimetableSessionProps>
-    >(Map<string, TimetableSessionProps>());
+        Map<string, TimetableCustomSessionProps>
+    >(Map<string, TimetableCustomSessionProps>());
     const { displayedDays, dayStartTime, dayEndTime, displayMySessionsOnly } =
         useContext(TimetableSettingsContext);
     const { chosenTermId, chosenWeek, chosenCourses } =
@@ -39,20 +33,20 @@ export const TimetableContainer: React.FC<Props> = () => {
     const { user } = useContext(UserContext);
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
     const [
-        getRootSessions,
+        getRootSessionStreams,
         { data: sessionStreamsData, loading: sessionStreamsLoading },
     ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {});
     useEffect(() => {
-        if (chosenWeek === defaultInt) {
+        if (chosenWeek !== defaultInt) {
             return;
         }
-        getRootSessions({
+        getRootSessionStreams({
             variables: {
                 termId: chosenTermId,
                 courseIds: chosenCourses.toArray(),
             },
         });
-    }, [chosenWeek, getRootSessions, chosenCourses, chosenTermId]);
+    }, [chosenWeek, getRootSessionStreams, chosenCourses, chosenTermId]);
     const sessions = useMemo(() => {
         if (chosenWeek === defaultInt) {
             if (sessionStreamsLoading || !sessionStreamsData) {
@@ -157,26 +151,21 @@ export const TimetableContainer: React.FC<Props> = () => {
                 startTime={dayStartTime}
                 endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
-                    <Day
+                    <Day<TimetableCustomSessionProps>
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(
-                            sessionProps,
-                            key,
-                            moreProps: TimetableSessionProps
-                        ) => (
+                        renderSession={(sessionProps, key) => (
                             <TimetableSession
                                 {...sessionProps}
                                 key={key}
-                                {...moreProps}
+                                custom={(sessionId) =>
+                                    sessionInfo.get(sessionId) || {
+                                        allocation: [],
+                                        location: "",
+                                    }
+                                }
                             />
                         )}
-                        getSessionProps={(sessionId) =>
-                            sessionInfo.get(sessionId) || {
-                                allocation: [],
-                                location: "",
-                            }
-                        }
                         key={key}
                     />
                 )}

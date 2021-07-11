@@ -114,19 +114,18 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
                     <Day<{ theme: SessionTheme }>
                         {...dayProps}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        getSessionProps={(sessionId) => ({
-                            theme:
-                                sessionId !== session?.id
-                                    ? SessionTheme.PRIMARY
-                                    : isClashed
-                                    ? SessionTheme.ERROR
-                                    : SessionTheme.SUCCESS,
-                        })}
-                        renderSession={(sessionProps, key, moreProps) => (
+                        renderSession={(sessionProps, key) => (
                             <SimpleSession
                                 {...sessionProps}
-                                {...moreProps}
                                 key={key}
+                                custom={(sessionId) => ({
+                                    theme:
+                                        sessionId !== session?.id
+                                            ? SessionTheme.PRIMARY
+                                            : isClashed
+                                            ? SessionTheme.ERROR
+                                            : SessionTheme.SUCCESS,
+                                })}
                             />
                         )}
                         key={key}
