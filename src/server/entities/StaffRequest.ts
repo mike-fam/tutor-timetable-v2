@@ -32,7 +32,8 @@ import { OfferStatus } from "../types/offer";
 @Check(checkFieldValueInEnum(RequestStatus, "status"))
 export class StaffRequest
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity
+{
     @Field(() => RequestType)
     @Column("varchar")
     type: RequestType;
@@ -128,7 +129,8 @@ export class StaffRequest
             if (this.type !== RequestType.PERMANENT) {
                 return false;
             }
-            const subsequentSessions = await requestedSession.subsequentSessions();
+            const subsequentSessions =
+                await requestedSession.subsequentSessions();
             const subsequentSessionIds = subsequentSessions.map(
                 (session) => session.id
             );

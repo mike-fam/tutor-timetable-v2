@@ -26,7 +26,8 @@ import { Utils } from "../utils/Util";
 @Check(checkFieldValueInEnum(FreezeState, "temporaryRequestLock"))
 export class Timetable
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity
+{
     @RelationId((timetable: Timetable) => timetable.course)
     @Column()
     courseId: string;

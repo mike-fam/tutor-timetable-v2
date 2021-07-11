@@ -62,10 +62,8 @@ export const getAvailabilityStatus = (
     );
     for (const otherSession of sessionsOfWeek) {
         const { startTime, endTime } = session.sessionStream;
-        const {
-            startTime: otherStart,
-            endTime: otherEnd,
-        } = otherSession.sessionStream;
+        const { startTime: otherStart, endTime: otherEnd } =
+            otherSession.sessionStream;
         if (startTime <= otherStart && otherStart < endTime) {
             return SessionAvailabilityStatus.CLASHED;
         } else if (otherStart <= startTime && startTime < otherEnd) {

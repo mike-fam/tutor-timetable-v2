@@ -3,15 +3,16 @@ import { AppRouter } from "./AppRouter";
 import {
     ApolloClient,
     ApolloProvider,
+    from,
     HttpLink,
     InMemoryCache,
     split,
-    from,
 } from "@apollo/client";
 import { WrapperContainer } from "./containers/WrapperContainer";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { RetryLink } from "@apollo/client/link/retry";
+import { __prod__ } from "../constants";
 
 const httpLink = new HttpLink({
     uri: "/graphql",
@@ -20,7 +21,7 @@ const httpLink = new HttpLink({
 const retryLink = new RetryLink();
 
 const wsLink = new WebSocketLink({
-    uri: `ws://${window.location.host}/graphql`,
+    uri: `ws${__prod__ ? "s" : ""}://${window.location.host}/graphql`,
     options: {
         reconnect: true,
     },

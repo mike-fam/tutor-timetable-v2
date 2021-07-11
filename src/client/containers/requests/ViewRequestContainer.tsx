@@ -28,10 +28,10 @@ export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
             fetchRequestById(requestId);
         }
     });
-    const request = useMemo(() => requests.get(requestId), [
-        requestId,
-        requests,
-    ]);
+    const request = useMemo(
+        () => requests.get(requestId),
+        [requestId, requests]
+    );
     const { chosenTerm } = useTermMetadata(
         request?.session.sessionStream.timetable.term.id
     );

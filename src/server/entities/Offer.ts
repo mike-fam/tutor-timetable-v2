@@ -28,7 +28,8 @@ import { RequestType } from "../types/request";
 @Check(checkFieldValueInEnum(OfferStatus, "status"))
 export class Offer
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity
+{
     @ManyToOne(() => StaffRequest, (staffRequest) => staffRequest.offers, {
         lazy: true,
         onDelete: "CASCADE",
@@ -119,7 +120,8 @@ export class Offer
             if (request.type !== RequestType.PERMANENT) {
                 return false;
             }
-            const subsequentSessions = await offeredSession.subsequentSessions();
+            const subsequentSessions =
+                await offeredSession.subsequentSessions();
             const subsequentSessionIds = subsequentSessions.map(
                 (session) => session.id
             );

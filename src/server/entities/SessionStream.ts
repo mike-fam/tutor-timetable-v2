@@ -31,7 +31,8 @@ import differenceBy from "lodash/differenceBy";
 @Check(checkFieldValueInEnum(IsoDay, "day", true))
 export class SessionStream
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity
+{
     @RelationId((stream: SessionStream) => stream.timetable)
     @Column()
     timetableId: string;
@@ -92,6 +93,7 @@ export class SessionStream
     @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
         lazy: true,
         nullable: true,
+        onDelete: "CASCADE",
     })
     based: Lazy<SessionStream>;
 

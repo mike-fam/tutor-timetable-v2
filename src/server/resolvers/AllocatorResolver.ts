@@ -16,7 +16,6 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { CourseTermIdInput } from "./CourseTermId";
 import { asyncForEach, asyncMap } from "../../utils/array";
-import { isDigits } from "../utils/string";
 import { isNumeric } from "../../utils/string";
 import asyncFilter from "node-filter-async";
 
@@ -117,6 +116,7 @@ type AllocatorInput = {
     request_time: string;
     requester: string;
     data: AllocatorInputData;
+    token: string;
 };
 
 @Resolver()
@@ -198,6 +198,7 @@ export class AllocatorResolver {
                 })
             )
         ).filter((staffInput) => staffIds.includes(staffInput.id));
+        const token = uuid();
         const input: AllocatorInput = {
             request_time: new Date().toISOString(),
             requester: req.user!.username,
@@ -207,12 +208,12 @@ export class AllocatorResolver {
                 staff: staffInput,
                 new_threshold: newThreshold,
             },
+            token,
         };
         const allocatorOutput = await axios.post<AllocatorOutputData>(
             process.env.ALLOCATOR_URL || "http://localhost:8000/allocator/",
             input
         );
-        const token = uuid();
         await models.timetable.update(
             timetable,
             { allocationToken: token },
@@ -222,28 +223,12 @@ export class AllocatorResolver {
         output.allocations = await asyncMap(
             Object.entries(allocatorOutput.data.allocations),
             async ([streamId, staffIds]) => {
-                const dummyIds = staffIds.filter((staffId) =>
-                    isDigits(staffId)
-                );
-                const realIds = staffIds.filter(
-                    (staffId) => !dummyIds.includes(staffId)
-                );
                 return {
                     sessionStream: await models.sessionStream.getById(
                         streamId,
                         user
                     ),
-                    staff: [
-                        ...(await models.user.getByIds(realIds, user)),
-                        ...User.create(
-                            dummyIds.map((staffId) => ({
-                                id: staffId,
-                                username: `dummy${staffId}`,
-                                name: `Dummy Guy ${staffId}`,
-                                email: "dummy.guy@email.com",
-                            }))
-                        ),
-                    ],
+                    staff: [...(await models.user.getByIds(staffIds, user))],
                 };
             }
         );
@@ -271,10 +256,12 @@ export class AllocatorResolver {
         } catch (e) {
             throw new Error("Invalid token or token already consumed.");
         }
+        console.log(1);
         const { data: allocationOutput } = await axios.get<AllocatorOutputData>(
-            process.env.ALLOCATOR_URL || "http://localhost:8000/allocator/",
-            { params: { token } }
+            process.env.ALLOCATOR_URL ||
+                `http://localhost:8000/allocator/${token}`
         );
+        console.log(2);
         if (allocationOutput.type === AllocationType.Failed) {
             throw new Error("You cannot apply a failed allocation");
         }
@@ -282,6 +269,7 @@ export class AllocatorResolver {
             timetable.sessionStreamIds,
             user
         );
+        console.log(3);
         const hasAllocation = sessionStreams.some(
             (stream) => stream.allocatedUserIds.length > 0
         );
@@ -292,6 +280,7 @@ export class AllocatorResolver {
                     " and override the existing timetable, set 'override' to true"
             );
         }
+        console.log(4);
         // Delete existing allocations
         await asyncForEach(
             sessionStreams,
@@ -300,6 +289,7 @@ export class AllocatorResolver {
         );
         const streamIds = Object.keys(allocationOutput.allocations);
         const streams = await models.sessionStream.getByIds(streamIds, user);
+        console.log(5);
         // Create new allocation for streams
         await asyncForEach(streams, async (stream) => {
             const staffIds = allocationOutput.allocations[stream.id];
@@ -307,6 +297,7 @@ export class AllocatorResolver {
             const staff = await models.user.getByIds(realStaffIds, user);
             await models.sessionStream.allocateMultiple(stream, staff, user);
         });
+        console.log(6);
 
         // Change all affected sessions
         const sessionIds = streams.reduce<string[]>(
@@ -314,6 +305,7 @@ export class AllocatorResolver {
             []
         );
         const sessions = await models.session.getByIds(sessionIds, user);
+        console.log(7);
         const today = new Date();
         const sessionsAfterToday = await asyncFilter(
             sessions,
@@ -326,6 +318,7 @@ export class AllocatorResolver {
             async (session) =>
                 await models.session.clearAllocation(session, user)
         );
+        console.log(8);
         // Create new allocation
         await asyncForEach(sessionsAfterToday, async (session) => {
             const staffIds =
@@ -334,6 +327,7 @@ export class AllocatorResolver {
             const staff = await models.user.getByIds(realStaffIds, user);
             await models.session.allocateMultiple(session, staff, user);
         });
+        console.log(9);
         return true;
     }
 }

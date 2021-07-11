@@ -3,7 +3,7 @@ import { Dropdown } from "../components/helpers/Dropdown";
 import { Role, useMyCoursesQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
-import { useQueryWithError } from "../hooks/useQueryWithError";
+import { useQueryWithError } from "../hooks/useApolloHooksWithError";
 
 type Props = {
     chooseCourse: (termId: string) => void;

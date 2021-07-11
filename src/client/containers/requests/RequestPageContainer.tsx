@@ -32,18 +32,12 @@ export const RequestPageContainer: React.FunctionComponent = () => {
     const [chosenCourses, setChosenCourses] = useState<Set<string>>(Set());
     const { user } = useContext(UserContext);
     const requestUtils = useRequestUtils();
-    const {
-        selected: selectedTypes,
-        selectElem: selectType,
-    } = useSelectableList([RequestType.Temporary, RequestType.Permanent]);
-    const {
-        selected: selectedStatuses,
-        selectElem: selectStatus,
-    } = useSelectableList([RequestStatus.Open, RequestStatus.Closed]);
-    const {
-        selected: whoseSelected,
-        selectElem: selectWhose,
-    } = useSelectableList([WhoseRequest.ME, WhoseRequest.EVERYONE_ELSE]);
+    const { selected: selectedTypes, selectElem: selectType } =
+        useSelectableList([RequestType.Temporary, RequestType.Permanent]);
+    const { selected: selectedStatuses, selectElem: selectStatus } =
+        useSelectableList([RequestStatus.Open, RequestStatus.Closed]);
+    const { selected: whoseSelected, selectElem: selectWhose } =
+        useSelectableList([WhoseRequest.ME, WhoseRequest.EVERYONE_ELSE]);
     useEffect(() => {
         if (!termsData || termIsSet) {
             return;

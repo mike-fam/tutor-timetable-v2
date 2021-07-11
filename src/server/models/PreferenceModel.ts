@@ -74,7 +74,8 @@ export class PreferenceModel extends BaseModel<Preference> {
             };
         }
         if (updatedFields.courseStaff) {
-            const updatedCourseStaff = (await updatedFields.courseStaff) as CourseStaff;
+            const updatedCourseStaff =
+                (await updatedFields.courseStaff) as CourseStaff;
             if (updatedCourseStaff.id !== preference.courseStaffId) {
                 return {
                     hasPerm: false,
@@ -108,6 +109,9 @@ export class PreferenceModel extends BaseModel<Preference> {
      * they are admin
      * OR
      * they are course coordinator of the course and term of the preference
+     * OR
+     * they are the owner of the preference AND they work in said course and
+     * term
      *
      * @param {Preference} preference preference object to be created
      * @param {User} user user performing this action
@@ -120,12 +124,14 @@ export class PreferenceModel extends BaseModel<Preference> {
     ): Promise<PermissionState> {
         const courseStaff =
             (await preference.courseStaff) ||
-            (await this.loaders.preference.load(preference.courseStaffId));
+            (await this.loaders.courseStaff.load(preference.courseStaffId));
         const course = await courseStaff.getCourse();
         const term = await courseStaff.getTerm();
-        if (!(await user.isCoordinatorOf(course, term))) {
-            return { hasPerm: false };
+        if (await user.isCoordinatorOf(course, term)) {
+            return { hasPerm: true };
+        } else if (await user.isStaffOf(course, term)) {
+            return { hasPerm: user.id === courseStaff.userId };
         }
-        return { hasPerm: true };
+        return { hasPerm: false };
     }
 }

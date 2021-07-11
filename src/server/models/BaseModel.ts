@@ -152,22 +152,27 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async update(
-        toUpdateFind: FindConditions<T>,
+        toUpdateFind: FindConditions<T> | T,
         updatedFields: Partial<T>,
         user: User
     ): Promise<T> {
-        const updateCandidates: T[] = (this.entityCls as any).find(
-            toUpdateFind
-        );
-        if (updateCandidates.length === 0) {
-            throw new Error(CANT_FIND);
-        }
-        if (updateCandidates.length > 1) {
-            throw new Error(
-                `Multiple ${this.entityCls.name} objects found due to ambiguous fields`
+        let toUpdate: T;
+        if (toUpdateFind instanceof this.entityCls) {
+            toUpdate = toUpdateFind as T;
+        } else {
+            const updateCandidates: T[] = await (this.entityCls as any).find(
+                toUpdateFind
             );
+            if (updateCandidates.length === 0) {
+                throw new Error(CANT_FIND);
+            }
+            if (updateCandidates.length > 1) {
+                throw new Error(
+                    `Multiple ${this.entityCls.name} objects found due to ambiguous fields`
+                );
+            }
+            toUpdate = updateCandidates[0];
         }
-        let toUpdate = updateCandidates[0];
         const { hasPerm, errMsg } = await this.permUpdate(
             toUpdate,
             updatedFields,
@@ -178,7 +183,7 @@ export abstract class BaseModel<T extends BaseEntity> {
                 ...toUpdate,
                 ...updatedFields,
             };
-            return await toUpdate.save();
+            return await (this.entityCls as any).save(toUpdate);
         }
         throw new Error(errMsg || PERM_ERR);
     }

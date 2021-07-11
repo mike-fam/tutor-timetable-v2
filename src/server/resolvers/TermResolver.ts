@@ -42,6 +42,11 @@ export class TermResolver {
     }
 
     @Query(() => Term)
+    async activeTerm(@Ctx() { models }: MyContext): Promise<Term> {
+        return await models.term.getActiveTerm();
+    }
+
+    @Query(() => Term)
     async term(
         @Arg("termId") termId: string,
         @Ctx() { req, models }: MyContext

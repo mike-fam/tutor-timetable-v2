@@ -1,0 +1,7 @@
+subscription Notifications($key: String!) {
+    notifications(key: $key) {
+        id
+        title
+        message
+    }
+}

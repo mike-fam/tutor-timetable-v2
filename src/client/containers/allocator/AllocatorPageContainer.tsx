@@ -27,16 +27,15 @@ import {
     useRequestAllocationMutation,
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
-import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
+import { TimetableCustomSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
     AllocatorTable,
 } from "../../components/allocator/AllocatorTable";
 import { SessionTheme } from "../../types/session";
-import { isNumeric } from "../../../utils/string";
 
 type Props = {};
 
@@ -52,24 +51,22 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         onOpen: openConfirm,
         onClose: closeConfirm,
     } = useDisclosure();
-    const [
-        getSessionStream,
-        { data: defaultSessionData },
-    ] = useGetSessionStreamsLazyQuery();
+    const [getSessionStream, { data: defaultSessionData }] =
+        useGetSessionStreamsLazyQuery();
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
-    ] = useMutationWithError(useRequestAllocationMutation);
+    ] = useMutationWithError(useRequestAllocationMutation, {});
 
     // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
-        Map<string, TimetableSessionProps>
-    >(Map());
+        Map<string, TimetableCustomSessionProps>
+    >(Map<string, TimetableCustomSessionProps>());
 
     const [
         applyAllocation,
         { data: applyAllocationData, loading: applyAllocationLoading },
-    ] = useMutationWithError(useApplyAllocationMutation);
+    ] = useMutationWithError(useApplyAllocationMutation, {});
 
     // Show popup when allocation successfully applied
     useEffect(() => {
@@ -136,13 +133,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             setSessions(
                 requestAllocationData.requestAllocation.allocations.map(
                     ({ sessionStream }) => {
-                        const {
-                            id,
-                            name,
-                            startTime,
-                            endTime,
-                            day,
-                        } = sessionStream;
+                        const { id, name, startTime, endTime, day } =
+                            sessionStream;
                         return {
                             id,
                             name,
@@ -159,11 +151,10 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,
                             allocation: staff.map((staff) => staff.name),
-                            theme: staff.some((staffMember) =>
-                                isNumeric(staffMember.id)
-                            )
-                                ? SessionTheme.ERROR
-                                : SessionTheme.PRIMARY,
+                            theme:
+                                staff.length < sessionStream.numberOfStaff
+                                    ? SessionTheme.ERROR
+                                    : SessionTheme.PRIMARY,
                         })
                     );
                 }
@@ -296,7 +287,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                                     courseId,
                                                     termId,
                                                 },
-                                                staffIds: selectedStaff.toArray(),
+                                                staffIds:
+                                                    selectedStaff.toArray(),
                                                 newThreshold: 0.5,
                                             },
                                         });

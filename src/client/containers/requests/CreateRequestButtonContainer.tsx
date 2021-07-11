@@ -6,7 +6,7 @@ import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { defaultStr } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
 import { useTermsQuery } from "../../generated/graphql";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { CreateRequestSessionTimetableContainer } from "./CreateRequestSessionTimetableContainer";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { CreateRequestPreferenceTimetableContainer } from "./CreateRequestPreferenceTimetableContainer";
@@ -17,7 +17,7 @@ type Props = {};
 
 export const CreateRequestButtonContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const formState = useRequestFormState();
     const {
         title,

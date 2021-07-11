@@ -1,7 +1,7 @@
 import {
     useLazyQueryWithError,
     useMutationWithError,
-} from "./useQueryWithError";
+} from "./useApolloHooksWithError";
 import {
     RequestFormInputType,
     useCreateRequestMutation,
@@ -9,12 +9,12 @@ import {
     useGetRequestsByTermIdLazyQuery,
 } from "../generated/graphql";
 import { createContext, useCallback, useEffect, useState } from "react";
-import { RequestMap, RequestUtil } from "../types/requests";
+import { RequestMap, RequestResponse, RequestUtil } from "../types/requests";
 import { Map } from "immutable";
 import { defaultStr } from "../constants";
 
 export const RequestContext = createContext<RequestUtil>({
-    requests: Map(),
+    requests: Map<string, RequestResponse>(),
     setRequests: () => {},
     fetchRequests: () => {},
     fetchRequestById: () => {},
@@ -23,19 +23,19 @@ export const RequestContext = createContext<RequestUtil>({
 });
 
 export const useRequestUtils = (): RequestUtil => {
-    const [requests, setRequests] = useState<RequestMap>(Map());
+    const [requests, setRequests] = useState<RequestMap>(Map<string, RequestResponse>());
     const [
         getRequests,
         { data: requestsData, loading: multipleLoading },
-    ] = useLazyQueryWithError(useGetRequestsByTermIdLazyQuery);
+    ] = useLazyQueryWithError(useGetRequestsByTermIdLazyQuery, {});
     const [
         getRequestById,
         { data: requestData, loading: singleLoading },
-    ] = useLazyQueryWithError(useGetRequestByIdLazyQuery);
+    ] = useLazyQueryWithError(useGetRequestByIdLazyQuery, {});
     const [
         createNewRequestMutation,
         { data: newRequestData, loading: newLoading },
-    ] = useMutationWithError(useCreateRequestMutation);
+    ] = useMutationWithError(useCreateRequestMutation, {});
     const fetchRequests = useCallback(
         (termId: string) => {
             if (termId === defaultStr) {
