@@ -6,6 +6,7 @@ import { Wrapper } from "../../components/helpers/Wrapper";
 import { Heading, HStack, Stack } from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
 import { Map } from "immutable";
+import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
 
 type Props = {};
 
@@ -32,7 +33,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 <SessionSettingsTimetableContainer
                     sessions={[]}
                     loading={true}
-                    sessionsData={Map()}
+                    sessionsData={Map<string, TimetableSessionProps>()}
                 />
             </Stack>
         </Wrapper>
