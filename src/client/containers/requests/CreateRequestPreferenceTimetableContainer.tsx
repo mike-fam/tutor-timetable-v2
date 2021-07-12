@@ -17,7 +17,7 @@ import {
 import { getAvailabilityStatus } from "../../utils/session";
 import range from "lodash/range";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useMyAvailabilityQuery } from "../../generated/graphql";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { Text } from "@chakra-ui/react";
@@ -44,7 +44,8 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     const { user } = useContext(UserContext);
     const { currentWeek, weekNum, chosenTerm } = useTermMetadata(chosenTermId);
     const { data: availabilityData } = useQueryWithError(
-        useMyAvailabilityQuery
+        useMyAvailabilityQuery,
+        {}
     );
     const { sessions, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {

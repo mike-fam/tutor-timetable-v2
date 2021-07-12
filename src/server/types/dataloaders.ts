@@ -2,6 +2,7 @@ import DataLoader from "dataloader";
 import {
     Course,
     CourseStaff,
+    Notification,
     Offer,
     Preference,
     Session,
@@ -16,6 +17,7 @@ import {
 
 export type CourseLoader = DataLoader<string, Course>;
 export type CourseStaffLoader = DataLoader<string, CourseStaff>;
+export type NotificationLoader = DataLoader<string, Notification>;
 export type OfferLoader = DataLoader<string, Offer>;
 export type PreferenceLoader = DataLoader<string, Preference>;
 export type SessionLoader = DataLoader<string, Session>;
@@ -30,6 +32,7 @@ export type UserSettingsLoader = DataLoader<string, UserSettings>;
 export type DataLoaders = {
     course: CourseLoader;
     courseStaff: CourseStaffLoader;
+    notification: NotificationLoader;
     offer: OfferLoader;
     preference: PreferenceLoader;
     session: SessionLoader;

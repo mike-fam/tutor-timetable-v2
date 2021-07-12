@@ -1,5 +1,4 @@
 import asyncFilter from "node-filter-async";
-import identity from "lodash/identity";
 
 export const asyncMap = async <T, R>(
     array: Array<T>,
