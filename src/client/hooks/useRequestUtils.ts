@@ -23,15 +23,13 @@ export const RequestContext = createContext<RequestUtil>({
 });
 
 export const useRequestUtils = (): RequestUtil => {
-    const [requests, setRequests] = useState<RequestMap>(Map<string, RequestResponse>());
-    const [
-        getRequests,
-        { data: requestsData, loading: multipleLoading },
-    ] = useLazyQueryWithError(useGetRequestsByTermIdLazyQuery, {});
-    const [
-        getRequestById,
-        { data: requestData, loading: singleLoading },
-    ] = useLazyQueryWithError(useGetRequestByIdLazyQuery, {});
+    const [requests, setRequests] = useState<RequestMap>(
+        Map<string, RequestResponse>()
+    );
+    const [getRequests, { data: requestsData, loading: multipleLoading }] =
+        useLazyQueryWithError(useGetRequestsByTermIdLazyQuery, {});
+    const [getRequestById, { data: requestData, loading: singleLoading }] =
+        useLazyQueryWithError(useGetRequestByIdLazyQuery, {});
     const [
         createNewRequestMutation,
         { data: newRequestData, loading: newLoading },

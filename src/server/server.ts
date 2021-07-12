@@ -114,7 +114,7 @@ const main = async () => {
             authChecker: ({ context: { req } }: { context: MyContext }) =>
                 !!req.user,
         }),
-        context: ({ req, res, connection }): MyContext => {
+        context: ({ req, res }): MyContext => {
             const loaders = {
                 course: createLoader(Course),
                 courseStaff: createLoader(CourseStaff),

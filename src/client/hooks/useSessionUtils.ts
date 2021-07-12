@@ -17,11 +17,11 @@ export const SessionsContext = createContext<SessionUtil>({
 });
 
 export const useSessionUtils = (): SessionUtil => {
-    const [sessions, setSessions] = useState<SessionMap>(Map<string, SessionResponseType>());
-    const [
-        getSession,
-        { data: sessionsData, loading: getSessionsLoading },
-    ] = useLazyQueryWithError(useGetMergedSessionsLazyQuery, {});
+    const [sessions, setSessions] = useState<SessionMap>(
+        Map<string, SessionResponseType>()
+    );
+    const [getSession, { data: sessionsData, loading: getSessionsLoading }] =
+        useLazyQueryWithError(useGetMergedSessionsLazyQuery, {});
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },

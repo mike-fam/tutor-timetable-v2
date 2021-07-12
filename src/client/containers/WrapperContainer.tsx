@@ -82,15 +82,15 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
         if (!notificationData) {
             return;
         }
-            toast({
-                id: notificationData.notifications.id,
-                title: notificationData.notifications.title,
-                description: notificationData.notifications.message,
-                duration: null,
-                isClosable: true,
-                position: "bottom",
-            });
-        }, [notificationData, toast]);
+        toast({
+            id: notificationData.notifications.id,
+            title: notificationData.notifications.title,
+            description: notificationData.notifications.message,
+            duration: null,
+            isClosable: true,
+            position: "bottom",
+        });
+    }, [notificationData, toast]);
     return (
         <UserContext.Provider
             value={{

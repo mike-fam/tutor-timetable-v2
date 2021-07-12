@@ -10,7 +10,6 @@ import {
 import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
-import { v4 as uuid } from "uuid";
 
 @Resolver(() => Session)
 export class SessionResolver {

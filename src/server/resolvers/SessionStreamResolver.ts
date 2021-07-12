@@ -18,7 +18,7 @@ import { Models } from "../types/models";
 import { Request } from "express";
 import { CourseTermIdInput } from "./CourseTermId";
 import { Column } from "typeorm";
-import { IsNull, Not } from "typeorm";
+import { IsNull } from "typeorm";
 import min from "lodash/min";
 import { IsEnum, Max, Min, MinLength } from "class-validator";
 import { UniqueWeeks } from "../validators/sessionStream";

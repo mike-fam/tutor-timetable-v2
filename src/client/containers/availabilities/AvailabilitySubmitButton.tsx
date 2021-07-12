@@ -11,14 +11,12 @@ type Props = {};
 
 export const AvailabilitySubmitButton: React.FC<Props> = () => {
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
-    const [
-        updateAvailabilities,
-        { loading: updateLoading },
-    ] = useMutationWithError(useUpdateAvailabilitiesMutation, {
-        variables: {
-            timeslots: timeslots.valueSeq().toArray(),
-        },
-    });
+    const [updateAvailabilities, { loading: updateLoading }] =
+        useMutationWithError(useUpdateAvailabilitiesMutation, {
+            variables: {
+                timeslots: timeslots.valueSeq().toArray(),
+            },
+        });
     const submitTimeslots = useCallback(async () => {
         try {
             const newTimeslots = await updateAvailabilities();

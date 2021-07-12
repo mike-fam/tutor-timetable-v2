@@ -1,6 +1,5 @@
-import { Arg, Ctx, Resolver, Root, Subscription } from "type-graphql";
+import { Arg, Resolver, Root, Subscription } from "type-graphql";
 import { Notification } from "../entities";
-import { MyContext } from "../types/context";
 
 @Resolver(() => Notification)
 export class NotificationResolver {
@@ -18,8 +17,7 @@ export class NotificationResolver {
     })
     async notifications(
         @Root() payload: Notification,
-        @Arg("key") key: string,
-        @Ctx() ctx: MyContext
+        @Arg("key") _: string
     ): Promise<Notification> {
         return payload;
     }
