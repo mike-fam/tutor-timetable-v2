@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, Fragment } from "react";
 import { Props as SessionProps, Session } from "./Session";
 import { PopoverSession } from "./PopoverSession";
 import {
@@ -76,8 +76,8 @@ export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
                         <Text>
                             <strong>Extra Allocations:</strong>
                         </Text>
-                        {customAllocation.map((allocation) => (
-                            <>
+                        {customAllocation.map((allocation, key) => (
+                            <Fragment key={key}>
                                 <Text>
                                     <em>
                                         {weeksPatternRepr(
@@ -98,7 +98,7 @@ export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
                                 ) : (
                                     <Text>None</Text>
                                 )}
-                            </>
+                            </Fragment>
                         ))}
                     </PopoverBody>
                 </>
