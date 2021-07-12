@@ -15,126 +15,46 @@ export type Scalars = {
   DateTime: string;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  hello: Scalars['String'];
-  me: User;
-  terms: Array<Term>;
-  term: Term;
-  courseStaffs: Array<CourseStaff>;
-  sessionStreams: Array<SessionStream>;
-  timetables: Array<Timetable>;
-  timetable: Timetable;
-  timetableById: Timetable;
-  sessions: Array<Session>;
-  sessionById: Session;
-  myAvailability: Array<Timeslot>;
-  myPreference?: Maybe<Preference>;
-  preferenceByUsername: Preference;
-  getRequestById: StaffRequest;
-  getRequestsByUserId: Array<StaffRequest>;
-  getRequestsByTermId: Array<StaffRequest>;
-  courses: Array<Course>;
-  course: Course;
-  getOfferById: Offer;
-  getOffersByRequestId: Array<Offer>;
+export type Allocation = {
+  __typename?: 'Allocation';
+  sessionStream: SessionStream;
+  staff: Array<User>;
 };
 
+export enum AllocationStatus {
+  Optimal = 'Optimal',
+  Infeasible = 'Infeasible'
+}
 
-export type QueryTermArgs = {
-  termId: Scalars['String'];
+export enum AllocationType {
+  Success = 'Success',
+  Failed = 'Failed'
+}
+
+export type AllocatorOutput = {
+  __typename?: 'AllocatorOutput';
+  status: AllocationStatus;
+  type: AllocationType;
+  token: Scalars['String'];
+  detail: Scalars['String'];
+  runtime: Scalars['Float'];
+  allocations: Array<Allocation>;
 };
 
+export enum AvailabilityModificationType {
+  Unchanged = 'UNCHANGED',
+  Added = 'ADDED',
+  Modified = 'MODIFIED',
+  Removed = 'REMOVED',
+  RemovedModified = 'REMOVED_MODIFIED'
+}
 
-export type QueryCourseStaffsArgs = {
-  courseTermInput: CourseTermIdInput;
-};
-
-
-export type QuerySessionStreamsArgs = {
-  courseIds: Array<Scalars['String']>;
-  termId: Scalars['String'];
-};
-
-
-export type QueryTimetableArgs = {
-  termId: Scalars['String'];
-  courseId: Scalars['String'];
-};
-
-
-export type QueryTimetableByIdArgs = {
+export type Course = {
+  __typename?: 'Course';
   id: Scalars['String'];
-};
-
-
-export type QuerySessionsArgs = {
-  week: Scalars['Int'];
-  courseIds: Array<Scalars['String']>;
-  termId: Scalars['String'];
-};
-
-
-export type QuerySessionByIdArgs = {
-  sessionId: Scalars['String'];
-};
-
-
-export type QueryMyPreferenceArgs = {
-  preferenceFindInput: CourseTermIdInput;
-};
-
-
-export type QueryPreferenceByUsernameArgs = {
-  courseTermId: CourseTermIdInput;
-  username: Scalars['String'];
-};
-
-
-export type QueryGetRequestByIdArgs = {
-  requestId: Scalars['String'];
-};
-
-
-export type QueryGetRequestsByTermIdArgs = {
-  termId: Scalars['String'];
-};
-
-
-export type QueryCourseArgs = {
-  courseId: Scalars['String'];
-};
-
-
-export type QueryGetOfferByIdArgs = {
-  offerId: Scalars['String'];
-};
-
-
-export type QueryGetOffersByRequestIdArgs = {
-  requestId: Scalars['String'];
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  username: Scalars['String'];
-  name: Scalars['String'];
-  isAdmin: Scalars['Boolean'];
-  email: Scalars['String'];
-  notifications: Array<Notification>;
-  courseStaffs: Array<CourseStaff>;
-  requests: Array<StaffRequest>;
-  availabilities: Array<Timeslot>;
-  offers: Array<Offer>;
-  settings: UserSettings;
-};
-
-export type Notification = {
-  __typename?: 'Notification';
-  id: Scalars['String'];
+  code: Scalars['String'];
   title: Scalars['String'];
-  message: Scalars['String'];
+  timetables: Array<Timetable>;
 };
 
 export type CourseStaff = {
@@ -147,20 +67,40 @@ export type CourseStaff = {
   preference: Preference;
 };
 
-export enum Role {
-  CourseCoordinator = 'COURSE_COORDINATOR',
-  Staff = 'STAFF'
-}
+export type CourseStaffInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  role: Role;
+  isNew: Scalars['Boolean'];
+};
 
-export type Timetable = {
-  __typename?: 'Timetable';
-  id: Scalars['String'];
-  permanentRequestLock: FreezeState;
-  temporaryRequestLock: FreezeState;
-  course: Course;
-  term: Term;
-  courseStaffs: Array<CourseStaff>;
-  sessionStreams: Array<SessionStream>;
+export type CourseStaffUserInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  role: Role;
+  isNew: Scalars['Boolean'];
+  username: Scalars['String'];
+};
+
+export type CourseTermIdInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+};
+
+
+export type EditOfferInputType = {
+  offerId: Scalars['String'];
+  sessionPreferences: Array<Scalars['Int']>;
+};
+
+export type EditRequestFormInputType = {
+  requestId: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  preferences?: Maybe<Array<Scalars['Int']>>;
+  duration?: Maybe<RequestType>;
+  description?: Maybe<Scalars['String']>;
+  sessionId?: Maybe<Scalars['String']>;
+  closeRequest: Scalars['Boolean'];
 };
 
 export enum FreezeState {
@@ -169,148 +109,21 @@ export enum FreezeState {
   ApprovalRequired = 'APPROVAL_REQUIRED'
 }
 
-export type Course = {
-  __typename?: 'Course';
-  id: Scalars['String'];
-  code: Scalars['String'];
-  title: Scalars['String'];
-  timetables: Array<Timetable>;
-};
-
-export type Term = {
-  __typename?: 'Term';
-  id: Scalars['String'];
-  type: TermType;
-  year: Scalars['Int'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
-  isActive: Scalars['Boolean'];
-  timetables: Array<Timetable>;
-  numberOfWeeks: Scalars['Int'];
-};
-
-export enum TermType {
-  Semester_1 = 'SEMESTER_1',
-  Semester_2 = 'SEMESTER_2',
-  SummerSemester = 'SUMMER_SEMESTER',
-  Trimester_1 = 'TRIMESTER_1',
-  Trimester_2 = 'TRIMESTER_2',
-  Trimester_3 = 'TRIMESTER_3'
-}
-
-
-export type SessionStream = {
-  __typename?: 'SessionStream';
-  id: Scalars['String'];
+export type MergedStreamInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
   name: Scalars['String'];
   type: SessionType;
   day: Scalars['Int'];
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
-  weeks: Array<Scalars['Int']>;
   location: Scalars['String'];
-  numberOfStaff: Scalars['Int'];
-  timetable: Timetable;
-  sessions: Array<Session>;
-  basedStreams: Array<SessionStream>;
-  based?: Maybe<SessionStream>;
-  allocatedUsers: Array<User>;
+  numberOfTutorsForWeeks: Array<MergedStreamTutorNumbers>;
 };
 
-export enum SessionType {
-  Practical = 'PRACTICAL',
-  Tutorial = 'TUTORIAL',
-  Seminar = 'SEMINAR',
-  Lecture = 'LECTURE',
-  Studio = 'STUDIO'
-}
-
-export type Session = {
-  __typename?: 'Session';
-  id: Scalars['String'];
-  location: Scalars['String'];
+export type MergedStreamTutorNumbers = {
   week: Scalars['Int'];
-  sessionStream: SessionStream;
-  allocatedUsers: Array<User>;
-  requests: Array<StaffRequest>;
-  preferredSwapRequests: Array<StaffRequest>;
-  preferredSwapOffers: Array<Offer>;
-  acceptedOffers: Array<Offer>;
-  date: Scalars['DateTime'];
-};
-
-export type StaffRequest = {
-  __typename?: 'StaffRequest';
-  id: Scalars['String'];
-  type: RequestType;
-  title: Scalars['String'];
-  description: Scalars['String'];
-  status: RequestStatus;
-  allowNonPrefOffers: Scalars['Boolean'];
-  requester: User;
-  finaliser?: Maybe<User>;
-  session: Session;
-  swapPreference: Array<Session>;
-  offers: Array<Offer>;
-};
-
-export enum RequestType {
-  Permanent = 'PERMANENT',
-  Temporary = 'TEMPORARY'
-}
-
-export enum RequestStatus {
-  Open = 'OPEN',
-  Closed = 'CLOSED'
-}
-
-export type Offer = {
-  __typename?: 'Offer';
-  id: Scalars['String'];
-  status: OfferStatus;
-  mustSwap: Scalars['Boolean'];
-  request: StaffRequest;
-  user: User;
-  preferences: Array<Session>;
-  acceptedSession?: Maybe<Session>;
-};
-
-export enum OfferStatus {
-  Open = 'OPEN',
-  Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED',
-  AwaitingApproval = 'AWAITING_APPROVAL'
-}
-
-export type Preference = {
-  __typename?: 'Preference';
-  id: Scalars['String'];
-  sessionType?: Maybe<SessionType>;
-  maxContigHours: Scalars['Float'];
-  maxWeeklyHours: Scalars['Float'];
-  courseStaff: CourseStaff;
-};
-
-export type Timeslot = {
-  __typename?: 'Timeslot';
-  id: Scalars['String'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  day: Scalars['Int'];
-  user: User;
-};
-
-export type UserSettings = {
-  __typename?: 'UserSettings';
-  id: Scalars['String'];
-  showMySessions: Scalars['Boolean'];
-  user: User;
-};
-
-export type CourseTermIdInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
+  numberOfTutors: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -323,10 +136,10 @@ export type Mutation = {
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
   removeCourseStaff: Scalars['String'];
+  addMergedSessionStreams: Array<SessionStream>;
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
-  generateSessions: Array<Session>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -387,6 +200,11 @@ export type MutationRemoveCourseStaffArgs = {
 };
 
 
+export type MutationAddMergedSessionStreamsArgs = {
+  sessionStreams: Array<MergedStreamInput>;
+};
+
+
 export type MutationAddBasedSessionStreamArgs = {
   numberOfStaff: Scalars['Int'];
   weeks: Array<Scalars['Int']>;
@@ -412,11 +230,6 @@ export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
-};
-
-
-export type MutationGenerateSessionsArgs = {
-  sessionStreamId: Scalars['String'];
 };
 
 
@@ -466,72 +279,173 @@ export type MutationAcceptOfferArgs = {
   offerId: Scalars['String'];
 };
 
-export type AllocatorOutput = {
-  __typename?: 'AllocatorOutput';
-  status: AllocationStatus;
-  type: AllocationType;
-  token: Scalars['String'];
-  detail: Scalars['String'];
-  runtime: Scalars['Float'];
-  allocations: Array<Allocation>;
-};
-
-export enum AllocationStatus {
-  Optimal = 'Optimal',
-  Infeasible = 'Infeasible'
-}
-
-export enum AllocationType {
-  Success = 'Success',
-  Failed = 'Failed'
-}
-
-export type Allocation = {
-  __typename?: 'Allocation';
-  sessionStream: SessionStream;
-  staff: Array<User>;
-};
-
-export type UpdateDetailsInputType = {
-  email: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type CourseStaffUserInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
-  isNew: Scalars['Boolean'];
-  username: Scalars['String'];
-};
-
-export type CourseStaffInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
-  isNew: Scalars['Boolean'];
-};
-
-export type TimeslotInput = {
+export type Notification = {
+  __typename?: 'Notification';
   id: Scalars['String'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  day: Scalars['Int'];
-  modificationType: AvailabilityModificationType;
+  title: Scalars['String'];
+  message: Scalars['String'];
 };
 
-export enum AvailabilityModificationType {
-  Unchanged = 'UNCHANGED',
-  Added = 'ADDED',
-  Modified = 'MODIFIED',
-  Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
+export type Offer = {
+  __typename?: 'Offer';
+  id: Scalars['String'];
+  status: OfferStatus;
+  mustSwap: Scalars['Boolean'];
+  request: StaffRequest;
+  user: User;
+  preferences: Array<Session>;
+  acceptedSession?: Maybe<Session>;
+};
+
+export type OfferInputType = {
+  requestId: Scalars['String'];
+  sessionPreferences?: Maybe<Array<Scalars['String']>>;
+  mustSwap: Scalars['Boolean'];
+};
+
+export enum OfferStatus {
+  Open = 'OPEN',
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
+  AwaitingApproval = 'AWAITING_APPROVAL'
 }
+
+export type Preference = {
+  __typename?: 'Preference';
+  id: Scalars['String'];
+  sessionType?: Maybe<SessionType>;
+  maxContigHours: Scalars['Float'];
+  maxWeeklyHours: Scalars['Float'];
+  courseStaff: CourseStaff;
+};
 
 export type PreferenceInput = {
   sessionType?: Maybe<SessionType>;
   maxContigHours: Scalars['Float'];
   maxWeeklyHours: Scalars['Float'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  hello: Scalars['String'];
+  me: User;
+  terms: Array<Term>;
+  activeTerm: Term;
+  term: Term;
+  courseStaffs: Array<CourseStaff>;
+  sessionStreams: Array<SessionStream>;
+  rootSessionStreams: Array<SessionStream>;
+  fromPublicTimetable: Array<SessionStream>;
+  timetables: Array<Timetable>;
+  timetable: Timetable;
+  timetableById: Timetable;
+  mergedSessions: Array<Session>;
+  sessions: Array<Session>;
+  sessionById: Session;
+  myAvailability: Array<Timeslot>;
+  myPreference?: Maybe<Preference>;
+  preferenceByUsername: Preference;
+  getRequestById: StaffRequest;
+  getRequestsByUserId: Array<StaffRequest>;
+  getRequestsByTermId: Array<StaffRequest>;
+  courses: Array<Course>;
+  course: Course;
+  getOfferById: Offer;
+  getOffersByRequestId: Array<Offer>;
+};
+
+
+export type QueryTermArgs = {
+  termId: Scalars['String'];
+};
+
+
+export type QueryCourseStaffsArgs = {
+  courseTermInput: CourseTermIdInput;
+};
+
+
+export type QuerySessionStreamsArgs = {
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+};
+
+
+export type QueryRootSessionStreamsArgs = {
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+};
+
+
+export type QueryFromPublicTimetableArgs = {
+  sessionTypes: Array<SessionType>;
+  courseTerm: CourseTermIdInput;
+};
+
+
+export type QueryTimetableArgs = {
+  termId: Scalars['String'];
+  courseId: Scalars['String'];
+};
+
+
+export type QueryTimetableByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryMergedSessionsArgs = {
+  week: Scalars['Int'];
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+};
+
+
+export type QuerySessionsArgs = {
+  week: Scalars['Int'];
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+};
+
+
+export type QuerySessionByIdArgs = {
+  sessionId: Scalars['String'];
+};
+
+
+export type QueryMyPreferenceArgs = {
+  preferenceFindInput: CourseTermIdInput;
+};
+
+
+export type QueryPreferenceByUsernameArgs = {
+  courseTermId: CourseTermIdInput;
+  username: Scalars['String'];
+};
+
+
+export type QueryGetRequestByIdArgs = {
+  requestId: Scalars['String'];
+};
+
+
+export type QueryGetRequestsByTermIdArgs = {
+  termId: Scalars['String'];
+};
+
+
+export type QueryCourseArgs = {
+  courseId: Scalars['String'];
+};
+
+
+export type QueryGetOfferByIdArgs = {
+  offerId: Scalars['String'];
+};
+
+
+export type QueryGetOffersByRequestIdArgs = {
+  requestId: Scalars['String'];
 };
 
 export type RequestFormInputType = {
@@ -542,25 +456,76 @@ export type RequestFormInputType = {
   sessionId: Scalars['String'];
 };
 
-export type EditRequestFormInputType = {
-  requestId: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  preferences?: Maybe<Array<Scalars['Int']>>;
-  duration?: Maybe<RequestType>;
-  description?: Maybe<Scalars['String']>;
-  sessionId?: Maybe<Scalars['String']>;
-  closeRequest: Scalars['Boolean'];
+export enum RequestStatus {
+  Open = 'OPEN',
+  Closed = 'CLOSED'
+}
+
+export enum RequestType {
+  Permanent = 'PERMANENT',
+  Temporary = 'TEMPORARY'
+}
+
+export enum Role {
+  CourseCoordinator = 'COURSE_COORDINATOR',
+  Staff = 'STAFF'
+}
+
+export type Session = {
+  __typename?: 'Session';
+  id: Scalars['String'];
+  location: Scalars['String'];
+  week: Scalars['Int'];
+  sessionStream: SessionStream;
+  allocatedUsers: Array<User>;
+  requests: Array<StaffRequest>;
+  preferredSwapRequests: Array<StaffRequest>;
+  preferredSwapOffers: Array<Offer>;
+  acceptedOffers: Array<Offer>;
+  date: Scalars['DateTime'];
 };
 
-export type OfferInputType = {
-  requestId: Scalars['String'];
-  sessionPreferences?: Maybe<Array<Scalars['String']>>;
-  mustSwap: Scalars['Boolean'];
+export type SessionStream = {
+  __typename?: 'SessionStream';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  weeks: Array<Scalars['Int']>;
+  location: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  timetable: Timetable;
+  sessions: Array<Session>;
+  basedStreams: Array<SessionStream>;
+  based?: Maybe<SessionStream>;
+  allocatedUsers: Array<User>;
 };
 
-export type EditOfferInputType = {
-  offerId: Scalars['String'];
-  sessionPreferences: Array<Scalars['Int']>;
+export enum SessionType {
+  Contact = 'CONTACT',
+  Practical = 'PRACTICAL',
+  Tutorial = 'TUTORIAL',
+  Seminar = 'SEMINAR',
+  Lecture = 'LECTURE',
+  Studio = 'STUDIO',
+  Workshop = 'WORKSHOP'
+}
+
+export type StaffRequest = {
+  __typename?: 'StaffRequest';
+  id: Scalars['String'];
+  type: RequestType;
+  title: Scalars['String'];
+  description: Scalars['String'];
+  status: RequestStatus;
+  allowNonPrefOffers: Scalars['Boolean'];
+  requester: User;
+  finaliser?: Maybe<User>;
+  session: Session;
+  swapPreference: Array<Session>;
+  offers: Array<Offer>;
 };
 
 export type Subscription = {
@@ -571,6 +536,83 @@ export type Subscription = {
 
 export type SubscriptionNotificationsArgs = {
   key: Scalars['String'];
+};
+
+export type Term = {
+  __typename?: 'Term';
+  id: Scalars['String'];
+  type: TermType;
+  year: Scalars['Int'];
+  startDate: Scalars['DateTime'];
+  endDate: Scalars['DateTime'];
+  weekNames: Array<Scalars['String']>;
+  isActive: Scalars['Boolean'];
+  timetables: Array<Timetable>;
+  numberOfWeeks: Scalars['Int'];
+};
+
+export enum TermType {
+  Semester_1 = 'SEMESTER_1',
+  Semester_2 = 'SEMESTER_2',
+  SummerSemester = 'SUMMER_SEMESTER',
+  Trimester_1 = 'TRIMESTER_1',
+  Trimester_2 = 'TRIMESTER_2',
+  Trimester_3 = 'TRIMESTER_3'
+}
+
+export type Timeslot = {
+  __typename?: 'Timeslot';
+  id: Scalars['String'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  day: Scalars['Int'];
+  user: User;
+};
+
+export type TimeslotInput = {
+  id: Scalars['String'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  day: Scalars['Int'];
+  modificationType: AvailabilityModificationType;
+};
+
+export type Timetable = {
+  __typename?: 'Timetable';
+  id: Scalars['String'];
+  permanentRequestLock: FreezeState;
+  temporaryRequestLock: FreezeState;
+  course: Course;
+  term: Term;
+  courseStaffs: Array<CourseStaff>;
+  sessionStreams: Array<SessionStream>;
+};
+
+export type UpdateDetailsInputType = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  username: Scalars['String'];
+  name: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
+  email: Scalars['String'];
+  notifications: Array<Notification>;
+  courseStaffs: Array<CourseStaff>;
+  requests: Array<StaffRequest>;
+  availabilities: Array<Timeslot>;
+  offers: Array<Offer>;
+  settings: UserSettings;
+};
+
+export type UserSettings = {
+  __typename?: 'UserSettings';
+  id: Scalars['String'];
+  showMySessions: Scalars['Boolean'];
+  user: User;
 };
 
 export type UpdateDetailsMutationVariables = Exact<{
@@ -1024,86 +1066,6 @@ export type GetRequestsByTermIdQuery = (
   )> }
 );
 
-export type GetSessionStreamsQueryVariables = Exact<{
-  termId: Scalars['String'];
-  courseIds: Array<Scalars['String']>;
-}>;
-
-
-export type GetSessionStreamsQuery = (
-  { __typename?: 'Query' }
-  & { sessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'name' | 'username'>
-    )> }
-  )> }
-);
-
-export type GetSessionsQueryVariables = Exact<{
-  termId: Scalars['String'];
-  week: Scalars['Int'];
-  courseIds: Array<Scalars['String']>;
-}>;
-
-
-export type GetSessionsQuery = (
-  { __typename?: 'Query' }
-  & { sessions: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'username' | 'name'>
-    )> }
-  )> }
-);
-
-export type GetSessionByIdQueryVariables = Exact<{
-  sessionId: Scalars['String'];
-}>;
-
-
-export type GetSessionByIdQuery = (
-  { __typename?: 'Query' }
-  & { sessionById: (
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'username' | 'name'>
-    )> }
-  ) }
-);
-
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1119,7 +1081,21 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'email'>
+    & Pick<User, 'id' | 'username' | 'name' | 'email' | 'isAdmin'>
+    & { courseStaffs: Array<(
+      { __typename?: 'CourseStaff' }
+      & Pick<CourseStaff, 'role'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ), term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ) }
+      ) }
+    )> }
   ) }
 );
 
@@ -1196,6 +1172,174 @@ export type PreferenceByUsernameQuery = (
         & Pick<User, 'username'>
       ) }
     ) }
+  ) }
+);
+
+export type GetSessionStreamsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetSessionStreamsQuery = (
+  { __typename?: 'Query' }
+  & { sessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'username'>
+    )> }
+  )> }
+);
+
+export type GetRootSessionStreamsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetRootSessionStreamsQuery = (
+  { __typename?: 'Query' }
+  & { rootSessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'name' | 'username'>
+    )>, basedStreams: Array<(
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks'>
+      & { allocatedUsers: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'name' | 'username'>
+      )> }
+    )>, timetable: (
+      { __typename?: 'Timetable' }
+      & { course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
+      ) }
+    ) }
+  )> }
+);
+
+export type SessionInfoFragment = (
+  { __typename?: 'Session' }
+  & Pick<Session, 'id' | 'location' | 'week'>
+  & { sessionStream: (
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+    & { timetable: (
+      { __typename?: 'Timetable' }
+      & { term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id'>
+      ), course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id'>
+      ) }
+    ) }
+  ), allocatedUsers: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'username' | 'name'>
+  )> }
+);
+
+export type GetSessionsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  week: Scalars['Int'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetSessionsQuery = (
+  { __typename?: 'Query' }
+  & { sessions: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
+  )> }
+);
+
+export type GetMergedSessionsQueryVariables = Exact<{
+  termId: Scalars['String'];
+  week: Scalars['Int'];
+  courseIds: Array<Scalars['String']>;
+}>;
+
+
+export type GetMergedSessionsQuery = (
+  { __typename?: 'Query' }
+  & { mergedSessions: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
+  )> }
+);
+
+export type GetSessionByIdQueryVariables = Exact<{
+  sessionId: Scalars['String'];
+}>;
+
+
+export type GetSessionByIdQuery = (
+  { __typename?: 'Query' }
+  & { sessionById: (
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
   ) }
 );
 
@@ -1289,7 +1433,32 @@ export type EditRequestMutation = (
   ) }
 );
 
-
+export const SessionInfoFragmentDoc = gql`
+    fragment SessionInfo on Session {
+  id
+  sessionStream {
+    id
+    name
+    startTime
+    endTime
+    day
+    timetable {
+      term {
+        id
+      }
+      course {
+        id
+      }
+    }
+  }
+  location
+  week
+  allocatedUsers {
+    username
+    name
+  }
+}
+    `;
 export const UpdateDetailsDocument = gql`
     mutation updateDetails($details: UpdateDetailsInputType!) {
   updateDetails(details: $details) {
@@ -2170,161 +2339,6 @@ export function useGetRequestsByTermIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetRequestsByTermIdQueryHookResult = ReturnType<typeof useGetRequestsByTermIdQuery>;
 export type GetRequestsByTermIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByTermIdLazyQuery>;
 export type GetRequestsByTermIdQueryResult = Apollo.QueryResult<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>;
-export const GetSessionStreamsDocument = gql`
-    query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
-  sessionStreams(courseIds: $courseIds, termId: $termId) {
-    id
-    type
-    name
-    startTime
-    endTime
-    day
-    location
-    numberOfStaff
-    allocatedUsers {
-      name
-      username
-    }
-  }
-}
-    `;
-
-/**
- * __useGetSessionStreamsQuery__
- *
- * To run a query within a React component, call `useGetSessionStreamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSessionStreamsQuery({
- *   variables: {
- *      termId: // value for 'termId'
- *      courseIds: // value for 'courseIds'
- *   },
- * });
- */
-export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
-      }
-export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
-        }
-export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
-export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
-export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
-export const GetSessionsDocument = gql`
-    query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
-  sessions(termId: $termId, courseIds: $courseIds, week: $week) {
-    id
-    sessionStream {
-      id
-      name
-      startTime
-      endTime
-      day
-      timetable {
-        term {
-          id
-        }
-        course {
-          id
-        }
-      }
-    }
-    location
-    week
-    allocatedUsers {
-      username
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useGetSessionsQuery__
- *
- * To run a query within a React component, call `useGetSessionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSessionsQuery({
- *   variables: {
- *      termId: // value for 'termId'
- *      week: // value for 'week'
- *      courseIds: // value for 'courseIds'
- *   },
- * });
- */
-export function useGetSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
-      }
-export function useGetSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
-        }
-export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
-export type GetSessionsLazyQueryHookResult = ReturnType<typeof useGetSessionsLazyQuery>;
-export type GetSessionsQueryResult = Apollo.QueryResult<GetSessionsQuery, GetSessionsQueryVariables>;
-export const GetSessionByIdDocument = gql`
-    query GetSessionById($sessionId: String!) {
-  sessionById(sessionId: $sessionId) {
-    id
-    sessionStream {
-      id
-      name
-      startTime
-      endTime
-      day
-      timetable {
-        term {
-          id
-        }
-        course {
-          id
-        }
-      }
-    }
-    location
-    week
-    allocatedUsers {
-      username
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useGetSessionByIdQuery__
- *
- * To run a query within a React component, call `useGetSessionByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSessionByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSessionByIdQuery({
- *   variables: {
- *      sessionId: // value for 'sessionId'
- *   },
- * });
- */
-export function useGetSessionByIdQuery(baseOptions: Apollo.QueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
-        return Apollo.useQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
-      }
-export function useGetSessionByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
-        }
-export type GetSessionByIdQueryHookResult = ReturnType<typeof useGetSessionByIdQuery>;
-export type GetSessionByIdLazyQueryHookResult = ReturnType<typeof useGetSessionByIdLazyQuery>;
-export type GetSessionByIdQueryResult = Apollo.QueryResult<GetSessionByIdQuery, GetSessionByIdQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello
@@ -2362,6 +2376,19 @@ export const MeDocument = gql`
     username
     name
     email
+    isAdmin
+    courseStaffs {
+      timetable {
+        course {
+          id
+          code
+        }
+        term {
+          id
+        }
+      }
+      role
+    }
   }
 }
     `;
@@ -2550,6 +2577,282 @@ export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
 export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
 export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>;
+export const GetSessionStreamsDocument = gql`
+    query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
+  sessionStreams(courseIds: $courseIds, termId: $termId) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    allocatedUsers {
+      name
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSessionStreamsQuery__
+ *
+ * To run a query within a React component, call `useGetSessionStreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionStreamsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+      }
+export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+        }
+export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
+export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
+export type GetSessionStreamsQueryResult = Apollo.QueryResult<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>;
+export const GetRootSessionStreamsDocument = gql`
+    query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
+  rootSessionStreams(courseIds: $courseIds, termId: $termId) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    weeks
+    allocatedUsers {
+      name
+      username
+    }
+    basedStreams {
+      weeks
+      allocatedUsers {
+        name
+        username
+      }
+    }
+    timetable {
+      course {
+        id
+        code
+      }
+      term {
+        id
+        weekNames
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRootSessionStreamsQuery__
+ *
+ * To run a query within a React component, call `useGetRootSessionStreamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRootSessionStreamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRootSessionStreamsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetRootSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
+        return Apollo.useQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+      }
+export function useGetRootSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+        }
+export type GetRootSessionStreamsQueryHookResult = ReturnType<typeof useGetRootSessionStreamsQuery>;
+export type GetRootSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetRootSessionStreamsLazyQuery>;
+export type GetRootSessionStreamsQueryResult = Apollo.QueryResult<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>;
+export const GetSessionsDocument = gql`
+    query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+  sessions(termId: $termId, courseIds: $courseIds, week: $week) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSessionsQuery__
+ *
+ * To run a query within a React component, call `useGetSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      week: // value for 'week'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
+        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+      }
+export function useGetSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+        }
+export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
+export type GetSessionsLazyQueryHookResult = ReturnType<typeof useGetSessionsLazyQuery>;
+export type GetSessionsQueryResult = Apollo.QueryResult<GetSessionsQuery, GetSessionsQueryVariables>;
+export const GetMergedSessionsDocument = gql`
+    query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+  mergedSessions(termId: $termId, courseIds: $courseIds, week: $week) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMergedSessionsQuery__
+ *
+ * To run a query within a React component, call `useGetMergedSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMergedSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMergedSessionsQuery({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *      week: // value for 'week'
+ *      courseIds: // value for 'courseIds'
+ *   },
+ * });
+ */
+export function useGetMergedSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>) {
+        return Apollo.useQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, baseOptions);
+      }
+export function useGetMergedSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>) {
+          return Apollo.useLazyQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, baseOptions);
+        }
+export type GetMergedSessionsQueryHookResult = ReturnType<typeof useGetMergedSessionsQuery>;
+export type GetMergedSessionsLazyQueryHookResult = ReturnType<typeof useGetMergedSessionsLazyQuery>;
+export type GetMergedSessionsQueryResult = Apollo.QueryResult<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>;
+export const GetSessionByIdDocument = gql`
+    query GetSessionById($sessionId: String!) {
+  sessionById(sessionId: $sessionId) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSessionByIdQuery__
+ *
+ * To run a query within a React component, call `useGetSessionByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSessionByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSessionByIdQuery({
+ *   variables: {
+ *      sessionId: // value for 'sessionId'
+ *   },
+ * });
+ */
+export function useGetSessionByIdQuery(baseOptions: Apollo.QueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
+        return Apollo.useQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
+      }
+export function useGetSessionByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
+        }
+export type GetSessionByIdQueryHookResult = ReturnType<typeof useGetSessionByIdQuery>;
+export type GetSessionByIdLazyQueryHookResult = ReturnType<typeof useGetSessionByIdLazyQuery>;
+export type GetSessionByIdQueryResult = Apollo.QueryResult<GetSessionByIdQuery, GetSessionByIdQueryVariables>;
 export const NotificationsDocument = gql`
     subscription Notifications($key: String!) {
   notifications(key: $key) {

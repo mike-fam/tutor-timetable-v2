@@ -17,7 +17,7 @@ import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
 import { AvailabilityModificationType } from "../../generated/graphql";
 
-export type AvailabilitySessionProps = {
+export type AvailabilityCustomSessionProps = {
     updateSession: (sessionId: string, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: string) => void;
     restoreSession: (sessionId: string) => void;
@@ -25,16 +25,17 @@ export type AvailabilitySessionProps = {
     modificationType: AvailabilityModificationType;
 };
 
-type Props = SessionProps & AvailabilitySessionProps;
+type Props = SessionProps<AvailabilityCustomSessionProps>;
 
-export const AvailabilitySession: React.FC<Props> = ({
-    updateSession,
-    removeSession,
-    restoreSession,
-    modificationType,
-    editSession,
-    ...props
-}) => {
+export const AvailabilitySession: React.FC<Props> = (props) => {
+    const { custom, id } = props;
+    const {
+        updateSession,
+        removeSession,
+        restoreSession,
+        modificationType,
+        editSession,
+    } = custom(id);
     const { top } = useMemo(() => sessionStyleFromProps(props), [props]);
     const { startTime, endTime } = props;
     const nodeRef = useRef(null);

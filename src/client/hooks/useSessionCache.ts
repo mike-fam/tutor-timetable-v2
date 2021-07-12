@@ -20,7 +20,7 @@ export type SessionCache = {
 };
 
 export const useSessionCache = (): SessionCache => {
-    const [sessions, setSessions] = useState<SessionMap>(Map());
+    const [sessions, setSessions] = useState<SessionMap>(Map<string, SessionResponseType>());
     const [fetchSessions, { data: sessionsData }] = useLazyQueryWithError(
         useGetSessionsLazyQuery,
         {}

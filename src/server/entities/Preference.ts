@@ -18,7 +18,8 @@ import { Utils } from "../utils/Util";
 @Check(checkFieldValueInEnum(SessionType, "sessionType"))
 export class Preference
     extends BaseEntity
-    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity {
+    implements CourseRelatedEntity, TermRelatedEntity, UserRelatedEntity
+{
     @Field(() => SessionType, { nullable: true })
     @Column("varchar", { length: 15, nullable: true })
     sessionType: SessionType | undefined;

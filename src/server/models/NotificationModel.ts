@@ -73,7 +73,6 @@ export class NotificationModel extends BaseModel<Notification> {
             notifiedUser = await notification.user;
         }
         if (!notifiedUser) {
-            console.log(notification);
             throw new Error(
                 "Attempted to create a notification without any notified user"
             );

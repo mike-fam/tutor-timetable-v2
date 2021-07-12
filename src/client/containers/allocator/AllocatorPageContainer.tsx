@@ -27,7 +27,7 @@ import {
     useRequestAllocationMutation,
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
-import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
+import { TimetableCustomSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
@@ -51,10 +51,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         onOpen: openConfirm,
         onClose: closeConfirm,
     } = useDisclosure();
-    const [
-        getSessionStream,
-        { data: defaultSessionData },
-    ] = useGetSessionStreamsLazyQuery();
+    const [getSessionStream, { data: defaultSessionData }] =
+        useGetSessionStreamsLazyQuery();
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
@@ -62,8 +60,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
 
     // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
-        Map<string, TimetableSessionProps>
-    >(Map());
+        Map<string, TimetableCustomSessionProps>
+    >(Map<string, TimetableCustomSessionProps>());
 
     const [
         applyAllocation,
@@ -135,13 +133,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             setSessions(
                 requestAllocationData.requestAllocation.allocations.map(
                     ({ sessionStream }) => {
-                        const {
-                            id,
-                            name,
-                            startTime,
-                            endTime,
-                            day,
-                        } = sessionStream;
+                        const { id, name, startTime, endTime, day } =
+                            sessionStream;
                         return {
                             id,
                             name,
@@ -154,7 +147,6 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             );
             requestAllocationData.requestAllocation.allocations.forEach(
                 ({ sessionStream, staff }) => {
-                    console.log(staff.length);
                     setSessionsInfo((prev) =>
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,
@@ -295,7 +287,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                                     courseId,
                                                     termId,
                                                 },
-                                                staffIds: selectedStaff.toArray(),
+                                                staffIds:
+                                                    selectedStaff.toArray(),
                                                 newThreshold: 0.5,
                                             },
                                         });

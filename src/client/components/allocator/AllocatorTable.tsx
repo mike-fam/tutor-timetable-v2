@@ -58,7 +58,7 @@ export const AllocatorTable: React.FC<Props> = ({
     ] = useLazyQueryWithError(usePreferenceByUsernameLazyQuery, {});
     const [staffPreferencesMap, setStaffPreferenceMap] = useState<
         Map<string, PreferenceResponseType>
-    >(Map());
+    >(Map<string, PreferenceResponseType>());
     useEffect(() => {
         if (!staffPreferenceData) {
             return;

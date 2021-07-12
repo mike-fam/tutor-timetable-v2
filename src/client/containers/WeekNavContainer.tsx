@@ -11,9 +11,8 @@ type Props = {};
 
 // Placeholder data
 export const WeekNavContainer: React.FunctionComponent<Props> = () => {
-    const { chosenTermId, chosenWeek, chooseWeek } = useContext(
-        TimetableContext
-    );
+    const { chosenTermId, chosenWeek, chooseWeek } =
+        useContext(TimetableContext);
     const { data, loading } = useQueryWithError(useTermsQuery, {});
     const [weeksNum, setWeeksNum] = useState(0);
     const [termMap, setTermMap] = useState(

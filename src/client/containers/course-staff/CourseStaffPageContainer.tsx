@@ -83,7 +83,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
     );
     const [courseStaff, setCourseStaff] = useState<
         Map<string, CourseStaffResponseType>
-    >(Map());
+    >(Map<string, CourseStaffResponseType>());
     useEffect(() => {
         if (!addCourseStaffData) {
             return;

@@ -4,5 +4,18 @@ query Me {
         username
         name
         email
+        isAdmin
+        courseStaffs {
+            timetable {
+                course {
+                    id
+                    code
+                }
+                term {
+                    id
+                }
+            }
+            role
+        }
     }
 }

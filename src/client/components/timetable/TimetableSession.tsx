@@ -14,19 +14,20 @@ import {
 } from "@chakra-ui/react";
 import { SessionTheme } from "../../types/session";
 
-export type TimetableSessionProps = {
+export type TimetableCustomSessionProps = {
     allocation: string[];
     location: string;
     theme?: SessionTheme;
 };
 
-export type Props = SessionProps & TimetableSessionProps;
+export type Props = SessionProps<TimetableCustomSessionProps>;
 
 export const TimetableSession: React.FC<Props> = ({
     children: _,
     ...props
 }) => {
-    const { name, allocation, location } = props;
+    const { name, custom, id } = props;
+    const { allocation, location } = custom(id);
     return (
         <Popover trigger="hover" placement="auto">
             <PopoverTrigger>

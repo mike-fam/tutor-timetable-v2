@@ -1,10 +1,9 @@
 import React from "react";
-import { Field, FieldInputProps, FieldProps } from "formik";
+import { Field, FieldProps } from "formik";
 import {
     FormControl,
     FormErrorMessage,
     FormLabel,
-    PseudoProps,
     Select,
     SelectProps,
 } from "@chakra-ui/react";
@@ -16,7 +15,7 @@ type Props = {
     id?: string;
     options: Array<string | number>;
     optionToText?: (val: string) => string;
-} & Omit<SelectProps, keyof FieldInputProps<any> | keyof PseudoProps<{}>>;
+} & SelectProps;
 
 export const FormikSelect: React.FC<Props> = ({
     name,

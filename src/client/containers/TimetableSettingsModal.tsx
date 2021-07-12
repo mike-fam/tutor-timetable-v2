@@ -67,7 +67,7 @@ export const TimetableSettingsModal: React.FC<Props> = ({
                                 .map(
                                     (value) =>
                                         parseInt(
-                                            (value as unknown) as string
+                                            value as unknown as string
                                         ) as IsoDay
                                 )
                                 .sort((a, b) => a - b)
