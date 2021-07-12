@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "formik": "^2.2.5",
-    "framer": "^1.2.12",
+    "framer": "^1.3.6",
     "framer-motion": "^4",
     "fs-extra": "^9.0.1",
     "graphql": "^15.4.0",

@@ -1,4 +1,5 @@
 import asyncFilter from "node-filter-async";
+import identity from "lodash/identity";
 
 export const asyncMap = async <T, R>(
     array: Array<T>,
@@ -19,4 +20,25 @@ export const asyncForEach = async <T>(
     callback: (elem: T) => any
 ): Promise<void> => {
     await Promise.all(array.map(async (e) => await callback(e)));
+};
+
+export const getAllIndices = <T>(
+    seq: Iterable<T> | ArrayLike<T>,
+    predicate: T | ((elem: T) => boolean)
+): Array<number> => {
+    const result = [];
+    const arr = Array.from(seq);
+    for (let i = 0; i < arr.length; i++) {
+        const elem = arr[i];
+        if (predicate instanceof Function) {
+            if (predicate(elem)) {
+                result.push(i);
+            }
+        } else {
+            if (elem === predicate) {
+                result.push(i);
+            }
+        }
+    }
+    return result;
 };

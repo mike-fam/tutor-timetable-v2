@@ -16,12 +16,13 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { UserContext } from "../utils/user";
-import { NavBarMenuButton } from "./navbar/NavBarMenuButton";
+import { UserContext } from "../../utils/user";
+import { NavBarMenuButton } from "./NavBarMenuButton";
 import { BsPersonFill } from "react-icons/all";
-import { EditUserDetailsModalContainer } from "../containers/navbar/EditUserDetailsModalContainer";
-import { TimetableSettingsModal } from "../containers/TimetableSettingsModal";
+import { EditUserDetailsModalContainer } from "../../containers/navbar/EditUserDetailsModalContainer";
+import { TimetableSettingsModal } from "../../containers/TimetableSettingsModal";
+import { Role } from "../../generated/graphql";
+import { RouterLink } from "../helpers/RouterLink";
 
 type Props = {};
 
@@ -46,39 +47,49 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                         </Heading>
                     </Box>
                     <Spacer />
-                    <RouterLink to="/" style={{ height: "100%" }}>
+                    <RouterLink to="/" fullHeight>
                         <NavBarMenuButton>Home</NavBarMenuButton>
                     </RouterLink>
-                    <RouterLink to="/requests" style={{ height: "100%" }}>
+                    <RouterLink to="/requests" fullHeight>
                         <NavBarMenuButton>Requests</NavBarMenuButton>
                     </RouterLink>
-                    <RouterLink to="/availabilities" style={{ height: "100%" }}>
+                    <RouterLink to="/availabilities" fullHeight>
                         <NavBarMenuButton>Availability</NavBarMenuButton>
                     </RouterLink>
-                    <RouterLink to="/preferences" style={{ height: "100%" }}>
+                    <RouterLink to="/preferences" fullHeight>
                         <NavBarMenuButton>Preferences</NavBarMenuButton>
                     </RouterLink>
-                    <Menu>
-                        <MenuButton
-                            as={NavBarMenuButton}
-                            rightIcon={<ChevronDownIcon />}
-                            style={{ cursor: "pointer" }}
-                        >
-                            Tools
-                        </MenuButton>
-                        <MenuList style={{ margin: 0 }}>
-                            <MenuItem>
-                                <RouterLink to="/allocator">
-                                    Allocator
-                                </RouterLink>
-                            </MenuItem>
-                            <MenuItem>
-                                <RouterLink to="/course-staff">
-                                    Course Staff
-                                </RouterLink>
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
+                    {user.courseStaffs.some(
+                        (courseStaff) =>
+                            courseStaff.role === Role.CourseCoordinator
+                    ) && (
+                        <Menu>
+                            <MenuButton
+                                as={NavBarMenuButton}
+                                rightIcon={<ChevronDownIcon />}
+                                style={{ cursor: "pointer" }}
+                            >
+                                Admin
+                            </MenuButton>
+                            <MenuList style={{ margin: 0 }}>
+                                <MenuItem>
+                                    <RouterLink to="/allocator" fullHeight fullWidth>
+                                        Allocator
+                                    </RouterLink>
+                                </MenuItem>
+                                <MenuItem>
+                                    <RouterLink to="/course-staff" fullHeight fullWidth>
+                                        Course Staff
+                                    </RouterLink>
+                                </MenuItem>
+                                <MenuItem>
+                                    <RouterLink to="/session-settings" fullHeight fullWidth>
+                                        Session Settings
+                                    </RouterLink>
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
+                    )}
                     <Menu>
                         <MenuButton
                             as={NavBarMenuButton}

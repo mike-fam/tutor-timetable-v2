@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import React, { useCallback, useContext, useMemo } from "react";
 import {
-    AvailabilityModificationType,
+    ModificationType,
     useUpdateAvailabilitiesMutation,
 } from "../../generated/graphql";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
@@ -11,12 +11,10 @@ type Props = {};
 
 export const AvailabilitySubmitButton: React.FC<Props> = () => {
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
-    const [
-        updateAvailabilities,
-        { loading: updateLoading },
-    ] = useMutationWithError(useUpdateAvailabilitiesMutation, {
-        timeslots: timeslots.valueSeq().toArray(),
-    });
+    const [updateAvailabilities, { loading: updateLoading }] =
+        useMutationWithError(useUpdateAvailabilitiesMutation, {
+            timeslots: timeslots.valueSeq().toArray(),
+        });
     const submitTimeslots = useCallback(async () => {
         try {
             const newTimeslots = await updateAvailabilities();
@@ -26,8 +24,7 @@ export const AvailabilitySubmitButton: React.FC<Props> = () => {
                     setTimeslots((prev) =>
                         prev.set(timeslot.id, {
                             ...timeslot,
-                            modificationType:
-                                AvailabilityModificationType.Unchanged,
+                            modificationType: ModificationType.Unchanged,
                         })
                     );
                 });
@@ -41,8 +38,7 @@ export const AvailabilitySubmitButton: React.FC<Props> = () => {
             timeslots.size !==
             timeslots.filter(
                 (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.Unchanged
+                    timeslot.modificationType === ModificationType.Unchanged
             ).size
         );
     }, [timeslots]);

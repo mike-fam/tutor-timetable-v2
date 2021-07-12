@@ -38,10 +38,10 @@ export const ViewMyRequestModalContainer: React.FC<Props> = ({
 }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
     const { data: termsData } = useQueryWithError(useTermsQuery);
-    const request = useMemo(() => requests.get(requestId), [
-        requests,
-        requestId,
-    ]);
+    const request = useMemo(
+        () => requests.get(requestId),
+        [requests, requestId]
+    );
     useEffect(() => {
         if (!request && requestId !== defaultStr) {
             fetchRequestById(requestId);

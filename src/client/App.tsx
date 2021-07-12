@@ -3,10 +3,10 @@ import { AppRouter } from "./AppRouter";
 import {
     ApolloClient,
     ApolloProvider,
+    from,
     HttpLink,
     InMemoryCache,
     split,
-    from,
 } from "@apollo/client";
 import { WrapperContainer } from "./containers/WrapperContainer";
 import { WebSocketLink } from "@apollo/client/link/ws";

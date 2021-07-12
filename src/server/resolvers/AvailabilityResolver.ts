@@ -15,18 +15,7 @@ import { Timeslot, User } from "../entities";
 import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { In } from "typeorm";
-
-export enum AvailabilityModificationType {
-    UNCHANGED,
-    ADDED,
-    MODIFIED,
-    REMOVED,
-    REMOVED_MODIFIED,
-}
-
-registerEnumType(AvailabilityModificationType, {
-    name: "AvailabilityModificationType",
-});
+import { ModificationType } from "../inputs/ModificationType";
 
 @InputType()
 class TimeslotInput {
@@ -42,8 +31,8 @@ class TimeslotInput {
     @Field(() => Int)
     day: IsoDay;
 
-    @Field(() => AvailabilityModificationType)
-    modificationType: AvailabilityModificationType;
+    @Field(() => ModificationType)
+    modificationType: ModificationType;
 }
 
 @Resolver(() => Timeslot)
@@ -66,8 +55,7 @@ export class AvailabilityResolver {
         const newSessions = timeslots
             .filter(
                 (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.ADDED
+                    timeslot.modificationType === ModificationType.ADDED
             )
             .map(({ startTime, endTime, day }) => ({
                 startTime,
@@ -78,8 +66,7 @@ export class AvailabilityResolver {
         const updatedTimeslots = timeslots
             .filter(
                 (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.MODIFIED
+                    timeslot.modificationType === ModificationType.MODIFIED
             )
             .map(({ id, startTime, endTime, day }) => ({
                 id,
@@ -90,10 +77,9 @@ export class AvailabilityResolver {
         const removedTimeslotIds = timeslots
             .filter(
                 (timeslot) =>
+                    timeslot.modificationType === ModificationType.REMOVED ||
                     timeslot.modificationType ===
-                        AvailabilityModificationType.REMOVED ||
-                    timeslot.modificationType ===
-                        AvailabilityModificationType.REMOVED_MODIFIED
+                        ModificationType.REMOVED_MODIFIED
             )
             .map((timeslot) => timeslot.id!);
         await models.timeslot.deleteMany(

@@ -1,11 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
+import { MeQuery } from "../generated/graphql";
 
-export type UserState = {
-    id: string;
-    username: string;
-    name: string;
-    email: string;
-};
+export type UserState = MeQuery["me"];
 
 export type UserContextType = {
     user: UserState;

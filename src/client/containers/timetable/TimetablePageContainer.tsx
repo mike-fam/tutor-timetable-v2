@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
+import React, { useContext, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
 import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
@@ -7,75 +6,43 @@ import { CourseCheckboxListContainer } from "./CourseCheckboxListContainer";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { TimetableContainer } from "./TimetableContainer";
 import { WeekNavContainer } from "../WeekNavContainer";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
     TimetableContext,
     TimetableSettingsContext,
 } from "../../utils/timetable";
 import { Set } from "immutable";
-import { parseISO } from "date-fns";
-import { defaultInt, defaultStr } from "../../constants";
-import { getCurrentTerm, getCurrentWeek } from "../../utils/term";
 import {
     firstLineHeight,
     realGap,
     timetableTimeslotHeight,
 } from "../../constants/timetable";
+import { useDefaultTerm } from "../../hooks/useDefaultTerm";
 
 type Props = {};
 
 export const TimetablePageContainer: React.FC<Props> = () => {
     document.title = "Tutor Timetable";
-    const [chosenTerm, setChosenTerm] = useState(defaultStr);
-    const [chosenWeek, setChosenWeek] = useState(defaultInt);
     const [chosenCourses, setChosenCourses] = useState(() => Set<string>());
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
-    const { data: termsData, loading: termsLoading } = useQueryWithError(
-        useTermsQuery,
-        {}
-    );
     const {
-        data: myCoursesData,
-        loading: myCoursesLoading,
-    } = useQueryWithError(useMyCoursesQuery, {});
-    useEffect(() => {
-        // Loading
-        if (termsLoading) {
-            return;
-        }
-        const today = new Date();
-        // possibly an error happened
-        if (!termsData) {
-            return;
-        }
-        // No term date yet.
-        if (termsData.terms.length === 0) {
-            return;
-        }
-        let chosenTerm = getCurrentTerm(termsData.terms);
-        // choose current week if current term found
-        setChosenTerm(chosenTerm.id);
-        const startDate = parseISO(chosenTerm.startDate);
-        const endDate = parseISO(chosenTerm.endDate);
-        // Choose current week if possible, otherwise choose "All weeks"
-        setChosenWeek(
-            startDate < today && today < endDate
-                ? getCurrentWeek(chosenTerm)
-                : defaultInt
-        );
-    }, [myCoursesLoading, termsLoading, termsData, myCoursesData]);
+        termsLoading,
+        chosenTermId,
+        setChosenTermId,
+        setChosenWeek,
+        chosenWeek,
+    } = useDefaultTerm();
 
     return (
         <Wrapper>
-            {myCoursesLoading || termsLoading ? (
+            {termsLoading ? (
                 <Center h="90vh">
                     <LoadingSpinner />
                 </Center>
             ) : (
                 <TimetableContext.Provider
                     value={{
-                        chosenTermId: chosenTerm,
-                        chooseTerm: setChosenTerm,
+                        chosenTermId,
+                        chooseTerm: setChosenTermId,
                         chosenWeek,
                         chooseWeek: setChosenWeek,
                         chosenCourses,
@@ -90,7 +57,7 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                             <CourseCheckboxListContainer
                                 chosenCourses={chosenCourses}
                                 setChosenCourses={setChosenCourses}
-                                chosenTermId={chosenTerm}
+                                chosenTermId={chosenTermId}
                             />
                         </Box>
                         <Box gridColumn={2} gridRow={1} mb={7}>
@@ -98,8 +65,8 @@ export const TimetablePageContainer: React.FC<Props> = () => {
                         </Box>
                         <Box gridColumn={2} gridRow={2} mb={5}>
                             <TermSelectContainer
-                                chooseTerm={setChosenTerm}
-                                chosenTerm={chosenTerm}
+                                chooseTerm={setChosenTermId}
+                                chosenTerm={chosenTermId}
                             />
                         </Box>
                         <Box

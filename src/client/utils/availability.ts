@@ -4,7 +4,7 @@ import {
     AvailabilityState,
 } from "../types/availability";
 import { Map } from "immutable";
-import { AvailabilityModificationType } from "../generated/graphql";
+import { ModificationType } from "../generated/graphql";
 import { SessionResponseType, SessionTheme } from "../types/session";
 
 export const AvailabilityContext = createContext<AvailabilityState>({
@@ -17,17 +17,17 @@ export const leftFillNum = (num: number, targetLength: number) => {
 };
 
 export const modificationTypeToTheme = (
-    modificationType: AvailabilityModificationType
+    modificationType: ModificationType
 ): SessionTheme => {
     switch (modificationType) {
-        case AvailabilityModificationType.Added:
+        case ModificationType.Added:
             return SessionTheme.SUCCESS;
-        case AvailabilityModificationType.Modified:
+        case ModificationType.Modified:
             return SessionTheme.WARNING;
-        case AvailabilityModificationType.Removed:
-        case AvailabilityModificationType.RemovedModified:
+        case ModificationType.Removed:
+        case ModificationType.RemovedModified:
             return SessionTheme.ERROR;
-        case AvailabilityModificationType.Unchanged:
+        case ModificationType.Unchanged:
             return SessionTheme.PRIMARY;
     }
 };

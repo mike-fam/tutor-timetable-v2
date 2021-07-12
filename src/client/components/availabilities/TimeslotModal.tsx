@@ -76,7 +76,7 @@ export const TimeslotModal: React.FC<Props> = ({
                         updateTimeslot(values.id, {
                             startTime,
                             endTime,
-                            day: parseInt((values.day as unknown) as string),
+                            day: parseInt(values.day as unknown as string),
                         });
                         close();
                     }}

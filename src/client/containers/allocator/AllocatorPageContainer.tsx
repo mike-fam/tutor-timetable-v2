@@ -30,7 +30,7 @@ import { TimetableSessionType } from "../../types/timetable";
 import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useQueryWithError";
-import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
+import { AllocatorConfirmDialog } from "../../components/allocator/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
     AllocatorTable,
@@ -51,10 +51,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         onOpen: openConfirm,
         onClose: closeConfirm,
     } = useDisclosure();
-    const [
-        getSessionStream,
-        { data: defaultSessionData },
-    ] = useGetSessionStreamsLazyQuery();
+    const [getSessionStream, { data: defaultSessionData }] =
+        useGetSessionStreamsLazyQuery();
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
@@ -135,13 +133,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             setSessions(
                 requestAllocationData.requestAllocation.allocations.map(
                     ({ sessionStream }) => {
-                        const {
-                            id,
-                            name,
-                            startTime,
-                            endTime,
-                            day,
-                        } = sessionStream;
+                        const { id, name, startTime, endTime, day } =
+                            sessionStream;
                         return {
                             id,
                             name,
@@ -295,7 +288,8 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
                                                     courseId,
                                                     termId,
                                                 },
-                                                staffIds: selectedStaff.toArray(),
+                                                staffIds:
+                                                    selectedStaff.toArray(),
                                                 newThreshold: 0.5,
                                             },
                                         });

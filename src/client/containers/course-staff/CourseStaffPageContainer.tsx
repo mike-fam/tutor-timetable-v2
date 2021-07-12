@@ -44,20 +44,16 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery);
     const toast = useToast();
-    const [
-        removeCourseStaffMutation,
-        { data: removeCourseStaffData },
-    ] = useMutationWithError(useRemoveCourseStaffMutation);
+    const [removeCourseStaffMutation, { data: removeCourseStaffData }] =
+        useMutationWithError(useRemoveCourseStaffMutation);
     const { termId, courseId, changeCourse, changeTerm } = useTermCourse();
     const [term, setTerm] = useState<TermResponseType>();
     const [
         addCourseStaff,
         { data: addCourseStaffData, loading: addCourseStaffLoading },
     ] = useMutationWithError(useAddCourseStaffMutation);
-    const [
-        getCourseStaff,
-        { data: getCourseStaffData },
-    ] = useLazyQueryWithError(useCourseStaffsLazyQuery);
+    const [getCourseStaff, { data: getCourseStaffData }] =
+        useLazyQueryWithError(useCourseStaffsLazyQuery);
     useEffect(() => {
         if (termId === defaultStr || courseId === defaultStr) {
             return;

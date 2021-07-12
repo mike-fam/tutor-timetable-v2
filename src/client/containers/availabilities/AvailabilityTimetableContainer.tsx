@@ -8,7 +8,7 @@ import React, {
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
 import { Props as SessionProps } from "../../components/timetable/Session";
-import { AvailabilityTimeslot } from "../../components/availabilities/AvailabilityTimeslot";
+import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { AvailabilityContext } from "../../utils/availability";
 import { ModifyTimeslotParams, TempTimeslot } from "../../types/availability";
@@ -19,7 +19,7 @@ import {
 import { useDisclosure } from "@chakra-ui/react";
 import { useQueryWithError } from "../../hooks/useQueryWithError";
 import {
-    AvailabilityModificationType,
+    ModificationType,
     useMyAvailabilityQuery,
 } from "../../generated/graphql";
 import { TimeslotModal } from "../../components/availabilities/TimeslotModal";
@@ -60,7 +60,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
             setTimeslots((prev) =>
                 prev.set(timeslot.id, {
                     ...timeslot,
-                    modificationType: AvailabilityModificationType.Unchanged,
+                    modificationType: ModificationType.Unchanged,
                 })
             );
         });
@@ -80,7 +80,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 prev.set(String(tempAddIndex), {
                     ...timeslot,
                     id: String(tempAddIndex),
-                    modificationType: AvailabilityModificationType.Added,
+                    modificationType: ModificationType.Added,
                 })
             );
             setTempAddIndex((prev) => prev + 1);
@@ -96,14 +96,13 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
             }
             if (
                 !isNumeric(timeslotId) &&
-                session.modificationType ===
-                    AvailabilityModificationType.Unchanged
+                session.modificationType === ModificationType.Unchanged
             ) {
                 setTimeslots((prev) =>
                     prev.set(timeslotId, {
                         ...session,
                         ...newTimeslotProps,
-                        modificationType: AvailabilityModificationType.Modified,
+                        modificationType: ModificationType.Modified,
                     })
                 );
             } else {
@@ -133,9 +132,9 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                         ...timeslot,
                         modificationType:
                             timeslot.modificationType ===
-                            AvailabilityModificationType.Unchanged
-                                ? AvailabilityModificationType.Removed
-                                : AvailabilityModificationType.RemovedModified,
+                            ModificationType.Unchanged
+                                ? ModificationType.Removed
+                                : ModificationType.RemovedModified,
                     })
                 );
             }
@@ -153,10 +152,9 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 prev.set(timeslotId, {
                     ...timeslot,
                     modificationType:
-                        timeslot.modificationType ===
-                        AvailabilityModificationType.Removed
-                            ? AvailabilityModificationType.Unchanged
-                            : AvailabilityModificationType.Modified,
+                        timeslot.modificationType === ModificationType.Removed
+                            ? ModificationType.Unchanged
+                            : ModificationType.Modified,
                 })
             );
         },
@@ -178,10 +176,10 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 startTime={dayStartTime}
                 endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
-                    <Day
+                    <Day<AvailabilitySessionProps>
                         {...dayProps}
                         renderTimeSlot={(key, time, day) => (
-                            <AvailabilityTimeslot
+                            <ClickableTimeslot
                                 key={key}
                                 time={time}
                                 day={day}
@@ -206,9 +204,9 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                             restoreSession,
                             editSession,
                             modificationType: isNumeric(timeslotId)
-                                ? AvailabilityModificationType.Added
+                                ? ModificationType.Added
                                 : timeslots.get(timeslotId)?.modificationType ||
-                                  AvailabilityModificationType.Unchanged,
+                                  ModificationType.Unchanged,
                         })}
                     />
                 )}

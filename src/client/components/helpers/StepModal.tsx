@@ -38,10 +38,10 @@ export const StepModal: React.FC<Props> = ({
     ...props
 }) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const isLastStep = useMemo(() => currentStep >= stepCount - 1, [
-        currentStep,
-        stepCount,
-    ]);
+    const isLastStep = useMemo(
+        () => currentStep >= stepCount - 1,
+        [currentStep, stepCount]
+    );
     const close = useCallback(() => {
         setCurrentStep(0);
         onClose();

@@ -94,8 +94,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
             ) {
                 return {
                     hasPerm: false,
-                    errMsg:
-                        "You cannot change the start time of a based stream",
+                    errMsg: "You cannot change the start time of a based stream",
                 };
             }
             if (
