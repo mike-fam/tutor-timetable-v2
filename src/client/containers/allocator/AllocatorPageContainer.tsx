@@ -27,9 +27,9 @@ import {
     useRequestAllocationMutation,
 } from "../../generated/graphql";
 import { TimetableSessionType } from "../../types/timetable";
-import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
+import { TimetableCustomSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
-import { useMutationWithError } from "../../hooks/useQueryWithError";
+import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
 import { AllocatorConfirmDialog } from "../../components/allocator/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
@@ -56,17 +56,17 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
     const [
         requestAllocation,
         { data: requestAllocationData, loading: requestAllocationLoading },
-    ] = useMutationWithError(useRequestAllocationMutation);
+    ] = useMutationWithError(useRequestAllocationMutation, {});
 
     // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
-        Map<string, TimetableSessionProps>
-    >(Map());
+        Map<string, TimetableCustomSessionProps>
+    >(Map<string, TimetableCustomSessionProps>());
 
     const [
         applyAllocation,
         { data: applyAllocationData, loading: applyAllocationLoading },
-    ] = useMutationWithError(useApplyAllocationMutation);
+    ] = useMutationWithError(useApplyAllocationMutation, {});
 
     // Show popup when allocation successfully applied
     useEffect(() => {
@@ -147,7 +147,6 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
             );
             requestAllocationData.requestAllocation.allocations.forEach(
                 ({ sessionStream, staff }) => {
-                    console.log(staff.length);
                     setSessionsInfo((prev) =>
                         prev.set(sessionStream.id, {
                             location: sessionStream.location,

@@ -17,13 +17,13 @@ export const seed = async () => {
         .toString();
     pool.connect((err, client, done) => {
         if (err) {
-            console.error(err);
+            console.log(err);
             process.exit(1);
         }
         client.query(query, (err) => {
             done();
             if (err) {
-                console.error(err);
+                console.log(err);
                 process.exit(1);
             }
         });

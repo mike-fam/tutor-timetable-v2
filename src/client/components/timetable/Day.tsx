@@ -14,12 +14,10 @@ export type Props<T> = {
     endTime: number;
     renderTimeSlot: (key: number, time: number, day: number) => ReactElement;
     sessions: Array<TimetableSessionType>;
-    getSessionProps: (sessionId: string) => T;
     renderSession: (
-        sessionProps: SessionProps,
-        key: number,
-        moreProps: T
-    ) => ReactElement<SessionProps & T>;
+        sessionProps: Omit<SessionProps<T>, "custom">,
+        key: number
+    ) => ReactElement<SessionProps<T>>;
     timeslotHeight: number;
 };
 
@@ -30,7 +28,6 @@ export const Day = <T,>({
     sessions,
     renderTimeSlot,
     renderSession,
-    getSessionProps,
     timeslotHeight,
 }: PropsWithChildren<Props<T>>) => {
     const stackInfo = useMemo(
@@ -68,8 +65,7 @@ export const Day = <T,>({
                         timeslotHeight,
                         ...stackInfo[session.id],
                     },
-                    key,
-                    getSessionProps(session.id)
+                    key
                 )
             )}
         </Grid>

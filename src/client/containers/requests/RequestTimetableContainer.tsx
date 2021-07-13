@@ -45,7 +45,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
         : displayedDaysContext;
     const [sessionInfo, setSessionInfo] = useState<
         Map<string, RequestSessionProps>
-    >(Map());
+    >(Map<string, RequestSessionProps>());
     const { fetchSessions, sessions: sessionMap } = useContext(SessionsContext);
     const [timetableSessions, setTimetableSessions] = useState<
         TimetableSessionType[]
@@ -95,28 +95,23 @@ export const RequestTimetableContainer: React.FC<Props> = ({
             renderDay={(dayProps, key) => (
                 <Day
                     {...dayProps}
-                    renderSession={(
-                        sessionProps,
-                        key,
-                        moreProps: RequestSessionProps
-                    ) => (
+                    renderSession={(sessionProps, key) => (
                         <RequestSession
                             {...sessionProps}
                             key={key}
-                            {...moreProps}
+                            custom={(sessionId) =>
+                                sessionInfo.get(sessionId) || {
+                                    onClick: chooseSession,
+                                    disabled: true,
+                                    theme: SessionTheme.PRIMARY,
+                                    location: "",
+                                    allocation: [],
+                                }
+                            }
                         />
                     )}
                     key={key}
                     renderTimeSlot={(key) => <TimeSlot key={key} />}
-                    getSessionProps={(sessionId) =>
-                        sessionInfo.get(sessionId) || {
-                            onClick: chooseSession,
-                            disabled: true,
-                            theme: SessionTheme.PRIMARY,
-                            location: "",
-                            allocation: [],
-                        }
-                    }
                 />
             )}
         />

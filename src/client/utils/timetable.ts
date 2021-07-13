@@ -31,7 +31,7 @@ type SessionStyle = {
  *      style from
  * @returns {SessionStyle} Style information of session
  */
-export const sessionStyleFromProps = ({
+export const sessionStyleFromProps = <T>({
     startTime,
     endTime,
     startDay,
@@ -43,7 +43,7 @@ export const sessionStyleFromProps = ({
     longestBranchSize,
     splitBranchSize,
     timeslotHeight,
-}: Omit<SessionProps, "name">): {
+}: Omit<SessionProps<T>, "name" | "custom">): {
     topPx: CSS.Property.Top<number>;
     heightPx: CSS.Property.Height<number>;
     top: number;

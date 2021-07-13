@@ -3,7 +3,7 @@ import { RequestTimetableContainer } from "./RequestTimetableContainer";
 import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
 import { Loadable } from "../../components/helpers/Loadable";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { SessionResponseType, SessionTheme } from "../../types/session";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
@@ -31,7 +31,7 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     chosenWeek,
     chooseWeek,
 }) => {
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const { sessionsData, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
         for (const courseId of chosenCourseIds) {
