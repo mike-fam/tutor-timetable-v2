@@ -191,7 +191,7 @@ export class SessionModel extends BaseModel<Session> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async allocateSingle(
+    public async allocateSingleFromOffer(
         session: Session,
         staff: User,
         user: User
@@ -296,6 +296,7 @@ export class SessionModel extends BaseModel<Session> {
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
+        // console.log(allocatedUserIds, staff);
         for (const staffMember of staff) {
             if (!allocatedUserIds.includes(staffMember.id)) {
                 throw new Error(
@@ -305,7 +306,9 @@ export class SessionModel extends BaseModel<Session> {
         }
         if (await user.isCoordinatorOf(course, term)) {
             await session.deallocate(...staff);
+            return;
         }
+        throw new Error(PERM_ERR)
     }
 
     /**
@@ -336,7 +339,7 @@ export class SessionModel extends BaseModel<Session> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async deallocateSingle(
+    public async deallocateSingleFromOffer(
         session: Session,
         staff: User,
         user: User

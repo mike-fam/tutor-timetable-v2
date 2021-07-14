@@ -3,10 +3,14 @@ import { Map } from "immutable";
 import { v4 as uuid } from "uuid";
 
 export const useModificationMap = <T>() => {
-    const [unchanged, setUnchanged] = useState<Map<string, T>>(Map<string, T>());
+    const [unchanged, setUnchanged] = useState<Map<string, T>>(
+        Map<string, T>()
+    );
     const [modified, setModified] = useState<Map<string, T>>(Map<string, T>());
     const [deleted, setDeleted] = useState<Map<string, T>>(Map<string, T>());
-    const [deleteModified, setDeleteModified] = useState<Map<string, T>>(Map<string, T>());
+    const [deleteModified, setDeleteModified] = useState<Map<string, T>>(
+        Map<string, T>()
+    );
     const [created, setCreated] = useState<Map<string, T>>(Map<string, T>());
 
     const deleteItem = useCallback(
@@ -52,6 +56,7 @@ export const useModificationMap = <T>() => {
                 return;
             }
             const newItem = { ...item, ...newFields };
+            setUnchanged((prev) => prev.remove(id));
             setModified((prev) => prev.set(id, newItem));
         },
         [unchanged]
@@ -86,6 +91,6 @@ export const useModificationMap = <T>() => {
         createItem,
         updateItem,
         clearItems,
-        resetItems
+        resetItems,
     };
 };

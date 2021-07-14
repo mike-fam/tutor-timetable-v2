@@ -105,3 +105,33 @@ query GetSessionById($sessionId: String!) {
         }
     }
 }
+
+mutation UpdateSessionAllocation($newAllocation: [AllocateUserInput!]!) {
+    updateSessionAllocations(
+        newAllocation: $newAllocation
+    ) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            username
+            name
+        }
+    }
+}

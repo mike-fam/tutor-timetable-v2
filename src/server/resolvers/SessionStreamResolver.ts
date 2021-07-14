@@ -397,7 +397,7 @@ export class SessionStreamResolver {
     }
 
     @Mutation(() => [SessionStream])
-    async allocateUsers(
+    async updateStreamAllocations(
         @Ctx() { req, models }: MyContext,
         @Arg("changeAllocationInput", () => [ChangeAllocationInput])
         allocationInput: ChangeAllocationInput[]

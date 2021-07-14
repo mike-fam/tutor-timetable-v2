@@ -1,8 +1,11 @@
 import {
     Arg,
     Ctx,
+    Field,
     FieldResolver,
+    InputType,
     Int,
+    Mutation,
     Query,
     Resolver,
     Root,
@@ -10,6 +13,19 @@ import {
 import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
+import { asyncForEach } from "../../utils/array";
+import differenceBy from "lodash/differenceBy";
+import intersectionBy from "lodash/intersectionBy";
+import { updateSessionAllocation } from "../../client/utils/session";
+
+@InputType()
+export class AllocateUserInput {
+    @Field()
+    rootSessionId: string;
+
+    @Field(() => [String])
+    newAllocation: string[];
+}
 
 @Resolver(() => Session)
 export class SessionResolver {
@@ -164,6 +180,31 @@ export class SessionResolver {
             },
             req.user
         );
+    }
+
+    @Mutation(() => [Session])
+    async updateSessionAllocations(
+        @Arg("newAllocation", () => [AllocateUserInput])
+        allocateUserInput: AllocateUserInput[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const { user } = req;
+        const { session: sessionModel } = models;
+        const returnValue: Session[] = [];
+        await asyncForEach(allocateUserInput, async (sessionInput) => {
+            const rootSession = await sessionModel.getById(
+                sessionInput.rootSessionId,
+                user
+            );
+            const updatedSessions = await updateSessionAllocation(
+                models,
+                rootSession,
+                sessionInput.newAllocation,
+                user
+            );
+            returnValue.push(updatedSessions);
+        });
+        return returnValue;
     }
 
     @Query(() => Session)

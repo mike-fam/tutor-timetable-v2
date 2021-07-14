@@ -17,12 +17,16 @@ import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableCon
 import { EditMode } from "../../types/session-settings";
 import { defaultStr } from "../../constants";
 import { EditModeChooser } from "../../components/session-settings/EditModeChooser";
+import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
+import { useStreamsFromPublicTimetableLazyQuery } from "../../generated/graphql";
 
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
     const { courseId, termId, changeCourse, changeTerm } = useSessionSettings();
     const [editMode, setEditMode] = useState<EditMode>(EditMode.SETTINGS);
+    const [fetchFromPublicTimetable, { data: publicTimetableData }] =
+        useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
 
     return (
         <Wrapper>
@@ -42,29 +46,27 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                         coordinatorOnly={true}
                     />
                 </HStack>
-                {
-                    termId !== defaultStr && courseId !== defaultStr && (
-                        <>
-                            <EditModeChooser changeEditMode={setEditMode}/>
-                            <HStack>
-                                {editMode === EditMode.ALLOCATION ? (
-                                    <Button ml="auto" colorScheme="green">
-                                        Generate Allocation
-                                    </Button>
-                                ) : (
-                                    <Button ml="auto" colorScheme="green">
-                                        Fetch from Public Timetable
-                                    </Button>
-                                )}
-                                <Button colorScheme="blue">Apply changes</Button>
-                            </HStack>
-                            <SessionSettingsTimetableContainer
-                                courseId={courseId}
-                                termId={termId}
-                            />
-                        </>
-                    )
-                }
+                {termId !== defaultStr && courseId !== defaultStr && (
+                    <>
+                        <EditModeChooser changeEditMode={setEditMode} />
+                        <HStack>
+                            {editMode === EditMode.ALLOCATION ? (
+                                <Button ml="auto" colorScheme="green">
+                                    Generate Allocation
+                                </Button>
+                            ) : (
+                                <Button ml="auto" colorScheme="green">
+                                    Fetch from Public Timetable
+                                </Button>
+                            )}
+                            <Button colorScheme="blue">Apply changes</Button>
+                        </HStack>
+                        <SessionSettingsTimetableContainer
+                            courseId={courseId}
+                            termId={termId}
+                        />
+                    </>
+                )}
             </Stack>
         </Wrapper>
     );

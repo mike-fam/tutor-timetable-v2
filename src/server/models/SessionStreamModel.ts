@@ -246,7 +246,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async allocateSingle(
+    public async allocateSingleFromOffer(
         stream: SessionStream,
         staff: User,
         user: User
@@ -388,7 +388,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async deallocateSingle(
+    public async deallocateSingleFromOffer(
         stream: SessionStream,
         staff: User,
         user: User

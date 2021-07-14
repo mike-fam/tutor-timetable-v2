@@ -22,17 +22,17 @@ import { useModificationMap } from "./useModificationMap";
 export const useSessionSettings = () => {
     const { courseId, termId, changeCourse, changeTerm } = useTermCourse();
     const {
-        unchanged,
-        created,
-        deleted,
-        modified,
-        deleteModified,
-        createItem,
-        deleteItem,
-        clearItems,
-        resetItems,
-        restoreItem,
-        updateItem,
+        unchanged: unchangedStreams,
+        created: createdStreams,
+        deleted: deletedStreams,
+        modified: modifiedStreams,
+        deleteModified: deleteModifiedStreams,
+        createItem: createStream,
+        deleteItem: deleteStream,
+        clearItems: clearStreams,
+        resetItems: resetStreams,
+        restoreItem: restoreStreams,
+        updateItem: updateStreams,
     } = useModificationMap<MergedStreamInput>();
     const [fetchStream, { data: getSessionStreamsData, loading }] =
         useLazyQueryWithError(useGetSessionStreamsLazyQuery, {});
@@ -49,7 +49,7 @@ export const useSessionSettings = () => {
         if (!getSessionStreamsData) {
             return;
         }
-        resetItems(getSessionStreamsData.sessionStreams.map(stream => ([stream.id, {
+        resetStreams(getSessionStreamsData.sessionStreams.map(stream => ([stream.id, {
             courseId,
             termId,
             name: stream.name,
@@ -60,7 +60,7 @@ export const useSessionSettings = () => {
             location: stream.location,
             numberOfTutorsForWeeks: [] // TODO: change
         }])))
-    }, [getSessionStreamsData]);
+    }, [getSessionStreamsData, courseId, termId, resetStreams]);
     // TODO: Implement week cache
     // Save it to state
     // Allow user to modify
