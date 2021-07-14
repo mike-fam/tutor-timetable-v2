@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
-import { Heading, HStack, Stack } from "@chakra-ui/react";
+import {
+    Button,
+    Heading,
+    HStack,
+    Stack,
+    Tab,
+    TabList,
+    Tabs,
+    Text,
+} from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
-import { Map } from "immutable";
-import { TimetableSessionProps } from "../../components/timetable/TimetableSession";
+import { EditMode } from "../../types/session-settings";
+import { defaultStr } from "../../constants";
+import { EditModeChooser } from "../../components/session-settings/EditModeChooser";
 
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
     const { courseId, termId, changeCourse, changeTerm } = useSessionSettings();
+    const [editMode, setEditMode] = useState<EditMode>(EditMode.SETTINGS);
+
     return (
         <Wrapper>
             <Stack spacing={4}>
@@ -30,11 +42,29 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                         coordinatorOnly={true}
                     />
                 </HStack>
-                <SessionSettingsTimetableContainer
-                    sessions={[]}
-                    loading={true}
-                    sessionsData={Map<string, TimetableSessionProps>()}
-                />
+                {
+                    termId !== defaultStr && courseId !== defaultStr && (
+                        <>
+                            <EditModeChooser changeEditMode={setEditMode}/>
+                            <HStack>
+                                {editMode === EditMode.ALLOCATION ? (
+                                    <Button ml="auto" colorScheme="green">
+                                        Generate Allocation
+                                    </Button>
+                                ) : (
+                                    <Button ml="auto" colorScheme="green">
+                                        Fetch from Public Timetable
+                                    </Button>
+                                )}
+                                <Button colorScheme="blue">Apply changes</Button>
+                            </HStack>
+                            <SessionSettingsTimetableContainer
+                                courseId={courseId}
+                                termId={termId}
+                            />
+                        </>
+                    )
+                }
             </Stack>
         </Wrapper>
     );

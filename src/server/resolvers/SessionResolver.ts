@@ -40,7 +40,7 @@ export class SessionResolver {
             user
         );
         // get all root streams
-        const rootStreams = streams.filter((stream) => stream.basedId === null);
+        const rootStreams = streams.filter((stream) => stream.rootId === null);
         const streamMap = keyBy(streams, (stream) => stream.id);
         // get all root sessions of specified weeks
         const sessions = await models.session.getMany(
@@ -60,13 +60,13 @@ export class SessionResolver {
         // get related sessions (same week, same stream based id)
         for (const rootSession of rootSessions) {
             const rootStream = streamMap[rootSession.sessionStreamId];
-            const streamIdsToCheck = [...rootStream.basedStreamIds];
+            const streamIdsToCheck = [...rootStream.secondaryStreamIds];
             const visitedStreamIds: string[] = [];
             while (streamIdsToCheck.length !== 0) {
                 const currentStreamId = streamIdsToCheck.pop()!;
                 const currentStream = streamMap[currentStreamId];
                 visitedStreamIds.push(currentStreamId);
-                streamIdsToCheck.push(...currentStream.basedStreamIds);
+                streamIdsToCheck.push(...currentStream.secondaryStreamIds);
             }
             const relatedSessions = sessions.filter((session) =>
                 visitedStreamIds.includes(session.sessionStreamId)

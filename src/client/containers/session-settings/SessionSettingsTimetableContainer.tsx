@@ -3,31 +3,24 @@ import { Loadable } from "../../components/helpers/Loadable";
 import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
-import {
-    TimetableSession,
-    TimetableSessionProps,
-} from "../../components/timetable/TimetableSession";
-import { TimetableSessionType } from "../../types/timetable";
-import { Map } from "immutable";
+import { TimetableSession } from "../../components/timetable/TimetableSession";
 import { SessionTheme } from "../../types/session";
 import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
 
 type Props = {
-    sessions: TimetableSessionType[];
-    loading: boolean;
-    sessionsData: Map<string, TimetableSessionProps>;
+    courseId: string;
+    termId: string;
 };
 
 export const SessionSettingsTimetableContainer: React.FC<Props> = ({
-    sessions,
-    loading,
-    sessionsData,
+    courseId,
+    termId,
 }) => {
     const { displayedDays } = useContext(TimetableSettingsContext);
     return (
-        <Loadable isLoading={loading}>
+        <Loadable isLoading={false}>
             <Timetable
-                sessions={sessions}
+                sessions={[]}
                 displayedDays={displayedDays}
                 renderDay={(dayProps, key) => (
                     <Day
@@ -41,24 +34,17 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                                 day={day}
                             />
                         )}
-                        renderSession={(
-                            sessionProps,
-                            key,
-                            moreProps: TimetableSessionProps
-                        ) => (
+                        renderSession={(sessionProps, key) => (
                             <TimetableSession
                                 {...sessionProps}
                                 key={key}
-                                {...moreProps}
+                                custom={(sessionId) => ({
+                                    allocation: [],
+                                    location: "",
+                                    theme: SessionTheme.PRIMARY,
+                                })}
                             />
                         )}
-                        getSessionProps={(sessionId) =>
-                            sessionsData.get(sessionId) || {
-                                allocation: [],
-                                location: "",
-                                theme: SessionTheme.PRIMARY,
-                            }
-                        }
                     />
                 )}
             />

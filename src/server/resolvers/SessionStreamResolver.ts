@@ -17,9 +17,10 @@ import { MyContext } from "../types/context";
 import { Models } from "../types/models";
 import { Request } from "express";
 import { CourseTermIdInput } from "./CourseTermId";
-import { Column } from "typeorm";
-import { IsNull } from "typeorm";
+import { Column, IsNull } from "typeorm";
+import isEqual from "lodash/isEqual";
 import min from "lodash/min";
+import uniqBy from "lodash/uniqBy";
 import { IsEnum, Max, Min, MinLength } from "class-validator";
 import { UniqueWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
@@ -31,6 +32,26 @@ import startOfISOWeek from "date-fns/startOfISOWeek";
 import differenceInWeeks from "date-fns/differenceInWeeks";
 import { dayToIsoNumber, timeStringToHours } from "../../utils/date";
 import { v4 as uuid } from "uuid";
+import sortBy from "lodash/sortBy";
+import differenceBy from "lodash/differenceBy";
+
+@InputType()
+export class AllocationPattern {
+    @Field(() => [Int])
+    weeks: number[];
+
+    @Field(() => [String])
+    allocation: string[];
+}
+
+@InputType()
+export class ChangeAllocationInput {
+    @Field()
+    streamId: string;
+
+    @Field(() => [AllocationPattern])
+    allocation: AllocationPattern[];
+}
 
 @InputType()
 export class MergedStreamTutorNumbers {
@@ -185,7 +206,7 @@ export class SessionStreamResolver {
                     weeks,
                     location,
                     numberOfStaff: numberOfStaff - minStaffNum,
-                    basedId: rootStream.id,
+                    rootId: rootStream.id,
                     allocatedUserIds: [],
                 });
             }
@@ -201,6 +222,7 @@ export class SessionStreamResolver {
         );
         return allStreams;
     }
+
     @Query(() => [SessionStream])
     async rootSessionStreams(
         @Arg("termId") termId: string,
@@ -220,7 +242,7 @@ export class SessionStreamResolver {
             {
                 where: {
                     timetableId: timetable.id,
-                    basedId: IsNull(),
+                    rootId: IsNull(),
                 },
             },
             req.user
@@ -250,7 +272,7 @@ export class SessionStreamResolver {
                 startTime: sessionStream.startTime,
                 endTime: sessionStream.endTime,
                 location: sessionStream.location,
-                based: sessionStream,
+                root: sessionStream,
             },
             req.user
         );
@@ -365,13 +387,111 @@ export class SessionStreamResolver {
                     weeks: relativeWeeks,
                     location: locations.length > 0 ? locations[0] : "",
                     numberOfStaff: 0,
-                    basedId: undefined,
+                    rootId: undefined,
                     timetableId: timetable.id,
                 });
                 generatedStreams.push(newStream);
             }
         }
         return generatedStreams;
+    }
+
+    @Mutation(() => [SessionStream])
+    async allocateUsers(
+        @Ctx() { req, models }: MyContext,
+        @Arg("changeAllocationInput", () => [ChangeAllocationInput])
+        allocationInput: ChangeAllocationInput[]
+    ): Promise<SessionStream[]> {
+        const user = req.user;
+        const { sessionStream: streamModel } = models;
+        const affectedStreamIds: string[] = [];
+        await asyncForEach(allocationInput, async (streamInput) => {
+            const rootStream = await streamModel.getById(
+                streamInput.streamId,
+                user
+            );
+            const secondaryStreams = await streamModel.getByIds(
+                rootStream.secondaryStreamIds,
+                user
+            );
+            const streams = [rootStream, ...secondaryStreams];
+            await asyncForEach(
+                streamInput.allocation,
+                async (allocationPattern) => {
+                    const relevantStream = streams.find((stream) =>
+                        isEqual(
+                            sortBy(stream.weeks),
+                            sortBy(allocationPattern.weeks)
+                        )
+                    );
+                    if (!relevantStream) {
+                        throw new Error(
+                            `Invalid week pattern: no session streams run in weeks ${allocationPattern.weeks.join(
+                                ", "
+                            )}`
+                        );
+                    }
+                    affectedStreamIds.push(relevantStream.id);
+                    const existingUsers = await models.user.getByIds(
+                        relevantStream.allocatedUserIds,
+                        user
+                    );
+                    const newUsers = await models.user.getByIds(
+                        allocationPattern.allocation,
+                        user
+                    );
+                    const removedUsers = differenceBy(
+                        existingUsers,
+                        newUsers,
+                        (user) => user.id
+                    );
+                    const addedUsers = differenceBy(
+                        newUsers,
+                        existingUsers,
+                        (user) => user.id
+                    );
+                    // Update stream allocation
+                    await streamModel.clearAllocation(relevantStream, user)
+                    await streamModel.allocateMultiple(
+                        relevantStream,
+                        newUsers,
+                        user
+                    );
+                    // Update related sessions allocation
+                    const relevantSessions = await models.session.getByIds(
+                        relevantStream.sessionIds,
+                        user
+                    );
+                    await asyncForEach(relevantSessions, async (session) => {
+                        const sessionAllocatedUsers =
+                            await models.user.getByIds(
+                                session.allocatedUserIds,
+                                user
+                            );
+                        const allocatedUsersAfterRemove = differenceBy(
+                            sessionAllocatedUsers,
+                            removedUsers,
+                            (user) => user.id
+                        );
+                        const allocatedUsersAfterAdd = [
+                            ...allocatedUsersAfterRemove,
+                            ...addedUsers,
+                        ];
+                        const finalAllocation = uniqBy(
+                            allocatedUsersAfterAdd,
+                            (user) => user.id
+                        );
+                        await models.session.clearAllocation(session, user);
+                        await models.session.allocateMultiple(
+                            session,
+                            finalAllocation,
+                            user
+                        );
+                    });
+                }
+            );
+        });
+        return await streamModel.getByIds(affectedStreamIds, user);
     }
 
     async generateSessions(
@@ -416,7 +536,7 @@ export class SessionStreamResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
         return await models.sessionStream.getByIds(
-            root.basedStreamIds,
+            root.secondaryStreamIds,
             req.user
         );
     }
@@ -426,10 +546,10 @@ export class SessionStreamResolver {
         @Root() root: SessionStream,
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream | null> {
-        if (!root.basedId) {
+        if (!root.rootId) {
             return null;
         }
-        return await models.sessionStream.getById(root.basedId, req.user);
+        return await models.sessionStream.getById(root.rootId, req.user);
     }
 
     @FieldResolver(() => [User])

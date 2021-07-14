@@ -15,7 +15,7 @@
 import { useEffect, useState } from "react";
 import { defaultStr } from "../constants";
 import { MergedStreamInput, useGetSessionStreamsLazyQuery } from "../generated/graphql";
-import { useLazyQueryWithError } from "./useQueryWithError";
+import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import { useTermCourse } from "./useTermCourse";
 import { useModificationMap } from "./useModificationMap";
 
@@ -35,7 +35,7 @@ export const useSessionSettings = () => {
         updateItem,
     } = useModificationMap<MergedStreamInput>();
     const [fetchStream, { data: getSessionStreamsData, loading }] =
-        useLazyQueryWithError(useGetSessionStreamsLazyQuery);
+        useLazyQueryWithError(useGetSessionStreamsLazyQuery, {});
     // Fetch one first time
     useEffect(() => {
         if (!courseId || !termId) {

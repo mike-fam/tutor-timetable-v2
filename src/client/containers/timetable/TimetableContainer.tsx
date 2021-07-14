@@ -44,7 +44,11 @@ export const TimetableContainer: React.FC<Props> = () => {
         { data: sessionStreamsData, loading: sessionStreamsLoading },
     ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {});
     useEffect(() => {
-        if (chosenWeek !== defaultInt) {
+        if (
+            chosenWeek !== defaultInt ||
+            chosenCourses.size === 0 ||
+            chosenTermId === defaultStr
+        ) {
             return;
         }
         getRootSessionStreams({

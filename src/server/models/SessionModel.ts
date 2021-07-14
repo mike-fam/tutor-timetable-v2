@@ -56,10 +56,10 @@ export class SessionModel extends BaseModel<Session> {
         if (!(await user.isCoordinatorOf(course, term))) {
             return { hasPerm: false };
         }
-        if (!isEmpty(omit(updatedFields, "location"))) {
+        if (!isEmpty(omit(updatedFields, ["location", "allocatedUserIds"]))) {
             return {
                 hasPerm: false,
-                errMsg: "You can only change the location of a session",
+                errMsg: "You can only change the location or the allocation of a session",
             };
         }
         return { hasPerm: true };

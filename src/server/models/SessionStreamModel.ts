@@ -84,8 +84,8 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
                 return { hasPerm: false };
             }
         }
-        if (stream.basedId) {
-            if (updatedFields.basedId === null) {
+        if (stream.rootId) {
+            if (updatedFields.rootId === null) {
                 return { hasPerm: true };
             }
             if (
