@@ -21,6 +21,11 @@ export type Allocation = {
   staff: Array<User>;
 };
 
+export type AllocationPattern = {
+  weeks: Array<Scalars['Int']>;
+  allocation: Array<Scalars['String']>;
+};
+
 export enum AllocationStatus {
   Optimal = 'Optimal',
   Infeasible = 'Infeasible'
@@ -39,6 +44,11 @@ export type AllocatorOutput = {
   detail: Scalars['String'];
   runtime: Scalars['Float'];
   allocations: Array<Allocation>;
+};
+
+export type ChangeAllocationInput = {
+  streamId: Scalars['String'];
+  allocation: Array<AllocationPattern>;
 };
 
 export type Course = {
@@ -140,6 +150,7 @@ export type Mutation = {
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
   addStreamStaff: SessionStream;
+  allocateUsers: Array<SessionStream>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -230,6 +241,11 @@ export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
+};
+
+
+export type MutationAllocateUsersArgs = {
+  changeAllocationInput: Array<ChangeAllocationInput>;
 };
 
 
