@@ -14,8 +14,8 @@ import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
 import { asyncForEach, asyncMap } from "../../utils/array";
-import { updateSessionAllocation } from "../../client/utils/session";
 import { In } from "typeorm";
+import { updateSessionAllocation } from "../utils/session";
 
 @InputType()
 export class AllocateSessionUserInput {
