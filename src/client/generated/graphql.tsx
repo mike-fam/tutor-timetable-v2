@@ -15,7 +15,7 @@ export type Scalars = {
   DateTime: string;
 };
 
-export type AllocateUserInput = {
+export type AllocateSessionUserInput = {
   rootSessionId: Scalars['String'];
   newAllocation: Array<Scalars['String']>;
 };
@@ -157,6 +157,7 @@ export type Mutation = {
   addStreamStaff: SessionStream;
   updateStreamAllocations: Array<SessionStream>;
   updateSessionAllocations: Array<Session>;
+  updateSession: Array<Session>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -256,7 +257,12 @@ export type MutationUpdateStreamAllocationsArgs = {
 
 
 export type MutationUpdateSessionAllocationsArgs = {
-  newAllocation: Array<AllocateUserInput>;
+  newAllocation: Array<AllocateSessionUserInput>;
+};
+
+
+export type MutationUpdateSessionArgs = {
+  updateSessionInput: Array<UpdateSessionInput>;
 };
 
 
@@ -525,7 +531,7 @@ export type SessionStream = {
   numberOfStaff: Scalars['Int'];
   timetable: Timetable;
   sessions: Array<Session>;
-  basedStreams: Array<SessionStream>;
+  secondaryStreams: Array<SessionStream>;
   based?: Maybe<SessionStream>;
   allocatedUsers: Array<User>;
 };
@@ -618,6 +624,11 @@ export type Timetable = {
 export type UpdateDetailsInputType = {
   email: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type UpdateSessionInput = {
+  id: Scalars['String'];
+  location: Scalars['String'];
 };
 
 export type User = {
@@ -1234,7 +1245,7 @@ export type GetRootSessionStreamsQuery = (
     & { allocatedUsers: Array<(
       { __typename?: 'User' }
       & Pick<User, 'name' | 'username'>
-    )>, basedStreams: Array<(
+    )>, secondaryStreams: Array<(
       { __typename?: 'SessionStream' }
       & Pick<SessionStream, 'weeks'>
       & { allocatedUsers: Array<(
@@ -1392,13 +1403,43 @@ export type GetSessionByIdQuery = (
 );
 
 export type UpdateSessionAllocationMutationVariables = Exact<{
-  newAllocation: Array<AllocateUserInput>;
+  newAllocation: Array<AllocateSessionUserInput>;
 }>;
 
 
 export type UpdateSessionAllocationMutation = (
   { __typename?: 'Mutation' }
   & { updateSessionAllocations: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'name'>
+    )> }
+  )> }
+);
+
+export type UpdateSessionMutationVariables = Exact<{
+  updateSessionInput: Array<UpdateSessionInput>;
+}>;
+
+
+export type UpdateSessionMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSession: Array<(
     { __typename?: 'Session' }
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
@@ -2716,7 +2757,7 @@ export const GetRootSessionStreamsDocument = gql`
       name
       username
     }
-    basedStreams {
+    secondaryStreams {
       weeks
       allocatedUsers {
         name
@@ -2978,7 +3019,7 @@ export type GetSessionByIdQueryHookResult = ReturnType<typeof useGetSessionByIdQ
 export type GetSessionByIdLazyQueryHookResult = ReturnType<typeof useGetSessionByIdLazyQuery>;
 export type GetSessionByIdQueryResult = Apollo.QueryResult<GetSessionByIdQuery, GetSessionByIdQueryVariables>;
 export const UpdateSessionAllocationDocument = gql`
-    mutation UpdateSessionAllocation($newAllocation: [AllocateUserInput!]!) {
+    mutation UpdateSessionAllocation($newAllocation: [AllocateSessionUserInput!]!) {
   updateSessionAllocations(newAllocation: $newAllocation) {
     id
     sessionStream {
@@ -3031,6 +3072,60 @@ export function useUpdateSessionAllocationMutation(baseOptions?: Apollo.Mutation
 export type UpdateSessionAllocationMutationHookResult = ReturnType<typeof useUpdateSessionAllocationMutation>;
 export type UpdateSessionAllocationMutationResult = Apollo.MutationResult<UpdateSessionAllocationMutation>;
 export type UpdateSessionAllocationMutationOptions = Apollo.BaseMutationOptions<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>;
+export const UpdateSessionDocument = gql`
+    mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
+  updateSession(updateSessionInput: $updateSessionInput) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      username
+      name
+    }
+  }
+}
+    `;
+export type UpdateSessionMutationFn = Apollo.MutationFunction<UpdateSessionMutation, UpdateSessionMutationVariables>;
+
+/**
+ * __useUpdateSessionMutation__
+ *
+ * To run a mutation, you first call `useUpdateSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSessionMutation, { data, loading, error }] = useUpdateSessionMutation({
+ *   variables: {
+ *      updateSessionInput: // value for 'updateSessionInput'
+ *   },
+ * });
+ */
+export function useUpdateSessionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionMutation, UpdateSessionMutationVariables>) {
+        return Apollo.useMutation<UpdateSessionMutation, UpdateSessionMutationVariables>(UpdateSessionDocument, baseOptions);
+      }
+export type UpdateSessionMutationHookResult = ReturnType<typeof useUpdateSessionMutation>;
+export type UpdateSessionMutationResult = Apollo.MutationResult<UpdateSessionMutation>;
+export type UpdateSessionMutationOptions = Apollo.BaseMutationOptions<UpdateSessionMutation, UpdateSessionMutationVariables>;
 export const NotificationsDocument = gql`
     subscription Notifications($key: String!) {
   notifications(key: $key) {

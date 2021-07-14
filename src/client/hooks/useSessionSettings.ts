@@ -14,7 +14,7 @@
 //  States: Unchanged, updated, deleted, created, remove_modified sessions
 import { useEffect, useState } from "react";
 import { defaultStr } from "../constants";
-import { MergedStreamInput, useGetSessionStreamsLazyQuery } from "../generated/graphql";
+import { MergedStreamInput, UpdateSessionInput, useGetSessionStreamsLazyQuery } from "../generated/graphql";
 import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import { useTermCourse } from "./useTermCourse";
 import { useModificationMap } from "./useModificationMap";
@@ -34,6 +34,19 @@ export const useSessionSettings = () => {
         restoreItem: restoreStreams,
         updateItem: updateStreams,
     } = useModificationMap<MergedStreamInput>();
+    const {
+        unchanged: unchangedSessions,
+        created: createdSessions,
+        deleted: deletedSessions,
+        modified: modifiedSessions,
+        deleteModified: deleteModifiedSessions,
+        createItem: createSession,
+        deleteItem: deleteSession,
+        clearItems: clearSessions,
+        resetItems: resetSessions,
+        restoreItem: restoreSessions,
+        updateItem: updateSessions,
+    } = useModificationMap<UpdateSessionInput>();
     const [fetchStream, { data: getSessionStreamsData, loading }] =
         useLazyQueryWithError(useGetSessionStreamsLazyQuery, {});
     // Fetch one first time

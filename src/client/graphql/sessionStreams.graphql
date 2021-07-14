@@ -30,7 +30,7 @@ query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
             name
             username
         }
-        basedStreams {
+        secondaryStreams {
             weeks
             allocatedUsers {
                 name

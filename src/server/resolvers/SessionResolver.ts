@@ -13,18 +13,26 @@ import {
 import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
-import { asyncForEach } from "../../utils/array";
-import differenceBy from "lodash/differenceBy";
-import intersectionBy from "lodash/intersectionBy";
+import { asyncForEach, asyncMap } from "../../utils/array";
 import { updateSessionAllocation } from "../../client/utils/session";
+import { In } from "typeorm";
 
 @InputType()
-export class AllocateUserInput {
+export class AllocateSessionUserInput {
     @Field()
     rootSessionId: string;
 
     @Field(() => [String])
     newAllocation: string[];
+}
+
+@InputType()
+export class UpdateSessionInput {
+    @Field()
+    id: string;
+
+    @Field()
+    location: string;
 }
 
 @Resolver(() => Session)
@@ -184,8 +192,8 @@ export class SessionResolver {
 
     @Mutation(() => [Session])
     async updateSessionAllocations(
-        @Arg("newAllocation", () => [AllocateUserInput])
-        allocateUserInput: AllocateUserInput[],
+        @Arg("newAllocation", () => [AllocateSessionUserInput])
+        allocateUserInput: AllocateSessionUserInput[],
         @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
         const { user } = req;
@@ -205,6 +213,39 @@ export class SessionResolver {
             returnValue.push(updatedSessions);
         });
         return returnValue;
+    }
+
+    @Mutation(() => [Session])
+    async updateSession(
+        @Arg("updateSessionInput", () => [UpdateSessionInput])
+        updatedSessions: UpdateSessionInput[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const user = req.user;
+        return await asyncMap(
+            updatedSessions,
+            async ({ id, ...sessionInput }) => {
+                const { location } = sessionInput;
+                return await models.session.update({ id }, { location }, user);
+            }
+        );
+    }
+
+    @Mutation(() => [String])
+    async deleteSessions(
+        @Arg("sessionIds", () => [String])
+        sessionIds: string[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<string[]> {
+        await models.session.deleteMany(
+            {
+                where: {
+                    id: In(sessionIds),
+                },
+            },
+            req.user
+        );
+        return sessionIds;
     }
 
     @Query(() => Session)
