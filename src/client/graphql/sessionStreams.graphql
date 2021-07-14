@@ -70,3 +70,40 @@ query StreamsFromPublicTimetable(
         }
     }
 }
+
+mutation UpdateStreamAllocations($changeAllocationInput: [ChangeStreamAllocationInput!]!) {
+    updateStreamAllocations(
+        changeAllocationInput: $changeAllocationInput
+    ) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        location
+        numberOfStaff
+        weeks
+        allocatedUsers {
+            name
+            username
+        }
+        secondaryStreams {
+            weeks
+            allocatedUsers {
+                name
+                username
+            }
+        }
+        timetable {
+            course {
+                id
+                code
+            }
+            term {
+                id
+                weekNames
+            }
+        }
+    }
+}

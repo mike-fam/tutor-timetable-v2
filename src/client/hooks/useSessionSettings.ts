@@ -13,6 +13,7 @@
 // TODO: This should store:
 //  States: Unchanged, updated, deleted, created, remove_modified sessions
 import { useEffect, useState } from "react";
+import { List } from "immutable";
 import { defaultStr } from "../constants";
 import {
     MergedStreamInput,
@@ -25,6 +26,9 @@ import { useModificationMap } from "./useModificationMap";
 
 export const useSessionSettings = () => {
     const { courseId, termId, changeCourse, changeTerm } = useTermCourse();
+    const [selectedStreams, setSelectedStreams] = useState<List<string>>(
+        List<string>()
+    );
     const {
         unchanged: unchangedStreams,
         created: createdStreams,
@@ -33,6 +37,7 @@ export const useSessionSettings = () => {
         deleteModified: deleteModifiedStreams,
         createItem: createStream,
         deleteItem: deleteStream,
+        permDeleteItems: permDeleteStreams,
         clearItems: clearStreams,
         resetItems: resetStreams,
         restoreItem: restoreStreams,
@@ -46,6 +51,7 @@ export const useSessionSettings = () => {
         deleteModified: deleteModifiedSessions,
         createItem: createSession,
         deleteItem: deleteSession,
+        permDeleteItems: permDeleteSessions,
         clearItems: clearSessions,
         resetItems: resetSessions,
         restoreItem: restoreSessions,

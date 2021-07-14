@@ -30,6 +30,12 @@ export const useModificationMap = <T>() => {
         [unchanged, modified, created]
     );
 
+    const permDeleteItems = useCallback((ids: string[]) => {
+        ids.forEach((id) => {
+            setUnchanged((prev) => prev.remove(id));
+        });
+    }, []);
+
     const restoreItem = useCallback(
         (id: string) => {
             if (deleted.has(id)) {
@@ -87,6 +93,7 @@ export const useModificationMap = <T>() => {
         deleteModified,
         created,
         deleteItem,
+        permDeleteItems,
         restoreItem,
         createItem,
         updateItem,
