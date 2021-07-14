@@ -296,7 +296,6 @@ export class SessionModel extends BaseModel<Session> {
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
-        // console.log(allocatedUserIds, staff);
         for (const staffMember of staff) {
             if (!allocatedUserIds.includes(staffMember.id)) {
                 throw new Error(
@@ -308,7 +307,7 @@ export class SessionModel extends BaseModel<Session> {
             await session.deallocate(...staff);
             return;
         }
-        throw new Error(PERM_ERR)
+        throw new Error(PERM_ERR);
     }
 
     /**

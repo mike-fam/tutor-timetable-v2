@@ -85,8 +85,13 @@ export const getAvailabilityStatus = (
     return SessionAvailabilityStatus.UNDERTERMINED;
 };
 
-export const updateSessionAllocation = async (models: Models, rootSession: Session, newAllocationIds: string[], user: User): Promise<Session> => {
-    const {session: sessionModel, sessionStream: streamModel} = models
+export const updateSessionAllocation = async (
+    models: Models,
+    rootSession: Session,
+    newAllocationIds: string[],
+    user: User
+): Promise<Session> => {
+    const { session: sessionModel, sessionStream: streamModel } = models;
     const rootStream = await streamModel.getById(
         rootSession.sessionStreamId,
         user
@@ -122,24 +127,14 @@ export const updateSessionAllocation = async (models: Models, rootSession: Sessi
         relevantSessionIds,
         user
     );
-    const existingUsers = await models.user.getByIds(
-        existingUserIds,
-        user
-    );
-    const newUsers = await models.user.getByIds(
-        newAllocationIds,
-        user
-    );
+    const existingUsers = await models.user.getByIds(existingUserIds, user);
+    const newUsers = await models.user.getByIds(newAllocationIds, user);
     const removedUsers = differenceBy(
         existingUsers,
         newUsers,
         (user) => user.id
     );
-    const addedUsers = differenceBy(
-        newUsers,
-        existingUsers,
-        (user) => user.id
-    );
+    const addedUsers = differenceBy(newUsers, existingUsers, (user) => user.id);
     await asyncForEach(relevantSessions, async (session) => {
         const allocatedUsers = await models.user.getByIds(
             session.allocatedUserIds,
@@ -166,8 +161,7 @@ export const updateSessionAllocation = async (models: Models, rootSession: Sessi
         );
         const usersAddedToSession = addedUsers.splice(
             0,
-            stream.numberOfStaff -
-            updatedSession.allocatedUserIds.length
+            stream.numberOfStaff - updatedSession.allocatedUserIds.length
         );
         await sessionModel.allocateMultiple(
             updatedSession,
@@ -186,20 +180,14 @@ export const updateSessionAllocation = async (models: Models, rootSession: Sessi
     updatedSession.preferredSwapRequestIds = [
         ...rootSession.preferredSwapRequestIds,
         ...secondarySessions.reduce<string[]>(
-            (arr, session) => [
-                ...arr,
-                ...session.preferredSwapRequestIds,
-            ],
+            (arr, session) => [...arr, ...session.preferredSwapRequestIds],
             []
         ),
     ];
     updatedSession.preferredSwapOfferIds = [
         ...rootSession.preferredSwapOfferIds,
         ...secondarySessions.reduce<string[]>(
-            (arr, session) => [
-                ...arr,
-                ...session.preferredSwapOfferIds,
-            ],
+            (arr, session) => [...arr, ...session.preferredSwapOfferIds],
             []
         ),
     ];
@@ -210,5 +198,5 @@ export const updateSessionAllocation = async (models: Models, rootSession: Sessi
             []
         ),
     ];
-    return updatedSession
-}
+    return updatedSession;
+};

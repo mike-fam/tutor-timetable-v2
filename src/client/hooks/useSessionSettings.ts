@@ -14,7 +14,11 @@
 //  States: Unchanged, updated, deleted, created, remove_modified sessions
 import { useEffect, useState } from "react";
 import { defaultStr } from "../constants";
-import { MergedStreamInput, UpdateSessionInput, useGetSessionStreamsLazyQuery } from "../generated/graphql";
+import {
+    MergedStreamInput,
+    UpdateSessionInput,
+    useGetSessionStreamsLazyQuery,
+} from "../generated/graphql";
 import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import { useTermCourse } from "./useTermCourse";
 import { useModificationMap } from "./useModificationMap";
@@ -62,17 +66,22 @@ export const useSessionSettings = () => {
         if (!getSessionStreamsData) {
             return;
         }
-        resetStreams(getSessionStreamsData.sessionStreams.map(stream => ([stream.id, {
-            courseId,
-            termId,
-            name: stream.name,
-            type: stream.type,
-            day: stream.day,
-            startTime: stream.startTime,
-            endTime: stream.endTime,
-            location: stream.location,
-            numberOfTutorsForWeeks: [] // TODO: change
-        }])))
+        resetStreams(
+            getSessionStreamsData.sessionStreams.map((stream) => [
+                stream.id,
+                {
+                    courseId,
+                    termId,
+                    name: stream.name,
+                    type: stream.type,
+                    day: stream.day,
+                    startTime: stream.startTime,
+                    endTime: stream.endTime,
+                    location: stream.location,
+                    numberOfTutorsForWeeks: [], // TODO: change
+                },
+            ])
+        );
     }, [getSessionStreamsData, courseId, termId, resetStreams]);
     // TODO: Implement week cache
     // Save it to state

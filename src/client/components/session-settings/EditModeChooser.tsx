@@ -1,5 +1,5 @@
 import { HStack, Tab, TabList, Tabs, Text } from "@chakra-ui/react";
-import React, { FC} from "react";
+import React, { FC } from "react";
 import { EditMode } from "../../types/session-settings";
 
 type Props = {

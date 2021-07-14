@@ -322,7 +322,7 @@ export class SessionStreamResolver {
                     models,
                     user,
                     loaders,
-                    existingStream.id,
+                    existingStream.id
                 );
                 if (createdStream) {
                     updatedStreams.push(createdStream);
@@ -627,7 +627,7 @@ export class SessionStreamResolver {
             allStreams,
             async (stream) => await this.generateSessions(stream, user, models)
         );
-        loaders.sessionStream.clear(rootStream.id)
+        loaders.sessionStream.clear(rootStream.id);
         return await models.sessionStream.getById(rootStream.id, user);
     }
 

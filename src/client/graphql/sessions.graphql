@@ -107,9 +107,7 @@ query GetSessionById($sessionId: String!) {
 }
 
 mutation UpdateSessionAllocation($newAllocation: [AllocateSessionUserInput!]!) {
-    updateSessionAllocations(
-        newAllocation: $newAllocation
-    ) {
+    updateSessionAllocations(newAllocation: $newAllocation) {
         id
         sessionStream {
             id
@@ -137,9 +135,7 @@ mutation UpdateSessionAllocation($newAllocation: [AllocateSessionUserInput!]!) {
 }
 
 mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
-    updateSession(
-        updateSessionInput: $updateSessionInput
-    ) {
+    updateSession(updateSessionInput: $updateSessionInput) {
         id
         sessionStream {
             id

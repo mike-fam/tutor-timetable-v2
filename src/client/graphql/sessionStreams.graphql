@@ -50,14 +50,11 @@ query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
     }
 }
 
-query StreamsFromPublicTimetable (
-    $courseTerm: CourseTermIdInput!,
-    $sessionTypes: [SessionType!]!)
-{
-    fromPublicTimetable(
-        courseTerm: $courseTerm
-        sessionTypes: $sessionTypes
-    ) {
+query StreamsFromPublicTimetable(
+    $courseTerm: CourseTermIdInput!
+    $sessionTypes: [SessionType!]!
+) {
+    fromPublicTimetable(courseTerm: $courseTerm, sessionTypes: $sessionTypes) {
         id
         name
         type
@@ -72,5 +69,4 @@ query StreamsFromPublicTimetable (
             }
         }
     }
-
 }

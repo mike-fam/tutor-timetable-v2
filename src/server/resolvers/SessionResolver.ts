@@ -237,13 +237,35 @@ export class SessionResolver {
         sessionIds: string[],
         @Ctx() { req, models }: MyContext
     ): Promise<string[]> {
+        const { user } = req;
+        const sessionsToDelete: string[] = [];
+        const rootSessions = await models.session.getByIds(sessionIds, user);
+        await asyncForEach(rootSessions, async (rootSession) => {
+            const rootStream = await models.sessionStream.getById(
+                rootSession.sessionStreamId,
+                user
+            );
+            const secondarySessions = await models.session.getMany(
+                {
+                    where: rootStream.secondaryStreamIds.map((streamId) => ({
+                        sessionStreamId: streamId,
+                        week: rootSession.week,
+                    })),
+                },
+                user
+            );
+            sessionsToDelete.push(
+                rootSession.id,
+                ...secondarySessions.map((session) => session.id)
+            );
+        });
         await models.session.deleteMany(
             {
                 where: {
-                    id: In(sessionIds),
+                    id: In(sessionsToDelete),
                 },
             },
-            req.user
+            user
         );
         return sessionIds;
     }

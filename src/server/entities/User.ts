@@ -83,7 +83,7 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => Session, (session) => session.allocatedUsers, {
         lazy: true,
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
     })
     @JoinTable()
     allocatedSessions: Promise<Session[]>;
@@ -93,7 +93,7 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => SessionStream, (stream) => stream.allocatedUsers, {
         lazy: true,
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
     })
     @JoinTable()
     allocatedStreams: Promise<SessionStream[]>;

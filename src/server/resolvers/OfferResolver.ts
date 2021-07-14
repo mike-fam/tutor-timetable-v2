@@ -251,8 +251,16 @@ export class OfferResolver {
         toDeallocate: User,
         performer: User
     ): Promise<void> {
-        await sessionModel.allocateSingleFromOffer(session, toAllocate, performer);
-        await sessionModel.deallocateSingleFromOffer(session, toDeallocate, performer);
+        await sessionModel.allocateSingleFromOffer(
+            session,
+            toAllocate,
+            performer
+        );
+        await sessionModel.deallocateSingleFromOffer(
+            session,
+            toDeallocate,
+            performer
+        );
     }
 
     private static async performStreamSwap(
@@ -262,8 +270,16 @@ export class OfferResolver {
         toDeallocate: User,
         performer: User
     ): Promise<void> {
-        await streamModel.allocateSingleFromOffer(session, toAllocate, performer);
-        await streamModel.deallocateSingleFromOffer(session, toDeallocate, performer);
+        await streamModel.allocateSingleFromOffer(
+            session,
+            toAllocate,
+            performer
+        );
+        await streamModel.deallocateSingleFromOffer(
+            session,
+            toDeallocate,
+            performer
+        );
     }
 
     @FieldResolver(() => StaffRequest)
