@@ -12,23 +12,34 @@
 //  Store previous states for undo
 // TODO: This should store:
 //  States: Unchanged, updated, deleted, created, remove_modified sessions
-import { useEffect, useState } from "react";
-import { List } from "immutable";
+import { useCallback, useEffect, useState } from "react";
+import { Set } from "immutable";
 import { defaultStr } from "../constants";
 import {
     MergedStreamInput,
+    SessionType,
+    StreamInput,
     UpdateSessionInput,
     useGetSessionStreamsLazyQuery,
+    useStreamsFromPublicTimetableLazyQuery,
 } from "../generated/graphql";
 import { useLazyQueryWithError } from "./useApolloHooksWithError";
 import { useTermCourse } from "./useTermCourse";
 import { useModificationMap } from "./useModificationMap";
+import { useMultiSelection } from "./useMultiSelection";
 
 export const useSessionSettings = () => {
     const { courseId, termId, changeCourse, changeTerm } = useTermCourse();
-    const [selectedStreams, setSelectedStreams] = useState<List<string>>(
-        List<string>()
-    );
+    const {
+        selected: selectedStreams,
+        select: selectStreams,
+        deselect: deselectStreams,
+    } = useMultiSelection<string>();
+    const {
+        selected: selectedSessions,
+        select: selectSessions,
+        deselect: deselectSessions,
+    } = useMultiSelection<string>();
     const {
         unchanged: unchangedStreams,
         created: createdStreams,
@@ -42,7 +53,7 @@ export const useSessionSettings = () => {
         resetItems: resetStreams,
         restoreItem: restoreStreams,
         updateItem: updateStreams,
-    } = useModificationMap<MergedStreamInput>();
+    } = useModificationMap<StreamInput>();
     const {
         unchanged: unchangedSessions,
         created: createdSessions,
@@ -57,6 +68,8 @@ export const useSessionSettings = () => {
         restoreItem: restoreSessions,
         updateItem: updateSessions,
     } = useModificationMap<UpdateSessionInput>();
+
+    // Handle fetching streams
     const [fetchStream, { data: getSessionStreamsData, loading }] =
         useLazyQueryWithError(useGetSessionStreamsLazyQuery, {});
     // Fetch one first time
@@ -89,6 +102,73 @@ export const useSessionSettings = () => {
             ])
         );
     }, [getSessionStreamsData, courseId, termId, resetStreams]);
+
+    // Handle editing streams
+    const editStreams = useCallback(
+        (newStreamState: MergedStreamInput) => {
+            selectedStreams.forEach((streamId) =>
+                updateStreams(streamId, newStreamState)
+            );
+        },
+        [selectedStreams, updateStreams]
+    );
+
+    // Handle fetching from public timetable
+    const [
+        fetchFromPublicTimetable,
+        { data: publicTimetableData, loading: publicTimetableLoading },
+    ] = useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
+
+    const fromPublicTimetable = useCallback(
+        (sessionTypes: SessionType[]) => {
+            if (courseId === defaultStr || termId === defaultStr) {
+                return;
+            }
+            fetchFromPublicTimetable({
+                variables: {
+                    courseTerm: {
+                        courseId,
+                        termId,
+                    },
+                    sessionTypes,
+                },
+            });
+        },
+        [courseId, termId, fetchFromPublicTimetable]
+    );
+
+    useEffect(() => {
+        if (!publicTimetableData) {
+            return;
+        }
+        publicTimetableData.fromPublicTimetable.forEach((stream) => {
+            const { name, type, day, startTime, endTime, weeks, location } =
+                stream;
+            createStream({
+                name,
+                type,
+                day,
+                startTime,
+                endTime,
+                location,
+                numberOfTutorsForWeeks: weeks.map((week) => ({
+                    week,
+                    numberOfTutors: 1,
+                })),
+            });
+        });
+    }, [publicTimetableData, createStream]);
+
+    // Handle editing sessions
+    const editSession = useCallback(
+        (updatedFields: Omit<UpdateSessionInput, "id">) => {
+            selectedSessions.forEach((sessionId) => {
+                updateSessions(sessionId, { id: sessionId, ...updatedFields });
+            });
+        },
+        [selectedSessions, updateSessions]
+    );
+
     // TODO: Implement week cache
     // Save it to state
     // Allow user to modify

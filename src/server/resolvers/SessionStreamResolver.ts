@@ -68,7 +68,7 @@ export class StreamTutorNumbersPattern {
     numberOfTutors: number;
 }
 
-@InputType()
+@InputType("StreamInput")
 export class StreamInput {
     @Field()
     @MinLength(1)

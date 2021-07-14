@@ -574,6 +574,16 @@ export type StreamAllocationPattern = {
   allocation: Array<Scalars['String']>;
 };
 
+export type StreamInput = {
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  numberOfTutorsForWeeks: Array<StreamTutorNumbersPattern>;
+};
+
 export type StreamTutorNumbersPattern = {
   week: Scalars['Int'];
   numberOfTutors: Scalars['Int'];
