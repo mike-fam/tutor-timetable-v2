@@ -3,17 +3,39 @@ import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
-import { Button, Heading, HStack, Stack } from "@chakra-ui/react";
+import {
+    Button,
+    Heading,
+    HStack,
+    Stack,
+    useDisclosure,
+} from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
 import { EditMode } from "../../types/session-settings";
 import { defaultStr } from "../../constants";
 import { EditModeChooser } from "../../components/session-settings/EditModeChooser";
+import { WeekNav } from "../../components/WeekNav";
+import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
 
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
-    const { base } = useSessionSettings();
-    const { courseId, termId, changeCourse, changeTerm } = base;
+    const { base, loading, timetableState, actions } = useSessionSettings();
+    const {
+        courseId,
+        termId,
+        changeCourse,
+        changeTerm,
+        chooseWeek,
+        week,
+        course,
+        term,
+    } = base;
+    const {
+        isOpen: isFetchModalOpen,
+        onClose: closeFetchModal,
+        onOpen: openFetchModal,
+    } = useDisclosure();
     const [editMode, setEditMode] = useState<EditMode>(EditMode.SETTINGS);
     return (
         <Wrapper>
@@ -42,19 +64,38 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                                     Generate Allocation
                                 </Button>
                             ) : (
-                                <Button ml="auto" colorScheme="green">
+                                <Button
+                                    ml="auto"
+                                    colorScheme="green"
+                                    onClick={openFetchModal}
+                                >
                                     Fetch from Public Timetable
                                 </Button>
                             )}
                             <Button colorScheme="blue">Apply changes</Button>
                         </HStack>
                         <SessionSettingsTimetableContainer
-                            courseId={courseId}
-                            termId={termId}
+                            loading={loading}
+                            timetableState={timetableState}
+                            timetableActions={actions}
+                            week={week}
+                        />
+                        <WeekNav
+                            chooseWeek={chooseWeek}
+                            chosenWeek={week}
+                            weekNames={term?.weekNames || []}
+                            weeksNum={term?.numberOfWeeks || 0}
                         />
                     </>
                 )}
             </Stack>
+            <FetchFromTimetableModal
+                fetchFromTimetable={actions.getStreamsFromPublicTimetable}
+                isOpen={isFetchModalOpen}
+                onClose={closeFetchModal}
+                course={course}
+                term={term}
+            />
         </Wrapper>
     );
 };

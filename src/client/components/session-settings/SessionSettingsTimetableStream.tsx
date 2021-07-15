@@ -1,11 +1,10 @@
-import React, { useMemo} from "react";
-import { Props as SessionProps, Session } from "./Session";
-import { PopoverSession } from "./PopoverSession";
+import React, { FC, useMemo } from "react";
+import { ClickableSession, Props as ClickableSessionProps } from "../timetable/ClickableSession";
 import { SessionTheme } from "../../types/session";
-import { TimetableStreamPopover } from "./TimetableStreamPopover";
+import { PopoverSession } from "../timetable/PopoverSession";
+import { TimetableStreamPopover } from "../timetable/TimetableStreamPopover";
 
-// weeks[], allocatedTutors[]
-export type StreamCustomSessionProps = {
+type StreamSettingsCustomSessionProps = {
     courseCode: string;
     baseAllocation: [number[], string[]];
     customAllocation: Array<[number[], string[]]>;
@@ -14,9 +13,9 @@ export type StreamCustomSessionProps = {
     theme?: SessionTheme;
 };
 
-type Props = SessionProps<StreamCustomSessionProps>;
+type Props = ClickableSessionProps<StreamSettingsCustomSessionProps>;
 
-export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
+export const SessionSettingsTimetableStream: FC<Props> = (props) => {
     const { custom, id, name } = props;
     const {
         customAllocation,
@@ -28,9 +27,9 @@ export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
     return (
         <PopoverSession
             sessionComponent={
-                <Session {...props} p={1}>
+                <ClickableSession {...props} p={1}>
                     {name}
-                </Session>
+                </ClickableSession>
             }
             popoverContent={
                 <TimetableStreamPopover

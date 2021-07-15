@@ -53,8 +53,11 @@ type SessionAllocationFields = Omit<
     "rootSessionId"
 >;
 
+export type SessionSettingsUtils = ReturnType<typeof useSessionSettings>;
+
 export const useSessionSettings = () => {
-    const { courseId, termId, changeCourse, changeTerm } = useTermCourse();
+    const { courseId, termId, changeCourse, changeTerm, course, term } =
+        useTermCourse();
     const [week, chooseWeek] = useState(defaultInt);
     const {
         selected: selectedStreams,
@@ -191,23 +194,13 @@ export const useSessionSettings = () => {
         if (!getSessionsData) {
             return;
         }
-        resetSessions(
-            getSessionsData.mergedSessions.map((session) => [
-                session.id,
-                { location: session.location },
-            ])
-        );
-        resetSessionAllocation(
-            getSessionsData.mergedSessions.map((session) => [
-                session.id,
-                {
-                    newAllocation: session.allocatedUsers.map(
-                        (user) => user.id
-                    ),
-                },
-            ])
-        );
-    }, [getSessionsData, resetSessions, resetSessionAllocation]);
+        getSessionsData.mergedSessions.forEach((session) => {
+            commitSession(session.id, { location: session.location });
+            commitSessionAllocations(session.id, {
+                newAllocation: session.allocatedUsers.map((user) => user.id),
+            });
+        });
+    }, [getSessionsData, commitSession, commitSessionAllocations]);
 
     // Handle editing streams
     const editMultipleStreams = useCallback(
@@ -576,6 +569,8 @@ export const useSessionSettings = () => {
             changeTerm,
             week,
             chooseWeek,
+            course,
+            term,
         },
         loading:
             streamsLoading ||

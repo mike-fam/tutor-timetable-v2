@@ -1,17 +1,10 @@
 import React, { useMemo } from "react";
 import { SessionTheme } from "../../types/session";
-import { Props as SessionProps, Session } from "./Session";
-import { PopoverSession } from "./PopoverSession";
-import {
-    Box,
-    ListItem,
-    PopoverArrow,
-    PopoverBody,
-    PopoverHeader,
-    Text,
-    UnorderedList,
-} from "@chakra-ui/react";
-import { TimetableSessionPopover } from "./TimetableSessionPopover";
+import { Props as SessionProps } from "../timetable/Session";
+import { PopoverSession } from "../timetable/PopoverSession";
+import { Box, } from "@chakra-ui/react";
+import { TimetableSessionPopover } from "../timetable/TimetableSessionPopover";
+import { ClickableSession, Props as ClickableSessionProps } from "../timetable/ClickableSession";
 
 export type TimetableCustomSessionProps = {
     allocation: string[];
@@ -20,9 +13,9 @@ export type TimetableCustomSessionProps = {
     theme?: SessionTheme;
 };
 
-export type Props = SessionProps<TimetableCustomSessionProps>;
+export type Props = ClickableSessionProps<TimetableCustomSessionProps>;
 
-export const TimetableSession2: React.FC<Props> = (props) => {
+export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
     const { custom, id, name } = props;
     const { allocation, location, courseCode } = useMemo(
         () => custom(id),
@@ -31,9 +24,9 @@ export const TimetableSession2: React.FC<Props> = (props) => {
     return (
         <PopoverSession
             sessionComponent={
-                <Session {...props}>
+                <ClickableSession {...props}>
                     <Box p={1}>{name}</Box>
-                </Session>
+                </ClickableSession>
             }
             popoverContent={
                 <TimetableSessionPopover
