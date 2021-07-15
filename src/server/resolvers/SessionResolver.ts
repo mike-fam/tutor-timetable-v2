@@ -18,7 +18,7 @@ import { In } from "typeorm";
 import { updateSessionAllocation } from "../utils/session";
 
 @InputType()
-export class AllocateSessionUserInput {
+export class UpdateSessionAllocationInput {
     @Field()
     rootSessionId: string;
 
@@ -192,8 +192,8 @@ export class SessionResolver {
 
     @Mutation(() => [Session])
     async updateSessionAllocations(
-        @Arg("newAllocation", () => [AllocateSessionUserInput])
-        allocateUserInput: AllocateSessionUserInput[],
+        @Arg("newAllocation", () => [UpdateSessionAllocationInput])
+        allocateUserInput: UpdateSessionAllocationInput[],
         @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
         const { user } = req;

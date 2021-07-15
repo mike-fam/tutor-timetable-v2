@@ -2,7 +2,6 @@ import {
     Check,
     Column,
     Entity,
-    JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,

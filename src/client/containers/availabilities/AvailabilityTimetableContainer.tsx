@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
-import { Props as SessionProps } from "../../components/timetable/Session";
 import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { AvailabilityContext } from "../../utils/availability";

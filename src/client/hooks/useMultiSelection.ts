@@ -9,9 +9,13 @@ export const useMultiSelection = <T>() => {
     const deselect = useCallback((elem: T) => {
         setSelectedElems((prev) => prev.remove(elem));
     }, []);
+    const deselectAll = useCallback(() => {
+        setSelectedElems((prev) => prev.clear());
+    }, []);
     return {
         selected,
         select,
         deselect,
+        deselectAll,
     };
 };

@@ -3,31 +3,18 @@ import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
-import {
-    Button,
-    Heading,
-    HStack,
-    Stack,
-    Tab,
-    TabList,
-    Tabs,
-    Text,
-} from "@chakra-ui/react";
+import { Button, Heading, HStack, Stack } from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
 import { EditMode } from "../../types/session-settings";
 import { defaultStr } from "../../constants";
 import { EditModeChooser } from "../../components/session-settings/EditModeChooser";
-import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
-import { useStreamsFromPublicTimetableLazyQuery } from "../../generated/graphql";
 
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
-    const { courseId, termId, changeCourse, changeTerm } = useSessionSettings();
+    const { base } = useSessionSettings();
+    const { courseId, termId, changeCourse, changeTerm } = base;
     const [editMode, setEditMode] = useState<EditMode>(EditMode.SETTINGS);
-    const [fetchFromPublicTimetable, { data: publicTimetableData }] =
-        useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
-
     return (
         <Wrapper>
             <Stack spacing={4}>

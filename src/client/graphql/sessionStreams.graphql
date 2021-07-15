@@ -27,12 +27,15 @@ query GetRootSessionStreams($termId: String!, $courseIds: [String!]!) {
         numberOfStaff
         weeks
         allocatedUsers {
+            id
             name
             username
         }
         secondaryStreams {
             weeks
+            numberOfStaff
             allocatedUsers {
+                id
                 name
                 username
             }
@@ -85,12 +88,15 @@ mutation UpdateStreamAllocations($changeAllocationInput: [ChangeStreamAllocation
         numberOfStaff
         weeks
         allocatedUsers {
+            id
             name
             username
         }
         secondaryStreams {
             weeks
+            numberOfStaff
             allocatedUsers {
+                id
                 name
                 username
             }
@@ -106,4 +112,86 @@ mutation UpdateStreamAllocations($changeAllocationInput: [ChangeStreamAllocation
             }
         }
     }
+}
+
+mutation UpdateSessionStreams($updateStreamInput: [UpdateStreamInput!]!) {
+    updateSessionStreams(updateStreamInput: $updateStreamInput) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        location
+        numberOfStaff
+        weeks
+        allocatedUsers {
+            id
+            name
+            username
+        }
+        secondaryStreams {
+            weeks
+            numberOfStaff
+            allocatedUsers {
+                id
+                name
+                username
+            }
+        }
+        timetable {
+            course {
+                id
+                code
+            }
+            term {
+                id
+                weekNames
+            }
+        }
+    }
+}
+
+mutation AddMergedSessionStreams($sessionStreams: [MergedStreamInput!]!) {
+    addMergedSessionStreams (
+        sessionStreams: $sessionStreams
+    ) {
+        id
+        type
+        name
+        startTime
+        endTime
+        day
+        location
+        numberOfStaff
+        weeks
+        allocatedUsers {
+            id
+            name
+            username
+        }
+        secondaryStreams {
+            weeks
+            numberOfStaff
+            allocatedUsers {
+                id
+                name
+                username
+            }
+        }
+        timetable {
+            course {
+                id
+                code
+            }
+            term {
+                id
+                weekNames
+            }
+        }
+    }
+}
+
+mutation DeleteSessionStreams($streamIds: [String!]!) {
+    deleteSessionStreams(streamIds: $streamIds)
 }
