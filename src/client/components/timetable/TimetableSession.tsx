@@ -26,8 +26,8 @@ export const TimetableSession: React.FC<Props> = ({
     children: _,
     ...props
 }) => {
-    const { name, custom, id } = props;
-    const { allocation, location } = custom(id);
+    const { name, custom, sessionId } = props;
+    const { allocation, location } = custom(sessionId);
     return (
         <Popover trigger="hover" placement="auto">
             <PopoverTrigger>

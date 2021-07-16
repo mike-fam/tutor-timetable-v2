@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import { Props as SessionProps, Session } from "../timetable/Session";
 import { useColorMode } from "@chakra-ui/react";
 
@@ -7,12 +7,10 @@ export type Props<T> = Omit<SessionProps<T>, "_hover" | "onClick"> & {
     onClick: (sessionId: string) => void;
 };
 
-export const ClickableSession = <T,>({
-    children,
-    onClick,
-    disabled = false,
-    ...props
-}: PropsWithChildren<Props<T>>) => {
+const ClickableSessionInner = <T,>(
+    { children, onClick, disabled = false, ...props }: Props<T>,
+    ref: ForwardedRef<HTMLDivElement>
+) => {
     const { colorMode } = useColorMode();
     return (
         <Session
@@ -29,11 +27,13 @@ export const ClickableSession = <T,>({
                       }
             }
             onClick={() => {
-                !disabled && onClick(props.id);
+                !disabled && onClick(props.sessionId);
             }}
-            opacity={disabled ? 0.5 : 1}
+            ref={ref}
         >
             {children}
         </Session>
     );
 };
+
+export const ClickableSession = forwardRef(ClickableSessionInner)

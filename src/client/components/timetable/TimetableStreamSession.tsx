@@ -17,14 +17,14 @@ export type StreamCustomSessionProps = {
 type Props = SessionProps<StreamCustomSessionProps>;
 
 export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
-    const { custom, id, name } = props;
+    const { custom, sessionId, name } = props;
     const {
         customAllocation,
         location,
         courseCode,
         weekNames,
         baseAllocation,
-    } = useMemo(() => custom(id), [custom, id]);
+    } = useMemo(() => custom(sessionId), [custom, sessionId]);
     return (
         <PopoverSession
             sessionComponent={

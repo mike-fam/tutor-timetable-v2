@@ -45,6 +45,9 @@ import {
     getStreamWeekPattern,
 } from "../utils/session-stream";
 import { ArrayElement } from "../types/helpers";
+import { Set, Map } from "immutable";
+import { SessionResponseType } from "../types/session";
+import { StreamResponseType } from "../types/session-stream";
 
 type SessionFields = Omit<UpdateSessionInput, "id">;
 type StreamAllocationFields = Omit<ChangeStreamAllocationInput, "streamId">;
@@ -59,6 +62,12 @@ export const useSessionSettings = () => {
     const { courseId, termId, changeCourse, changeTerm, course, term } =
         useTermCourse();
     const [week, chooseWeek] = useState(defaultInt);
+    const [sessionsByWeek, setSessionsByWeek] = useState(
+        Map<number, Map<string, SessionResponseType>>()
+    );
+    const [streamsById, setStreams] = useState(
+        Map<string, StreamResponseType>()
+    );
     const {
         selected: selectedStreams,
         select: selectStreams,
@@ -88,14 +97,11 @@ export const useSessionSettings = () => {
         updateItem: updateStreams,
     } = useModificationMap<StreamInput>();
     const {
-        unchanged: unchangedSessions,
-        created: createdSessions,
         deleted: deletedSessions,
         modified: modifiedSessions,
         deleteModified: deleteModifiedSessions,
         commitItem: commitSession,
         commitRemoveItem: commitRemoveSession,
-        createItem: createSession,
         deleteItem: deleteSession,
         permDeleteItems: permDeleteSessions,
         clearItems: clearSessions,
@@ -138,51 +144,56 @@ export const useSessionSettings = () => {
     );
 
     // Handle fetching streams
-    const [
-        fetchStreams,
-        { data: getSessionStreamsData, loading: streamsLoading },
-    ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {
-        fetchPolicy: "cache-and-network",
-    });
+    const [fetchStreams, { data: getStreamData, loading: streamsLoading }] =
+        useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {
+            fetchPolicy: "cache-and-network",
+        });
     const [fetchSessions, { data: getSessionsData, loading: sessionsLoading }] =
         useLazyQueryWithError(useGetMergedSessionsLazyQuery, {
             fetchPolicy: "cache-and-network",
         });
     // Fetch one first time
     useEffect(() => {
-        if (!courseId || !termId || week !== defaultInt) {
+        if (!courseId || !termId || week !== defaultInt || getStreamData) {
             return;
         }
         fetchStreams({ variables: { courseIds: [courseId], termId } });
-    }, [courseId, termId, fetchStreams, week]);
+    }, [courseId, termId, fetchStreams, week, getStreamData]);
 
     useEffect(() => {
-        if (!courseId || !termId || week === defaultInt) {
+        if (
+            !courseId ||
+            !termId ||
+            week === defaultInt ||
+            sessionsByWeek.has(week)
+        ) {
             return;
         }
         fetchSessions({ variables: { courseIds: [courseId], termId, week } });
-    }, [courseId, termId, week, fetchSessions]);
+    }, [courseId, termId, week, fetchSessions, sessionsByWeek]);
 
     // Always update streams after fetching
     useEffect(() => {
-        if (!getSessionStreamsData) {
+        if (!getStreamData) {
             return;
         }
         resetStreams(
-            getSessionStreamsData.rootSessionStreams.map((stream) => [
+            getStreamData.rootSessionStreams.map((stream) => [
                 stream.id,
                 streamToInput(stream),
             ])
         );
         resetStreamAllocations(
-            getSessionStreamsData.rootSessionStreams.map((stream) => [
+            getStreamData.rootSessionStreams.map((stream) => [
                 stream.id,
                 { allocation: getStreamAllocationPattern(stream) },
             ])
         );
-        // TODO: update allocated users here as well
+        getStreamData.rootSessionStreams.forEach((stream) => {
+            setStreams((prev) => prev.set(stream.id, stream));
+        });
     }, [
-        getSessionStreamsData,
+        getStreamData,
         courseId,
         termId,
         resetStreams,
@@ -195,6 +206,15 @@ export const useSessionSettings = () => {
             return;
         }
         getSessionsData.mergedSessions.forEach((session) => {
+            setSessionsByWeek((prev) =>
+                prev.set(
+                    session.week,
+                    (
+                        prev.get(session.week) ||
+                        Map<string, SessionResponseType>()
+                    ).set(session.id, session)
+                )
+            );
             commitSession(session.id, { location: session.location });
             commitSessionAllocations(session.id, {
                 newAllocation: session.allocatedUsers.map((user) => user.id),
@@ -455,6 +475,7 @@ export const useSessionSettings = () => {
                 commitStreamAllocations(stream.id, {
                     allocation: getStreamAllocationPattern(stream),
                 });
+                setStreams((prev) => prev.set(stream.id, stream));
             }
         );
     }, [updatedStreamAllocationData, commitStreamAllocations]);
@@ -465,6 +486,15 @@ export const useSessionSettings = () => {
         }
         updatedSessionsData.updateSession.forEach((session) => {
             commitSession(session.id, session);
+            setSessionsByWeek((prev) =>
+                prev.set(
+                    session.week,
+                    (
+                        prev.get(session.week) ||
+                        Map<string, SessionResponseType>()
+                    ).set(session.id, session)
+                )
+            );
         });
     }, [updatedSessionsData, commitSession]);
 
@@ -515,46 +545,61 @@ export const useSessionSettings = () => {
             deselectAllSessions,
         },
         timetableState: {
-            unchangedStreams,
-            createdStreams,
-            deletedStreams,
-            modifiedStreams,
-            deleteModifiedStreams,
-            createStream,
-            deleteStream,
-            commitStream,
-            commitRemoveStream,
-            permDeleteStreams,
-            clearStreams,
-            resetStreams,
-            restoreStreams,
-            updateStreams,
-            unchangedSessions,
-            createdSessions,
-            deletedSessions,
-            modifiedSessions,
-            deleteModifiedSessions,
-            commitSession,
-            commitRemoveSession,
-            createSession,
-            deleteSession,
-            permDeleteSessions,
-            clearSessions,
-            resetSessions,
-            restoreSessions,
-            updateSessions,
-            unchangedStreamAllocations,
-            modifiedStreamAllocations,
-            updateStreamAllocations,
-            resetStreamAllocations,
-            commitStreamAllocations,
-            commitRemoveStreamAllocation,
-            unchangedSessionAllocations,
-            modifiedSessionAllocations,
-            updateSessionAllocations,
-            resetSessionAllocation,
-            commitSessionAllocations,
-            commitRemoveSessionAllocation,
+            stream: {
+                unchangedStreams,
+                createdStreams,
+                deletedStreams,
+                modifiedStreams,
+                deleteModifiedStreams,
+                streamsById,
+            },
+            streamActions: {
+                createStream,
+                deleteStream,
+                commitStream,
+                commitRemoveStream,
+                permDeleteStreams,
+                clearStreams,
+                resetStreams,
+                restoreStreams,
+                updateStreams,
+            },
+            session: {
+                deletedSessions,
+                modifiedSessions,
+                deleteModifiedSessions,
+                sessionsByWeek,
+            },
+            sessionActions: {
+                commitSession,
+                commitRemoveSession,
+                deleteSession,
+                permDeleteSessions,
+                clearSessions,
+                resetSessions,
+                restoreSessions,
+                updateSessions,
+            },
+            streamAllocation: {
+                unchangedStreamAllocations,
+                modifiedStreamAllocations,
+            },
+            streamAllocationActions: {
+                updateStreamAllocations,
+                resetStreamAllocations,
+                commitStreamAllocations,
+                commitRemoveStreamAllocation,
+            },
+            sessionAllocation: {
+                unchangedSessionAllocations,
+                modifiedSessionAllocations,
+            },
+            sessionAllocationActions: {
+                updateSessionAllocations,
+                resetSessionAllocation,
+                commitSessionAllocations,
+                commitRemoveSessionAllocation,
+            },
         },
         actions: {
             editMultipleStreams,

@@ -20,7 +20,8 @@ import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
 type Props = {};
 
 export const SessionSettingsPageContainer: React.FC<Props> = () => {
-    const { base, loading, timetableState, actions } = useSessionSettings();
+    const { base, loading, selection, timetableState, actions } =
+        useSessionSettings();
     const {
         courseId,
         termId,
@@ -78,6 +79,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                             loading={loading}
                             timetableState={timetableState}
                             timetableActions={actions}
+                            selectActions={selection}
                             week={week}
                         />
                         <WeekNav

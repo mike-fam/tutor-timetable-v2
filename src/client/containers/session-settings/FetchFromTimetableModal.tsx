@@ -35,8 +35,6 @@ export const FetchFromTimetableModal: FC<Props> = ({
     const [selectedSessionTypes, selectSessionTypes] = useState<
         Set<SessionType>
     >(Set<SessionType>());
-    console.log(course, term);
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />

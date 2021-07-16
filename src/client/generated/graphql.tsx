@@ -1447,7 +1447,7 @@ export type SessionInfoFragment = (
         & Pick<Term, 'id'>
       ), course: (
         { __typename?: 'Course' }
-        & Pick<Course, 'id'>
+        & Pick<Course, 'id' | 'code'>
       ) }
     ) }
   ), allocatedUsers: Array<(
@@ -1478,7 +1478,7 @@ export type GetSessionsQuery = (
           & Pick<Term, 'id'>
         ), course: (
           { __typename?: 'Course' }
-          & Pick<Course, 'id'>
+          & Pick<Course, 'id' | 'code'>
         ) }
       ) }
     ), allocatedUsers: Array<(
@@ -1725,6 +1725,7 @@ export const SessionInfoFragmentDoc = gql`
       }
       course {
         id
+        code
       }
     }
   }
@@ -3250,6 +3251,7 @@ export const GetSessionsDocument = gql`
         }
         course {
           id
+          code
         }
       }
     }

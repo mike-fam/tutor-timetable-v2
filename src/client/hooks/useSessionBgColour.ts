@@ -7,7 +7,7 @@ type ColourTheme = {
     dark: string;
 };
 
-export const useSessionColour = (theme: SessionTheme) => {
+export const useSessionBgColour = (theme: SessionTheme) => {
     const colour = useMemo((): ColourTheme => {
         switch (theme) {
             case SessionTheme.ERROR:
