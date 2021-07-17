@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
@@ -11,11 +11,10 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
-import { EditMode } from "../../types/session-settings";
-import { defaultStr } from "../../constants";
-import { EditModeChooser } from "../../components/session-settings/EditModeChooser";
+import { defaultInt, defaultStr } from "../../constants";
 import { WeekNav } from "../../components/WeekNav";
 import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
+import { StreamDrawer } from "../../components/session-settings/StreamDrawer";
 
 type Props = {};
 
@@ -32,12 +31,18 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         course,
         term,
     } = base;
+    const { selectedStreams, selectedSessions, selectedStreamInput } =
+        selection;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
         onOpen: openFetchModal,
     } = useDisclosure();
-    const [editMode, setEditMode] = useState<EditMode>(EditMode.SETTINGS);
+    const {
+        isOpen: isStreamDrawerOpen,
+        onClose: closeStreamDrawer,
+        onOpen: openStreamDrawer,
+    } = useDisclosure();
     return (
         <Wrapper>
             <Stack spacing={4}>
@@ -58,21 +63,30 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 </HStack>
                 {termId !== defaultStr && courseId !== defaultStr && (
                     <>
-                        <EditModeChooser changeEditMode={setEditMode} />
-                        <HStack>
-                            {editMode === EditMode.ALLOCATION ? (
-                                <Button ml="auto" colorScheme="green">
-                                    Generate Allocation
-                                </Button>
-                            ) : (
-                                <Button
-                                    ml="auto"
-                                    colorScheme="green"
-                                    onClick={openFetchModal}
-                                >
-                                    Fetch from Public Timetable
-                                </Button>
-                            )}
+                        <HStack justify="flex-end">
+                            {week === defaultInt
+                                ? selectedStreams.size > 0 && (
+                                      <Button
+                                          colorScheme="green"
+                                          onClick={openStreamDrawer}
+                                      >
+                                          Edit Session Streams
+                                      </Button>
+                                  )
+                                : selectedSessions.size > 0 && (
+                                      <Button colorScheme="green">
+                                          Edit Sessions
+                                      </Button>
+                                  )}
+                            <Button colorScheme="green">
+                                Generate Allocation
+                            </Button>
+                            <Button
+                                colorScheme="green"
+                                onClick={openFetchModal}
+                            >
+                                Fetch from Public Timetable
+                            </Button>
                             <Button colorScheme="blue">Apply changes</Button>
                         </HStack>
                         <SessionSettingsTimetableContainer
@@ -80,6 +94,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                             timetableState={timetableState}
                             timetableActions={actions}
                             selectActions={selection}
+                            baseInfo={base}
                             week={week}
                         />
                         <WeekNav
@@ -97,6 +112,11 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 onClose={closeFetchModal}
                 course={course}
                 term={term}
+            />
+            <StreamDrawer
+                isOpen={isStreamDrawerOpen}
+                close={closeStreamDrawer}
+                stream={selectedStreamInput}
             />
         </Wrapper>
     );

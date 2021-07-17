@@ -396,6 +396,16 @@ export class SessionStreamResolver {
             sessionTypes
         );
         for (const courseOffering of Object.values(courseData)) {
+            const subjectCode = courseOffering.subject_code;
+            const teachingMode = subjectCode.split("_").slice(-1)[0];
+            let mode = "";
+            if (teachingMode === "FD") {
+                mode = "Flexible";
+            } else if (teachingMode === "EX") {
+                mode = "External";
+            } else if (teachingMode === "IN") {
+                mode = "Internal";
+            }
             for (const activity of Object.values(courseOffering.activities)) {
                 const startDate = startOfISOWeek(
                     parse(activity.start_date, "dd/MM/yyyy", new Date())
@@ -409,7 +419,7 @@ export class SessionStreamResolver {
                     id: uuid(),
                     name: `${activity.activity_type.charAt(0)}${
                         activity.activity_code
-                    }`,
+                    } ${mode}`,
                     type: activity.activity_type as SessionType,
                     day: dayToIsoNumber(activity.day_of_week),
                     startTime,

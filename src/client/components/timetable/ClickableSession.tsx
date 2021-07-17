@@ -36,4 +36,4 @@ const ClickableSessionInner = <T,>(
     );
 };
 
-export const ClickableSession = forwardRef(ClickableSessionInner)
+export const ClickableSession = forwardRef(ClickableSessionInner);

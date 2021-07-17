@@ -39,7 +39,7 @@ export const FetchFromTimetableModal: FC<Props> = ({
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
+                <ModalHeader>Fetch Sessions from Public Timetable</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <Stack spacing={4}>

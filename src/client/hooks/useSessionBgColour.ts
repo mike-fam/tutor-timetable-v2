@@ -22,7 +22,7 @@ export const useSessionBgColour = (theme: SessionTheme) => {
                 return { light: "gray.400", dark: "gray.400" };
             case SessionTheme.PRIMARY:
             default:
-                return { light: "gray.800", dark: "blue.500" };
+                return { light: "gray.800", dark: "blue.600" };
         }
     }, [theme]);
     return useColorModeValue(colour.light, colour.dark);

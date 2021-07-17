@@ -4,23 +4,27 @@ import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
-import { SessionSettingsUtils } from "../../hooks/useSessionSettings";
 import { defaultInt } from "../../constants";
 import { SessionSettingsTimetableSession } from "../../components/session-settings/SessionSettingsTimetableSession";
 import {
     SessionSettingsStyleProps,
     SessionSettingsTimetableStream,
+    StreamSettingsCustomSessionProps,
 } from "../../components/session-settings/SessionSettingsTimetableStream";
 import { TimetableSessionType } from "../../types/timetable";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { SessionResponseType } from "../../types/session";
-import {Map} from "immutable"
+import { Map } from "immutable";
+import { ModificationType } from "../../generated/graphql";
+import { useColorMode } from "@chakra-ui/react";
+import { SessionSettingsUtils } from "../../types/session-settings";
 
 type Props = {
     loading: boolean;
     timetableState: SessionSettingsUtils["timetableState"];
     timetableActions: SessionSettingsUtils["actions"];
     selectActions: SessionSettingsUtils["selection"];
+    baseInfo: SessionSettingsUtils["base"];
     week: number;
 };
 
@@ -29,24 +33,15 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     timetableState,
     timetableActions,
     selectActions,
+    baseInfo,
     week,
 }) => {
     const { displayedDays } = useContext(TimetableSettingsContext);
     const { session, stream } = timetableState;
-    const {
-        streamsById,
-        createdStreams,
-        deletedStreams,
-        modifiedStreams,
-        deleteModifiedStreams,
-    } = stream;
-    const {
-        deletedSessions,
-        modifiedSessions,
-        deleteModifiedSessions,
-        sessionsByWeek,
-    } = session;
+    const { streamsById } = stream;
+    const { sessionsByWeek } = session;
     const {} = timetableActions;
+    const { course, term } = baseInfo;
     const {
         selectSessions,
         selectStreams,
@@ -55,6 +50,7 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
         deselectSessions,
         deselectStreams,
     } = selectActions;
+    const { colorMode } = useColorMode();
     const sessions = useMemo<TimetableSessionType[]>(() => {
         if (week === defaultInt) {
             return streamsById
@@ -68,53 +64,116 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                 }))
                 .toArray();
         } else {
-            return (sessionsByWeek.get(week) || Map<string, SessionResponseType>())
+            return (
+                sessionsByWeek.get(week) || Map<string, SessionResponseType>()
+            )
                 .map((session, sessionId) => ({
                     id: sessionId,
                     name: session.sessionStream.name,
                     startTime: session.sessionStream.startTime,
                     endTime: session.sessionStream.endTime,
                     day: session.sessionStream.day,
-                })).valueSeq()
+                }))
+                .valueSeq()
                 .toArray();
         }
     }, [week, sessionsByWeek, streamsById]);
-    const streamStyle = useCallback<(streamId: string) => SessionSettingsStyleProps>(
+    const streamStyle = useCallback<
+        (streamId: string) => SessionSettingsStyleProps
+    >(
         (streamId: string) => {
-            if (deletedStreams.has(streamId)) {
-                return {
+            const stream = streamsById.get(streamId);
+            if (!stream) {
+                return { display: "none" };
+            }
+            let style = {};
+            if (stream.settingsModification === ModificationType.Removed) {
+                style = {
                     opacity: 0.5,
                 };
             }
-            if (modifiedStreams.has(streamId)) {
-                return {
+            if (stream.settingsModification === ModificationType.Modified) {
+                style = {
                     color: "yellow.500",
                 };
             }
-            if (createdStreams.has(streamId)) {
-                return {
-                    bg: "green.500",
+            if (stream.settingsModification === ModificationType.Added) {
+                style = {
+                    color: "green.300",
                 };
             }
-            return {};
+            if (
+                stream.settingsModification === ModificationType.RemovedModified
+            ) {
+                style = {
+                    color: "yellow.500",
+                    opacity: 0.5,
+                };
+            }
+            if (selectedStreams.has(streamId)) {
+                style = {
+                    ...style,
+                    bg:
+                        colorMode === "light"
+                            ? "blue.600"
+                            : "purple.700",
+                };
+            }
+            return {
+                ...style,
+            };
         },
-        [deletedStreams, modifiedStreams, createdStreams]
+        [streamsById, colorMode, selectedStreams]
     );
-    const sessionStyle = useCallback<(sessionId: string) => SessionSettingsStyleProps>(
+    const streamCustomProps = useCallback(
+        (streamId: string): StreamSettingsCustomSessionProps => {
+            const stream = streamsById.get(streamId);
+            const baseAllocation = stream?.allocation[0];
+            const baseAllocationProps: [number[], string[]] = [
+                baseAllocation?.weeks || [],
+                baseAllocation?.allocation || [],
+            ];
+            const customAllocation = stream?.allocation.slice(1) || [];
+            return {
+                courseCode: course?.code || "",
+                baseAllocation: baseAllocationProps,
+                customAllocation:
+                    customAllocation.map((allocationPattern) => [
+                        allocationPattern.weeks,
+                        allocationPattern.allocation,
+                    ]) || [],
+                weekNames: term?.weekNames || [],
+                location: stream?.location || "",
+                styles: streamStyle(streamId),
+            };
+        },
+        [course, term, streamsById, streamStyle]
+    );
+    const sessionStyle = useCallback<
+        (sessionId: string) => SessionSettingsStyleProps
+    >(
         (sessionId: string) => {
-            if (deletedSessions.has(sessionId)) {
+            const sessionWeeks = sessionsByWeek.get(week);
+            if (!sessionWeeks) {
+                return { display: "none" };
+            }
+            const session = sessionWeeks.get(sessionId);
+            if (!session) {
+                return { display: "none" };
+            }
+            if (session.settingsModification === ModificationType.Removed) {
                 return {
                     opacity: 0.5,
                 };
             }
-            if (modifiedSessions.has(sessionId)) {
+            if (session.settingsModification === ModificationType.Modified) {
                 return {
                     color: "yellow.500",
                 };
             }
             return {};
         },
-        [deletedSessions, modifiedSessions]
+        [week, sessionsByWeek]
     );
     return (
         <Loadable isLoading={loading}>
@@ -125,52 +184,24 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                     <Day
                         {...dayProps}
                         key={key}
-                        renderTimeSlot={(key, time, day) => (
-                            week === defaultInt ?
-                            <ClickableTimeslot
-                                key={key}
-                                addNewTimeslot={(timeslot) => {
-
-                                }}
-                                time={time}
-                                day={day}
-                            /> :
-                                <TimeSlot key={key}/>
-                        )}
+                        renderTimeSlot={(key, time, day) =>
+                            week === defaultInt ? (
+                                <ClickableTimeslot
+                                    key={key}
+                                    addNewTimeslot={(timeslot) => {}}
+                                    time={time}
+                                    day={day}
+                                />
+                            ) : (
+                                <TimeSlot key={key} />
+                            )
+                        }
                         renderSession={(sessionProps) =>
                             week === defaultInt ? (
                                 <SessionSettingsTimetableStream
                                     {...sessionProps}
                                     key={sessionProps.sessionId}
-                                    custom={(streamId) => {
-                                        const stream =
-                                            streamsById.get(streamId);
-                                        return {
-                                            courseCode:
-                                                stream?.timetable.course.code ||
-                                                "",
-                                            baseAllocation: [
-                                                stream?.weeks || [],
-                                                stream?.allocatedUsers.map(
-                                                    (user) => user.id
-                                                ) || [],
-                                            ],
-                                            customAllocation:
-                                                stream?.secondaryStreams.map(
-                                                    (stream) => [
-                                                        stream.weeks,
-                                                        stream.allocatedUsers.map(
-                                                            (user) => user.id
-                                                        ),
-                                                    ]
-                                                ) || [],
-                                            weekNames:
-                                                stream?.timetable.term
-                                                    .weekNames || [],
-                                            location: stream?.location || "",
-                                            styles: streamStyle(streamId),
-                                        };
-                                    }}
+                                    custom={streamCustomProps}
                                     onClick={(streamId) => {
                                         if (selectedStreams.has(streamId)) {
                                             deselectStreams(streamId);
@@ -184,8 +215,9 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                                     {...sessionProps}
                                     key={sessionProps.sessionId}
                                     custom={(sessionId) => {
-                                        const session =
-                                            sessionsByWeek.get(week)?.get(sessionId);
+                                        const session = sessionsByWeek
+                                            .get(week)
+                                            ?.get(sessionId);
                                         return {
                                             allocation:
                                                 session?.allocatedUsers.map(

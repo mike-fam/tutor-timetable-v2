@@ -153,7 +153,7 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                                 NO_PREFERENCE,
                             ] || [NO_PREFERENCE]
                         }
-                        optionToText={capitalCase}
+                        optionToText={(val) => capitalCase(val as string)}
                     />
                     <Divider my={2} />
                     <Button
