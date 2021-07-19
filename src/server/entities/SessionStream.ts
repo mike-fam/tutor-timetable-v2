@@ -2,7 +2,6 @@ import {
     Check,
     Column,
     Entity,
-    JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -82,27 +81,26 @@ export class SessionStream
     @RelationId((stream: SessionStream) => stream.sessions)
     sessionIds: string[];
 
-    @OneToMany(() => SessionStream, (stream) => stream.based, {
+    @OneToMany(() => SessionStream, (stream) => stream.root, {
         lazy: true,
     })
-    basedStreams: Lazy<SessionStream[]>;
+    secondaryStreams: Lazy<SessionStream[]>;
 
-    @RelationId((stream: SessionStream) => stream.basedStreams)
-    basedStreamIds: string[];
+    @RelationId((stream: SessionStream) => stream.secondaryStreams)
+    secondaryStreamIds: string[];
 
-    @ManyToOne(() => SessionStream, (stream) => stream.basedStreams, {
+    @ManyToOne(() => SessionStream, (stream) => stream.secondaryStreams, {
         lazy: true,
         nullable: true,
         onDelete: "CASCADE",
     })
-    based: Lazy<SessionStream>;
+    root: Lazy<SessionStream>;
 
-    @RelationId((stream: SessionStream) => stream.based)
+    @RelationId((stream: SessionStream) => stream.root)
     @Column({ nullable: true })
-    basedId: string | null;
+    rootId: string | null;
 
     @ManyToMany(() => User, (user) => user.allocatedStreams, { lazy: true })
-    @JoinTable()
     allocatedUsers: Lazy<User[]>;
 
     @RelationId((stream: SessionStream) => stream.allocatedUsers)

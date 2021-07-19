@@ -14,7 +14,7 @@ type Props = {
     label?: string;
     id?: string;
     options: Array<string | number>;
-    optionToText?: (val: string) => string;
+    optionToText?: (val: string | number) => string;
 } & SelectProps;
 
 export const FormikSelect: React.FC<Props> = ({
@@ -23,13 +23,15 @@ export const FormikSelect: React.FC<Props> = ({
     label,
     options,
     optionToText = capitalCase,
+    ...props
 }) => {
+    console.log(props.isDisabled);
     return (
         <Field name={name}>
             {({ field, meta }: FieldProps) => (
                 <FormControl id={id || name} mt={3}>
                     <FormLabel>{label || capitalCase(name)}</FormLabel>
-                    <Select {...field}>
+                    <Select {...field} {...props}>
                         {options.map((option) => (
                             <option value={option} key={option}>
                                 {optionToText(option.toString())}

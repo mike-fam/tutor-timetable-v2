@@ -56,10 +56,10 @@ export class SessionModel extends BaseModel<Session> {
         if (!(await user.isCoordinatorOf(course, term))) {
             return { hasPerm: false };
         }
-        if (!isEmpty(omit(updatedFields, "location"))) {
+        if (!isEmpty(omit(updatedFields, ["location", "allocatedUserIds"]))) {
             return {
                 hasPerm: false,
-                errMsg: "You can only change the location of a session",
+                errMsg: "You can only change the location or the allocation of a session",
             };
         }
         return { hasPerm: true };
@@ -191,7 +191,7 @@ export class SessionModel extends BaseModel<Session> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async allocateSingle(
+    public async allocateSingleFromOffer(
         session: Session,
         staff: User,
         user: User
@@ -305,7 +305,9 @@ export class SessionModel extends BaseModel<Session> {
         }
         if (await user.isCoordinatorOf(course, term)) {
             await session.deallocate(...staff);
+            return;
         }
+        throw new Error(PERM_ERR);
     }
 
     /**
@@ -336,7 +338,7 @@ export class SessionModel extends BaseModel<Session> {
      * @param {User} user user performing this action
      * @protected
      */
-    public async deallocateSingle(
+    public async deallocateSingleFromOffer(
         session: Session,
         staff: User,
         user: User

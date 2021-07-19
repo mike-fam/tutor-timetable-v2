@@ -1,13 +1,13 @@
 import { Box, BoxProps } from "@chakra-ui/react";
 import React, { forwardRef, useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
-import { useSessionColour } from "../../hooks/useSessionColour";
+import { useSessionBgColour } from "../../hooks/useSessionBgColour";
 import omit from "lodash/omit";
 import { StackInfo } from "../../../types/date";
 import { SessionTheme } from "../../types/session";
 
 type SessionProps<T> = {
-    id: string;
+    sessionId: string;
     name: string;
     startTime: number;
     endTime: number;
@@ -22,22 +22,22 @@ type StyleProps = Partial<Omit<BoxProps, "id">>;
 
 export type Props<T> = SessionProps<T> & StyleProps;
 
-export const Session: React.FC<Props<{}>> = forwardRef<
+export const Session = forwardRef<
     HTMLDivElement,
-    Props<{}>
->(({ theme = SessionTheme.PRIMARY, children, custom: _, ...props }, ref) => {
+    Props<any>
+>(({ theme = SessionTheme.PRIMARY, children, ...props }, ref) => {
     const { width, heightPx, display, left, topPx } = useMemo(
         () => sessionStyleFromProps(props),
         [props]
     );
-    const bg = useSessionColour(theme);
+    const bg = useSessionBgColour(theme);
     const styleProps = useMemo(
         () =>
             omit<
-                Omit<Props<{}>, "custom">,
-                keyof Omit<SessionProps<{}>, "custom">
+                Props<any>,
+                keyof SessionProps<any>
             >(props, [
-                "id",
+                "sessionId",
                 "name",
                 "startTime",
                 "endTime",
@@ -51,6 +51,7 @@ export const Session: React.FC<Props<{}>> = forwardRef<
                 "longestBranchSize",
                 "splitBranchSize",
                 "theme",
+                "custom"
             ]),
         [props]
     );

@@ -79,3 +79,4 @@ export const getAvailabilityStatus = (
     }
     return SessionAvailabilityStatus.UNDERTERMINED;
 };
+

@@ -30,7 +30,7 @@ import { TimetableSessionType } from "../../types/timetable";
 import { TimetableCustomSessionProps } from "../../components/timetable/TimetableSession";
 import { Map, Set } from "immutable";
 import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
-import { AllocatorConfirmDialog } from "../../components/AllocatorConfirmDialog";
+import { AllocatorConfirmDialog } from "../../components/allocator/AllocatorConfirmDialog";
 import {
     AllocatedStaffData,
     AllocatorTable,

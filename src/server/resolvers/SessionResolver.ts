@@ -1,8 +1,11 @@
 import {
     Arg,
     Ctx,
+    Field,
     FieldResolver,
+    InputType,
     Int,
+    Mutation,
     Query,
     Resolver,
     Root,
@@ -10,6 +13,27 @@ import {
 import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
+import { asyncForEach, asyncMap } from "../../utils/array";
+import { In } from "typeorm";
+import { updateSessionAllocation } from "../utils/session";
+
+@InputType()
+export class UpdateSessionAllocationInput {
+    @Field()
+    rootSessionId: string;
+
+    @Field(() => [String])
+    newAllocation: string[];
+}
+
+@InputType()
+export class UpdateSessionInput {
+    @Field()
+    id: string;
+
+    @Field()
+    location: string;
+}
 
 @Resolver(() => Session)
 export class SessionResolver {
@@ -40,7 +64,7 @@ export class SessionResolver {
             user
         );
         // get all root streams
-        const rootStreams = streams.filter((stream) => stream.basedId === null);
+        const rootStreams = streams.filter((stream) => stream.rootId === null);
         const streamMap = keyBy(streams, (stream) => stream.id);
         // get all root sessions of specified weeks
         const sessions = await models.session.getMany(
@@ -60,13 +84,13 @@ export class SessionResolver {
         // get related sessions (same week, same stream based id)
         for (const rootSession of rootSessions) {
             const rootStream = streamMap[rootSession.sessionStreamId];
-            const streamIdsToCheck = [...rootStream.basedStreamIds];
+            const streamIdsToCheck = [...rootStream.secondaryStreamIds];
             const visitedStreamIds: string[] = [];
             while (streamIdsToCheck.length !== 0) {
                 const currentStreamId = streamIdsToCheck.pop()!;
                 const currentStream = streamMap[currentStreamId];
                 visitedStreamIds.push(currentStreamId);
-                streamIdsToCheck.push(...currentStream.basedStreamIds);
+                streamIdsToCheck.push(...currentStream.secondaryStreamIds);
             }
             const relatedSessions = sessions.filter((session) =>
                 visitedStreamIds.includes(session.sessionStreamId)
@@ -164,6 +188,86 @@ export class SessionResolver {
             },
             req.user
         );
+    }
+
+    @Mutation(() => [Session])
+    async updateSessionAllocations(
+        @Arg("newAllocation", () => [UpdateSessionAllocationInput])
+        allocateUserInput: UpdateSessionAllocationInput[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const { user } = req;
+        const { session: sessionModel } = models;
+        const returnValue: Session[] = [];
+        await asyncForEach(allocateUserInput, async (sessionInput) => {
+            const rootSession = await sessionModel.getById(
+                sessionInput.rootSessionId,
+                user
+            );
+            const updatedSessions = await updateSessionAllocation(
+                models,
+                rootSession,
+                sessionInput.newAllocation,
+                user
+            );
+            returnValue.push(updatedSessions);
+        });
+        return returnValue;
+    }
+
+    @Mutation(() => [Session])
+    async updateSession(
+        @Arg("updateSessionInput", () => [UpdateSessionInput])
+        updatedSessions: UpdateSessionInput[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const user = req.user;
+        return await asyncMap(
+            updatedSessions,
+            async ({ id, ...sessionInput }) => {
+                const { location } = sessionInput;
+                return await models.session.update({ id }, { location }, user);
+            }
+        );
+    }
+
+    @Mutation(() => [String])
+    async deleteSessions(
+        @Arg("sessionIds", () => [String])
+        sessionIds: string[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<string[]> {
+        const { user } = req;
+        const sessionsToDelete: string[] = [];
+        const rootSessions = await models.session.getByIds(sessionIds, user);
+        await asyncForEach(rootSessions, async (rootSession) => {
+            const rootStream = await models.sessionStream.getById(
+                rootSession.sessionStreamId,
+                user
+            );
+            const secondarySessions = await models.session.getMany(
+                {
+                    where: rootStream.secondaryStreamIds.map((streamId) => ({
+                        sessionStreamId: streamId,
+                        week: rootSession.week,
+                    })),
+                },
+                user
+            );
+            sessionsToDelete.push(
+                rootSession.id,
+                ...secondarySessions.map((session) => session.id)
+            );
+        });
+        await models.session.deleteMany(
+            {
+                where: {
+                    id: In(sessionsToDelete),
+                },
+            },
+            user
+        );
+        return sessionIds;
     }
 
     @Query(() => Session)

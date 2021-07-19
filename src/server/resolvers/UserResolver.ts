@@ -19,6 +19,7 @@ import {
     UserSettings,
 } from "../entities";
 import { MyContext } from "../types/context";
+import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
 export class UpdateDetailsInputType {
@@ -29,6 +30,11 @@ export class UpdateDetailsInputType {
     @Field()
     @IsNotEmpty()
     name: string;
+}
+
+@InputType()
+export class UserTimetableInput extends CourseTermIdInput {
+
 }
 
 @Resolver(() => User)

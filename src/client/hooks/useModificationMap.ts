@@ -3,11 +3,15 @@ import { Map } from "immutable";
 import { v4 as uuid } from "uuid";
 
 export const useModificationMap = <T>() => {
-    const [unchanged, setUnchanged] = useState<Map<string, T>>(Map());
-    const [modified, setModified] = useState<Map<string, T>>(Map());
-    const [deleted, setDeleted] = useState<Map<string, T>>(Map());
-    const [deleteModified, setDeleteModified] = useState<Map<string, T>>(Map());
-    const [created, setCreated] = useState<Map<string, T>>(Map());
+    const [unchanged, setUnchanged] = useState<Map<string, T>>(
+        Map<string, T>()
+    );
+    const [modified, setModified] = useState<Map<string, T>>(Map<string, T>());
+    const [deleted, setDeleted] = useState<Map<string, T>>(Map<string, T>());
+    const [deleteModified, setDeleteModified] = useState<Map<string, T>>(
+        Map<string, T>()
+    );
+    const [created, setCreated] = useState<Map<string, T>>(Map<string, T>());
 
     const deleteItem = useCallback(
         (id: string) => {
@@ -25,6 +29,12 @@ export const useModificationMap = <T>() => {
         },
         [unchanged, modified, created]
     );
+
+    const permDeleteItems = useCallback((ids: string[]) => {
+        ids.forEach((id) => {
+            setUnchanged((prev) => prev.remove(id));
+        });
+    }, []);
 
     const restoreItem = useCallback(
         (id: string) => {
@@ -52,6 +62,7 @@ export const useModificationMap = <T>() => {
                 return;
             }
             const newItem = { ...item, ...newFields };
+            setUnchanged((prev) => prev.remove(id));
             setModified((prev) => prev.set(id, newItem));
         },
         [unchanged]
@@ -75,6 +86,22 @@ export const useModificationMap = <T>() => {
         [clearItems]
     );
 
+    const commitItem = useCallback((id: string, item: T) => {
+        setModified((prev) => prev.remove(id));
+        setCreated((prev) => prev.remove(id));
+        setDeleteModified((prev) => prev.remove(id));
+        setDeleted((prev) => prev.remove(id));
+        setUnchanged((prev) => prev.set(id, item));
+    }, []);
+
+    const commitRemoveItem = useCallback((id: string) => {
+        setModified((prev) => prev.remove(id));
+        setCreated((prev) => prev.remove(id));
+        setDeleteModified((prev) => prev.remove(id));
+        setDeleted((prev) => prev.remove(id));
+        setUnchanged((prev) => prev.remove(id));
+    }, []);
+
     return {
         unchanged,
         modified,
@@ -82,10 +109,13 @@ export const useModificationMap = <T>() => {
         deleteModified,
         created,
         deleteItem,
+        commitItem,
+        commitRemoveItem,
+        permDeleteItems,
         restoreItem,
         createItem,
         updateItem,
         clearItems,
-        resetItems
+        resetItems,
     };
 };

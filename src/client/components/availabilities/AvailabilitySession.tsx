@@ -28,14 +28,14 @@ export type AvailabilityCustomSessionProps = {
 type Props = SessionProps<AvailabilityCustomSessionProps>;
 
 export const AvailabilitySession: React.FC<Props> = (props) => {
-    const { custom, id } = props;
+    const { custom, sessionId } = props;
     const {
         updateSession,
         removeSession,
         restoreSession,
         modificationType,
         editSession,
-    } = custom(id);
+    } = custom(sessionId);
     const { top } = useMemo(() => sessionStyleFromProps(props), [props]);
     const { startTime, endTime } = props;
     const nodeRef = useRef(null);
@@ -88,7 +88,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                                         startTime +
                                         dragData.y / timetableTimeslotHeight;
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     // Limit free time to less than 15 mins
                                     startTime: Math.min(
                                         Math.max(newStartTime, props.startDay),
@@ -153,7 +153,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                                 ) {
                                     newEndTime = Math.round(newEndTime);
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     endTime: Math.min(
                                         Math.max(newEndTime, startTime + 0.25),
                                         props.endDay
@@ -187,7 +187,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
             </ContextMenuTrigger>
             <ContextMenuList>
                 <ContextMenuItem
-                    onClick={() => editSession(props.id)}
+                    onClick={() => editSession(props.sessionId)}
                     disabled={removed}
                 >
                     Update
@@ -195,8 +195,8 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                 <ContextMenuItem
                     onClick={() => {
                         removed
-                            ? restoreSession(props.id)
-                            : removeSession(props.id);
+                            ? restoreSession(props.sessionId)
+                            : removeSession(props.sessionId);
                     }}
                     colorScheme={removed ? "green" : "red"}
                 >

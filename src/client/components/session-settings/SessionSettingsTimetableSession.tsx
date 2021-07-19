@@ -1,31 +1,31 @@
 import React, { useMemo } from "react";
-import { SessionTheme } from "../../types/session";
-import { Props as SessionProps, Session } from "./Session";
-import { PopoverSession } from "./PopoverSession";
-import { Box } from "@chakra-ui/react";
-import { TimetableSessionPopover } from "./TimetableSessionPopover";
+import { PopoverSession } from "../timetable/PopoverSession";
+import { Box, BoxProps } from "@chakra-ui/react";
+import { TimetableSessionPopover } from "../timetable/TimetableSessionPopover";
+import { ClickableSession, Props as ClickableSessionProps } from "../timetable/ClickableSession";
 
 export type TimetableCustomSessionProps = {
     allocation: string[];
     location: string;
     courseCode: string;
-    theme?: SessionTheme;
+    styles: Omit<BoxProps, "onClick" | "_hover" | "id">;
 };
 
-export type Props = SessionProps<TimetableCustomSessionProps>;
+export type Props = ClickableSessionProps<TimetableCustomSessionProps>;
 
-export const TimetableSession2: React.FC<Props> = (props) => {
+export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
     const { custom, sessionId, name } = props;
     const { allocation, location, courseCode } = useMemo(
         () => custom(sessionId),
         [custom, sessionId]
     );
+    console.log(sessionId);
     return (
         <PopoverSession
             sessionComponent={
-                <Session {...props}>
+                <ClickableSession {...props}>
                     <Box p={1}>{name}</Box>
-                </Session>
+                </ClickableSession>
             }
             popoverContent={
                 <TimetableSessionPopover

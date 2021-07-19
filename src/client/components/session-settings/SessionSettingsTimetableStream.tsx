@@ -1,22 +1,26 @@
-import React, { useMemo} from "react";
-import { Props as SessionProps, Session } from "./Session";
-import { PopoverSession } from "./PopoverSession";
-import { SessionTheme } from "../../types/session";
-import { TimetableStreamPopover } from "./TimetableStreamPopover";
+import React, { FC, useMemo } from "react";
+import {
+    ClickableSession,
+    Props as ClickableSessionProps,
+} from "../timetable/ClickableSession";
+import { PopoverSession } from "../timetable/PopoverSession";
+import { TimetableStreamPopover } from "../timetable/TimetableStreamPopover";
+import { BoxProps } from "@chakra-ui/react";
 
-// weeks[], allocatedTutors[]
-export type StreamCustomSessionProps = {
+export type SessionSettingsStyleProps = Omit<BoxProps, "onClick" | "_hover" | "id">;
+
+export type StreamSettingsCustomSessionProps = {
     courseCode: string;
     baseAllocation: [number[], string[]];
     customAllocation: Array<[number[], string[]]>;
     weekNames: string[];
     location: string;
-    theme?: SessionTheme;
+    styles: SessionSettingsStyleProps
 };
 
-type Props = SessionProps<StreamCustomSessionProps>;
+type Props = ClickableSessionProps<StreamSettingsCustomSessionProps>;
 
-export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
+export const SessionSettingsTimetableStream: FC<Props> = (props) => {
     const { custom, sessionId, name } = props;
     const {
         customAllocation,
@@ -24,13 +28,14 @@ export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
         courseCode,
         weekNames,
         baseAllocation,
+        styles,
     } = useMemo(() => custom(sessionId), [custom, sessionId]);
     return (
         <PopoverSession
             sessionComponent={
-                <Session {...props} p={1}>
+                <ClickableSession {...props} {...styles} p={1}>
                     {name}
-                </Session>
+                </ClickableSession>
             }
             popoverContent={
                 <TimetableStreamPopover
