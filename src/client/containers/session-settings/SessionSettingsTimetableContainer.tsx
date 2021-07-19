@@ -128,12 +128,12 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     const streamCustomProps = useCallback(
         (streamId: string): StreamSettingsCustomSessionProps => {
             const stream = streamsById.get(streamId);
-            const baseAllocation = stream?.allocation[0];
+            const baseAllocation = stream?.allocations[0];
             const baseAllocationProps: [number[], string[]] = [
                 baseAllocation?.weeks || [],
                 baseAllocation?.allocation || [],
             ];
-            const customAllocation = stream?.allocation.slice(1) || [];
+            const customAllocation = stream?.allocations.slice(1) || [];
             return {
                 courseCode: course?.code || "",
                 baseAllocation: baseAllocationProps,

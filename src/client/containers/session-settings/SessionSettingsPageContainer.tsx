@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
@@ -14,7 +14,7 @@ import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableCon
 import { defaultInt, defaultStr } from "../../constants";
 import { WeekNav } from "../../components/WeekNav";
 import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
-import { StreamDrawer } from "../../components/session-settings/StreamDrawer";
+import { StreamSettingsDrawer } from "../../components/session-settings/StreamSettingsDrawer";
 
 type Props = {};
 
@@ -33,6 +33,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
     } = base;
     const { selectedStreams, selectedSessions, selectedStreamInput } =
         selection;
+    const {streamActions} = timetableState
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -113,10 +114,13 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 course={course}
                 term={term}
             />
-            <StreamDrawer
+            <StreamSettingsDrawer
                 isOpen={isStreamDrawerOpen}
                 close={closeStreamDrawer}
                 stream={selectedStreamInput}
+                weekNames={term?.weekNames || []}
+                numberOfWeeks={term?.numberOfWeeks || 0}
+                onSave={streamActions.editMultipleStreamSettings}
             />
         </Wrapper>
     );

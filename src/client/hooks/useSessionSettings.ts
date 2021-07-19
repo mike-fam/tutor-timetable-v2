@@ -18,7 +18,8 @@ import {
     MergedStreamInput,
     ModificationType,
     SessionType,
-    StreamInput,
+    StreamAllocationPattern, StreamInput,
+    StreamStaffRequirement,
     useAddMergedSessionStreamsMutation,
     useDeleteSessionsMutation,
     useDeleteSessionStreamsMutation,
@@ -36,33 +37,36 @@ import {
 } from "./useApolloHooksWithError";
 import { useTermCourse } from "./useTermCourse";
 import { useMultiSelection } from "./useMultiSelection";
-import {
-    getStreamAllocationPattern,
-    getStreamWeekPattern,
-} from "../utils/session-stream";
+import { getStreamAllocationPattern } from "../utils/session-stream";
 import { List, Map } from "immutable";
 import { SessionResponseType } from "../types/session";
 import { StreamResponseType } from "../types/session-stream";
 import { v4 as uuid } from "uuid";
-import isEqual from "lodash/isEqual";
 import {
     SessionFields,
     SessionResponseWithModification,
     StreamState,
     StreamStateWithModification,
 } from "../types/session-settings";
+import isEqual from "lodash/isEqual";
 
 const streamResponseToState = (stream: StreamResponseType): StreamState => {
     return {
-        id: stream.id,
-        allocation: getStreamAllocationPattern(stream),
+        allocations: getStreamAllocationPattern(stream),
         day: stream.day,
         startTime: stream.startTime,
         endTime: stream.endTime,
         location: stream.location,
         name: stream.name,
-        numberOfTutorsForWeeks: getStreamWeekPattern(stream),
         type: stream.type,
+        baseStaffRequirement: {
+            weeks: stream.weeks,
+            numberOfStaff: stream.numberOfStaff,
+        },
+        extraStaffRequirement: stream.secondaryStreams.map((stream) => ({
+            weeks: stream.weeks,
+            numberOfStaff: stream.numberOfStaff,
+        })),
     };
 };
 
@@ -100,28 +104,77 @@ export const useSessionSettings = () => {
             fetchPolicy: "cache-and-network",
         });
 
-    const selectedStreamInput = useMemo<Partial<StreamInput>>(() => {
-        const streamList = List(selectedStreams);
+    const selectedStreamInput = useMemo<Partial<StreamState>>(() => {
         if (selectedStreams.size === 1) {
-            return streamsById.get(streamList.get(0)!)!;
+            const selectedStreamId = List(selectedStreams).get(0)!;
+            return streamsById.get(selectedStreamId)!;
         } else if (selectedStreams.size > 1) {
-            const firstWeekPattern = streamsById.get(
-                streamList.get(0)!
-            )!.numberOfTutorsForWeeks;
-            if (
-                selectedStreams.every((streamId) =>
-                    isEqual(
-                        streamsById.get(streamId)!.numberOfTutorsForWeeks,
-                        firstWeekPattern
-                    )
-                )
-            ) {
-                return {
-                    numberOfTutorsForWeeks: firstWeekPattern,
-                };
+            const selectedStreamObjs: StreamState[] = [];
+            for (const selectedStreamId of selectedStreams) {
+                selectedStreamObjs.push(streamsById.get(selectedStreamId)!);
             }
+            let location: string | undefined = undefined;
+            let baseStaffRequirement: StreamStaffRequirement | undefined =
+                undefined;
+            let extraStaffRequirement: StreamStaffRequirement[] | undefined =
+                undefined;
+            let allocations: StreamAllocationPattern[] | undefined = undefined;
+            let propertiesDefined = false;
+            for (const selectedStream of selectedStreamObjs) {
+                if (!propertiesDefined) {
+                    location = selectedStream.location;
+                    baseStaffRequirement = selectedStream.baseStaffRequirement;
+                    extraStaffRequirement =
+                        selectedStream.extraStaffRequirement;
+                    allocations = selectedStream.allocations;
+                    propertiesDefined = true;
+                    continue;
+                }
+                if (location && selectedStream.location !== location) {
+                    location = undefined;
+                }
+                if (
+                    baseStaffRequirement &&
+                    !isEqual(
+                        baseStaffRequirement,
+                        selectedStream.baseStaffRequirement
+                    )
+                ) {
+                    baseStaffRequirement = undefined;
+                }
+                if (
+                    extraStaffRequirement &&
+                    !isEqual(
+                        extraStaffRequirement,
+                        selectedStream.extraStaffRequirement
+                    )
+                ) {
+                    extraStaffRequirement = undefined;
+                }
+                if (
+                    allocations &&
+                    !isEqual(allocations, selectedStream.allocations)
+                ) {
+                    allocations = undefined;
+                }
+                if (
+                    !location &&
+                    !baseStaffRequirement &&
+                    !extraStaffRequirement &&
+                    !allocations
+                ) {
+                    break;
+                }
+            }
+            return {
+                location,
+                baseStaffRequirement,
+                extraStaffRequirement,
+                allocations,
+            };
+        } else {
+            return {}
         }
-        return {};
     }, [selectedStreams, streamsById]);
 
     const commitNewStreams = useCallback((streams: StreamResponseType[]) => {
@@ -192,7 +245,7 @@ export const useSessionSettings = () => {
 
     // Handle editing streams
     const editMultipleStreamSettings = useCallback(
-        (newStreamState: MergedStreamInput) => {
+        (newStreamState: Partial<StreamState>) => {
             selectedStreams.forEach((streamId) =>
                 setStreams((prev) => {
                     const stream = prev.get(streamId);
@@ -203,7 +256,7 @@ export const useSessionSettings = () => {
                         stream.settingsModification ===
                         ModificationType.Unchanged
                     ) {
-                        return prev.set(stream.id, {
+                        return prev.set(streamId, {
                             ...stream,
                             ...newStreamState,
                             settingsModification: ModificationType.Modified,
@@ -214,7 +267,7 @@ export const useSessionSettings = () => {
                         stream.settingsModification ===
                             ModificationType.Modified
                     ) {
-                        return prev.set(stream.id, {
+                        return prev.set(streamId, {
                             ...stream,
                             ...newStreamState,
                         });
@@ -222,13 +275,14 @@ export const useSessionSettings = () => {
                     return prev;
                 })
             );
+            // TODO: Edit Allocation
         },
         [selectedStreams]
     );
 
     const createStream = useCallback((stream: StreamState) => {
         setStreams((prev) =>
-            prev.set(stream.id, {
+            prev.set(uuid(), {
                 ...stream,
                 settingsModification: ModificationType.Added,
                 allocationModification: ModificationType.Unchanged,
@@ -294,29 +348,9 @@ export const useSessionSettings = () => {
             return;
         }
         publicTimetableData.fromPublicTimetable.forEach((stream) => {
-            const { name, type, day, startTime, endTime, weeks, location } =
-                stream;
-            const newStreamId = uuid();
-            setStreams((prev) =>
-                prev.set(newStreamId, {
-                    id: newStreamId,
-                    name,
-                    type,
-                    day,
-                    startTime,
-                    endTime,
-                    location,
-                    numberOfTutorsForWeeks: weeks.map((week) => ({
-                        week,
-                        numberOfTutors: 1,
-                    })),
-                    allocation: [{ weeks, allocation: [] }],
-                    settingsModification: ModificationType.Added,
-                    allocationModification: ModificationType.Unchanged,
-                })
-            );
+            createStream(streamResponseToState(stream));
         });
-    }, [publicTimetableData]);
+    }, [publicTimetableData, createStream]);
 
     // Handle editing sessions
     const editMultipleSessions = useCallback(
@@ -388,16 +422,16 @@ export const useSessionSettings = () => {
 
     const submitChanges = useCallback(() => {
         const createdStreams: StreamState[] = [];
-        const modifiedStreams: StreamState[] = [];
+        const modifiedStreams: [string, StreamState][] = [];
         const deletedStreamIds: string[] = [];
-        const allocationModifiedStreams: StreamState[] = [];
+        const allocationModifiedStreams: [string, StreamState][] = [];
         for (const [streamId, stream] of streamsById) {
             if (stream.settingsModification === ModificationType.Added) {
                 createdStreams.push(stream);
             } else if (
                 stream.settingsModification === ModificationType.Modified
             ) {
-                modifiedStreams.push(stream);
+                modifiedStreams.push([streamId, stream]);
             } else if (
                 stream.settingsModification === ModificationType.Removed ||
                 stream.settingsModification === ModificationType.RemovedModified
@@ -405,7 +439,7 @@ export const useSessionSettings = () => {
                 deletedStreamIds.push(streamId);
             }
             if (stream.allocationModification === ModificationType.Modified) {
-                allocationModifiedStreams.push(stream);
+                allocationModifiedStreams.push([streamId, stream]);
             }
         }
         if (createdStreams.length > 0) {
@@ -418,8 +452,9 @@ export const useSessionSettings = () => {
                         endTime: streamState.endTime,
                         day: streamState.day,
                         location: streamState.location,
-                        numberOfTutorsForWeeks:
-                            streamState.numberOfTutorsForWeeks,
+                        baseStaffRequirement: streamState.baseStaffRequirement,
+                        extraStaffRequirement:
+                            streamState.extraStaffRequirement,
                         courseId,
                         termId,
                     })),
@@ -429,16 +464,17 @@ export const useSessionSettings = () => {
         if (modifiedStreams.length > 0) {
             submitUpdatedStream({
                 variables: {
-                    updateStreamInput: modifiedStreams.map((streamState) => ({
+                    updateStreamInput: modifiedStreams.map(([streamId, streamState]) => ({
                         name: streamState.name,
                         type: streamState.type,
                         startTime: streamState.startTime,
                         endTime: streamState.endTime,
                         day: streamState.day,
                         location: streamState.location,
-                        numberOfTutorsForWeeks:
-                            streamState.numberOfTutorsForWeeks,
-                        streamId: streamState.id,
+                        baseStaffRequirement: streamState.baseStaffRequirement,
+                        extraStaffRequirement:
+                        streamState.extraStaffRequirement,
+                        streamId,
                     })),
                 },
             });
@@ -454,9 +490,9 @@ export const useSessionSettings = () => {
             submitStreamAllocations({
                 variables: {
                     changeAllocationInput: allocationModifiedStreams.map(
-                        (streamState) => ({
-                            allocation: streamState.allocation,
-                            streamId: streamState.id,
+                        ([streamId, streamState]) => ({
+                            allocation: streamState.allocations,
+                            streamId
                         })
                     ),
                 },
@@ -606,7 +642,7 @@ export const useSessionSettings = () => {
             selectSessions,
             deselectSessions,
             deselectAllSessions,
-            selectedStreamInput
+            selectedStreamInput,
         },
         timetableState: {
             stream: {

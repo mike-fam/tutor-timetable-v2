@@ -3,7 +3,6 @@ import mapValues from "lodash/mapValues";
 import {
     GetRootSessionStreamsQuery,
     StreamAllocationPattern,
-    StreamTutorNumbersPattern,
 } from "../generated/graphql";
 import { ArrayElement } from "../types/helpers";
 
@@ -32,24 +31,6 @@ export const weeksPatternRepr = (weekNames: string[], weeks: number[]) => {
         lastWeek = week;
     }
     return weekRanges.join(", ");
-};
-
-export const getStreamWeekPattern = (
-    stream: ArrayElement<GetRootSessionStreamsQuery["rootSessionStreams"]>
-): StreamTutorNumbersPattern[] => {
-    const weekPattern = mapValues(
-        keyBy(stream.weeks),
-        () => stream.numberOfStaff
-    );
-    for (const secondaryStream of stream.secondaryStreams) {
-        for (const week of secondaryStream.weeks) {
-            weekPattern[week] += secondaryStream.numberOfStaff;
-        }
-    }
-    return Object.entries(weekPattern).map(([week, numberOfTutors]) => ({
-        week: parseInt(week),
-        numberOfTutors,
-    }));
 };
 
 export const getStreamAllocationPattern = (

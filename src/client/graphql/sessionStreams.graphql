@@ -59,16 +59,36 @@ query StreamsFromPublicTimetable(
 ) {
     fromPublicTimetable(courseTerm: $courseTerm, sessionTypes: $sessionTypes) {
         id
-        name
         type
-        day
+        name
         startTime
         endTime
-        weeks
+        day
         location
+        numberOfStaff
+        weeks
+        allocatedUsers {
+            id
+            name
+            username
+        }
+        secondaryStreams {
+            weeks
+            numberOfStaff
+            allocatedUsers {
+                id
+                name
+                username
+            }
+        }
         timetable {
             course {
+                id
                 code
+            }
+            term {
+                id
+                weekNames
             }
         }
     }

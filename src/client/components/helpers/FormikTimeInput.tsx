@@ -32,7 +32,6 @@ export const FormikTimeInput: FC<Props> = ({ name, id, label, ...props }) => {
         return startDate.getHours() + startDate.getMinutes() / 60;
     }, []);
     const [, { value }, { setValue }] = useField(name);
-    console.log(name, timeToString(value));
     return (
         <Field name={name}>
             {({ field, form, meta }: FieldProps) => (

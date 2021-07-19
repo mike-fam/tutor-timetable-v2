@@ -17,7 +17,6 @@ type Props = {
     name: string;
     id?: string;
     label?: string;
-    type?: string;
     max?: number;
     min?: number;
 } & NumberInputFieldProps;
@@ -26,7 +25,6 @@ export const FormikNumberInput: React.FC<Props> = ({
     name,
     id,
     label,
-    type = "text",
     max,
     min,
     ...props

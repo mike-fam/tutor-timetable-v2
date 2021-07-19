@@ -18,10 +18,9 @@ import { Models } from "../types/models";
 import { CourseTermIdInput } from "./CourseTermId";
 import { In, IsNull } from "typeorm";
 import isEqual from "lodash/isEqual";
-import min from "lodash/min";
 import uniqBy from "lodash/uniqBy";
 import { ArrayNotEmpty, IsEnum, Max, Min, MinLength } from "class-validator";
-import { UniqueExtraWeeks } from "../validators/sessionStream";
+import { UniqueExtraWeeks, ValidExtraWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
 import { asyncForEach, getAllIndices } from "../../utils/array";
 import { PERM_ERR } from "../constants";
@@ -56,7 +55,7 @@ export class ChangeStreamAllocationInput {
 }
 
 @InputType()
-export class StreamTutorNumbersPattern {
+export class StreamStaffRequirement {
     @Field(() => [Int])
     @ArrayNotEmpty()
     weeks: number[];
@@ -94,12 +93,16 @@ export class StreamInput {
     @Field()
     location: string;
 
-    @Field(() => StreamTutorNumbersPattern)
-    baseTutorNumRequirement: StreamTutorNumbersPattern;
+    @Field(() => StreamStaffRequirement)
+    baseStaffRequirement: StreamStaffRequirement;
 
-    @Field(() => [StreamTutorNumbersPattern])
+    @Field(() => [StreamStaffRequirement])
     @UniqueExtraWeeks({ message: "Duplicated weeks in extra requirements." })
-    extraTutorNumRequirement: StreamTutorNumbersPattern[];
+    @ValidExtraWeeks({
+        message:
+            "Week in extra requirement that does not appear in base requirement",
+    })
+    extraStaffRequirement: StreamStaffRequirement[];
 }
 
 @InputType()
@@ -299,12 +302,12 @@ export class SessionStreamResolver {
             const sameBasePattern =
                 isEqual(
                     rootStream.weeks,
-                    uniq(input.baseTutorNumRequirement.weeks)
+                    uniq(input.baseStaffRequirement.weeks)
                 ) &&
                 rootStream.numberOfStaff ===
-                    input.baseTutorNumRequirement.numberOfStaff;
+                    input.baseStaffRequirement.numberOfStaff;
             let sameExtraPattern = true;
-            for (const extraWeekPattern of input.extraTutorNumRequirement) {
+            for (const extraWeekPattern of input.extraStaffRequirement) {
                 let samePattern = false;
                 for (const secondaryStream of secondaryStreams) {
                     if (
@@ -399,7 +402,7 @@ export class SessionStreamResolver {
         if (!user.isAdmin && !(await user.isCoordinatorOf(course, term))) {
             throw new Error(PERM_ERR);
         }
-        const generatedStreams = [];
+        const generatedStreams: SessionStream[] = [];
         const timetable = await models.timetable.get(
             { courseId, termId },
             user
@@ -440,10 +443,13 @@ export class SessionStreamResolver {
                     endTime: startTime + parseInt(activity.duration) / 60,
                     weeks: relativeWeeks,
                     location: locations.length > 0 ? locations[0] : "",
-                    numberOfStaff: 0,
+                    numberOfStaff: 1,
                     rootId: undefined,
                     timetableId: timetable.id,
                 });
+                newStream.secondaryStreamIds = [];
+                newStream.sessionIds = [];
+                newStream.allocatedUserIds = [];
                 generatedStreams.push(newStream);
             }
         }
@@ -584,8 +590,8 @@ export class SessionStreamResolver {
             startTime,
             endTime,
             location,
-            baseTutorNumRequirement,
-            extraTutorNumRequirement,
+            baseStaffRequirement,
+            extraStaffRequirement,
         } = streamInput;
         const rootStream = await models.sessionStream.create(
             {
@@ -596,16 +602,16 @@ export class SessionStreamResolver {
                 day,
                 startTime,
                 endTime,
-                weeks: baseTutorNumRequirement.weeks,
+                weeks: sortBy(uniq(baseStaffRequirement.weeks)),
                 location,
-                numberOfStaff: baseTutorNumRequirement.numberOfStaff,
+                numberOfStaff: baseStaffRequirement.numberOfStaff,
                 allocatedUserIds: [],
             },
             user
         );
         // Create all streams based on root stream
         let extraIndex = 1;
-        for (const { numberOfStaff, weeks } of extraTutorNumRequirement) {
+        for (const { numberOfStaff, weeks } of extraStaffRequirement) {
             streamsToBeCreated.push({
                 timetableId: timetable.id,
                 name: `${name} extra ${extraIndex++}`,
@@ -613,7 +619,7 @@ export class SessionStreamResolver {
                 day,
                 startTime,
                 endTime,
-                weeks,
+                weeks: sortBy(uniq(weeks)),
                 location,
                 numberOfStaff,
                 rootId: rootStream.id,

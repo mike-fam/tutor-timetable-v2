@@ -12,28 +12,38 @@ import {
 } from "@chakra-ui/react";
 import { Form, Formik, FormikErrors } from "formik";
 import { FormikInput } from "../helpers/FormikInput";
-import { SessionType, UpdateStreamInput } from "../../generated/graphql";
+import { SessionType } from "../../generated/graphql";
 import { FormikSelect } from "../helpers/FormikSelect";
 import { sentenceCase } from "change-case";
 import { FormikTimeInput } from "../helpers/FormikTimeInput";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-
-type UpdateStreamInputNoId = Omit<UpdateStreamInput, "streamId">;
+import { FormikBaseStaffRequirement } from "./FormikBaseStaffRequirement";
+import { FormikExtraStaffRequirement } from "./FormikExtraStaffRequirement";
+import { StreamState } from "../../types/session-settings";
 
 type Props = {
     isOpen: boolean;
     close: () => void;
-    stream: Partial<UpdateStreamInputNoId>;
+    stream: Partial<StreamState>;
+    weekNames: string[];
+    numberOfWeeks: number;
+    onSave: (newState: Partial<StreamState>) => any;
 };
 
-export const StreamDrawer: FC<Props> = ({ isOpen, close, stream }) => {
-    console.log(stream);
+export const StreamSettingsDrawer: FC<Props> = ({
+    isOpen,
+    close,
+    stream,
+    weekNames,
+    numberOfWeeks,
+    onSave,
+}) => {
     return (
-        <Drawer isOpen={isOpen} onClose={close} size="sm">
+        <Drawer isOpen={isOpen} onClose={close} size="md">
             <DrawerOverlay />
             <DrawerContent>
-                <Formik<Partial<UpdateStreamInputNoId>>
+                <Formik<Partial<StreamState>>
                     initialValues={stream}
                     validate={(values) => {
                         const errors: FormikErrors<typeof values> = {};
@@ -53,15 +63,16 @@ export const StreamDrawer: FC<Props> = ({ isOpen, close, stream }) => {
                         }
                         return errors;
                     }}
-                    onSubmit={(values) => {
-                        console.log(values);
+                    onSubmit={(value) => {
+                        onSave(value);
+                        close();
                     }}
                 >
                     <Form>
                         <DrawerCloseButton />
                         <DrawerHeader>Edit Session Stream</DrawerHeader>
 
-                        <DrawerBody>
+                        <DrawerBody maxH="85vh" overflow="auto">
                             <Stack spacing={4}>
                                 <FormikInput
                                     name="name"
@@ -136,6 +147,16 @@ export const StreamDrawer: FC<Props> = ({ isOpen, close, stream }) => {
                                             : ""
                                     }
                                 />
+                                <FormikBaseStaffRequirement
+                                    name="baseStaffRequirement"
+                                    weekNames={weekNames}
+                                    numberOfWeeks={numberOfWeeks}
+                                />
+                                <FormikExtraStaffRequirement
+                                    name="extraStaffRequirement"
+                                    weekNames={weekNames}
+                                    numberOfWeeks={numberOfWeeks}
+                                />
                             </Stack>
                         </DrawerBody>
 
@@ -143,7 +164,9 @@ export const StreamDrawer: FC<Props> = ({ isOpen, close, stream }) => {
                             <Button variant="outline" mr={3} onClick={close}>
                                 Cancel
                             </Button>
-                            <Button colorScheme="blue">Save</Button>
+                            <Button colorScheme="blue" type="submit">
+                                Save
+                            </Button>
                         </DrawerFooter>
                     </Form>
                 </Formik>

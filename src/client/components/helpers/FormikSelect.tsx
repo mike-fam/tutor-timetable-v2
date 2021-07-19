@@ -25,7 +25,6 @@ export const FormikSelect: React.FC<Props> = ({
     optionToText = capitalCase,
     ...props
 }) => {
-    console.log(props.isDisabled);
     return (
         <Field name={name}>
             {({ field, meta }: FieldProps) => (

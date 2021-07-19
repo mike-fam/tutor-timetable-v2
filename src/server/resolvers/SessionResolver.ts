@@ -46,6 +46,9 @@ export class SessionResolver {
     ): Promise<Session[]> {
         const results = [];
         const user = req.user;
+        if (courseIds.length === 0) {
+            return []
+        }
         const timetables = await models.timetable.getMany(
             {
                 where: courseIds.map((courseId) => ({
@@ -55,6 +58,9 @@ export class SessionResolver {
             },
             user
         );
+        if (timetables.length === 0) {
+            return []
+        }
         const streams = await models.sessionStream.getMany(
             {
                 where: timetables.map((timetable) => ({
@@ -63,6 +69,9 @@ export class SessionResolver {
             },
             user
         );
+        if (streams.length === 0) {
+            return []
+        }
         // get all root streams
         const rootStreams = streams.filter((stream) => stream.rootId === null);
         const streamMap = keyBy(streams, (stream) => stream.id);
@@ -179,6 +188,9 @@ export class SessionResolver {
             },
             req.user
         );
+        if (timetable.sessionStreamIds.length === 0) {
+            return []
+        }
         return await models.session.getMany(
             {
                 where: timetable.sessionStreamIds.map((sessionStreamId) => ({

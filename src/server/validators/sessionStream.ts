@@ -1,11 +1,16 @@
-import { registerDecorator, ValidationOptions } from "class-validator";
-import { StreamTutorNumbersPattern } from "../resolvers/SessionStreamResolver";
+import {
+    registerDecorator,
+    ValidationArguments,
+    ValidationOptions,
+} from "class-validator";
+import { StreamStaffRequirement } from "../resolvers/SessionStreamResolver";
 import uniq from "lodash/uniq";
 import intersection from "lodash/intersection";
+import difference from "lodash/difference";
 
 export const UniqueExtraWeeks = (validationOptions?: ValidationOptions) => {
     return (
-        object: { extraTutorNumRequirement: StreamTutorNumbersPattern[] },
+        object: { extraStaffRequirement: StreamStaffRequirement[] },
         propertyName: string
     ) => {
         registerDecorator({
@@ -14,7 +19,7 @@ export const UniqueExtraWeeks = (validationOptions?: ValidationOptions) => {
             propertyName: propertyName,
             options: { ...validationOptions },
             validator: {
-                validate(value: StreamTutorNumbersPattern[]) {
+                validate(value: StreamStaffRequirement[]) {
                     const cumulativeWeeks: number[] = [];
                     for (const pattern of value) {
                         const newWeeks = uniq(pattern.weeks);
@@ -24,6 +29,38 @@ export const UniqueExtraWeeks = (validationOptions?: ValidationOptions) => {
                             return false;
                         }
                         cumulativeWeeks.push(...newWeeks);
+                    }
+                    return true;
+                },
+            },
+        });
+    };
+};
+
+export const ValidExtraWeeks = (validationOptions?: ValidationOptions) => {
+    return (
+        object: { extraStaffRequirement: StreamStaffRequirement[] },
+        propertyName: string
+    ) => {
+        registerDecorator({
+            name: "validExtraWeeks",
+            target: object.constructor,
+            propertyName: propertyName,
+            options: { ...validationOptions },
+            validator: {
+                validate(
+                    value: StreamStaffRequirement[],
+                    args: ValidationArguments
+                ) {
+                    for (const pattern of value) {
+                        if (
+                            difference(
+                                pattern.weeks,
+                                (args.object as any).weeks
+                            ).length > 0
+                        ) {
+                            return false;
+                        }
                     }
                     return true;
                 },

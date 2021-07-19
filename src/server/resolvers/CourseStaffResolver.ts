@@ -91,6 +91,9 @@ export class CourseStaffResolver {
             { courseId, termId },
             user
         );
+        if (!usernames) {
+            return [];
+        }
         const users = await models.user.getOrCreateUserByUsernames(
             usernames,
             user

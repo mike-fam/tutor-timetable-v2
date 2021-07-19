@@ -113,8 +113,8 @@ export type MergedStreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  baseTutorNumRequirement: StreamTutorNumbersPattern;
-  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
   courseId: Scalars['String'];
   termId: Scalars['String'];
 };
@@ -577,11 +577,11 @@ export type StreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  baseTutorNumRequirement: StreamTutorNumbersPattern;
-  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
 };
 
-export type StreamTutorNumbersPattern = {
+export type StreamStaffRequirement = {
   weeks: Array<Scalars['Int']>;
   numberOfStaff: Scalars['Int'];
 };
@@ -668,8 +668,8 @@ export type UpdateStreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  baseTutorNumRequirement: StreamTutorNumbersPattern;
-  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
   streamId: Scalars['String'];
 };
 
@@ -1317,12 +1317,25 @@ export type StreamsFromPublicTimetableQuery = (
   { __typename?: 'Query' }
   & { fromPublicTimetable: Array<(
     { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'name' | 'type' | 'day' | 'startTime' | 'endTime' | 'weeks' | 'location'>
-    & { timetable: (
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username'>
+    )>, secondaryStreams: Array<(
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
+      & { allocatedUsers: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'username'>
+      )> }
+    )>, timetable: (
       { __typename?: 'Timetable' }
       & { course: (
         { __typename?: 'Course' }
-        & Pick<Course, 'code'>
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
       ) }
     ) }
   )> }
@@ -2974,16 +2987,36 @@ export const StreamsFromPublicTimetableDocument = gql`
     query StreamsFromPublicTimetable($courseTerm: CourseTermIdInput!, $sessionTypes: [SessionType!]!) {
   fromPublicTimetable(courseTerm: $courseTerm, sessionTypes: $sessionTypes) {
     id
-    name
     type
-    day
+    name
     startTime
     endTime
-    weeks
+    day
     location
+    numberOfStaff
+    weeks
+    allocatedUsers {
+      id
+      name
+      username
+    }
+    secondaryStreams {
+      weeks
+      numberOfStaff
+      allocatedUsers {
+        id
+        name
+        username
+      }
+    }
     timetable {
       course {
+        id
         code
+      }
+      term {
+        id
+        weekNames
       }
     }
   }
