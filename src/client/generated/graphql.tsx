@@ -113,7 +113,8 @@ export type MergedStreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  numberOfTutorsForWeeks: Array<StreamTutorNumbersPattern>;
+  baseTutorNumRequirement: StreamTutorNumbersPattern;
+  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
   courseId: Scalars['String'];
   termId: Scalars['String'];
 };
@@ -576,12 +577,13 @@ export type StreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  numberOfTutorsForWeeks: Array<StreamTutorNumbersPattern>;
+  baseTutorNumRequirement: StreamTutorNumbersPattern;
+  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
 };
 
 export type StreamTutorNumbersPattern = {
-  week: Scalars['Int'];
-  numberOfTutors: Scalars['Int'];
+  weeks: Array<Scalars['Int']>;
+  numberOfStaff: Scalars['Int'];
 };
 
 export type Subscription = {
@@ -666,7 +668,8 @@ export type UpdateStreamInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  numberOfTutorsForWeeks: Array<StreamTutorNumbersPattern>;
+  baseTutorNumRequirement: StreamTutorNumbersPattern;
+  extraTutorNumRequirement: Array<StreamTutorNumbersPattern>;
   streamId: Scalars['String'];
 };
 

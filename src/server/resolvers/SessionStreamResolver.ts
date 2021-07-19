@@ -15,14 +15,13 @@ import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 import { MyContext } from "../types/context";
 import { Models } from "../types/models";
-import { Request } from "express";
 import { CourseTermIdInput } from "./CourseTermId";
 import { In, IsNull } from "typeorm";
 import isEqual from "lodash/isEqual";
 import min from "lodash/min";
 import uniqBy from "lodash/uniqBy";
-import { IsEnum, IsOptional, Max, Min, MinLength } from "class-validator";
-import { UniqueWeeks } from "../validators/sessionStream";
+import { ArrayNotEmpty, IsEnum, Max, Min, MinLength } from "class-validator";
+import { UniqueExtraWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
 import { asyncForEach, getAllIndices } from "../../utils/array";
 import { PERM_ERR } from "../constants";
@@ -34,14 +33,13 @@ import { dayToIsoNumber, timeStringToHours } from "../../utils/date";
 import { v4 as uuid } from "uuid";
 import sortBy from "lodash/sortBy";
 import differenceBy from "lodash/differenceBy";
-import { isOptional } from "@typescript-eslint/typescript-estree/dist/node-utils";
-import keyBy from "lodash/keyBy";
-import mapValues from "lodash/mapValues";
 import { DataLoaders } from "../types/dataloaders";
+import uniq from "lodash/uniq";
 
 @InputType()
 export class StreamAllocationPattern {
     @Field(() => [Int])
+    @ArrayNotEmpty()
     weeks: number[];
 
     @Field(() => [String])
@@ -60,11 +58,12 @@ export class ChangeStreamAllocationInput {
 @InputType()
 export class StreamTutorNumbersPattern {
     @Field(() => [Int])
-    week: number[];
+    @ArrayNotEmpty()
+    weeks: number[];
 
     @Field(() => Int)
     @Min(0)
-    numberOfTutors: number;
+    numberOfStaff: number;
 }
 
 @InputType("StreamInput")
@@ -99,7 +98,7 @@ export class StreamInput {
     baseTutorNumRequirement: StreamTutorNumbersPattern;
 
     @Field(() => [StreamTutorNumbersPattern])
-    @UniqueWeeks()
+    @UniqueExtraWeeks({ message: "Duplicated weeks in extra requirements." })
     extraTutorNumRequirement: StreamTutorNumbersPattern[];
 }
 
@@ -292,29 +291,42 @@ export class SessionStreamResolver {
         const updatedStreams: SessionStream[] = [];
         await asyncForEach(streamInputs, async ({ streamId, ...input }) => {
             // Get allocation pattern, compare with existing pattern
-            const existingStream = await streamModel.getById(streamId, user);
+            const rootStream = await streamModel.getById(streamId, user);
             const secondaryStreams = await streamModel.getByIds(
-                existingStream.secondaryStreamIds,
+                rootStream.secondaryStreamIds,
                 user
             );
-            const existingPattern = mapValues(
-                keyBy(existingStream.weeks),
-                () => existingStream.numberOfStaff
-            );
-            for (const secondaryStream of secondaryStreams) {
-                for (const week of secondaryStream.weeks) {
-                    existingPattern[week] += secondaryStream.numberOfStaff;
+            const sameBasePattern =
+                isEqual(
+                    rootStream.weeks,
+                    uniq(input.baseTutorNumRequirement.weeks)
+                ) &&
+                rootStream.numberOfStaff ===
+                    input.baseTutorNumRequirement.numberOfStaff;
+            let sameExtraPattern = true;
+            for (const extraWeekPattern of input.extraTutorNumRequirement) {
+                let samePattern = false;
+                for (const secondaryStream of secondaryStreams) {
+                    if (
+                        isEqual(
+                            uniq(secondaryStream.weeks),
+                            extraWeekPattern.weeks
+                        ) &&
+                        secondaryStream.numberOfStaff ===
+                            extraWeekPattern.numberOfStaff
+                    ) {
+                        samePattern = true;
+                    }
+                }
+                if (!samePattern) {
+                    sameExtraPattern = false;
+                    break;
                 }
             }
-            const updatedPattern = mapValues(
-                keyBy(input.numberOfTutorsForWeeks, (pattern) => pattern.week),
-                (value) => value.numberOfTutors
-            );
-
             // If not equal, delete all streams and recreate from scratch
-            if (!isEqual(existingPattern, updatedPattern)) {
+            if (!sameBasePattern || !sameExtraPattern) {
                 const timetable = await models.timetable.getById(
-                    existingStream.timetableId,
+                    rootStream.timetableId,
                     user
                 );
                 await streamModel.delete({ id: streamId }, user);
@@ -324,7 +336,7 @@ export class SessionStreamResolver {
                     models,
                     user,
                     loaders,
-                    existingStream.id
+                    rootStream.id
                 );
                 if (createdStream) {
                     updatedStreams.push(createdStream);
@@ -333,7 +345,7 @@ export class SessionStreamResolver {
                 // Otherwise, update as normal
                 const { name, type, day, startTime, endTime, location } = input;
                 const updatedStream = await streamModel.update(
-                    existingStream,
+                    rootStream,
                     { name, type, day, startTime, endTime, location },
                     user
                 );
@@ -569,33 +581,12 @@ export class SessionStreamResolver {
             name,
             type,
             day,
-            numberOfTutorsForWeeks,
             startTime,
             endTime,
             location,
+            baseTutorNumRequirement,
+            extraTutorNumRequirement,
         } = streamInput;
-        // map in { numStaff: week[] } format
-        const numberOfStaffWeekMap: Map<number, number[]> = new Map();
-        // set of all weeks
-        const allWeeks: Set<number> = new Set();
-        for (const { week, numberOfTutors } of numberOfTutorsForWeeks) {
-            // skip weeks that have 0 staff
-            if (numberOfTutors === 0) {
-                continue;
-            }
-            if (numberOfStaffWeekMap.has(numberOfTutors)) {
-                numberOfStaffWeekMap.get(numberOfTutors)!.push(week);
-            } else {
-                numberOfStaffWeekMap.set(numberOfTutors, [week]);
-            }
-            allWeeks.add(week);
-        }
-        // If nothing in map, skip. This happens if all weeks have 0 staff
-        if (numberOfStaffWeekMap.size === 0) {
-            return null;
-        }
-        // Create root stream
-        const minStaffNum = min(Array.from(numberOfStaffWeekMap.keys()))!;
         const rootStream = await models.sessionStream.create(
             {
                 id,
@@ -605,17 +596,16 @@ export class SessionStreamResolver {
                 day,
                 startTime,
                 endTime,
-                weeks: Array.from(allWeeks),
+                weeks: baseTutorNumRequirement.weeks,
                 location,
-                numberOfStaff: minStaffNum,
+                numberOfStaff: baseTutorNumRequirement.numberOfStaff,
                 allocatedUserIds: [],
             },
             user
         );
-        numberOfStaffWeekMap.delete(minStaffNum);
         // Create all streams based on root stream
         let extraIndex = 1;
-        for (const [numberOfStaff, weeks] of numberOfStaffWeekMap) {
+        for (const { numberOfStaff, weeks } of extraTutorNumRequirement) {
             streamsToBeCreated.push({
                 timetableId: timetable.id,
                 name: `${name} extra ${extraIndex++}`,
@@ -625,7 +615,7 @@ export class SessionStreamResolver {
                 endTime,
                 weeks,
                 location,
-                numberOfStaff: numberOfStaff - minStaffNum,
+                numberOfStaff,
                 rootId: rootStream.id,
                 allocatedUserIds: [],
             });

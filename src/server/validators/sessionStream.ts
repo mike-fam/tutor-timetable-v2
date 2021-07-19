@@ -1,10 +1,9 @@
 import { registerDecorator, ValidationOptions } from "class-validator";
-import {
-    MergedStreamInput,
-    StreamTutorNumbersPattern,
-} from "../resolvers/SessionStreamResolver";
+import { StreamTutorNumbersPattern } from "../resolvers/SessionStreamResolver";
+import uniq from "lodash/uniq";
+import intersection from "lodash/intersection";
 
-export const UniqueWeeks = (validationOptions?: ValidationOptions) => {
+export const UniqueExtraWeeks = (validationOptions?: ValidationOptions) => {
     return (
         object: { extraTutorNumRequirement: StreamTutorNumbersPattern[] },
         propertyName: string
@@ -13,15 +12,20 @@ export const UniqueWeeks = (validationOptions?: ValidationOptions) => {
             name: "uniqueWeeks",
             target: object.constructor,
             propertyName: propertyName,
-            options: {
-                ...validationOptions,
-                message: "Multiple of the same weeks specified",
-            },
+            options: { ...validationOptions },
             validator: {
                 validate(value: StreamTutorNumbersPattern[]) {
-                    const weeks = value.map((tutorNumber) => tutorNumber.week);
-                    const uniqueWeeks = new Set(weeks);
-                    return weeks.length === uniqueWeeks.size;
+                    const cumulativeWeeks: number[] = [];
+                    for (const pattern of value) {
+                        const newWeeks = uniq(pattern.weeks);
+                        if (
+                            intersection(newWeeks, cumulativeWeeks).length > 0
+                        ) {
+                            return false;
+                        }
+                        cumulativeWeeks.push(...newWeeks);
+                    }
+                    return true;
                 },
             },
         });
