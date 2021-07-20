@@ -24,7 +24,6 @@ import { v4 as uuid } from "uuid";
 type Props = {
     loading: boolean;
     timetableState: SessionSettingsUtils["timetableState"];
-    timetableActions: SessionSettingsUtils["actions"];
     selectActions: SessionSettingsUtils["selection"];
     baseInfo: SessionSettingsUtils["base"];
     week: number;
@@ -35,7 +34,6 @@ type Props = {
 export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     loading,
     timetableState,
-    timetableActions,
     selectActions,
     baseInfo,
     week,
@@ -46,7 +44,6 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     const { session, stream, streamActions } = timetableState;
     const { streamsById } = stream;
     const { sessionsByWeek } = session;
-    const {} = timetableActions;
     const { course, term } = baseInfo;
     const {
         selectSessions,

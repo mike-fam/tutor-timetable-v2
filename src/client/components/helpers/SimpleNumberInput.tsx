@@ -13,7 +13,7 @@ type Props = Omit<NumberInputFieldProps, "value" | "onChange" | "size"> & {
     min?: number;
     size?: string;
     value: number;
-    inline?: boolean
+    inline?: boolean;
     onChange: (value: number) => any;
 };
 
@@ -23,7 +23,7 @@ export const SimpleNumberInput: FC<Props> = ({
     value,
     onChange,
     size,
-    inline  = false
+    inline = false,
 }) => {
     return (
         <NumberInput

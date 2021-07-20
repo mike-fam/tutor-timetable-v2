@@ -100,7 +100,10 @@ export class SessionStream
     @Column({ nullable: true })
     rootId: string | null;
 
-    @ManyToMany(() => User, (user) => user.allocatedStreams, { lazy: true, onDelete: "CASCADE" })
+    @ManyToMany(() => User, (user) => user.allocatedStreams, {
+        lazy: true,
+        onDelete: "CASCADE",
+    })
     allocatedUsers: Lazy<User[]>;
 
     @RelationId((stream: SessionStream) => stream.allocatedUsers)

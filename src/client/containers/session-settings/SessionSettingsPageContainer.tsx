@@ -75,20 +75,22 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                         <HStack justify="flex-end">
                             {week === defaultInt
                                 ? selectedStreams.size > 0 && (
-                                    <>
-                                        <Button
-                                            colorScheme="green"
-                                            onClick={() => deselectAllStreams()}
-                                        >
-                                            Deselect All
-                                        </Button>
-                                      <Button
-                                          colorScheme="green"
-                                          onClick={openStreamDrawer}
-                                      >
-                                          Edit Session Streams
-                                      </Button>
-                                    </>
+                                      <>
+                                          <Button
+                                              colorScheme="green"
+                                              onClick={() =>
+                                                  deselectAllStreams()
+                                              }
+                                          >
+                                              Deselect All
+                                          </Button>
+                                          <Button
+                                              colorScheme="green"
+                                              onClick={openStreamDrawer}
+                                          >
+                                              Edit Session Streams
+                                          </Button>
+                                      </>
                                   )
                                 : selectedSessions.size > 0 && (
                                       <Button colorScheme="green">
@@ -114,7 +116,6 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                         <SessionSettingsTimetableContainer
                             loading={loading}
                             timetableState={timetableState}
-                            timetableActions={actions}
                             selectActions={selection}
                             baseInfo={base}
                             week={week}

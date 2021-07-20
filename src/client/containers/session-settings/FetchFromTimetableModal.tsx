@@ -11,7 +11,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay, Stack,
+    ModalOverlay,
+    Stack,
 } from "@chakra-ui/react";
 import { Set } from "immutable";
 import { sentenceCase } from "change-case";
@@ -55,10 +56,7 @@ export const FetchFromTimetableModal: FC<Props> = ({
                         </FormControl>
                         <FormControl>
                             <FormLabel>Course</FormLabel>
-                            <Input
-                                value={course?.code}
-                                readOnly={true}
-                            />
+                            <Input value={course?.code} readOnly={true} />
                         </FormControl>
                         <FormControl>
                             <FormLabel>SessionTypes</FormLabel>
@@ -86,7 +84,6 @@ export const FetchFromTimetableModal: FC<Props> = ({
                                 textDisplayed={(elem) => sentenceCase(elem)}
                             />
                         </FormControl>
-
                     </Stack>
                 </ModalBody>
 

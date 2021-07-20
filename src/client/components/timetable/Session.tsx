@@ -22,56 +22,52 @@ type StyleProps = Partial<Omit<BoxProps, "id">>;
 
 export type Props<T> = SessionProps<T> & StyleProps;
 
-export const Session = forwardRef<
-    HTMLDivElement,
-    Props<any>
->(({ theme = SessionTheme.PRIMARY, children, ...props }, ref) => {
-    const { width, heightPx, display, left, topPx } = useMemo(
-        () => sessionStyleFromProps(props),
-        [props]
-    );
-    const bg = useSessionBgColour(theme);
-    const styleProps = useMemo(
-        () =>
-            omit<
-                Props<any>,
-                keyof SessionProps<any>
-            >(props, [
-                "sessionId",
-                "name",
-                "startTime",
-                "endTime",
-                "startDay",
-                "endDay",
-                "stackSize",
-                "timeslotHeight",
-                "elemStackStart",
-                "elemStackIndex",
-                "elemStackWidth",
-                "longestBranchSize",
-                "splitBranchSize",
-                "theme",
-                "custom"
-            ]),
-        [props]
-    );
+export const Session = forwardRef<HTMLDivElement, Props<any>>(
+    ({ theme = SessionTheme.PRIMARY, children, ...props }, ref) => {
+        const { width, heightPx, display, left, topPx } = useMemo(
+            () => sessionStyleFromProps(props),
+            [props]
+        );
+        const bg = useSessionBgColour(theme);
+        const styleProps = useMemo(
+            () =>
+                omit<Props<any>, keyof SessionProps<any>>(props, [
+                    "sessionId",
+                    "name",
+                    "startTime",
+                    "endTime",
+                    "startDay",
+                    "endDay",
+                    "stackSize",
+                    "timeslotHeight",
+                    "elemStackStart",
+                    "elemStackIndex",
+                    "elemStackWidth",
+                    "longestBranchSize",
+                    "splitBranchSize",
+                    "theme",
+                    "custom",
+                ]),
+            [props]
+        );
 
-    return (
-        <Box
-            position="absolute"
-            w={width}
-            h={heightPx}
-            display={display}
-            left={left}
-            top={topPx}
-            bg={bg}
-            color="white"
-            rounded="base"
-            overflow="hidden"
-            {...styleProps}
-            ref={ref}
-        >
-            {children}
-        </Box>
-    );
-});
+        return (
+            <Box
+                position="absolute"
+                w={width}
+                h={heightPx}
+                display={display}
+                left={left}
+                top={topPx}
+                bg={bg}
+                color="white"
+                rounded="base"
+                overflow="hidden"
+                {...styleProps}
+                ref={ref}
+            >
+                {children}
+            </Box>
+        );
+    }
+);

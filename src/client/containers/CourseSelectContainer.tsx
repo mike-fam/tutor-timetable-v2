@@ -28,9 +28,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
         if (loading || !data?.me?.courseStaffs) {
             return;
         }
-        setCoursesMap((prev) =>
-            prev.clear()
-        );
+        setCoursesMap((prev) => prev.clear());
         for (const courseStaff of data.me.courseStaffs) {
             if (
                 courseStaff.timetable.term.id === chosenTerm &&

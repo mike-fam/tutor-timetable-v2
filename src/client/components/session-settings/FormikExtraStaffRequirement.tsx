@@ -2,7 +2,6 @@ import React, { FC, Fragment } from "react";
 import {
     Box,
     Flex,
-    FormControl,
     FormLabel,
     Grid,
     IconButton,
@@ -16,7 +15,6 @@ import range from "lodash/range";
 import { removeAtIndex, updateElementAtIndex } from "../../../utils/array";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { SimpleNumberInput } from "../helpers/SimpleNumberInput";
-import { v4 as uuid } from "uuid";
 
 type Props = {
     name: string;

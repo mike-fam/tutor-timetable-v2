@@ -1,4 +1,4 @@
-import React, { useMemo} from "react";
+import React, { useMemo } from "react";
 import { Props as SessionProps, Session } from "./Session";
 import { PopoverSession } from "./PopoverSession";
 import { SessionTheme } from "../../types/session";

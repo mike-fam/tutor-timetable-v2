@@ -47,7 +47,7 @@ export class SessionResolver {
         const results = [];
         const user = req.user;
         if (courseIds.length === 0) {
-            return []
+            return [];
         }
         const timetables = await models.timetable.getMany(
             {
@@ -59,7 +59,7 @@ export class SessionResolver {
             user
         );
         if (timetables.length === 0) {
-            return []
+            return [];
         }
         const streams = await models.sessionStream.getMany(
             {
@@ -70,7 +70,7 @@ export class SessionResolver {
             user
         );
         if (streams.length === 0) {
-            return []
+            return [];
         }
         // get all root streams
         const rootStreams = streams.filter((stream) => stream.rootId === null);
@@ -189,7 +189,7 @@ export class SessionResolver {
             req.user
         );
         if (timetable.sessionStreamIds.length === 0) {
-            return []
+            return [];
         }
         return await models.session.getMany(
             {

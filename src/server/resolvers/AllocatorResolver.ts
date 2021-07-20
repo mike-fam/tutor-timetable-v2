@@ -46,13 +46,7 @@ export enum AllocatorStatus {
     REQUESTED,
     NOT_READY,
     ERROR,
-    GENERATED
-}
-
-@ObjectType()
-class Allocator {
-    @Field(() => AllocatorStatus)
-    status: AllocatorStatus
+    GENERATED,
 }
 
 @ObjectType()

@@ -15,7 +15,10 @@ import { UserResolver } from "./resolvers/UserResolver";
 import { TermResolver } from "./resolvers/TermResolver";
 import { CourseStaffResolver } from "./resolvers/CourseStaffResolver";
 import cors from "cors";
-import { SessionStreamResolver, StreamInput } from "./resolvers/SessionStreamResolver";
+import {
+    SessionStreamResolver,
+    StreamInput,
+} from "./resolvers/SessionStreamResolver";
 import { TimetableResolver } from "./resolvers/TimetableResolver";
 import { SessionResolver } from "./resolvers/SessionResolver";
 import { AvailabilityResolver } from "./resolvers/AvailabilityResolver";
@@ -113,7 +116,7 @@ const main = async () => {
             globalMiddlewares: [LoadersInjector],
             authChecker: ({ context: { req } }: { context: MyContext }) =>
                 !!req.user,
-            orphanedTypes: [StreamInput]
+            orphanedTypes: [StreamInput],
         }),
         context: ({ req, res }): MyContext => {
             const loaders = {

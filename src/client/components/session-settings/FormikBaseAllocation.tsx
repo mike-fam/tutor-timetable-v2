@@ -3,14 +3,12 @@ import { useField } from "formik";
 import {
     Box,
     Flex,
-    FormControl,
     FormLabel,
     Grid,
     IconButton,
     Spacer,
     Text,
 } from "@chakra-ui/react";
-import { v4 as uuid } from "uuid";
 import { UserMap } from "../../hooks/useUsersOfCourse";
 import { weeksPatternRepr } from "../../utils/session-stream";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";

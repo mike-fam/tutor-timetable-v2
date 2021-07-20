@@ -33,9 +33,7 @@ export class UpdateDetailsInputType {
 }
 
 @InputType()
-export class UserTimetableInput extends CourseTermIdInput {
-
-}
+export class UserTimetableInput extends CourseTermIdInput {}
 
 @Resolver(() => User)
 export class UserResolver {

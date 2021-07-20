@@ -133,9 +133,7 @@ mutation UpdateSessionStreams($updateStreamInput: [UpdateStreamInput!]!) {
 }
 
 mutation AddMergedSessionStreams($sessionStreams: [MergedStreamInput!]!) {
-    addMergedSessionStreams (
-        sessionStreams: $sessionStreams
-    ) {
+    addMergedSessionStreams(sessionStreams: $sessionStreams) {
         id
         type
         name
