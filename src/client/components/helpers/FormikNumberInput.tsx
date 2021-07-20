@@ -34,7 +34,6 @@ export const FormikNumberInput: React.FC<Props> = ({
         <FormControl
             id={id || camelCase(name)}
             isInvalid={meta.touched && !!meta.error}
-            mt={3}
         >
             <FormLabel>{label || capitalCase(name)}</FormLabel>
             <NumberInput

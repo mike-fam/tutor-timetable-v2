@@ -3,7 +3,7 @@ import { Select, SelectProps } from "@chakra-ui/react";
 import { Map } from "immutable";
 import { defaultStr } from "../../constants";
 
-type Props = SelectHTMLAttributes<HTMLSelectElement> &
+type Props = Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> &
     Partial<SelectProps> & {
         options: Map<string, string>;
         size?: string;

@@ -28,7 +28,13 @@ export const MultiSelect: FC<Props> = ({
     }, [elements, selectedElements]);
     return (
         <Menu closeOnSelect={false} boundary="clippingParents" isLazy>
-            <MenuButton as={Button} variant="outline" w="25ch" rightIcon={<ChevronDownIcon />} size="sm">
+            <MenuButton
+                as={Button}
+                variant="outline"
+                w="25ch"
+                rightIcon={<ChevronDownIcon />}
+                size="sm"
+            >
                 {selectedElemsRepr.substr(0, 18)}
                 {selectedElemsRepr.length >= 18 && "..."}
             </MenuButton>
@@ -41,11 +47,7 @@ export const MultiSelect: FC<Props> = ({
                     }}
                 >
                     {elements.map(([elemKey, elem]) => (
-                        <MenuItemOption
-                            key={elemKey}
-                            value={elemKey}
-                            commandSpacing="auto"
-                        >
+                        <MenuItemOption key={elemKey} value={elemKey}>
                             {elem}
                         </MenuItemOption>
                     ))}

@@ -15,10 +15,11 @@ import { TimetableSessionType } from "../../types/timetable";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import { SessionResponseType } from "../../types/session";
 import { Map } from "immutable";
-import { ModificationType } from "../../generated/graphql";
+import { ModificationType, SessionType } from "../../generated/graphql";
 import { useColorMode } from "@chakra-ui/react";
 import { SessionSettingsUtils } from "../../types/session-settings";
-import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
+import { UserMap } from "../../hooks/useUsersOfCourse";
+import { v4 as uuid } from "uuid";
 
 type Props = {
     loading: boolean;
@@ -27,6 +28,8 @@ type Props = {
     selectActions: SessionSettingsUtils["selection"];
     baseInfo: SessionSettingsUtils["base"];
     week: number;
+    openStreamDrawer: () => void;
+    users: UserMap;
 };
 
 export const SessionSettingsTimetableContainer: React.FC<Props> = ({
@@ -36,13 +39,15 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     selectActions,
     baseInfo,
     week,
+    openStreamDrawer,
+    users,
 }) => {
     const { displayedDays } = useContext(TimetableSettingsContext);
-    const { session, stream } = timetableState;
+    const { session, stream, streamActions } = timetableState;
     const { streamsById } = stream;
     const { sessionsByWeek } = session;
     const {} = timetableActions;
-    const { course, term, courseId, termId } = baseInfo;
+    const { course, term } = baseInfo;
     const {
         selectSessions,
         selectStreams,
@@ -50,9 +55,11 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
         selectedStreams,
         deselectSessions,
         deselectStreams,
+        deselectAllStreams,
+        selectExclusiveStream,
     } = selectActions;
+    const { createStream, deleteStream, restoreStream } = streamActions;
     const { colorMode } = useColorMode();
-    const usersOfCourse = useUsersOfCourse(courseId, termId);
     const sessions = useMemo<TimetableSessionType[]>(() => {
         if (week === defaultInt) {
             return streamsById
@@ -130,14 +137,14 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
             const baseAllocation = [
                 stream?.baseStaffRequirement.weeks || [],
                 stream?.baseStaffRequirement.allocatedUsers.map(
-                    (userId) => usersOfCourse.get(userId)?.name || ""
+                    (userId) => users.get(userId)?.name || ""
                 ) || [],
             ] as [number[], string[]];
             const extraAllocations = stream?.extraStaffRequirement.map(
                 (requirement) => [
                     requirement.weeks || [],
                     requirement.allocatedUsers.map(
-                        (userId) => usersOfCourse.get(userId)?.name || ""
+                        (userId) => users.get(userId)?.name || ""
                     ) || [],
                 ]
             ) as [number[], string[]][];
@@ -148,9 +155,34 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                 weekNames: term?.weekNames || [],
                 location: stream?.location || "",
                 styles: streamStyle(streamId),
+                deleteStream: (streamId) => {
+                    deleteStream(streamId);
+                    deselectAllStreams();
+                },
+                editStream: (streamId) => {
+                    selectExclusiveStream(streamId);
+                    openStreamDrawer();
+                },
+                restoreStream,
+                isDeleted:
+                    !stream ||
+                    stream.settingsModification === ModificationType.Removed ||
+                    stream.settingsModification ===
+                        ModificationType.RemovedModified,
             };
         },
-        [course, term, streamsById, streamStyle, usersOfCourse]
+        [
+            course,
+            term,
+            streamsById,
+            streamStyle,
+            users,
+            deleteStream,
+            openStreamDrawer,
+            restoreStream,
+            selectExclusiveStream,
+            deselectAllStreams,
+        ]
     );
     const sessionStyle = useCallback<
         (sessionId: string) => SessionSettingsStyleProps
@@ -191,7 +223,28 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                             week === defaultInt ? (
                                 <ClickableTimeslot
                                     key={key}
-                                    addNewTimeslot={(timeslot) => {}}
+                                    addNewTimeslot={(timeslot) => {
+                                        const streamId = uuid();
+                                        createStream(
+                                            {
+                                                name: "New Session Stream",
+                                                type: SessionType.Practical,
+                                                day: timeslot.day,
+                                                startTime: timeslot.startTime,
+                                                endTime: timeslot.endTime,
+                                                location: "None",
+                                                baseStaffRequirement: {
+                                                    weeks: [],
+                                                    numberOfStaff: 1,
+                                                    allocatedUsers: [],
+                                                },
+                                                extraStaffRequirement: [],
+                                            },
+                                            streamId
+                                        );
+                                        selectExclusiveStream(streamId);
+                                        openStreamDrawer();
+                                    }}
                                     time={time}
                                     day={day}
                                 />
@@ -206,6 +259,17 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                                     key={sessionProps.sessionId}
                                     custom={streamCustomProps}
                                     onClick={(streamId) => {
+                                        const stream =
+                                            streamsById.get(streamId)!;
+
+                                        if (
+                                            stream.settingsModification ===
+                                                ModificationType.Removed ||
+                                            stream.settingsModification ===
+                                                ModificationType.RemovedModified
+                                        ) {
+                                            return;
+                                        }
                                         if (selectedStreams.has(streamId)) {
                                             deselectStreams(streamId);
                                         } else {

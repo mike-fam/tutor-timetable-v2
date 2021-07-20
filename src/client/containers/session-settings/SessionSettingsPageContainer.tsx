@@ -15,6 +15,7 @@ import { defaultInt, defaultStr } from "../../constants";
 import { WeekNav } from "../../components/WeekNav";
 import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
 import { StreamSettingsDrawer } from "../../components/session-settings/StreamSettingsDrawer";
+import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
 
 type Props = {};
 
@@ -31,9 +32,15 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         course,
         term,
     } = base;
-    const { selectedStreams, selectedSessions, selectedStreamInput } =
-        selection;
+    const {
+        selectedStreams,
+        selectedSessions,
+        selectedStreamInput,
+        deselectAllStreams,
+    } = selection;
     const { streamActions } = timetableState;
+    const { deleteSelectedStreams, editMultipleStreamSettings } = streamActions;
+    const { submitChanges } = actions;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -44,6 +51,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         onClose: closeStreamDrawer,
         onOpen: openStreamDrawer,
     } = useDisclosure();
+    const users = useUsersOfCourse(courseId, termId);
     return (
         <Wrapper>
             <Stack spacing={4}>
@@ -88,7 +96,12 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                             >
                                 Fetch from Public Timetable
                             </Button>
-                            <Button colorScheme="blue">Apply changes</Button>
+                            <Button
+                                colorScheme="blue"
+                                onClick={() => submitChanges()}
+                            >
+                                Apply changes
+                            </Button>
                         </HStack>
                         <SessionSettingsTimetableContainer
                             loading={loading}
@@ -97,6 +110,8 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                             selectActions={selection}
                             baseInfo={base}
                             week={week}
+                            openStreamDrawer={openStreamDrawer}
+                            users={users}
                         />
                         <WeekNav
                             chooseWeek={chooseWeek}
@@ -120,7 +135,13 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 stream={selectedStreamInput}
                 weekNames={term?.weekNames || []}
                 numberOfWeeks={term?.numberOfWeeks || 0}
-                onSave={streamActions.editMultipleStreamSettings}
+                onSave={editMultipleStreamSettings}
+                deleteStreams={() => {
+                    deselectAllStreams();
+                    deleteSelectedStreams();
+                    closeStreamDrawer();
+                }}
+                users={users}
             />
         </Wrapper>
     );

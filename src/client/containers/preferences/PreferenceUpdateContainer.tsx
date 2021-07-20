@@ -16,7 +16,7 @@ import { FormikInput } from "../../components/helpers/FormikInput";
 import { FormikSelect } from "../../components/helpers/FormikSelect";
 import uniq from "lodash/uniq";
 import { capitalCase } from "change-case";
-import { Button, Divider } from "@chakra-ui/react";
+import { Button, Divider, Stack } from "@chakra-ui/react";
 
 const NO_PREFERENCE = "No Preference";
 
@@ -131,38 +131,41 @@ export const PreferenceUpdateContainer: React.FC<Props> = ({
                 }}
             >
                 <Form>
-                    <FormikInput
-                        name="maxContigHours"
-                        type="number"
-                        label="Maximum Contiguous Hours"
-                    />
-                    <FormikInput
-                        name="maxWeeklyHours"
-                        type="number"
-                        label="Maximum Weekly Hours"
-                    />
-                    <FormikSelect
-                        name="sessionType"
-                        options={
-                            [
-                                ...uniq(
-                                    sessionStreamData?.sessionStreams.map(
-                                        (sessionStream) => sessionStream.type
-                                    )
-                                ),
-                                NO_PREFERENCE,
-                            ] || [NO_PREFERENCE]
-                        }
-                        optionToText={(val) => capitalCase(val as string)}
-                    />
-                    <Divider my={2} />
-                    <Button
-                        colorScheme="green"
-                        type="submit"
-                        isLoading={updatePreferenceLoading}
-                    >
-                        Submit Changes
-                    </Button>
+                    <Stack spacing={3}>
+                        <FormikInput
+                            name="maxContigHours"
+                            type="number"
+                            label="Maximum Contiguous Hours"
+                        />
+                        <FormikInput
+                            name="maxWeeklyHours"
+                            type="number"
+                            label="Maximum Weekly Hours"
+                        />
+                        <FormikSelect
+                            name="sessionType"
+                            options={
+                                [
+                                    ...uniq(
+                                        sessionStreamData?.sessionStreams.map(
+                                            (sessionStream) =>
+                                                sessionStream.type
+                                        )
+                                    ),
+                                    NO_PREFERENCE,
+                                ] || [NO_PREFERENCE]
+                            }
+                            optionToText={(val) => capitalCase(val as string)}
+                        />
+                        <Divider />
+                        <Button
+                            colorScheme="green"
+                            type="submit"
+                            isLoading={updatePreferenceLoading}
+                        >
+                            Submit Changes
+                        </Button>
+                    </Stack>
                 </Form>
             </Formik>
         </Loadable>

@@ -31,6 +31,8 @@ import {
     StreamInputWithModification,
 } from "../types/session-settings";
 import isEqual from "lodash/isEqual";
+import omitBy from "lodash/omitBy";
+import isUndefined from "lodash/isUndefined";
 
 const streamResponseToState = (stream: StreamResponseType): StreamInput => {
     return {
@@ -69,12 +71,14 @@ export const useSessionSettings = () => {
         select: selectStreams,
         deselect: deselectStreams,
         deselectAll: deselectAllStreams,
+        selectExclusive: selectExclusiveStream,
     } = useMultiSelection<string>();
     const {
         selected: selectedSessions,
         select: selectSessions,
         deselect: deselectSessions,
         deselectAll: deselectAllSessions,
+        selectExclusive: selectExclusiveSession,
     } = useMultiSelection<string>();
 
     // Handle fetching streams
@@ -155,7 +159,6 @@ export const useSessionSettings = () => {
             setStreams((prev) =>
                 prev.set(stream.id, {
                     ...streamResponseToState(stream),
-                    allocationModification: ModificationType.Unchanged,
                     settingsModification: ModificationType.Unchanged,
                 })
             );
@@ -225,13 +228,18 @@ export const useSessionSettings = () => {
                     if (!stream) {
                         return prev;
                     }
+                    const { location, ...sanitisedInput } = omitBy(
+                        newStreamInput,
+                        isUndefined
+                    );
                     if (
                         stream.settingsModification ===
                         ModificationType.Unchanged
                     ) {
                         return prev.set(streamId, {
                             ...stream,
-                            ...newStreamInput,
+                            ...sanitisedInput,
+                            location: (location as string) || stream.location,
                             settingsModification: ModificationType.Modified,
                         });
                     } else if (
@@ -242,7 +250,7 @@ export const useSessionSettings = () => {
                     ) {
                         return prev.set(streamId, {
                             ...stream,
-                            ...newStreamInput,
+                            ...sanitisedInput,
                         });
                     }
                     return prev;
@@ -253,44 +261,47 @@ export const useSessionSettings = () => {
         [selectedStreams]
     );
 
-    const createStream = useCallback((stream: StreamInput) => {
+    const createStream = useCallback((stream: StreamInput, id?: string) => {
         setStreams((prev) =>
-            prev.set(uuid(), {
+            prev.set(id || uuid(), {
                 ...stream,
                 settingsModification: ModificationType.Added,
-                allocationModification: ModificationType.Unchanged,
             })
         );
     }, []);
 
-    const deleteStreams = useCallback((streamIds: string[]) => {
-        streamIds.forEach((streamId) => {
-            setStreams((prev) => {
-                if (!prev.has(streamId)) {
-                    return prev;
-                }
-                const stream = prev.get(streamId)!;
-                if (stream.settingsModification === ModificationType.Added) {
-                    return prev.remove(streamId);
-                } else if (
-                    stream.settingsModification === ModificationType.Modified
-                ) {
-                    return prev.set(streamId, {
-                        ...stream,
-                        settingsModification: ModificationType.RemovedModified,
-                    });
-                } else if (
-                    stream.settingsModification === ModificationType.Unchanged
-                ) {
-                    return prev.set(streamId, {
-                        ...stream,
-                        settingsModification: ModificationType.Removed,
-                    });
-                }
+    const deleteStream = useCallback((streamId) => {
+        setStreams((prev) => {
+            if (!prev.has(streamId)) {
                 return prev;
-            });
+            }
+            const stream = prev.get(streamId)!;
+            if (stream.settingsModification === ModificationType.Added) {
+                return prev.remove(streamId);
+            } else if (
+                stream.settingsModification === ModificationType.Modified
+            ) {
+                return prev.set(streamId, {
+                    ...stream,
+                    settingsModification: ModificationType.RemovedModified,
+                });
+            } else if (
+                stream.settingsModification === ModificationType.Unchanged
+            ) {
+                return prev.set(streamId, {
+                    ...stream,
+                    settingsModification: ModificationType.Removed,
+                });
+            }
+            return prev;
         });
     }, []);
+
+    const deleteSelectedStreams = useCallback(() => {
+        selectedStreams.forEach((streamId) => {
+            deleteStream(streamId);
+        });
+    }, [selectedStreams, deleteStream]);
 
     // Handle fetching from public timetable
     const [
@@ -298,6 +309,28 @@ export const useSessionSettings = () => {
         { data: publicTimetableData, loading: publicTimetableLoading },
     ] = useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
 
+    const restoreStream = useCallback((streamId) => {
+        setStreams((prev) => {
+            if (!prev.has(streamId)) {
+                return prev;
+            }
+            const stream = prev.get(streamId)!;
+            if (stream.settingsModification === ModificationType.Removed) {
+                return prev.set(streamId, {
+                    ...stream,
+                    settingsModification: ModificationType.Unchanged,
+                });
+            } else if (
+                stream.settingsModification === ModificationType.RemovedModified
+            ) {
+                return prev.set(streamId, {
+                    ...stream,
+                    settingsModification: ModificationType.Modified,
+                });
+            }
+            return prev;
+        });
+    }, []);
     const getStreamsFromPublicTimetable = useCallback(
         (sessionTypes: SessionType[]) => {
             if (courseId === defaultStr || termId === defaultStr) {
@@ -360,24 +393,30 @@ export const useSessionSettings = () => {
     const [
         submitUpdatedStream,
         { data: updatedStreamsData, loading: updatedStreamsLoading },
-    ] = useMutationWithError(useUpdateSessionStreamsMutation, {});
+    ] = useMutationWithError(useUpdateSessionStreamsMutation, {
+        errorPolicy: "all",
+    });
     const [
         submitMergedStreams,
         { data: addMergedStreamsData, loading: addMergedStreamsLoading },
-    ] = useMutationWithError(useAddMergedSessionStreamsMutation, {});
+    ] = useMutationWithError(useAddMergedSessionStreamsMutation, {
+        errorPolicy: "all",
+    });
     const [
         submitDeletedStreams,
         { data: deletedStreamsData, loading: deletedStreamsLoading },
-    ] = useMutationWithError(useDeleteSessionStreamsMutation, {});
+    ] = useMutationWithError(useDeleteSessionStreamsMutation, {
+        errorPolicy: "all",
+    });
 
     const [
         submitUpdatedSessions,
         { data: updatedSessionsData, loading: updatedSessionsLoading },
-    ] = useMutationWithError(useUpdateSessionMutation, {});
+    ] = useMutationWithError(useUpdateSessionMutation, { errorPolicy: "all" });
     const [
         submitDeletedSessions,
         { data: deletedSessionsData, loading: deletedSessionsLoading },
-    ] = useMutationWithError(useDeleteSessionsMutation, {});
+    ] = useMutationWithError(useDeleteSessionsMutation, { errorPolicy: "all" });
     const [
         submitSessionAllocations,
         {
@@ -390,7 +429,6 @@ export const useSessionSettings = () => {
         const createdStreams: StreamInput[] = [];
         const modifiedStreams: [string, StreamInput][] = [];
         const deletedStreamIds: string[] = [];
-        const allocationModifiedStreams: [string, StreamInput][] = [];
         for (const [streamId, stream] of streamsById) {
             if (stream.settingsModification === ModificationType.Added) {
                 createdStreams.push(stream);
@@ -403,9 +441,6 @@ export const useSessionSettings = () => {
                 stream.settingsModification === ModificationType.RemovedModified
             ) {
                 deletedStreamIds.push(streamId);
-            }
-            if (stream.allocationModification === ModificationType.Modified) {
-                allocationModifiedStreams.push([streamId, stream]);
             }
         }
         if (createdStreams.length > 0) {
@@ -535,6 +570,12 @@ export const useSessionSettings = () => {
             return;
         }
         commitNewStreams(addMergedStreamsData.addMergedSessionStreams);
+        setStreams((prev) =>
+            prev.filter(
+                (stream) =>
+                    stream.settingsModification !== ModificationType.Added
+            )
+        );
     }, [addMergedStreamsData, commitNewStreams]);
 
     useEffect(() => {
@@ -577,10 +618,6 @@ export const useSessionSettings = () => {
     }, [updatedSessionAllocationsData, commitNewSessions]);
 
     // TODO: Implement week cache
-    // Save it to state
-    // Allow user to modify
-    // TODO: User cannot modify session weeks if allocation exists
-    // TODO: User can (de)allocate other users from sessions
     return {
         selection: {
             selectedStreams,
@@ -592,6 +629,8 @@ export const useSessionSettings = () => {
             deselectSessions,
             deselectAllSessions,
             selectedStreamInput,
+            selectExclusiveStream,
+            selectExclusiveSession,
         },
         timetableState: {
             stream: {
@@ -599,7 +638,9 @@ export const useSessionSettings = () => {
             },
             streamActions: {
                 createStream,
-                deleteStreams,
+                deleteStream,
+                restoreStream,
+                deleteSelectedStreams,
                 editMultipleStreamSettings,
             },
             session: {

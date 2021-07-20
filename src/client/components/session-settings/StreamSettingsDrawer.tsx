@@ -8,18 +8,18 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
-    Stack,
+    HStack,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
 } from "@chakra-ui/react";
 import { Form, Formik, FormikErrors } from "formik";
-import { FormikInput } from "../helpers/FormikInput";
-import { SessionType, StreamInput } from "../../generated/graphql";
-import { FormikSelect } from "../helpers/FormikSelect";
-import { sentenceCase } from "change-case";
-import { FormikTimeInput } from "../helpers/FormikTimeInput";
-import { IsoDay } from "../../../types/date";
-import { isoNumberToDay } from "../../../utils/date";
-import { FormikBaseStaffRequirement } from "./FormikBaseStaffRequirement";
-import { FormikExtraStaffRequirement } from "./FormikExtraStaffRequirement";
+import { StreamInput } from "../../generated/graphql";
+import { StreamSettingsDrawerContent } from "./StreamSettingsDrawerContent";
+import { StreamAllocationDrawerContent } from "./StreamAllocationDrawerContent";
+import { UserMap } from "../../hooks/useUsersOfCourse";
 
 type Props = {
     isOpen: boolean;
@@ -28,6 +28,8 @@ type Props = {
     weekNames: string[];
     numberOfWeeks: number;
     onSave: (newState: Partial<StreamInput>) => any;
+    deleteStreams: () => void;
+    users: UserMap;
 };
 
 export const StreamSettingsDrawer: FC<Props> = ({
@@ -37,9 +39,11 @@ export const StreamSettingsDrawer: FC<Props> = ({
     weekNames,
     numberOfWeeks,
     onSave,
+    deleteStreams,
+    users,
 }) => {
     return (
-        <Drawer isOpen={isOpen} onClose={close} size="md">
+        <Drawer isOpen={isOpen} onClose={close} size="lg">
             <DrawerOverlay />
             <DrawerContent>
                 <Formik<Partial<StreamInput>>
@@ -72,100 +76,47 @@ export const StreamSettingsDrawer: FC<Props> = ({
                         <DrawerHeader>Edit Session Stream</DrawerHeader>
 
                         <DrawerBody maxH="85vh" overflow="auto">
-                            <Stack spacing={4}>
-                                <FormikInput
-                                    name="name"
-                                    placeholder={
-                                        stream.name || "Multiple Selected"
-                                    }
-                                    isDisabled={!stream.name}
-                                />
-                                <FormikSelect
-                                    name="type"
-                                    options={[
-                                        SessionType.Practical,
-                                        SessionType.Tutorial,
-                                        SessionType.Lecture,
-                                        SessionType.Seminar,
-                                        SessionType.Studio,
-                                        SessionType.Workshop,
-                                        SessionType.Contact,
-                                    ]}
-                                    optionToText={(val) =>
-                                        sentenceCase(val as string)
-                                    }
-                                    isDisabled={!stream.type}
-                                    placeholder={
-                                        stream.type || "Multiple Selected"
-                                    }
-                                />
-                                <FormikSelect
-                                    name="day"
-                                    options={[
-                                        IsoDay.MON,
-                                        IsoDay.TUE,
-                                        IsoDay.WED,
-                                        IsoDay.THU,
-                                        IsoDay.FRI,
-                                        IsoDay.SAT,
-                                        IsoDay.SUN,
-                                    ]}
-                                    optionToText={(val) =>
-                                        isoNumberToDay(val as IsoDay)
-                                    }
-                                    isDisabled={!stream.day}
-                                    placeholder={
-                                        stream.day === undefined
-                                            ? "Multiple Selected"
-                                            : ""
-                                    }
-                                />
-                                <FormikTimeInput
-                                    name="startTime"
-                                    placeholder={
-                                        stream.startTime === undefined
-                                            ? "Multiple Selected"
-                                            : ""
-                                    }
-                                    isDisabled={!stream.startTime}
-                                />
-                                <FormikTimeInput
-                                    name="endTime"
-                                    placeholder={
-                                        stream.endTime === undefined
-                                            ? "Multiple Selected"
-                                            : ""
-                                    }
-                                    isDisabled={!stream.endTime}
-                                />
-                                <FormikInput
-                                    name="location"
-                                    placeholder={
-                                        stream.endTime === undefined
-                                            ? "Multiple Selected"
-                                            : ""
-                                    }
-                                />
-                                <FormikBaseStaffRequirement
-                                    name="baseStaffRequirement"
-                                    weekNames={weekNames}
-                                    numberOfWeeks={numberOfWeeks}
-                                />
-                                <FormikExtraStaffRequirement
-                                    name="extraStaffRequirement"
-                                    weekNames={weekNames}
-                                    numberOfWeeks={numberOfWeeks}
-                                />
-                            </Stack>
+                            <Tabs isFitted variant="enclosed">
+                                <TabList mb="1em">
+                                    <Tab>Settings</Tab>
+                                    <Tab>Allocation</Tab>
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <StreamSettingsDrawerContent
+                                            stream={stream}
+                                            weekNames={weekNames}
+                                            numberOfWeeks={numberOfWeeks}
+                                        />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <StreamAllocationDrawerContent
+                                            stream={stream}
+                                            weekNames={weekNames}
+                                            users={users}
+                                        />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
                         </DrawerBody>
 
                         <DrawerFooter>
-                            <Button variant="outline" mr={3} onClick={close}>
-                                Cancel
-                            </Button>
-                            <Button colorScheme="blue" type="submit">
-                                Save
-                            </Button>
+                            <HStack spacing={3} justify="end">
+                                <Button variant="outline" onClick={close}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    colorScheme="red"
+                                    onClick={() => {
+                                        deleteStreams();
+                                    }}
+                                >
+                                    Delete
+                                </Button>
+                                <Button colorScheme="blue" type="submit">
+                                    Save
+                                </Button>
+                            </HStack>
                         </DrawerFooter>
                     </Form>
                 </Formik>

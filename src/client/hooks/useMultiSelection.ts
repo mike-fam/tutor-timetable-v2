@@ -12,10 +12,15 @@ export const useMultiSelection = <T>() => {
     const deselectAll = useCallback(() => {
         setSelectedElems((prev) => prev.clear());
     }, []);
+    const selectExclusive = useCallback((elem: T) => {
+        setSelectedElems((prev) => prev.clear());
+        setSelectedElems((prev) => prev.add(elem));
+    }, []);
     return {
         selected,
         select,
         deselect,
         deselectAll,
+        selectExclusive,
     };
 };

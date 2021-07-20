@@ -1,34 +1,34 @@
 import React, { FC } from "react";
 import { useField } from "formik";
-import { FormControl, FormLabel, Text } from "@chakra-ui/react";
-import { camelCase } from "change-case";
+import { Box, FormControl, FormLabel } from "@chakra-ui/react";
 import range from "lodash/range";
-import { StreamStaffRequirement } from "../../generated/graphql";
 import { MultiSelect } from "../helpers/MultiSelect";
 import { SimpleNumberInput } from "../helpers/SimpleNumberInput";
+import { v4 as uuid } from "uuid";
 
 type Props = {
     name: string;
     weekNames: string[];
     numberOfWeeks: number;
-    id?: string;
 };
 
 export const FormikBaseStaffRequirement: FC<Props> = ({
     name,
-    id,
     numberOfWeeks,
     weekNames,
 }) => {
     const [
         ,
-        { value: baseStaffRequirement },
-        { setValue: setBaseStaffRequirement },
-    ] = useField<StreamStaffRequirement>(name);
+        { value: baseNumberOfStaff },
+        { setValue: setBasedNumberOfStaff },
+    ] = useField<number | undefined>(`${name}.numberOfStaff`);
+    const [, { value: baseWeeks }, { setValue: setBaseWeeks }] = useField<
+        number[] | undefined
+    >(`${name}.weeks`);
     return (
-        <FormControl id={id || camelCase(name)} mt={3}>
+        <FormControl id={uuid()}>
             <FormLabel>Base Week Pattern:</FormLabel>
-            <Text>
+            <Box>
                 In standard weeks, i.e.{" "}
                 <MultiSelect
                     elements={range(numberOfWeeks).map(
@@ -38,33 +38,25 @@ export const FormikBaseStaffRequirement: FC<Props> = ({
                                 weekNames[week] || `Week [${week}]`,
                             ] as [string, string]
                     )}
-                    selectedElements={baseStaffRequirement.weeks.map((week) =>
-                        week.toString()
-                    )}
+                    selectedElements={
+                        baseWeeks?.map((week) => week.toString()) || []
+                    }
                     setSelectedElements={(values) => {
-                        setBaseStaffRequirement({
-                            numberOfStaff: baseStaffRequirement.numberOfStaff,
-                            weeks: values.map((value) => parseInt(value)),
-                            allocatedUsers: baseStaffRequirement.allocatedUsers,
-                        });
+                        setBaseWeeks(values.map((value) => parseInt(value)));
                     }}
                 />
                 , at least{" "}
                 <SimpleNumberInput
-                    value={baseStaffRequirement.numberOfStaff}
+                    value={baseNumberOfStaff || 0}
                     onChange={(numberOfStaff) =>
-                        setBaseStaffRequirement({
-                            numberOfStaff,
-                            weeks: baseStaffRequirement.weeks,
-                            allocatedUsers: baseStaffRequirement.allocatedUsers,
-                        })
+                        setBasedNumberOfStaff(numberOfStaff)
                     }
                     min={0}
                     size="xs"
                     inline
                 />{" "}
                 tutors are allocated to this session.
-            </Text>
+            </Box>
         </FormControl>
     );
 };

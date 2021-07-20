@@ -17,7 +17,6 @@ export type SessionSettingsModificationType = {
 
 export type StreamSettingsModificationType = {
     settingsModification: ModificationType;
-    allocationModification: ModificationType;
 };
 
 export type SessionResponseWithModification = SessionResponseType &

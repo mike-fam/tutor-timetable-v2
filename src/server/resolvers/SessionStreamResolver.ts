@@ -432,7 +432,7 @@ export class SessionStreamResolver {
             baseStaffRequirement,
             extraStaffRequirement,
         } = streamInput;
-        const rootStream = await models.sessionStream.create(
+        let rootStream = await models.sessionStream.create(
             {
                 id,
                 timetableId: timetable.id,
@@ -447,6 +447,8 @@ export class SessionStreamResolver {
             },
             user
         );
+        loaders.sessionStream.clear(rootStream.id);
+        rootStream = await models.sessionStream.getById(rootStream.id, user);
         await models.sessionStream.allocateMultiple(
             rootStream,
             baseStaffRequirement.allocatedUsers,
@@ -458,7 +460,7 @@ export class SessionStreamResolver {
         await asyncForEach(
             extraStaffRequirement,
             async ({ numberOfStaff, weeks, allocatedUsers }) => {
-                const createdStream = await models.sessionStream.create(
+                let createdStream = await models.sessionStream.create(
                     {
                         timetableId: timetable.id,
                         name: `${name} extra ${extraIndex++}`,
@@ -473,6 +475,10 @@ export class SessionStreamResolver {
                     },
                     user
                 );
+                createdStream = await models.sessionStream.getById(
+                    createdStream.id,
+                    user
+                );
                 await models.sessionStream.allocateMultiple(
                     createdStream,
                     allocatedUsers,
@@ -485,8 +491,7 @@ export class SessionStreamResolver {
             allStreams,
             async (stream) => await this.generateSessions(stream, user, models)
         );
-        loaders.sessionStream.clear(rootStream.id);
-        return await models.sessionStream.getById(rootStream.id, user);
+        return rootStream;
     }
 
     @FieldResolver(() => Timetable)

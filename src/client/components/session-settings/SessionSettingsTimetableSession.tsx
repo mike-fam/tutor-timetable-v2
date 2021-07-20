@@ -2,7 +2,10 @@ import React, { useMemo } from "react";
 import { PopoverSession } from "../timetable/PopoverSession";
 import { Box, BoxProps } from "@chakra-ui/react";
 import { TimetableSessionPopover } from "../timetable/TimetableSessionPopover";
-import { ClickableSession, Props as ClickableSessionProps } from "../timetable/ClickableSession";
+import {
+    ClickableSession,
+    Props as ClickableSessionProps,
+} from "../timetable/ClickableSession";
 
 export type TimetableCustomSessionProps = {
     allocation: string[];
@@ -19,7 +22,6 @@ export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
         () => custom(sessionId),
         [custom, sessionId]
     );
-    console.log(sessionId);
     return (
         <PopoverSession
             sessionComponent={

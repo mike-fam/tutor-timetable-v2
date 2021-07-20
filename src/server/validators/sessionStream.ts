@@ -56,7 +56,7 @@ export const ValidExtraWeeks = (validationOptions?: ValidationOptions) => {
                         if (
                             difference(
                                 pattern.weeks,
-                                (args.object as any).weeks
+                                (args.object as any).baseStaffRequirement.weeks
                             ).length > 0
                         ) {
                             return false;

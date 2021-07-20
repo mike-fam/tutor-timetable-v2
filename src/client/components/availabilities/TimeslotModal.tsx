@@ -9,6 +9,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Stack,
 } from "@chakra-ui/react";
 import { ModifyTimeslotParams } from "../../types/availability";
 import { Form, Formik, FormikErrors } from "formik";
@@ -57,11 +58,10 @@ export const TimeslotModal: React.FC<Props> = ({
                 <Formik
                     initialValues={formState}
                     onSubmit={(values) => {
-                        console.log(values);
                         updateTimeslot(values.id, {
                             startTime: values.startTime,
                             endTime: values.endTime,
-                            day: Number(values.day)
+                            day: Number(values.day),
                         });
                         close();
                     }}
@@ -86,30 +86,32 @@ export const TimeslotModal: React.FC<Props> = ({
                         <ModalHeader>Update Availability</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <FormikTimeInput
-                                name="startTime"
-                                id="startTimeAvailModal"
-                            />
-                            <FormikTimeInput
-                                name="endTime"
-                                id="endTimeAvailModal"
-                            />
-                            <FormikSelect
-                                name="day"
-                                options={[
-                                    IsoDay.MON,
-                                    IsoDay.TUE,
-                                    IsoDay.WED,
-                                    IsoDay.THU,
-                                    IsoDay.FRI,
-                                    IsoDay.SAT,
-                                    IsoDay.SUN,
-                                ]}
-                                optionToText={(val) =>
-                                    isoNumberToDay(val as IsoDay)
-                                }
-                                id="dayAvailModal"
-                            />
+                            <Stack spacing={3}>
+                                <FormikTimeInput
+                                    name="startTime"
+                                    id="startTimeAvailModal"
+                                />
+                                <FormikTimeInput
+                                    name="endTime"
+                                    id="endTimeAvailModal"
+                                />
+                                <FormikSelect
+                                    name="day"
+                                    options={[
+                                        IsoDay.MON,
+                                        IsoDay.TUE,
+                                        IsoDay.WED,
+                                        IsoDay.THU,
+                                        IsoDay.FRI,
+                                        IsoDay.SAT,
+                                        IsoDay.SUN,
+                                    ]}
+                                    optionToText={(val) =>
+                                        isoNumberToDay(val as IsoDay)
+                                    }
+                                    id="dayAvailModal"
+                                />
+                            </Stack>
                         </ModalBody>
                         <Divider py={3} />
                         <ModalFooter>
