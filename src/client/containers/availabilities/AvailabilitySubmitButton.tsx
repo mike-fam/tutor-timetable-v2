@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import React, { useCallback, useContext, useMemo } from "react";
 import {
-    AvailabilityModificationType,
+    ModificationType,
     useUpdateAvailabilitiesMutation,
 } from "../../generated/graphql";
 import { useMutationWithError } from "../../hooks/useApolloHooksWithError";
@@ -26,8 +26,7 @@ export const AvailabilitySubmitButton: React.FC<Props> = () => {
                     setTimeslots((prev) =>
                         prev.set(timeslot.id, {
                             ...timeslot,
-                            modificationType:
-                                AvailabilityModificationType.Unchanged,
+                            modificationType: ModificationType.Unchanged,
                         })
                     );
                 });
@@ -41,8 +40,7 @@ export const AvailabilitySubmitButton: React.FC<Props> = () => {
             timeslots.size !==
             timeslots.filter(
                 (timeslot) =>
-                    timeslot.modificationType ===
-                    AvailabilityModificationType.Unchanged
+                    timeslot.modificationType === ModificationType.Unchanged
             ).size
         );
     }, [timeslots]);

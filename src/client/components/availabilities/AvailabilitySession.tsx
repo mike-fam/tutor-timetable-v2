@@ -15,27 +15,27 @@ import { ContextMenu } from "../helpers/ContextMenu";
 import { ContextMenuTrigger } from "../helpers/ContextMenuTrigger";
 import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
-import { AvailabilityModificationType } from "../../generated/graphql";
+import { ModificationType } from "../../generated/graphql";
 
 export type AvailabilityCustomSessionProps = {
     updateSession: (sessionId: string, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: string) => void;
     restoreSession: (sessionId: string) => void;
     editSession: (sessionId: string) => void;
-    modificationType: AvailabilityModificationType;
+    modificationType: ModificationType;
 };
 
 type Props = SessionProps<AvailabilityCustomSessionProps>;
 
 export const AvailabilitySession: React.FC<Props> = (props) => {
-    const { custom, id } = props;
+    const { custom, sessionId } = props;
     const {
         updateSession,
         removeSession,
         restoreSession,
         modificationType,
         editSession,
-    } = custom(id);
+    } = custom(sessionId);
     const { top } = useMemo(() => sessionStyleFromProps(props), [props]);
     const { startTime, endTime } = props;
     const nodeRef = useRef(null);
@@ -45,8 +45,8 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
     }, [modificationType]);
     const removed = useMemo(() => {
         return (
-            modificationType === AvailabilityModificationType.RemovedModified ||
-            modificationType === AvailabilityModificationType.Removed
+            modificationType === ModificationType.RemovedModified ||
+            modificationType === ModificationType.Removed
         );
     }, [modificationType]);
     return (
@@ -88,7 +88,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                                         startTime +
                                         dragData.y / timetableTimeslotHeight;
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     // Limit free time to less than 15 mins
                                     startTime: Math.min(
                                         Math.max(newStartTime, props.startDay),
@@ -153,7 +153,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                                 ) {
                                     newEndTime = Math.round(newEndTime);
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     endTime: Math.min(
                                         Math.max(newEndTime, startTime + 0.25),
                                         props.endDay
@@ -187,7 +187,7 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
             </ContextMenuTrigger>
             <ContextMenuList>
                 <ContextMenuItem
-                    onClick={() => editSession(props.id)}
+                    onClick={() => editSession(props.sessionId)}
                     disabled={removed}
                 >
                     Update
@@ -195,8 +195,8 @@ export const AvailabilitySession: React.FC<Props> = (props) => {
                 <ContextMenuItem
                     onClick={() => {
                         removed
-                            ? restoreSession(props.id)
-                            : removeSession(props.id);
+                            ? restoreSession(props.sessionId)
+                            : removeSession(props.sessionId);
                     }}
                     colorScheme={removed ? "green" : "red"}
                 >

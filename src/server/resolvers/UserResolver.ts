@@ -19,6 +19,9 @@ import {
     UserSettings,
 } from "../entities";
 import { MyContext } from "../types/context";
+import { CourseTermIdInput } from "./CourseTermId";
+import { v4 as uuid } from "uuid";
+import { Role } from "../types/user";
 
 @InputType()
 export class UpdateDetailsInputType {
@@ -30,6 +33,9 @@ export class UpdateDetailsInputType {
     @IsNotEmpty()
     name: string;
 }
+
+@InputType()
+export class UserTimetableInput extends CourseTermIdInput {}
 
 @Resolver(() => User)
 export class UserResolver {
@@ -51,7 +57,21 @@ export class UserResolver {
         @Root() root: User,
         @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
-        return await models.courseStaff.getByIds(root.courseStaffIds, req.user);
+        if (!root.isAdmin) {
+            return await models.courseStaff.getByIds(
+                root.courseStaffIds,
+                req.user
+            );
+        }
+        const adminCourseStaffs = CourseStaff.create(
+            (await models.timetable.getMany({}, root)).map((timetable) => ({
+                id: uuid(),
+                timetableId: timetable.id,
+                role: Role.COURSE_COORDINATOR,
+                userId: root.id,
+            }))
+        );
+        return adminCourseStaffs;
     }
 
     @FieldResolver(() => [StaffRequest])

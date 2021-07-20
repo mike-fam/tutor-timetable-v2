@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, useToast } from "@chakra-ui/react";
+import { Box, Center, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
 import { IsoDay } from "../../types/date";
 import {
@@ -19,6 +19,7 @@ import {
     displayedDaysKey,
     showMySessionsKeys,
 } from "../constants/localStorageKeys";
+import { LoadingSpinner } from "../components/helpers/LoadingSpinner";
 
 type Props = {};
 
@@ -91,6 +92,13 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
             position: "bottom",
         });
     }, [notificationData, toast]);
+    if (user.id === defaultStr) {
+        return (
+            <Center h="100vh">
+                <LoadingSpinner />
+            </Center>
+        );
+    }
     return (
         <UserContext.Provider
             value={{

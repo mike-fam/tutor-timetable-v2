@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { NavBar } from "./components/NavBar";
+import { NavBar } from "./components/navbar/NavBar";
 import { RequestPageContainer } from "./containers/requests/RequestPageContainer";
 import { TimetablePageContainer } from "./containers/timetable/TimetablePageContainer";
 import { AvailabilityPageContainer } from "./containers/availabilities/AvailabilityPageContainer";

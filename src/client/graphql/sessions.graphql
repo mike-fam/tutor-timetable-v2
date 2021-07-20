@@ -12,12 +12,14 @@ fragment SessionInfo on Session {
             }
             course {
                 id
+                code
             }
         }
     }
     location
     week
     allocatedUsers {
+        id
         username
         name
     }
@@ -38,12 +40,14 @@ query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
                 }
                 course {
                     id
+                    code
                 }
             }
         }
         location
         week
         allocatedUsers {
+            id
             username
             name
         }
@@ -72,6 +76,7 @@ query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
         location
         week
         allocatedUsers {
+            id
             username
             name
         }
@@ -100,8 +105,73 @@ query GetSessionById($sessionId: String!) {
         location
         week
         allocatedUsers {
+            id
             username
             name
         }
     }
+}
+
+mutation UpdateSessionAllocation(
+    $newAllocation: [UpdateSessionAllocationInput!]!
+) {
+    updateSessionAllocations(newAllocation: $newAllocation) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
+    updateSession(updateSessionInput: $updateSessionInput) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+mutation DeleteSessions($sessionIds: [String!]!) {
+    deleteSessions(sessionIds: $sessionIds)
 }

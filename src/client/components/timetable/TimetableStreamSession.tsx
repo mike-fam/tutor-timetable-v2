@@ -1,18 +1,8 @@
-import React, { useMemo, Fragment } from "react";
+import React, { useMemo } from "react";
 import { Props as SessionProps, Session } from "./Session";
 import { PopoverSession } from "./PopoverSession";
-import {
-    Box,
-    Divider,
-    ListItem,
-    PopoverArrow,
-    PopoverBody,
-    PopoverHeader,
-    Text,
-    UnorderedList,
-} from "@chakra-ui/react";
 import { SessionTheme } from "../../types/session";
-import { weeksPatternRepr } from "../../utils/session-stream";
+import { TimetableStreamPopover } from "./TimetableStreamPopover";
 
 // weeks[], allocatedTutors[]
 export type StreamCustomSessionProps = {
@@ -27,81 +17,30 @@ export type StreamCustomSessionProps = {
 type Props = SessionProps<StreamCustomSessionProps>;
 
 export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
-    const { custom, id, name } = props;
+    const { custom, sessionId, name } = props;
     const {
         customAllocation,
         location,
         courseCode,
         weekNames,
         baseAllocation,
-    } = useMemo(() => custom(id), [custom, id]);
+    } = useMemo(() => custom(sessionId), [custom, sessionId]);
     return (
         <PopoverSession
             sessionComponent={
-                <Session {...props}>
-                    <Box p={1}>{name}</Box>
+                <Session {...props} p={1}>
+                    {name}
                 </Session>
             }
             popoverContent={
-                <>
-                    <PopoverArrow />
-                    <PopoverHeader>{name}</PopoverHeader>
-                    <PopoverBody>
-                        <Text>
-                            <strong>Course:</strong> {courseCode}
-                        </Text>
-                        <Text>
-                            <strong>Location:</strong> {location || "None"}
-                        </Text>
-                        <Divider />
-                        <Text>
-                            <strong>Base Allocations:</strong>
-                        </Text>
-                        <Text>
-                            <em>
-                                {weeksPatternRepr(weekNames, baseAllocation[0])}
-                                :
-                            </em>
-                        </Text>
-                        {baseAllocation[1].length > 0 ? (
-                            <UnorderedList>
-                                {baseAllocation[1].map((name, index) => (
-                                    <ListItem key={index}>{name}</ListItem>
-                                ))}
-                            </UnorderedList>
-                        ) : (
-                            <Text>None</Text>
-                        )}
-                        <Divider />
-                        <Text>
-                            <strong>Extra Allocations:</strong>
-                        </Text>
-                        {customAllocation.map((allocation, key) => (
-                            <Fragment key={key}>
-                                <Text>
-                                    <em>
-                                        {weeksPatternRepr(
-                                            weekNames,
-                                            allocation[0]
-                                        )}
-                                        :
-                                    </em>
-                                </Text>
-                                {allocation[1].length > 0 ? (
-                                    <UnorderedList>
-                                        {allocation[1].map((name, index) => (
-                                            <ListItem key={index}>
-                                                {name}
-                                            </ListItem>
-                                        ))}
-                                    </UnorderedList>
-                                ) : (
-                                    <Text>None</Text>
-                                )}
-                            </Fragment>
-                        ))}
-                    </PopoverBody>
-                </>
+                <TimetableStreamPopover
+                    name={name}
+                    courseCode={courseCode}
+                    baseAllocation={baseAllocation}
+                    customAllocation={customAllocation}
+                    weekNames={weekNames}
+                    location={location}
+                />
             }
         />
     );

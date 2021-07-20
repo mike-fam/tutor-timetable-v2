@@ -44,7 +44,11 @@ export const TimetableContainer: React.FC<Props> = () => {
         { data: sessionStreamsData, loading: sessionStreamsLoading },
     ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {});
     useEffect(() => {
-        if (chosenWeek !== defaultInt) {
+        if (
+            chosenWeek !== defaultInt ||
+            chosenCourses.size === 0 ||
+            chosenTermId === defaultStr
+        ) {
             return;
         }
         getRootSessionStreams({
@@ -125,7 +129,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                             (allocatedUser) => allocatedUser.name
                         ),
                     ],
-                    customAllocation: sessionStream.basedStreams.map(
+                    customAllocation: sessionStream.secondaryStreams.map(
                         (stream) => [
                             stream.weeks,
                             stream.allocatedUsers.map((user) => user.name),

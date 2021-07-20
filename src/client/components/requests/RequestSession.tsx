@@ -18,7 +18,7 @@ type Props = Omit<
 
 export const RequestSession: React.FC<Props> = (props) => {
     const { colorMode } = useColorMode();
-    const { disabled, onClick } = props.custom(props.id);
+    const { disabled, onClick } = props.custom(props.sessionId);
     return (
         <TimetableSession
             {...props}
@@ -33,7 +33,7 @@ export const RequestSession: React.FC<Props> = (props) => {
                       }
             }
             onClick={() => {
-                !disabled && onClick(props.id);
+                !disabled && onClick(props.sessionId);
             }}
             opacity={disabled ? 0.5 : 1}
         />

@@ -41,14 +41,6 @@ export type AllocatorOutput = {
   allocations: Array<Allocation>;
 };
 
-export enum AvailabilityModificationType {
-  Unchanged = 'UNCHANGED',
-  Added = 'ADDED',
-  Modified = 'MODIFIED',
-  Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
-}
-
 export type Course = {
   __typename?: 'Course';
   id: Scalars['String'];
@@ -110,21 +102,25 @@ export enum FreezeState {
 }
 
 export type MergedStreamInput = {
-  courseId: Scalars['String'];
-  termId: Scalars['String'];
   name: Scalars['String'];
   type: SessionType;
   day: Scalars['Int'];
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   location: Scalars['String'];
-  numberOfTutorsForWeeks: Array<MergedStreamTutorNumbers>;
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
 };
 
-export type MergedStreamTutorNumbers = {
-  week: Scalars['Int'];
-  numberOfTutors: Scalars['Int'];
-};
+export enum ModificationType {
+  Unchanged = 'UNCHANGED',
+  Added = 'ADDED',
+  Modified = 'MODIFIED',
+  Removed = 'REMOVED',
+  RemovedModified = 'REMOVED_MODIFIED'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -139,7 +135,12 @@ export type Mutation = {
   addMergedSessionStreams: Array<SessionStream>;
   addBasedSessionStream: SessionStream;
   addSessionStream: SessionStream;
+  deleteSessionStreams: Array<Scalars['String']>;
+  updateSessionStreams: Array<SessionStream>;
   addStreamStaff: SessionStream;
+  updateSessionAllocations: Array<Session>;
+  updateSession: Array<Session>;
+  deleteSessions: Array<Scalars['String']>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
@@ -226,10 +227,35 @@ export type MutationAddSessionStreamArgs = {
 };
 
 
+export type MutationDeleteSessionStreamsArgs = {
+  streamIds: Array<Scalars['String']>;
+};
+
+
+export type MutationUpdateSessionStreamsArgs = {
+  updateStreamInput: Array<UpdateStreamInput>;
+};
+
+
 export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
+};
+
+
+export type MutationUpdateSessionAllocationsArgs = {
+  newAllocation: Array<UpdateSessionAllocationInput>;
+};
+
+
+export type MutationUpdateSessionArgs = {
+  updateSessionInput: Array<UpdateSessionInput>;
+};
+
+
+export type MutationDeleteSessionsArgs = {
+  sessionIds: Array<Scalars['String']>;
 };
 
 
@@ -498,8 +524,8 @@ export type SessionStream = {
   numberOfStaff: Scalars['Int'];
   timetable: Timetable;
   sessions: Array<Session>;
-  basedStreams: Array<SessionStream>;
-  based?: Maybe<SessionStream>;
+  secondaryStreams: Array<SessionStream>;
+  root?: Maybe<SessionStream>;
   allocatedUsers: Array<User>;
 };
 
@@ -526,6 +552,23 @@ export type StaffRequest = {
   session: Session;
   swapPreference: Array<Session>;
   offers: Array<Offer>;
+};
+
+export type StreamInput = {
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
+};
+
+export type StreamStaffRequirement = {
+  weeks: Array<Scalars['Int']>;
+  numberOfStaff: Scalars['Int'];
+  allocatedUsers: Array<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -574,7 +617,7 @@ export type TimeslotInput = {
   startTime: Scalars['Float'];
   endTime: Scalars['Float'];
   day: Scalars['Int'];
-  modificationType: AvailabilityModificationType;
+  modificationType: ModificationType;
 };
 
 export type Timetable = {
@@ -591,6 +634,28 @@ export type Timetable = {
 export type UpdateDetailsInputType = {
   email: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type UpdateSessionAllocationInput = {
+  rootSessionId: Scalars['String'];
+  newAllocation: Array<Scalars['String']>;
+};
+
+export type UpdateSessionInput = {
+  id: Scalars['String'];
+  location: Scalars['String'];
+};
+
+export type UpdateStreamInput = {
+  name: Scalars['String'];
+  type: SessionType;
+  day: Scalars['Int'];
+  startTime: Scalars['Float'];
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
+  baseStaffRequirement: StreamStaffRequirement;
+  extraStaffRequirement: Array<StreamStaffRequirement>;
+  streamId: Scalars['String'];
 };
 
 export type User = {
@@ -1206,13 +1271,13 @@ export type GetRootSessionStreamsQuery = (
     & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
     & { allocatedUsers: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'name' | 'username'>
-    )>, basedStreams: Array<(
+      & Pick<User, 'id' | 'name' | 'username'>
+    )>, secondaryStreams: Array<(
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks'>
+      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
       & { allocatedUsers: Array<(
         { __typename?: 'User' }
-        & Pick<User, 'name' | 'username'>
+        & Pick<User, 'id' | 'name' | 'username'>
       )> }
     )>, timetable: (
       { __typename?: 'Timetable' }
@@ -1225,6 +1290,116 @@ export type GetRootSessionStreamsQuery = (
       ) }
     ) }
   )> }
+);
+
+export type StreamsFromPublicTimetableQueryVariables = Exact<{
+  courseTerm: CourseTermIdInput;
+  sessionTypes: Array<SessionType>;
+}>;
+
+
+export type StreamsFromPublicTimetableQuery = (
+  { __typename?: 'Query' }
+  & { fromPublicTimetable: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username'>
+    )>, secondaryStreams: Array<(
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
+      & { allocatedUsers: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'username'>
+      )> }
+    )>, timetable: (
+      { __typename?: 'Timetable' }
+      & { course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
+      ) }
+    ) }
+  )> }
+);
+
+export type UpdateSessionStreamsMutationVariables = Exact<{
+  updateStreamInput: Array<UpdateStreamInput>;
+}>;
+
+
+export type UpdateSessionStreamsMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username'>
+    )>, secondaryStreams: Array<(
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
+      & { allocatedUsers: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'username'>
+      )> }
+    )>, timetable: (
+      { __typename?: 'Timetable' }
+      & { course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
+      ) }
+    ) }
+  )> }
+);
+
+export type AddMergedSessionStreamsMutationVariables = Exact<{
+  sessionStreams: Array<MergedStreamInput>;
+}>;
+
+
+export type AddMergedSessionStreamsMutation = (
+  { __typename?: 'Mutation' }
+  & { addMergedSessionStreams: Array<(
+    { __typename?: 'SessionStream' }
+    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
+    & { allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username'>
+    )>, secondaryStreams: Array<(
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
+      & { allocatedUsers: Array<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'username'>
+      )> }
+    )>, timetable: (
+      { __typename?: 'Timetable' }
+      & { course: (
+        { __typename?: 'Course' }
+        & Pick<Course, 'id' | 'code'>
+      ), term: (
+        { __typename?: 'Term' }
+        & Pick<Term, 'id' | 'weekNames'>
+      ) }
+    ) }
+  )> }
+);
+
+export type DeleteSessionStreamsMutationVariables = Exact<{
+  streamIds: Array<Scalars['String']>;
+}>;
+
+
+export type DeleteSessionStreamsMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteSessionStreams'>
 );
 
 export type SessionInfoFragment = (
@@ -1240,12 +1415,12 @@ export type SessionInfoFragment = (
         & Pick<Term, 'id'>
       ), course: (
         { __typename?: 'Course' }
-        & Pick<Course, 'id'>
+        & Pick<Course, 'id' | 'code'>
       ) }
     ) }
   ), allocatedUsers: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'username' | 'name'>
+    & Pick<User, 'id' | 'username' | 'name'>
   )> }
 );
 
@@ -1271,12 +1446,12 @@ export type GetSessionsQuery = (
           & Pick<Term, 'id'>
         ), course: (
           { __typename?: 'Course' }
-          & Pick<Course, 'id'>
+          & Pick<Course, 'id' | 'code'>
         ) }
       ) }
     ), allocatedUsers: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'username' | 'name'>
+      & Pick<User, 'id' | 'username' | 'name'>
     )> }
   )> }
 );
@@ -1308,7 +1483,7 @@ export type GetMergedSessionsQuery = (
       ) }
     ), allocatedUsers: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'username' | 'name'>
+      & Pick<User, 'id' | 'username' | 'name'>
     )> }
   )> }
 );
@@ -1338,9 +1513,79 @@ export type GetSessionByIdQuery = (
       ) }
     ), allocatedUsers: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'username' | 'name'>
+      & Pick<User, 'id' | 'username' | 'name'>
     )> }
   ) }
+);
+
+export type UpdateSessionAllocationMutationVariables = Exact<{
+  newAllocation: Array<UpdateSessionAllocationInput>;
+}>;
+
+
+export type UpdateSessionAllocationMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSessionAllocations: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'name'>
+    )> }
+  )> }
+);
+
+export type UpdateSessionMutationVariables = Exact<{
+  updateSessionInput: Array<UpdateSessionInput>;
+}>;
+
+
+export type UpdateSessionMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSession: Array<(
+    { __typename?: 'Session' }
+    & Pick<Session, 'id' | 'location' | 'week'>
+    & { sessionStream: (
+      { __typename?: 'SessionStream' }
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ), course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ) }
+      ) }
+    ), allocatedUsers: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'name'>
+    )> }
+  )> }
+);
+
+export type DeleteSessionsMutationVariables = Exact<{
+  sessionIds: Array<Scalars['String']>;
+}>;
+
+
+export type DeleteSessionsMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteSessions'>
 );
 
 export type NotificationsSubscriptionVariables = Exact<{
@@ -1448,12 +1693,14 @@ export const SessionInfoFragmentDoc = gql`
       }
       course {
         id
+        code
       }
     }
   }
   location
   week
   allocatedUsers {
+    id
     username
     name
   }
@@ -2635,12 +2882,15 @@ export const GetRootSessionStreamsDocument = gql`
     numberOfStaff
     weeks
     allocatedUsers {
+      id
       name
       username
     }
-    basedStreams {
+    secondaryStreams {
       weeks
+      numberOfStaff
       allocatedUsers {
+        id
         name
         username
       }
@@ -2685,6 +2935,230 @@ export function useGetRootSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetRootSessionStreamsQueryHookResult = ReturnType<typeof useGetRootSessionStreamsQuery>;
 export type GetRootSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetRootSessionStreamsLazyQuery>;
 export type GetRootSessionStreamsQueryResult = Apollo.QueryResult<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>;
+export const StreamsFromPublicTimetableDocument = gql`
+    query StreamsFromPublicTimetable($courseTerm: CourseTermIdInput!, $sessionTypes: [SessionType!]!) {
+  fromPublicTimetable(courseTerm: $courseTerm, sessionTypes: $sessionTypes) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    weeks
+    allocatedUsers {
+      id
+      name
+      username
+    }
+    secondaryStreams {
+      weeks
+      numberOfStaff
+      allocatedUsers {
+        id
+        name
+        username
+      }
+    }
+    timetable {
+      course {
+        id
+        code
+      }
+      term {
+        id
+        weekNames
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useStreamsFromPublicTimetableQuery__
+ *
+ * To run a query within a React component, call `useStreamsFromPublicTimetableQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStreamsFromPublicTimetableQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStreamsFromPublicTimetableQuery({
+ *   variables: {
+ *      courseTerm: // value for 'courseTerm'
+ *      sessionTypes: // value for 'sessionTypes'
+ *   },
+ * });
+ */
+export function useStreamsFromPublicTimetableQuery(baseOptions: Apollo.QueryHookOptions<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>) {
+        return Apollo.useQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, baseOptions);
+      }
+export function useStreamsFromPublicTimetableLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>) {
+          return Apollo.useLazyQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, baseOptions);
+        }
+export type StreamsFromPublicTimetableQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableQuery>;
+export type StreamsFromPublicTimetableLazyQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableLazyQuery>;
+export type StreamsFromPublicTimetableQueryResult = Apollo.QueryResult<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>;
+export const UpdateSessionStreamsDocument = gql`
+    mutation UpdateSessionStreams($updateStreamInput: [UpdateStreamInput!]!) {
+  updateSessionStreams(updateStreamInput: $updateStreamInput) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    weeks
+    allocatedUsers {
+      id
+      name
+      username
+    }
+    secondaryStreams {
+      weeks
+      numberOfStaff
+      allocatedUsers {
+        id
+        name
+        username
+      }
+    }
+    timetable {
+      course {
+        id
+        code
+      }
+      term {
+        id
+        weekNames
+      }
+    }
+  }
+}
+    `;
+export type UpdateSessionStreamsMutationFn = Apollo.MutationFunction<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>;
+
+/**
+ * __useUpdateSessionStreamsMutation__
+ *
+ * To run a mutation, you first call `useUpdateSessionStreamsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSessionStreamsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSessionStreamsMutation, { data, loading, error }] = useUpdateSessionStreamsMutation({
+ *   variables: {
+ *      updateStreamInput: // value for 'updateStreamInput'
+ *   },
+ * });
+ */
+export function useUpdateSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>) {
+        return Apollo.useMutation<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>(UpdateSessionStreamsDocument, baseOptions);
+      }
+export type UpdateSessionStreamsMutationHookResult = ReturnType<typeof useUpdateSessionStreamsMutation>;
+export type UpdateSessionStreamsMutationResult = Apollo.MutationResult<UpdateSessionStreamsMutation>;
+export type UpdateSessionStreamsMutationOptions = Apollo.BaseMutationOptions<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>;
+export const AddMergedSessionStreamsDocument = gql`
+    mutation AddMergedSessionStreams($sessionStreams: [MergedStreamInput!]!) {
+  addMergedSessionStreams(sessionStreams: $sessionStreams) {
+    id
+    type
+    name
+    startTime
+    endTime
+    day
+    location
+    numberOfStaff
+    weeks
+    allocatedUsers {
+      id
+      name
+      username
+    }
+    secondaryStreams {
+      weeks
+      numberOfStaff
+      allocatedUsers {
+        id
+        name
+        username
+      }
+    }
+    timetable {
+      course {
+        id
+        code
+      }
+      term {
+        id
+        weekNames
+      }
+    }
+  }
+}
+    `;
+export type AddMergedSessionStreamsMutationFn = Apollo.MutationFunction<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>;
+
+/**
+ * __useAddMergedSessionStreamsMutation__
+ *
+ * To run a mutation, you first call `useAddMergedSessionStreamsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddMergedSessionStreamsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addMergedSessionStreamsMutation, { data, loading, error }] = useAddMergedSessionStreamsMutation({
+ *   variables: {
+ *      sessionStreams: // value for 'sessionStreams'
+ *   },
+ * });
+ */
+export function useAddMergedSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>) {
+        return Apollo.useMutation<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>(AddMergedSessionStreamsDocument, baseOptions);
+      }
+export type AddMergedSessionStreamsMutationHookResult = ReturnType<typeof useAddMergedSessionStreamsMutation>;
+export type AddMergedSessionStreamsMutationResult = Apollo.MutationResult<AddMergedSessionStreamsMutation>;
+export type AddMergedSessionStreamsMutationOptions = Apollo.BaseMutationOptions<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>;
+export const DeleteSessionStreamsDocument = gql`
+    mutation DeleteSessionStreams($streamIds: [String!]!) {
+  deleteSessionStreams(streamIds: $streamIds)
+}
+    `;
+export type DeleteSessionStreamsMutationFn = Apollo.MutationFunction<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>;
+
+/**
+ * __useDeleteSessionStreamsMutation__
+ *
+ * To run a mutation, you first call `useDeleteSessionStreamsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSessionStreamsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSessionStreamsMutation, { data, loading, error }] = useDeleteSessionStreamsMutation({
+ *   variables: {
+ *      streamIds: // value for 'streamIds'
+ *   },
+ * });
+ */
+export function useDeleteSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>) {
+        return Apollo.useMutation<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>(DeleteSessionStreamsDocument, baseOptions);
+      }
+export type DeleteSessionStreamsMutationHookResult = ReturnType<typeof useDeleteSessionStreamsMutation>;
+export type DeleteSessionStreamsMutationResult = Apollo.MutationResult<DeleteSessionStreamsMutation>;
+export type DeleteSessionStreamsMutationOptions = Apollo.BaseMutationOptions<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>;
 export const GetSessionsDocument = gql`
     query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
   sessions(termId: $termId, courseIds: $courseIds, week: $week) {
@@ -2701,12 +3175,14 @@ export const GetSessionsDocument = gql`
         }
         course {
           id
+          code
         }
       }
     }
     location
     week
     allocatedUsers {
+      id
       username
       name
     }
@@ -2764,6 +3240,7 @@ export const GetMergedSessionsDocument = gql`
     location
     week
     allocatedUsers {
+      id
       username
       name
     }
@@ -2821,6 +3298,7 @@ export const GetSessionByIdDocument = gql`
     location
     week
     allocatedUsers {
+      id
       username
       name
     }
@@ -2853,6 +3331,146 @@ export function useGetSessionByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetSessionByIdQueryHookResult = ReturnType<typeof useGetSessionByIdQuery>;
 export type GetSessionByIdLazyQueryHookResult = ReturnType<typeof useGetSessionByIdLazyQuery>;
 export type GetSessionByIdQueryResult = Apollo.QueryResult<GetSessionByIdQuery, GetSessionByIdQueryVariables>;
+export const UpdateSessionAllocationDocument = gql`
+    mutation UpdateSessionAllocation($newAllocation: [UpdateSessionAllocationInput!]!) {
+  updateSessionAllocations(newAllocation: $newAllocation) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      id
+      username
+      name
+    }
+  }
+}
+    `;
+export type UpdateSessionAllocationMutationFn = Apollo.MutationFunction<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>;
+
+/**
+ * __useUpdateSessionAllocationMutation__
+ *
+ * To run a mutation, you first call `useUpdateSessionAllocationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSessionAllocationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSessionAllocationMutation, { data, loading, error }] = useUpdateSessionAllocationMutation({
+ *   variables: {
+ *      newAllocation: // value for 'newAllocation'
+ *   },
+ * });
+ */
+export function useUpdateSessionAllocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>) {
+        return Apollo.useMutation<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>(UpdateSessionAllocationDocument, baseOptions);
+      }
+export type UpdateSessionAllocationMutationHookResult = ReturnType<typeof useUpdateSessionAllocationMutation>;
+export type UpdateSessionAllocationMutationResult = Apollo.MutationResult<UpdateSessionAllocationMutation>;
+export type UpdateSessionAllocationMutationOptions = Apollo.BaseMutationOptions<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>;
+export const UpdateSessionDocument = gql`
+    mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
+  updateSession(updateSessionInput: $updateSessionInput) {
+    id
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
+      }
+    }
+    location
+    week
+    allocatedUsers {
+      id
+      username
+      name
+    }
+  }
+}
+    `;
+export type UpdateSessionMutationFn = Apollo.MutationFunction<UpdateSessionMutation, UpdateSessionMutationVariables>;
+
+/**
+ * __useUpdateSessionMutation__
+ *
+ * To run a mutation, you first call `useUpdateSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSessionMutation, { data, loading, error }] = useUpdateSessionMutation({
+ *   variables: {
+ *      updateSessionInput: // value for 'updateSessionInput'
+ *   },
+ * });
+ */
+export function useUpdateSessionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionMutation, UpdateSessionMutationVariables>) {
+        return Apollo.useMutation<UpdateSessionMutation, UpdateSessionMutationVariables>(UpdateSessionDocument, baseOptions);
+      }
+export type UpdateSessionMutationHookResult = ReturnType<typeof useUpdateSessionMutation>;
+export type UpdateSessionMutationResult = Apollo.MutationResult<UpdateSessionMutation>;
+export type UpdateSessionMutationOptions = Apollo.BaseMutationOptions<UpdateSessionMutation, UpdateSessionMutationVariables>;
+export const DeleteSessionsDocument = gql`
+    mutation DeleteSessions($sessionIds: [String!]!) {
+  deleteSessions(sessionIds: $sessionIds)
+}
+    `;
+export type DeleteSessionsMutationFn = Apollo.MutationFunction<DeleteSessionsMutation, DeleteSessionsMutationVariables>;
+
+/**
+ * __useDeleteSessionsMutation__
+ *
+ * To run a mutation, you first call `useDeleteSessionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSessionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSessionsMutation, { data, loading, error }] = useDeleteSessionsMutation({
+ *   variables: {
+ *      sessionIds: // value for 'sessionIds'
+ *   },
+ * });
+ */
+export function useDeleteSessionsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSessionsMutation, DeleteSessionsMutationVariables>) {
+        return Apollo.useMutation<DeleteSessionsMutation, DeleteSessionsMutationVariables>(DeleteSessionsDocument, baseOptions);
+      }
+export type DeleteSessionsMutationHookResult = ReturnType<typeof useDeleteSessionsMutation>;
+export type DeleteSessionsMutationResult = Apollo.MutationResult<DeleteSessionsMutation>;
+export type DeleteSessionsMutationOptions = Apollo.BaseMutationOptions<DeleteSessionsMutation, DeleteSessionsMutationVariables>;
 export const NotificationsDocument = gql`
     subscription Notifications($key: String!) {
   notifications(key: $key) {

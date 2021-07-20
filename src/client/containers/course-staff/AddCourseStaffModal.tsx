@@ -74,7 +74,6 @@ export const AddCourseStaffModal: React.FC<Props> = ({
                                 </TabList>
                             </Tabs>
                             <CourseStaffForm
-                                onSubmit={onSubmit}
                                 multipleStaff={isMultipleStaff}
                                 editable={true}
                             />

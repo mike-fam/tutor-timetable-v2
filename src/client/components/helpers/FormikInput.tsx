@@ -29,7 +29,6 @@ export const FormikInput: React.FC<Props> = ({
                 <FormControl
                     id={id || camelCase(name)}
                     isInvalid={!!form.errors[name] && !!form.touched[name]}
-                    mt={3}
                 >
                     <FormLabel>{label || capitalCase(name)}</FormLabel>
                     <Input {...props} {...field} type={type} />

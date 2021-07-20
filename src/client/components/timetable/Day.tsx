@@ -56,7 +56,7 @@ export const Day = <T,>({
             {sessions.map((session, key) =>
                 renderSession(
                     {
-                        id: session.id,
+                        sessionId: session.id,
                         startTime: session.startTime,
                         endTime: session.endTime,
                         startDay: startTime,

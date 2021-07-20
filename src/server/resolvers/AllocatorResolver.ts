@@ -42,6 +42,13 @@ export enum AllocationStatus {
     Infeasible = "Infeasible model",
 }
 
+export enum AllocatorStatus {
+    REQUESTED,
+    NOT_READY,
+    ERROR,
+    GENERATED,
+}
+
 @ObjectType()
 class AllocatorOutput {
     @Field(() => AllocationStatus)
@@ -130,6 +137,15 @@ export class AllocatorResolver {
         newThreshold: number | undefined,
         @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
+        // TODO: This method should return the status of the request, can be one of
+        //  requested, not yet done, error, or generated
+        // TODO: checks if token is already created and get time of token
+        //  If not created, create a new token and mark timestamp
+        //  If already created, get and check redis store.
+        //  if allocation is generated less than {time limit} ago, use
+        //  if allocation is generated more than {time limit} ago,
+        //  request new allocation with new token
+
         const { user } = req;
         const timetable = await models.timetable.get(
             {
