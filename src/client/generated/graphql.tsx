@@ -41,11 +41,6 @@ export type AllocatorOutput = {
   allocations: Array<Allocation>;
 };
 
-export type ChangeStreamAllocationInput = {
-  streamId: Scalars['String'];
-  allocation: Array<StreamAllocationPattern>;
-};
-
 export type Course = {
   __typename?: 'Course';
   id: Scalars['String'];
@@ -143,7 +138,6 @@ export type Mutation = {
   deleteSessionStreams: Array<Scalars['String']>;
   updateSessionStreams: Array<SessionStream>;
   addStreamStaff: SessionStream;
-  updateStreamAllocations: Array<SessionStream>;
   updateSessionAllocations: Array<Session>;
   updateSession: Array<Session>;
   deleteSessions: Array<Scalars['String']>;
@@ -247,11 +241,6 @@ export type MutationAddStreamStaffArgs = {
   updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
-};
-
-
-export type MutationUpdateStreamAllocationsArgs = {
-  changeAllocationInput: Array<ChangeStreamAllocationInput>;
 };
 
 
@@ -565,11 +554,6 @@ export type StaffRequest = {
   offers: Array<Offer>;
 };
 
-export type StreamAllocationPattern = {
-  weeks: Array<Scalars['Int']>;
-  allocation: Array<Scalars['String']>;
-};
-
 export type StreamInput = {
   name: Scalars['String'];
   type: SessionType;
@@ -584,6 +568,7 @@ export type StreamInput = {
 export type StreamStaffRequirement = {
   weeks: Array<Scalars['Int']>;
   numberOfStaff: Scalars['Int'];
+  allocatedUsers: Array<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -1316,39 +1301,6 @@ export type StreamsFromPublicTimetableQueryVariables = Exact<{
 export type StreamsFromPublicTimetableQuery = (
   { __typename?: 'Query' }
   & { fromPublicTimetable: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    )>, secondaryStreams: Array<(
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
-      & { allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'username'>
-      )> }
-    )>, timetable: (
-      { __typename?: 'Timetable' }
-      & { course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ), term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id' | 'weekNames'>
-      ) }
-    ) }
-  )> }
-);
-
-export type UpdateStreamAllocationsMutationVariables = Exact<{
-  changeAllocationInput: Array<ChangeStreamAllocationInput>;
-}>;
-
-
-export type UpdateStreamAllocationsMutation = (
-  { __typename?: 'Mutation' }
-  & { updateStreamAllocations: Array<(
     { __typename?: 'SessionStream' }
     & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
     & { allocatedUsers: Array<(
@@ -3049,70 +3001,6 @@ export function useStreamsFromPublicTimetableLazyQuery(baseOptions?: Apollo.Lazy
 export type StreamsFromPublicTimetableQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableQuery>;
 export type StreamsFromPublicTimetableLazyQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableLazyQuery>;
 export type StreamsFromPublicTimetableQueryResult = Apollo.QueryResult<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>;
-export const UpdateStreamAllocationsDocument = gql`
-    mutation UpdateStreamAllocations($changeAllocationInput: [ChangeStreamAllocationInput!]!) {
-  updateStreamAllocations(changeAllocationInput: $changeAllocationInput) {
-    id
-    type
-    name
-    startTime
-    endTime
-    day
-    location
-    numberOfStaff
-    weeks
-    allocatedUsers {
-      id
-      name
-      username
-    }
-    secondaryStreams {
-      weeks
-      numberOfStaff
-      allocatedUsers {
-        id
-        name
-        username
-      }
-    }
-    timetable {
-      course {
-        id
-        code
-      }
-      term {
-        id
-        weekNames
-      }
-    }
-  }
-}
-    `;
-export type UpdateStreamAllocationsMutationFn = Apollo.MutationFunction<UpdateStreamAllocationsMutation, UpdateStreamAllocationsMutationVariables>;
-
-/**
- * __useUpdateStreamAllocationsMutation__
- *
- * To run a mutation, you first call `useUpdateStreamAllocationsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateStreamAllocationsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateStreamAllocationsMutation, { data, loading, error }] = useUpdateStreamAllocationsMutation({
- *   variables: {
- *      changeAllocationInput: // value for 'changeAllocationInput'
- *   },
- * });
- */
-export function useUpdateStreamAllocationsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateStreamAllocationsMutation, UpdateStreamAllocationsMutationVariables>) {
-        return Apollo.useMutation<UpdateStreamAllocationsMutation, UpdateStreamAllocationsMutationVariables>(UpdateStreamAllocationsDocument, baseOptions);
-      }
-export type UpdateStreamAllocationsMutationHookResult = ReturnType<typeof useUpdateStreamAllocationsMutation>;
-export type UpdateStreamAllocationsMutationResult = Apollo.MutationResult<UpdateStreamAllocationsMutation>;
-export type UpdateStreamAllocationsMutationOptions = Apollo.BaseMutationOptions<UpdateStreamAllocationsMutation, UpdateStreamAllocationsMutationVariables>;
 export const UpdateSessionStreamsDocument = gql`
     mutation UpdateSessionStreams($updateStreamInput: [UpdateStreamInput!]!) {
   updateSessionStreams(updateStreamInput: $updateStreamInput) {

@@ -58,7 +58,6 @@ export const AllocatorPageContainer: React.FC<Props> = () => {
         { data: requestAllocationData, loading: requestAllocationLoading },
     ] = useMutationWithError(useRequestAllocationMutation, {});
 
-    // TODO: Maybe course code as well.
     const [sessionsInfo, setSessionsInfo] = useState<
         Map<string, TimetableCustomSessionProps>
     >(Map<string, TimetableCustomSessionProps>());

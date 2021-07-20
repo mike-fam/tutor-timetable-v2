@@ -18,6 +18,7 @@ import { Map } from "immutable";
 import { ModificationType } from "../../generated/graphql";
 import { useColorMode } from "@chakra-ui/react";
 import { SessionSettingsUtils } from "../../types/session-settings";
+import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
 
 type Props = {
     loading: boolean;
@@ -41,7 +42,7 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     const { streamsById } = stream;
     const { sessionsByWeek } = session;
     const {} = timetableActions;
-    const { course, term } = baseInfo;
+    const { course, term, courseId, termId } = baseInfo;
     const {
         selectSessions,
         selectStreams,
@@ -51,6 +52,7 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
         deselectStreams,
     } = selectActions;
     const { colorMode } = useColorMode();
+    const usersOfCourse = useUsersOfCourse(courseId, termId);
     const sessions = useMemo<TimetableSessionType[]>(() => {
         if (week === defaultInt) {
             return streamsById
@@ -113,10 +115,7 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
             if (selectedStreams.has(streamId)) {
                 style = {
                     ...style,
-                    bg:
-                        colorMode === "light"
-                            ? "blue.600"
-                            : "purple.700",
+                    bg: colorMode === "light" ? "blue.600" : "purple.700",
                 };
             }
             return {
@@ -128,26 +127,30 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
     const streamCustomProps = useCallback(
         (streamId: string): StreamSettingsCustomSessionProps => {
             const stream = streamsById.get(streamId);
-            const baseAllocation = stream?.allocations[0];
-            const baseAllocationProps: [number[], string[]] = [
-                baseAllocation?.weeks || [],
-                baseAllocation?.allocation || [],
-            ];
-            const customAllocation = stream?.allocations.slice(1) || [];
+            const baseAllocation = [
+                stream?.baseStaffRequirement.weeks || [],
+                stream?.baseStaffRequirement.allocatedUsers.map(
+                    (userId) => usersOfCourse.get(userId)?.name || ""
+                ) || [],
+            ] as [number[], string[]];
+            const extraAllocations = stream?.extraStaffRequirement.map(
+                (requirement) => [
+                    requirement.weeks || [],
+                    requirement.allocatedUsers.map(
+                        (userId) => usersOfCourse.get(userId)?.name || ""
+                    ) || [],
+                ]
+            ) as [number[], string[]][];
             return {
                 courseCode: course?.code || "",
-                baseAllocation: baseAllocationProps,
-                customAllocation:
-                    customAllocation.map((allocationPattern) => [
-                        allocationPattern.weeks,
-                        allocationPattern.allocation,
-                    ]) || [],
+                baseAllocation,
+                extraAllocations,
                 weekNames: term?.weekNames || [],
                 location: stream?.location || "",
                 styles: streamStyle(streamId),
             };
         },
-        [course, term, streamsById, streamStyle]
+        [course, term, streamsById, streamStyle, usersOfCourse]
     );
     const sessionStyle = useCallback<
         (sessionId: string) => SessionSettingsStyleProps

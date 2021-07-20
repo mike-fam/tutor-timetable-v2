@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
@@ -33,7 +33,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
     } = base;
     const { selectedStreams, selectedSessions, selectedStreamInput } =
         selection;
-    const {streamActions} = timetableState
+    const { streamActions } = timetableState;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -125,5 +125,3 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         </Wrapper>
     );
 };
-
-// TODO: change props of timetable container

@@ -1,5 +1,6 @@
 import {
-    ModificationType, StreamAllocationPattern, StreamInput,
+    ModificationType,
+    StreamInput,
     UpdateSessionInput,
 } from "../generated/graphql";
 import { SessionResponseType } from "./session";
@@ -14,12 +15,13 @@ export type SessionSettingsModificationType = {
     allocationModification: ModificationType;
 };
 
-export type StreamState = StreamInput & {
-    allocations: StreamAllocationPattern[]
-}
+export type StreamSettingsModificationType = {
+    settingsModification: ModificationType;
+    allocationModification: ModificationType;
+};
 
 export type SessionResponseWithModification = SessionResponseType &
     SessionSettingsModificationType;
 
-export type StreamStateWithModification = StreamState &
-    SessionSettingsModificationType;
+export type StreamInputWithModification = StreamInput &
+    StreamSettingsModificationType;

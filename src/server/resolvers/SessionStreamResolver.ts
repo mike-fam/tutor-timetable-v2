@@ -17,8 +17,6 @@ import { MyContext } from "../types/context";
 import { Models } from "../types/models";
 import { CourseTermIdInput } from "./CourseTermId";
 import { In, IsNull } from "typeorm";
-import isEqual from "lodash/isEqual";
-import uniqBy from "lodash/uniqBy";
 import { ArrayNotEmpty, IsEnum, Max, Min, MinLength } from "class-validator";
 import { UniqueExtraWeeks, ValidExtraWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
@@ -31,28 +29,8 @@ import differenceInWeeks from "date-fns/differenceInWeeks";
 import { dayToIsoNumber, timeStringToHours } from "../../utils/date";
 import { v4 as uuid } from "uuid";
 import sortBy from "lodash/sortBy";
-import differenceBy from "lodash/differenceBy";
 import { DataLoaders } from "../types/dataloaders";
 import uniq from "lodash/uniq";
-
-@InputType()
-export class StreamAllocationPattern {
-    @Field(() => [Int])
-    @ArrayNotEmpty()
-    weeks: number[];
-
-    @Field(() => [String])
-    allocation: string[];
-}
-
-@InputType()
-export class ChangeStreamAllocationInput {
-    @Field()
-    streamId: string;
-
-    @Field(() => [StreamAllocationPattern])
-    allocation: StreamAllocationPattern[];
-}
 
 @InputType()
 export class StreamStaffRequirement {
@@ -63,6 +41,9 @@ export class StreamStaffRequirement {
     @Field(() => Int)
     @Min(0)
     numberOfStaff: number;
+
+    @Field(() => [String])
+    allocatedUsers: string[];
 }
 
 @InputType("StreamInput")
@@ -293,66 +274,23 @@ export class SessionStreamResolver {
         const { sessionStream: streamModel } = models;
         const updatedStreams: SessionStream[] = [];
         await asyncForEach(streamInputs, async ({ streamId, ...input }) => {
-            // Get allocation pattern, compare with existing pattern
             const rootStream = await streamModel.getById(streamId, user);
-            const secondaryStreams = await streamModel.getByIds(
-                rootStream.secondaryStreamIds,
+            // Delete all streams with allocations and create new ones with same root id
+            const timetable = await models.timetable.getById(
+                rootStream.timetableId,
                 user
             );
-            const sameBasePattern =
-                isEqual(
-                    rootStream.weeks,
-                    uniq(input.baseStaffRequirement.weeks)
-                ) &&
-                rootStream.numberOfStaff ===
-                    input.baseStaffRequirement.numberOfStaff;
-            let sameExtraPattern = true;
-            for (const extraWeekPattern of input.extraStaffRequirement) {
-                let samePattern = false;
-                for (const secondaryStream of secondaryStreams) {
-                    if (
-                        isEqual(
-                            uniq(secondaryStream.weeks),
-                            extraWeekPattern.weeks
-                        ) &&
-                        secondaryStream.numberOfStaff ===
-                            extraWeekPattern.numberOfStaff
-                    ) {
-                        samePattern = true;
-                    }
-                }
-                if (!samePattern) {
-                    sameExtraPattern = false;
-                    break;
-                }
-            }
-            // If not equal, delete all streams and recreate from scratch
-            if (!sameBasePattern || !sameExtraPattern) {
-                const timetable = await models.timetable.getById(
-                    rootStream.timetableId,
-                    user
-                );
-                await streamModel.delete({ id: streamId }, user);
-                const createdStream = await this.createStreamFromInput(
-                    input,
-                    timetable,
-                    models,
-                    user,
-                    loaders,
-                    rootStream.id
-                );
-                if (createdStream) {
-                    updatedStreams.push(createdStream);
-                }
-            } else {
-                // Otherwise, update as normal
-                const { name, type, day, startTime, endTime, location } = input;
-                const updatedStream = await streamModel.update(
-                    rootStream,
-                    { name, type, day, startTime, endTime, location },
-                    user
-                );
-                updatedStreams.push(updatedStream);
+            await streamModel.delete({ id: streamId }, user);
+            const createdStream = await this.createStreamFromInput(
+                input,
+                timetable,
+                models,
+                user,
+                loaders,
+                rootStream.id
+            );
+            if (createdStream) {
+                updatedStreams.push(createdStream);
             }
         });
         return updatedStreams;
@@ -456,104 +394,6 @@ export class SessionStreamResolver {
         return generatedStreams;
     }
 
-    @Mutation(() => [SessionStream])
-    async updateStreamAllocations(
-        @Ctx() { req, models }: MyContext,
-        @Arg("changeAllocationInput", () => [ChangeStreamAllocationInput])
-        allocationInput: ChangeStreamAllocationInput[]
-    ): Promise<SessionStream[]> {
-        const user = req.user;
-        const { sessionStream: streamModel } = models;
-        const affectedStreamIds: string[] = [];
-        await asyncForEach(allocationInput, async (streamInput) => {
-            const rootStream = await streamModel.getById(
-                streamInput.streamId,
-                user
-            );
-            const secondaryStreams = await streamModel.getByIds(
-                rootStream.secondaryStreamIds,
-                user
-            );
-            const streams = [rootStream, ...secondaryStreams];
-            await asyncForEach(
-                streamInput.allocation,
-                async (allocationPattern) => {
-                    const relevantStream = streams.find((stream) =>
-                        isEqual(
-                            sortBy(stream.weeks),
-                            sortBy(allocationPattern.weeks)
-                        )
-                    );
-                    if (!relevantStream) {
-                        throw new Error(
-                            `Invalid week pattern: no session streams run in weeks ${allocationPattern.weeks.join(
-                                ", "
-                            )}`
-                        );
-                    }
-                    affectedStreamIds.push(relevantStream.id);
-                    const existingUsers = await models.user.getByIds(
-                        relevantStream.allocatedUserIds,
-                        user
-                    );
-                    const newUsers = await models.user.getByIds(
-                        allocationPattern.allocation,
-                        user
-                    );
-                    const removedUsers = differenceBy(
-                        existingUsers,
-                        newUsers,
-                        (user) => user.id
-                    );
-                    const addedUsers = differenceBy(
-                        newUsers,
-                        existingUsers,
-                        (user) => user.id
-                    );
-                    // Update stream allocation
-                    await streamModel.clearAllocation(relevantStream, user);
-                    await streamModel.allocateMultiple(
-                        relevantStream,
-                        newUsers,
-                        user
-                    );
-                    // Update related sessions allocation
-                    const relevantSessions = await models.session.getByIds(
-                        relevantStream.sessionIds,
-                        user
-                    );
-                    await asyncForEach(relevantSessions, async (session) => {
-                        const sessionAllocatedUsers =
-                            await models.user.getByIds(
-                                session.allocatedUserIds,
-                                user
-                            );
-                        const allocatedUsersAfterRemove = differenceBy(
-                            sessionAllocatedUsers,
-                            removedUsers,
-                            (user) => user.id
-                        );
-                        const allocatedUsersAfterAdd = [
-                            ...allocatedUsersAfterRemove,
-                            ...addedUsers,
-                        ];
-                        const finalAllocation = uniqBy(
-                            allocatedUsersAfterAdd,
-                            (user) => user.id
-                        );
-                        await models.session.clearAllocation(session, user);
-                        await models.session.allocateMultiple(
-                            session,
-                            finalAllocation,
-                            user
-                        );
-                    });
-                }
-            );
-        });
-        return await streamModel.getByIds(affectedStreamIds, user);
-    }
-
     async generateSessions(
         stream: SessionStream,
         user: User,
@@ -582,7 +422,6 @@ export class SessionStreamResolver {
         loaders: DataLoaders,
         id?: string
     ): Promise<SessionStream | null> {
-        const streamsToBeCreated: Partial<SessionStream>[] = [];
         const {
             name,
             type,
@@ -605,32 +444,43 @@ export class SessionStreamResolver {
                 weeks: sortBy(uniq(baseStaffRequirement.weeks)),
                 location,
                 numberOfStaff: baseStaffRequirement.numberOfStaff,
-                allocatedUserIds: [],
             },
             user
         );
-        // Create all streams based on root stream
-        let extraIndex = 1;
-        for (const { numberOfStaff, weeks } of extraStaffRequirement) {
-            streamsToBeCreated.push({
-                timetableId: timetable.id,
-                name: `${name} extra ${extraIndex++}`,
-                type,
-                day,
-                startTime,
-                endTime,
-                weeks: sortBy(uniq(weeks)),
-                location,
-                numberOfStaff,
-                rootId: rootStream.id,
-                allocatedUserIds: [],
-            });
-        }
-        const createdStreams = await models.sessionStream.createMany(
-            streamsToBeCreated,
+        await models.sessionStream.allocateMultiple(
+            rootStream,
+            baseStaffRequirement.allocatedUsers,
             user
         );
-        const allStreams = [rootStream, ...createdStreams];
+        const allStreams = [rootStream];
+        // Create all streams based on root stream
+        let extraIndex = 1;
+        await asyncForEach(
+            extraStaffRequirement,
+            async ({ numberOfStaff, weeks, allocatedUsers }) => {
+                const createdStream = await models.sessionStream.create(
+                    {
+                        timetableId: timetable.id,
+                        name: `${name} extra ${extraIndex++}`,
+                        type,
+                        day,
+                        startTime,
+                        endTime,
+                        weeks: sortBy(uniq(weeks)),
+                        location,
+                        numberOfStaff,
+                        rootId: rootStream.id,
+                    },
+                    user
+                );
+                await models.sessionStream.allocateMultiple(
+                    createdStream,
+                    allocatedUsers,
+                    user
+                );
+                allStreams.push(createdStream);
+            }
+        );
         await asyncForEach(
             allStreams,
             async (stream) => await this.generateSessions(stream, user, models)

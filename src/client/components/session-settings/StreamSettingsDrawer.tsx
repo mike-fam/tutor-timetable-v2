@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Form, Formik, FormikErrors } from "formik";
 import { FormikInput } from "../helpers/FormikInput";
-import { SessionType } from "../../generated/graphql";
+import { SessionType, StreamInput } from "../../generated/graphql";
 import { FormikSelect } from "../helpers/FormikSelect";
 import { sentenceCase } from "change-case";
 import { FormikTimeInput } from "../helpers/FormikTimeInput";
@@ -20,15 +20,14 @@ import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
 import { FormikBaseStaffRequirement } from "./FormikBaseStaffRequirement";
 import { FormikExtraStaffRequirement } from "./FormikExtraStaffRequirement";
-import { StreamState } from "../../types/session-settings";
 
 type Props = {
     isOpen: boolean;
     close: () => void;
-    stream: Partial<StreamState>;
+    stream: Partial<StreamInput>;
     weekNames: string[];
     numberOfWeeks: number;
-    onSave: (newState: Partial<StreamState>) => any;
+    onSave: (newState: Partial<StreamInput>) => any;
 };
 
 export const StreamSettingsDrawer: FC<Props> = ({
@@ -43,7 +42,7 @@ export const StreamSettingsDrawer: FC<Props> = ({
         <Drawer isOpen={isOpen} onClose={close} size="md">
             <DrawerOverlay />
             <DrawerContent>
-                <Formik<Partial<StreamState>>
+                <Formik<Partial<StreamInput>>
                     initialValues={stream}
                     validate={(values) => {
                         const errors: FormikErrors<typeof values> = {};

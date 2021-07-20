@@ -7,15 +7,18 @@ import { PopoverSession } from "../timetable/PopoverSession";
 import { TimetableStreamPopover } from "../timetable/TimetableStreamPopover";
 import { BoxProps } from "@chakra-ui/react";
 
-export type SessionSettingsStyleProps = Omit<BoxProps, "onClick" | "_hover" | "id">;
+export type SessionSettingsStyleProps = Omit<
+    BoxProps,
+    "onClick" | "_hover" | "id"
+>;
 
 export type StreamSettingsCustomSessionProps = {
     courseCode: string;
     baseAllocation: [number[], string[]];
-    customAllocation: Array<[number[], string[]]>;
+    extraAllocations: Array<[number[], string[]]>;
     weekNames: string[];
     location: string;
-    styles: SessionSettingsStyleProps
+    styles: SessionSettingsStyleProps;
 };
 
 type Props = ClickableSessionProps<StreamSettingsCustomSessionProps>;
@@ -23,7 +26,7 @@ type Props = ClickableSessionProps<StreamSettingsCustomSessionProps>;
 export const SessionSettingsTimetableStream: FC<Props> = (props) => {
     const { custom, sessionId, name } = props;
     const {
-        customAllocation,
+        extraAllocations,
         location,
         courseCode,
         weekNames,
@@ -42,7 +45,7 @@ export const SessionSettingsTimetableStream: FC<Props> = (props) => {
                     name={name}
                     courseCode={courseCode}
                     baseAllocation={baseAllocation}
-                    customAllocation={customAllocation}
+                    customAllocation={extraAllocations}
                     weekNames={weekNames}
                     location={location}
                 />

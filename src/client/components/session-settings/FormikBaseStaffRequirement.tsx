@@ -45,6 +45,7 @@ export const FormikBaseStaffRequirement: FC<Props> = ({
                         setBaseStaffRequirement({
                             numberOfStaff: baseStaffRequirement.numberOfStaff,
                             weeks: values.map((value) => parseInt(value)),
+                            allocatedUsers: baseStaffRequirement.allocatedUsers,
                         });
                     }}
                 />
@@ -55,6 +56,7 @@ export const FormikBaseStaffRequirement: FC<Props> = ({
                         setBaseStaffRequirement({
                             numberOfStaff,
                             weeks: baseStaffRequirement.weeks,
+                            allocatedUsers: baseStaffRequirement.allocatedUsers,
                         })
                     }
                     min={0}

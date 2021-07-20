@@ -130,29 +130,40 @@ export class SessionModel extends BaseModel<Session> {
      */
     public async allocateMultiple(
         session: Session,
-        staff: User[],
+        staff: User[] | string[],
         user: User
     ): Promise<void> {
+        if (staff.length === 0) {
+            return;
+        }
         const course = await session.getCourse();
         const term = await session.getTerm();
         const allocatedUsers = (await this.loaders.user.loadMany(
             session.allocatedUserIds
         )) as User[];
         const allocatedUserIds = allocatedUsers.map((user) => user.id);
+        let staffUsers: User[];
+        if (typeof staff[0] === "string") {
+            staffUsers = (await this.loaders.user.loadMany(
+                staff as string[]
+            )) as User[];
+        } else {
+            staffUsers = staff as User[];
+        }
         // Disallow if staff is already allocated to this session
-        for (const staffMember of staff) {
+        for (const staffMember of staffUsers) {
             if (allocatedUserIds.includes(staffMember.id)) {
                 throw new Error(
                     `User ${staffMember.name} already works in that session.`
                 );
             }
         }
-        // If not course coordinator
         if (!(await user.isCoordinatorOf(course, term))) {
+            // If not course coordinator
             throw new Error(PERM_ERR);
         }
         // Disallow if staff is not of same course and same term
-        for (const staffMember of staff) {
+        for (const staffMember of staffUsers) {
             if (!(await staffMember.isStaffOf(course, term))) {
                 throw new Error(
                     `User ${staffMember.name} does not work in ` +
@@ -160,7 +171,7 @@ export class SessionModel extends BaseModel<Session> {
                 );
             }
         }
-        await session.allocate(...staff);
+        await session.allocate(...staffUsers);
     }
 
     /**

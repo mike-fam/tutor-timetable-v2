@@ -49,7 +49,7 @@ export const FormikExtraStaffRequirement: FC<Props> = ({
                     onClick={() => {
                         setExtraStaffRequirements([
                             ...extraStaffRequirements,
-                            { weeks: [], numberOfStaff: 1 },
+                            { weeks: [], numberOfStaff: 1, allocatedUsers: [] },
                         ]);
                     }}
                 />
@@ -85,6 +85,8 @@ export const FormikExtraStaffRequirement: FC<Props> = ({
                                                             (value) =>
                                                                 parseInt(value)
                                                         ),
+                                                        allocatedUsers:
+                                                            requirement.allocatedUsers,
                                                     }
                                                 )
                                             );
@@ -101,6 +103,8 @@ export const FormikExtraStaffRequirement: FC<Props> = ({
                                                     {
                                                         numberOfStaff,
                                                         weeks: requirement.weeks,
+                                                        allocatedUsers:
+                                                            requirement.allocatedUsers,
                                                     }
                                                 )
                                             )
@@ -118,7 +122,12 @@ export const FormikExtraStaffRequirement: FC<Props> = ({
                                 icon={<MinusIcon />}
                                 size="xs"
                                 onClick={() => {
-                                    setExtraStaffRequirements(removeAtIndex(extraStaffRequirements, index));
+                                    setExtraStaffRequirements(
+                                        removeAtIndex(
+                                            extraStaffRequirements,
+                                            index
+                                        )
+                                    );
                                 }}
                             />
                         </Fragment>
