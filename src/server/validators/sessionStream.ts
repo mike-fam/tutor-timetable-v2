@@ -32,6 +32,9 @@ export const UniqueExtraWeeks = (validationOptions?: ValidationOptions) => {
                     }
                     return true;
                 },
+                defaultMessage(): string {
+                    return "Duplicated weeks in extra requirements.";
+                },
             },
         });
     };
@@ -63,6 +66,9 @@ export const ValidExtraWeeks = (validationOptions?: ValidationOptions) => {
                         }
                     }
                     return true;
+                },
+                defaultMessage(): string {
+                    return "Week in extra requirement that does not appear in base requirement";
                 },
             },
         });

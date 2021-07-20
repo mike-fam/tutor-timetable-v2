@@ -75,12 +75,20 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                         <HStack justify="flex-end">
                             {week === defaultInt
                                 ? selectedStreams.size > 0 && (
+                                    <>
+                                        <Button
+                                            colorScheme="green"
+                                            onClick={() => deselectAllStreams()}
+                                        >
+                                            Deselect All
+                                        </Button>
                                       <Button
                                           colorScheme="green"
                                           onClick={openStreamDrawer}
                                       >
                                           Edit Session Streams
                                       </Button>
+                                    </>
                                   )
                                 : selectedSessions.size > 0 && (
                                       <Button colorScheme="green">

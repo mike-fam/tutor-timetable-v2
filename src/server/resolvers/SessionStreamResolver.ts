@@ -78,11 +78,8 @@ export class StreamInput {
     baseStaffRequirement: StreamStaffRequirement;
 
     @Field(() => [StreamStaffRequirement])
-    @UniqueExtraWeeks({ message: "Duplicated weeks in extra requirements." })
-    @ValidExtraWeeks({
-        message:
-            "Week in extra requirement that does not appear in base requirement",
-    })
+    @UniqueExtraWeeks()
+    @ValidExtraWeeks()
     extraStaffRequirement: StreamStaffRequirement[];
 }
 
@@ -491,7 +488,8 @@ export class SessionStreamResolver {
             allStreams,
             async (stream) => await this.generateSessions(stream, user, models)
         );
-        return rootStream;
+        loaders.sessionStream.clear(rootStream.id);
+        return await models.sessionStream.getById(rootStream.id, user);
     }
 
     @FieldResolver(() => Timetable)

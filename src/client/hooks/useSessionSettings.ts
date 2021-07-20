@@ -251,12 +251,12 @@ export const useSessionSettings = () => {
                         return prev.set(streamId, {
                             ...stream,
                             ...sanitisedInput,
+                            location: (location as string) || stream.location,
                         });
                     }
                     return prev;
                 })
             );
-            // TODO: Edit Allocation
         },
         [selectedStreams]
     );
@@ -545,6 +545,7 @@ export const useSessionSettings = () => {
                 },
             });
         }
+        deselectAllStreams();
     }, [
         courseId,
         termId,
@@ -556,6 +557,7 @@ export const useSessionSettings = () => {
         submitUpdatedStream,
         sessionsByWeek,
         streamsById,
+        deselectAllStreams,
     ]);
 
     useEffect(() => {
