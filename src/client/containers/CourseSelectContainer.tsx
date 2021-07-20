@@ -3,7 +3,7 @@ import { Dropdown } from "../components/helpers/Dropdown";
 import { Role, useMyCoursesQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
-import { useQueryWithError } from "../hooks/useQueryWithError";
+import { useQueryWithError } from "../hooks/useApolloHooksWithError";
 
 type Props = {
     chooseCourse: (termId: string) => void;
@@ -28,6 +28,7 @@ export const CourseSelectContainer: React.FC<Props> = ({
         if (loading || !data?.me?.courseStaffs) {
             return;
         }
+        setCoursesMap((prev) => prev.clear());
         for (const courseStaff of data.me.courseStaffs) {
             if (
                 courseStaff.timetable.term.id === chosenTerm &&
@@ -39,10 +40,6 @@ export const CourseSelectContainer: React.FC<Props> = ({
                         courseStaff.timetable.course.id,
                         courseStaff.timetable.course.code
                     )
-                );
-            } else {
-                setCoursesMap((prev) =>
-                    prev.remove(courseStaff.timetable.course.id)
                 );
             }
         }

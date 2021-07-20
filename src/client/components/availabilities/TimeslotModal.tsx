@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
     Button,
     Divider,
@@ -9,15 +9,15 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Stack,
 } from "@chakra-ui/react";
 import { ModifyTimeslotParams } from "../../types/availability";
 import { Form, Formik, FormikErrors } from "formik";
-import format from "date-fns/format";
-import parse from "date-fns/parse";
 import { IsoDay } from "../../../types/date";
-import { FormikInput } from "../helpers/FormikInput";
 import { TimeslotInput } from "../../generated/graphql";
 import { FormikSelect } from "../helpers/FormikSelect";
+import { isoNumberToDay } from "../../../utils/date";
+import { FormikTimeInput } from "../helpers/FormikTimeInput";
 
 type Props = {
     isOpen: boolean;
@@ -35,35 +35,22 @@ export const TimeslotModal: React.FC<Props> = ({
     timeslot,
     updateTimeslot,
 }) => {
-    const timeToString = useCallback((time: number) => {
-        const mins = Math.round((time % 1) * 60);
-        const hours = Math.floor(time);
-        return format(new Date(0, 0, 0, hours, mins), "HH:mm");
-    }, []);
-
-    const stringToTime = useCallback((formatString: string) => {
-        const startDate = parse(formatString, "HH:mm", new Date());
-        return startDate.getHours() + startDate.getMinutes() / 60;
-    }, []);
-
     const formState = useMemo(() => {
         if (!timeslot) {
             return {
                 id: "",
-                startTime: "0",
-                endTime: "24",
+                startTime: 0,
+                endTime: 24,
                 day: IsoDay.MON,
             };
         }
-        const startTime = timeToString(timeslot.startTime);
-        const endTime = timeToString(timeslot.endTime);
         return {
             id: timeslot.id,
-            startTime,
-            endTime,
+            startTime: timeslot.startTime,
+            endTime: timeslot.endTime,
             day: timeslot.day,
         };
-    }, [timeslot, timeToString]);
+    }, [timeslot]);
     return (
         <Modal isOpen={isOpen} onClose={close} isCentered>
             <ModalOverlay />
@@ -71,19 +58,16 @@ export const TimeslotModal: React.FC<Props> = ({
                 <Formik
                     initialValues={formState}
                     onSubmit={(values) => {
-                        const startTime = stringToTime(values.startTime);
-                        const endTime = stringToTime(values.endTime);
                         updateTimeslot(values.id, {
-                            startTime,
-                            endTime,
-                            day: parseInt(values.day as unknown as string),
+                            startTime: values.startTime,
+                            endTime: values.endTime,
+                            day: Number(values.day),
                         });
                         close();
                     }}
                     validate={(values) => {
                         const errors: FormikErrors<typeof values> = {};
-                        const startTime = stringToTime(values.startTime);
-                        const endTime = stringToTime(values.endTime);
+                        const { startTime, endTime } = values;
                         if (endTime <= startTime) {
                             const message =
                                 "Start time must be before end time";
@@ -102,29 +86,32 @@ export const TimeslotModal: React.FC<Props> = ({
                         <ModalHeader>Update Availability</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <FormikInput
-                                name="startTime"
-                                id="startTimeAvailModal"
-                                type="time"
-                            />
-                            <FormikInput
-                                name="endTime"
-                                id="endTimeAvailModal"
-                                type="time"
-                            />
-                            <FormikSelect
-                                name="day"
-                                options={[
-                                    IsoDay.MON,
-                                    IsoDay.TUE,
-                                    IsoDay.WED,
-                                    IsoDay.THU,
-                                    IsoDay.FRI,
-                                    IsoDay.SAT,
-                                    IsoDay.SUN,
-                                ]}
-                                id="dayAvailModal"
-                            />
+                            <Stack spacing={3}>
+                                <FormikTimeInput
+                                    name="startTime"
+                                    id="startTimeAvailModal"
+                                />
+                                <FormikTimeInput
+                                    name="endTime"
+                                    id="endTimeAvailModal"
+                                />
+                                <FormikSelect
+                                    name="day"
+                                    options={[
+                                        IsoDay.MON,
+                                        IsoDay.TUE,
+                                        IsoDay.WED,
+                                        IsoDay.THU,
+                                        IsoDay.FRI,
+                                        IsoDay.SAT,
+                                        IsoDay.SUN,
+                                    ]}
+                                    optionToText={(val) =>
+                                        isoNumberToDay(val as IsoDay)
+                                    }
+                                    id="dayAvailModal"
+                                />
+                            </Stack>
                         </ModalBody>
                         <Divider py={3} />
                         <ModalFooter>

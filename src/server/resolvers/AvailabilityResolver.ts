@@ -7,7 +7,6 @@ import {
     Int,
     Mutation,
     Query,
-    registerEnumType,
     Resolver,
     Root,
 } from "type-graphql";

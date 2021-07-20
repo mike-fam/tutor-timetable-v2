@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import React from "react";
 import { Props as SessionProps, Session } from "./Session";
 
-type Props = SessionProps;
+type Props = SessionProps<{}>;
 
 export const SimpleSession: React.FC<Props> = (props) => {
     return (

@@ -225,10 +225,10 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async delete(
-        deleteCriteria: FindConditions<T>,
+        deleteCriteria: FindConditions<T> | FindManyOptions<T>,
         user: User
     ): Promise<T> {
-        const deleteCandidates: T[] = (this.entityCls as any).find(
+        const deleteCandidates: T[] = await (this.entityCls as any).find(
             deleteCriteria
         );
         if (deleteCandidates.length === 0) {
@@ -251,7 +251,7 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async deleteMany(
-        deleteCriteria: FindConditions<T>,
+        deleteCriteria: FindConditions<T> | FindManyOptions<T>,
         user: User
     ): Promise<T[]> {
         const deleteCandidates: T[] = await (this.entityCls as any).find(

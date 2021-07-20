@@ -14,7 +14,7 @@ export type Props<T> = {
             "renderTimeSlot" | "renderSession" | "getSessionProps"
         >,
         key: number
-    ) => ReactElement;
+    ) => ReactElement<DayProps<T>>;
     startTime?: number;
     endTime?: number;
     sessions: Array<TimetableSessionType>;

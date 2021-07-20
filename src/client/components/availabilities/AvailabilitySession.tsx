@@ -17,7 +17,7 @@ import { ContextMenuList } from "../helpers/ContextMenuList";
 import { ContextMenuItem } from "../helpers/ContextMenuItem";
 import { ModificationType } from "../../generated/graphql";
 
-export type AvailabilitySessionProps = {
+export type AvailabilityCustomSessionProps = {
     updateSession: (sessionId: string, newProps: ModifyTimeslotParams) => void;
     removeSession: (sessionId: string) => void;
     restoreSession: (sessionId: string) => void;
@@ -25,16 +25,17 @@ export type AvailabilitySessionProps = {
     modificationType: ModificationType;
 };
 
-type Props = SessionProps & AvailabilitySessionProps;
+type Props = SessionProps<AvailabilityCustomSessionProps>;
 
-export const AvailabilitySession: React.FC<Props> = ({
-    updateSession,
-    removeSession,
-    restoreSession,
-    modificationType,
-    editSession,
-    ...props
-}) => {
+export const AvailabilitySession: React.FC<Props> = (props) => {
+    const { custom, sessionId } = props;
+    const {
+        updateSession,
+        removeSession,
+        restoreSession,
+        modificationType,
+        editSession,
+    } = custom(sessionId);
     const { top } = useMemo(() => sessionStyleFromProps(props), [props]);
     const { startTime, endTime } = props;
     const nodeRef = useRef(null);
@@ -87,7 +88,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                         startTime +
                                         dragData.y / timetableTimeslotHeight;
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     // Limit free time to less than 15 mins
                                     startTime: Math.min(
                                         Math.max(newStartTime, props.startDay),
@@ -152,7 +153,7 @@ export const AvailabilitySession: React.FC<Props> = ({
                                 ) {
                                     newEndTime = Math.round(newEndTime);
                                 }
-                                updateSession(props.id, {
+                                updateSession(props.sessionId, {
                                     endTime: Math.min(
                                         Math.max(newEndTime, startTime + 0.25),
                                         props.endDay
@@ -186,7 +187,7 @@ export const AvailabilitySession: React.FC<Props> = ({
             </ContextMenuTrigger>
             <ContextMenuList>
                 <ContextMenuItem
-                    onClick={() => editSession(props.id)}
+                    onClick={() => editSession(props.sessionId)}
                     disabled={removed}
                 >
                     Update
@@ -194,8 +195,8 @@ export const AvailabilitySession: React.FC<Props> = ({
                 <ContextMenuItem
                     onClick={() => {
                         removed
-                            ? restoreSession(props.id)
-                            : removeSession(props.id);
+                            ? restoreSession(props.sessionId)
+                            : removeSession(props.sessionId);
                     }}
                     colorScheme={removed ? "green" : "red"}
                 >

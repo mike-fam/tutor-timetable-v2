@@ -15,12 +15,10 @@ import { SessionType } from "../types/session";
 import { IsoDay } from "../../types/date";
 import { MyContext } from "../types/context";
 import { Models } from "../types/models";
-import { Request } from "express";
 import { CourseTermIdInput } from "./CourseTermId";
-import { Column } from "typeorm";
-import min from "lodash/min";
-import { IsEnum, Max, Min, MinLength } from "class-validator";
-import { UniqueWeeks } from "../validators/sessionStream";
+import { In, IsNull } from "typeorm";
+import { ArrayNotEmpty, IsEnum, Max, Min, MinLength } from "class-validator";
+import { UniqueExtraWeeks, ValidExtraWeeks } from "../validators/sessionStream";
 import { IsGreaterThan, IsLessThan } from "../validators/number";
 import { asyncForEach, getAllIndices } from "../../utils/array";
 import { PERM_ERR } from "../constants";
@@ -30,20 +28,26 @@ import startOfISOWeek from "date-fns/startOfISOWeek";
 import differenceInWeeks from "date-fns/differenceInWeeks";
 import { dayToIsoNumber, timeStringToHours } from "../../utils/date";
 import { v4 as uuid } from "uuid";
+import sortBy from "lodash/sortBy";
+import { DataLoaders } from "../types/dataloaders";
+import uniq from "lodash/uniq";
 
 @InputType()
-export class MergedStreamTutorNumbers {
-    @Field(() => Int)
-    @Min(0)
-    week: number;
+export class StreamStaffRequirement {
+    @Field(() => [Int])
+    @ArrayNotEmpty()
+    weeks: number[];
 
     @Field(() => Int)
     @Min(0)
-    numberOfTutors: number;
+    numberOfStaff: number;
+
+    @Field(() => [String])
+    allocatedUsers: string[];
 }
 
-@InputType()
-export class MergedStreamInput extends CourseTermIdInput {
+@InputType("StreamInput")
+export class StreamInput {
     @Field()
     @MinLength(1)
     name: string;
@@ -68,12 +72,30 @@ export class MergedStreamInput extends CourseTermIdInput {
     endTime: number;
 
     @Field()
-    @Column("varchar", { length: 15 })
     location: string;
 
-    @Field(() => [MergedStreamTutorNumbers])
-    @UniqueWeeks()
-    numberOfTutorsForWeeks: MergedStreamTutorNumbers[];
+    @Field(() => StreamStaffRequirement)
+    baseStaffRequirement: StreamStaffRequirement;
+
+    @Field(() => [StreamStaffRequirement])
+    @UniqueExtraWeeks()
+    @ValidExtraWeeks()
+    extraStaffRequirement: StreamStaffRequirement[];
+}
+
+@InputType()
+export class MergedStreamInput extends StreamInput {
+    @Field()
+    courseId: string;
+
+    @Field()
+    termId: string;
+}
+
+@InputType()
+export class UpdateStreamInput extends StreamInput {
+    @Field()
+    streamId: string;
 }
 
 @Resolver(() => SessionStream)
@@ -111,94 +133,56 @@ export class SessionStreamResolver {
     async addMergedSessionStreams(
         @Arg("sessionStreams", () => [MergedStreamInput])
         streamInputs: MergedStreamInput[],
-        @Ctx() { req, models }: MyContext
+        @Ctx() { req, models, loaders }: MyContext
     ): Promise<SessionStream[]> {
         const user = req.user;
-        const streamsToBeCreated: Partial<SessionStream>[] = [];
         const rootStreams: SessionStream[] = [];
-        for (const streamInput of streamInputs) {
-            const {
-                courseId,
-                termId,
-                name,
-                type,
-                day,
-                numberOfTutorsForWeeks,
-                startTime,
-                endTime,
-                location,
-            } = streamInput;
-            const timetable = await models.timetable.get(
-                { courseId, termId },
-                user
-            );
-            // map in { numStaff: week[] } format
-            const numberOfStaffWeekMap: Map<number, number[]> = new Map();
-            // set of all weeks
-            const allWeeks: Set<number> = new Set();
-            for (const { week, numberOfTutors } of numberOfTutorsForWeeks) {
-                // skip weeks that have 0 staff
-                if (numberOfTutors === 0) {
-                    continue;
-                }
-                if (numberOfStaffWeekMap.has(numberOfTutors)) {
-                    numberOfStaffWeekMap.get(numberOfTutors)!.push(week);
-                } else {
-                    numberOfStaffWeekMap.set(numberOfTutors, [week]);
-                }
-                allWeeks.add(week);
-            }
-            // If nothing in map, skip. This happens if all weeks have 0 staff
-            if (numberOfStaffWeekMap.size === 0) {
-                continue;
-            }
-            // Create root stream
-            const minStaffNum = min(Array.from(numberOfStaffWeekMap.keys()))!;
-            const rootStream = await models.sessionStream.create(
-                {
-                    timetableId: timetable.id,
-                    name,
-                    type,
-                    day,
-                    startTime,
-                    endTime,
-                    weeks: Array.from(allWeeks),
-                    location,
-                    numberOfStaff: minStaffNum,
-                    allocatedUserIds: [],
-                },
-                user
-            );
-            rootStreams.push(rootStream);
-            numberOfStaffWeekMap.delete(minStaffNum);
-            // Create all streams based on root stream
-            let extraIndex = 1;
-            for (const [numberOfStaff, weeks] of numberOfStaffWeekMap) {
-                streamsToBeCreated.push({
-                    timetableId: timetable.id,
-                    name: `${name} extra ${extraIndex++}`,
-                    type,
-                    day,
-                    startTime,
-                    endTime,
-                    weeks,
-                    location,
-                    numberOfStaff: numberOfStaff - minStaffNum,
-                    basedId: rootStream.id,
-                    allocatedUserIds: [],
-                });
-            }
-        }
-        const createdStreams = await models.sessionStream.createMany(
-            streamsToBeCreated,
-            user
-        );
-        const allStreams = [...rootStreams, ...createdStreams];
         await asyncForEach(
-            allStreams,
-            async (stream) => await this.generateSessions(stream, req, models)
+            streamInputs,
+            async ({ courseId, termId, ...streamInput }) => {
+                const timetable = await models.timetable.get(
+                    { courseId, termId },
+                    user
+                );
+                const rootStream = await this.createStreamFromInput(
+                    streamInput,
+                    timetable,
+                    models,
+                    user,
+                    loaders
+                );
+                if (rootStream) {
+                    rootStreams.push(rootStream);
+                }
+            }
         );
-        return allStreams;
+        return rootStreams;
+    }
+
+    @Query(() => [SessionStream])
+    async rootSessionStreams(
+        @Arg("termId") termId: string,
+        @Arg("courseIds", () => [String]) courseIds: string[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<SessionStream[]> {
+        const timetable = await models.timetable.get(
+            {
+                where: courseIds.map((courseId) => ({
+                    termId,
+                    courseId,
+                })),
+            },
+            req.user
+        );
+        return await models.sessionStream.getMany(
+            {
+                where: {
+                    timetableId: timetable.id,
+                    rootId: IsNull(),
+                },
+            },
+            req.user
+        );
     }
 
     @Mutation(() => SessionStream)
@@ -224,11 +208,11 @@ export class SessionStreamResolver {
                 startTime: sessionStream.startTime,
                 endTime: sessionStream.endTime,
                 location: sessionStream.location,
-                based: sessionStream,
+                root: sessionStream,
             },
             req.user
         );
-        await this.generateSessions(newStream, req, models);
+        await this.generateSessions(newStream, req.user, models);
         return newStream;
     }
 
@@ -259,8 +243,54 @@ export class SessionStreamResolver {
             },
             req.user
         );
-        await this.generateSessions(newStream, req, models);
+        await this.generateSessions(newStream, req.user, models);
         return newStream;
+    }
+
+    @Mutation(() => [String])
+    async deleteSessionStreams(
+        @Arg("streamIds", () => [String]) streamIds: string[],
+        @Ctx() { req, models }: MyContext
+    ): Promise<string[]> {
+        await models.sessionStream.deleteMany(
+            {
+                id: In(streamIds),
+            },
+            req.user
+        );
+        return streamIds;
+    }
+
+    @Mutation(() => [SessionStream])
+    async updateSessionStreams(
+        @Arg("updateStreamInput", () => [UpdateStreamInput])
+        streamInputs: UpdateStreamInput[],
+        @Ctx() { req, models, loaders }: MyContext
+    ): Promise<SessionStream[]> {
+        const { user } = req;
+        const { sessionStream: streamModel } = models;
+        const updatedStreams: SessionStream[] = [];
+        await asyncForEach(streamInputs, async ({ streamId, ...input }) => {
+            const rootStream = await streamModel.getById(streamId, user);
+            // Delete all streams with allocations and create new ones with same root id
+            const timetable = await models.timetable.getById(
+                rootStream.timetableId,
+                user
+            );
+            await streamModel.delete({ id: streamId }, user);
+            const createdStream = await this.createStreamFromInput(
+                input,
+                timetable,
+                models,
+                user,
+                loaders,
+                rootStream.id
+            );
+            if (createdStream) {
+                updatedStreams.push(createdStream);
+            }
+        });
+        return updatedStreams;
     }
 
     @Mutation(() => SessionStream)
@@ -307,7 +337,7 @@ export class SessionStreamResolver {
         if (!user.isAdmin && !(await user.isCoordinatorOf(course, term))) {
             throw new Error(PERM_ERR);
         }
-        const generatedStreams = [];
+        const generatedStreams: SessionStream[] = [];
         const timetable = await models.timetable.get(
             { courseId, termId },
             user
@@ -318,6 +348,16 @@ export class SessionStreamResolver {
             sessionTypes
         );
         for (const courseOffering of Object.values(courseData)) {
+            const subjectCode = courseOffering.subject_code;
+            const teachingMode = subjectCode.split("_").slice(-1)[0];
+            let mode = "";
+            if (teachingMode === "FD") {
+                mode = "Flexible";
+            } else if (teachingMode === "EX") {
+                mode = "External";
+            } else if (teachingMode === "IN") {
+                mode = "Internal";
+            }
             for (const activity of Object.values(courseOffering.activities)) {
                 const startDate = startOfISOWeek(
                     parse(activity.start_date, "dd/MM/yyyy", new Date())
@@ -331,17 +371,20 @@ export class SessionStreamResolver {
                     id: uuid(),
                     name: `${activity.activity_type.charAt(0)}${
                         activity.activity_code
-                    }`,
+                    } ${mode}`,
                     type: activity.activity_type as SessionType,
                     day: dayToIsoNumber(activity.day_of_week),
                     startTime,
                     endTime: startTime + parseInt(activity.duration) / 60,
                     weeks: relativeWeeks,
                     location: locations.length > 0 ? locations[0] : "",
-                    numberOfStaff: 0,
-                    basedId: undefined,
+                    numberOfStaff: 1,
+                    rootId: undefined,
                     timetableId: timetable.id,
                 });
+                newStream.secondaryStreamIds = [];
+                newStream.sessionIds = [];
+                newStream.allocatedUserIds = [];
                 generatedStreams.push(newStream);
             }
         }
@@ -350,12 +393,12 @@ export class SessionStreamResolver {
 
     async generateSessions(
         stream: SessionStream,
-        req: Request,
+        user: User,
         models: Models
     ): Promise<Session[]> {
         const allocatedUsers = await models.user.getByIds(
             stream.allocatedUserIds || [],
-            req.user
+            user
         );
         return await models.session.createMany(
             stream.weeks.map((week) => ({
@@ -364,8 +407,89 @@ export class SessionStreamResolver {
                 sessionStream: stream,
                 allocatedUsers,
             })),
-            req.user
+            user
         );
+    }
+
+    async createStreamFromInput(
+        streamInput: StreamInput,
+        timetable: Timetable,
+        models: Models,
+        user: User,
+        loaders: DataLoaders,
+        id?: string
+    ): Promise<SessionStream | null> {
+        const {
+            name,
+            type,
+            day,
+            startTime,
+            endTime,
+            location,
+            baseStaffRequirement,
+            extraStaffRequirement,
+        } = streamInput;
+        let rootStream = await models.sessionStream.create(
+            {
+                id,
+                timetableId: timetable.id,
+                name,
+                type,
+                day,
+                startTime,
+                endTime,
+                weeks: sortBy(uniq(baseStaffRequirement.weeks)),
+                location,
+                numberOfStaff: baseStaffRequirement.numberOfStaff,
+            },
+            user
+        );
+        loaders.sessionStream.clear(rootStream.id);
+        rootStream = await models.sessionStream.getById(rootStream.id, user);
+        await models.sessionStream.allocateMultiple(
+            rootStream,
+            baseStaffRequirement.allocatedUsers,
+            user
+        );
+        const allStreams = [rootStream];
+        // Create all streams based on root stream
+        let extraIndex = 1;
+        await asyncForEach(
+            extraStaffRequirement,
+            async ({ numberOfStaff, weeks, allocatedUsers }) => {
+                let createdStream = await models.sessionStream.create(
+                    {
+                        timetableId: timetable.id,
+                        name: `${name} extra ${extraIndex++}`,
+                        type,
+                        day,
+                        startTime,
+                        endTime,
+                        weeks: sortBy(uniq(weeks)),
+                        location,
+                        numberOfStaff,
+                        rootId: rootStream.id,
+                    },
+                    user
+                );
+                createdStream = await models.sessionStream.getById(
+                    createdStream.id,
+                    user
+                );
+                await models.sessionStream.allocateMultiple(
+                    createdStream,
+                    allocatedUsers,
+                    user
+                );
+                allStreams.push(createdStream);
+            }
+        );
+        await asyncForEach(
+            allStreams,
+            async (stream) => await this.generateSessions(stream, user, models)
+        );
+        loaders.sessionStream.clear(rootStream.id);
+        return await models.sessionStream.getById(rootStream.id, user);
     }
 
     @FieldResolver(() => Timetable)
@@ -385,25 +509,25 @@ export class SessionStreamResolver {
     }
 
     @FieldResolver(() => [SessionStream])
-    async basedStreams(
+    async secondaryStreams(
         @Root() root: SessionStream,
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
         return await models.sessionStream.getByIds(
-            root.basedStreamIds,
+            root.secondaryStreamIds,
             req.user
         );
     }
 
     @FieldResolver(() => SessionStream, { nullable: true })
-    async based(
+    async root(
         @Root() root: SessionStream,
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream | null> {
-        if (!root.basedId) {
+        if (!root.rootId) {
             return null;
         }
-        return await models.sessionStream.getById(root.basedId, req.user);
+        return await models.sessionStream.getById(root.rootId, req.user);
     }
 
     @FieldResolver(() => [User])

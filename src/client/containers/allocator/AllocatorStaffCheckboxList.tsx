@@ -1,6 +1,6 @@
 import { Checkbox, Grid } from "@chakra-ui/react";
 import React, { Dispatch, SetStateAction, useEffect } from "react";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { Role, useCourseStaffsQuery } from "../../generated/graphql";
 import { Loadable } from "../../components/helpers/Loadable";
 import { Set } from "immutable";
@@ -20,9 +20,11 @@ export const AllocatorStaffCheckboxList: React.FC<Props> = ({
     setSelectedStaff,
 }) => {
     const { loading, data } = useQueryWithError(useCourseStaffsQuery, {
-        courseTermInput: {
-            courseId,
-            termId,
+        variables: {
+            courseTermInput: {
+                courseId,
+                termId,
+            },
         },
     });
     useEffect(() => {

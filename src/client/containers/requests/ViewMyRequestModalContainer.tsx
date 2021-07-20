@@ -19,7 +19,7 @@ import {
 import { defaultStr } from "../../constants";
 import { RequestFormV3 } from "../../components/requests/RequestFormV3";
 import { getCurrentTerm } from "../../utils/term";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useTermsQuery } from "../../generated/graphql";
 import { Set } from "immutable";
 import { ViewRequestTimetableContainer } from "./ViewRequestTimetableContainer";
@@ -37,7 +37,7 @@ export const ViewMyRequestModalContainer: React.FC<Props> = ({
     onClose,
 }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const request = useMemo(
         () => requests.get(requestId),
         [requests, requestId]

@@ -24,6 +24,7 @@ import { UserSettings } from "./UserSettings";
 import { Session } from "./Session";
 import { Utils } from "../utils/Util";
 import { SessionStream } from "./SessionStream";
+import { Notification } from "./Notification";
 
 @ObjectType()
 @Entity()
@@ -82,6 +83,7 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => Session, (session) => session.allocatedUsers, {
         lazy: true,
+        onDelete: "CASCADE",
     })
     @JoinTable()
     allocatedSessions: Promise<Session[]>;
@@ -91,12 +93,20 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => SessionStream, (stream) => stream.allocatedUsers, {
         lazy: true,
+        onDelete: "CASCADE",
     })
     @JoinTable()
     allocatedStreams: Promise<SessionStream[]>;
 
     @RelationId((user: User) => user.allocatedStreams)
     allocatedStreamIds: string[];
+
+    @Field(() => [Notification])
+    @OneToMany(() => Notification, (notification) => notification.user)
+    notifications: Lazy<Notification[]>;
+
+    @RelationId((user: User) => user.notifications)
+    notificationIds: string[];
 
     private getCourseStaff(term?: Term): Promise<CourseStaff[]>;
     private getCourseStaff(term: Term, course: Course): Promise<CourseStaff[]>;

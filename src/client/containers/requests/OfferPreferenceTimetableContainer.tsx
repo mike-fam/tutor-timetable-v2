@@ -6,7 +6,7 @@ import React, {
     useState,
 } from "react";
 import { InteractiveRequestTimetable } from "./InteractiveRequestTimetable";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useMyCoursesQuery, useTermsQuery } from "../../generated/graphql";
 import { defaultInt, defaultStr } from "../../constants";
 import { getCurrentTerm } from "../../utils/term";
@@ -37,8 +37,8 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
         () => requests.get(requestId),
         [requests, requestId]
     );
-    const { data: myCoursesData } = useQueryWithError(useMyCoursesQuery);
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: myCoursesData } = useQueryWithError(useMyCoursesQuery, {});
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const [week, setWeek] = useState(defaultInt);
     const { user } = useContext(UserContext);
     const [defaultWeekIsSet, setDefaultWeekIsSet] = useState(false);

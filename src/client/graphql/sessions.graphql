@@ -1,0 +1,177 @@
+fragment SessionInfo on Session {
+    id
+    sessionStream {
+        id
+        name
+        startTime
+        endTime
+        day
+        timetable {
+            term {
+                id
+            }
+            course {
+                id
+                code
+            }
+        }
+    }
+    location
+    week
+    allocatedUsers {
+        id
+        username
+        name
+    }
+}
+
+query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+    sessions(termId: $termId, courseIds: $courseIds, week: $week) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
+    mergedSessions(termId: $termId, courseIds: $courseIds, week: $week) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+query GetSessionById($sessionId: String!) {
+    sessionById(sessionId: $sessionId) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+mutation UpdateSessionAllocation(
+    $newAllocation: [UpdateSessionAllocationInput!]!
+) {
+    updateSessionAllocations(newAllocation: $newAllocation) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
+    updateSession(updateSessionInput: $updateSessionInput) {
+        id
+        sessionStream {
+            id
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                term {
+                    id
+                }
+                course {
+                    id
+                    code
+                }
+            }
+        }
+        location
+        week
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
+
+mutation DeleteSessions($sessionIds: [String!]!) {
+    deleteSessions(sessionIds: $sessionIds)
+}

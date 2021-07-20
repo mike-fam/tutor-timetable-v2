@@ -15,7 +15,7 @@ import {
     useLazyQueryWithError,
     useMutationWithError,
     useQueryWithError,
-} from "../../hooks/useQueryWithError";
+} from "../../hooks/useApolloHooksWithError";
 import {
     Role,
     useAddCourseStaffMutation,
@@ -42,18 +42,18 @@ type Props = {};
 
 export const CourseStaffPageContainer: React.FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { data: termsData } = useQueryWithError(useTermsQuery);
+    const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const toast = useToast();
     const [removeCourseStaffMutation, { data: removeCourseStaffData }] =
-        useMutationWithError(useRemoveCourseStaffMutation);
+        useMutationWithError(useRemoveCourseStaffMutation, {});
     const { termId, courseId, changeCourse, changeTerm } = useTermCourse();
     const [term, setTerm] = useState<TermResponseType>();
     const [
         addCourseStaff,
         { data: addCourseStaffData, loading: addCourseStaffLoading },
-    ] = useMutationWithError(useAddCourseStaffMutation);
+    ] = useMutationWithError(useAddCourseStaffMutation, {});
     const [getCourseStaff, { data: getCourseStaffData }] =
-        useLazyQueryWithError(useCourseStaffsLazyQuery);
+        useLazyQueryWithError(useCourseStaffsLazyQuery, {});
     useEffect(() => {
         if (termId === defaultStr || courseId === defaultStr) {
             return;
@@ -79,7 +79,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
     );
     const [courseStaff, setCourseStaff] = useState<
         Map<string, CourseStaffResponseType>
-    >(Map());
+    >(Map<string, CourseStaffResponseType>());
     useEffect(() => {
         if (!addCourseStaffData) {
             return;

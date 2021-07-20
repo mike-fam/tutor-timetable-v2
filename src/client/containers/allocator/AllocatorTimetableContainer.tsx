@@ -5,8 +5,8 @@ import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
 import {
+    TimetableCustomSessionProps,
     TimetableSession,
-    TimetableSessionProps,
 } from "../../components/timetable/TimetableSession";
 import { TimetableSessionType } from "../../types/timetable";
 import { Map } from "immutable";
@@ -15,7 +15,7 @@ import { SessionTheme } from "../../types/session";
 type Props = {
     sessions: TimetableSessionType[];
     loading: boolean;
-    sessionsData: Map<string, TimetableSessionProps>;
+    sessionsData: Map<string, TimetableCustomSessionProps>;
 };
 
 export const AllocatorTimetableContainer: React.FC<Props> = ({
@@ -30,28 +30,23 @@ export const AllocatorTimetableContainer: React.FC<Props> = ({
                 sessions={sessions}
                 displayedDays={displayedDays}
                 renderDay={(dayProps, key) => (
-                    <Day
+                    <Day<TimetableCustomSessionProps>
                         {...dayProps}
                         key={key}
                         renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(
-                            sessionProps,
-                            key,
-                            moreProps: TimetableSessionProps
-                        ) => (
+                        renderSession={(sessionProps, key) => (
                             <TimetableSession
                                 {...sessionProps}
                                 key={key}
-                                {...moreProps}
+                                custom={(sessionId) =>
+                                    sessionsData.get(sessionId) || {
+                                        allocation: [],
+                                        location: "",
+                                        theme: SessionTheme.PRIMARY,
+                                    }
+                                }
                             />
                         )}
-                        getSessionProps={(sessionId) =>
-                            sessionsData.get(sessionId) || {
-                                allocation: [],
-                                location: "",
-                                theme: SessionTheme.PRIMARY,
-                            }
-                        }
                     />
                 )}
             />

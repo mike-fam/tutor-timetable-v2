@@ -17,7 +17,7 @@ export const FormikCheckboxGroup = <T extends number | string>({
     const [, { value: checkedValues }, { setValue: setCheckedValues }] =
         useField<T[]>(name);
     return (
-        <FormControl mt={3}>
+        <FormControl>
             <FormLabel>{capitalCase(name)}</FormLabel>
             <Stack spacing={2}>
                 {values.map((value, key) => (

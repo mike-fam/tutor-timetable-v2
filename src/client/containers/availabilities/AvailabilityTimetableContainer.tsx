@@ -7,17 +7,16 @@ import React, {
 } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
-import { Props as SessionProps } from "../../components/timetable/Session";
 import { ClickableTimeslot } from "../../components/timetable/ClickableTimeslot";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { AvailabilityContext } from "../../utils/availability";
 import { ModifyTimeslotParams, TempTimeslot } from "../../types/availability";
 import {
     AvailabilitySession,
-    AvailabilitySessionProps,
+    AvailabilityCustomSessionProps,
 } from "../../components/availabilities/AvailabilitySession";
 import { useDisclosure } from "@chakra-ui/react";
-import { useQueryWithError } from "../../hooks/useQueryWithError";
+import { useQueryWithError } from "../../hooks/useApolloHooksWithError";
 import {
     ModificationType,
     useMyAvailabilityQuery,
@@ -176,7 +175,7 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                 startTime={dayStartTime}
                 endTime={dayEndTime}
                 renderDay={(dayProps, key) => (
-                    <Day<AvailabilitySessionProps>
+                    <Day<AvailabilityCustomSessionProps>
                         {...dayProps}
                         renderTimeSlot={(key, time, day) => (
                             <ClickableTimeslot
@@ -186,28 +185,24 @@ export const AvailabilityTimetableContainer: React.FC<Props> = () => {
                                 addNewTimeslot={addTempTimeslot}
                             />
                         )}
-                        renderSession={(
-                            sessionProps: SessionProps,
-                            key,
-                            moreProps: AvailabilitySessionProps
-                        ) => (
+                        renderSession={(sessionProps, key) => (
                             <AvailabilitySession
                                 {...sessionProps}
                                 key={key}
-                                {...moreProps}
+                                custom={(sessionId: string) => ({
+                                    updateSession: modifySession,
+                                    removeSession,
+                                    restoreSession,
+                                    editSession,
+                                    modificationType: isNumeric(sessionId)
+                                        ? ModificationType.Added
+                                        : timeslots.get(sessionId)
+                                              ?.modificationType ||
+                                          ModificationType.Unchanged,
+                                })}
                             />
                         )}
                         key={key}
-                        getSessionProps={(timeslotId) => ({
-                            updateSession: modifySession,
-                            removeSession,
-                            restoreSession,
-                            editSession,
-                            modificationType: isNumeric(timeslotId)
-                                ? ModificationType.Added
-                                : timeslots.get(timeslotId)?.modificationType ||
-                                  ModificationType.Unchanged,
-                        })}
                     />
                 )}
                 sessions={sessions}

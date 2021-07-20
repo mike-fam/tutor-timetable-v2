@@ -48,7 +48,6 @@ export const ContextMenuList: React.FC<Props> = ({ children }) => {
 
     const bgColour = useColorModeValue("white", "gray.800");
 
-    // TODO: Any less manual way to do this
     useEffect(() => {
         let left: number | undefined;
         let right: number | undefined;

@@ -80,7 +80,10 @@ export class Session
     @RelationId((session: Session) => session.acceptedOffers)
     acceptedOfferIds: string[];
 
-    @ManyToMany(() => User, (user) => user.allocatedSessions, { lazy: true })
+    @ManyToMany(() => User, (user) => user.allocatedSessions, {
+        lazy: true,
+        onDelete: "CASCADE",
+    })
     allocatedUsers: Lazy<User[]>;
 
     @RelationId((session: Session) => session.allocatedUsers)

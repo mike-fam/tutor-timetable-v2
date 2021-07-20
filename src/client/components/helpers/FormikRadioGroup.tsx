@@ -21,7 +21,7 @@ export const FormikRadioGroup: React.FC<Props> = ({
     const [, { value }, { setValue }] = useField(name);
 
     return (
-        <FormControl mt={3}>
+        <FormControl>
             <FormLabel>{label || capitalCase(name)}</FormLabel>
             <Stack direction={stackDirection} spacing={2}>
                 {values.map((radioValue, key) => (
