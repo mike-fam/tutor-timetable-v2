@@ -161,8 +161,6 @@ export class AllocatorResolver {
         // checks if token is already created and get time of token
         const existingToken = timetable.allocationToken;
         const output = new AllocatorOutput();
-        output.status = AllocationStatus.ERROR;
-        output.message = "Something wrong happened";
         output.allocatedStreams = [];
         //  If not created, create a new token and mark timestamp
         if (!existingToken) {
@@ -186,13 +184,13 @@ export class AllocatorResolver {
             return output;
         }
         // If token already created get timestamp
-        const [token, timestamp, prevTimeout] = existingToken.split(":");
+        const [token, timestamp, prevTimeout] = existingToken.split(",");
         const timestampDate = parseISO(timestamp);
         const now = new Date();
         const elapsedTime = differenceInSeconds(now, timestampDate);
         const prevTimeoutSeconds = parseInt(prevTimeout);
         // If allocation requested/generated a long time ago, make new request
-        if (elapsedTime > Math.max(3600, prevTimeoutSeconds * 2)) {
+        if (elapsedTime > Math.max(1800, prevTimeoutSeconds * 2)) {
             output.message =
                 "A request to generate a new allocation has been made. " +
                 `The allocation will take at most ${timeout} seconds.`;
@@ -214,7 +212,7 @@ export class AllocatorResolver {
         }
         // If allocation requested not too long ago, try to get allocation
         const allocationResponse = await axios.get<AllocatorOutputData>(
-            `${process.env.ALLOCATOR_URL}request-allocation/${token}/`
+            `${process.env.ALLOCATOR_URL}/get-allocation/${token}/`
         );
         if (allocationResponse.status > 300) {
             output.message = "Something went wrong";
@@ -238,6 +236,7 @@ export class AllocatorResolver {
                 new BaseGeneratedAllocationPattern();
             allocatorStream.baseAllocation.allocatedUsers =
                 generatedAllocations[rootStream.id];
+            allocatorStream.extraAllocations = [];
             for (const secondaryStreamId of rootStream.secondaryStreamIds) {
                 const secondaryAllocation =
                     new ExtraGeneratedAllocationPattern();
@@ -249,6 +248,7 @@ export class AllocatorResolver {
             }
             output.allocatedStreams.push(allocatorStream);
         }
+        output.message = "Allocation successfully generated";
         return output;
     }
 
@@ -326,14 +326,14 @@ export class AllocatorResolver {
             timeout,
         };
         const allocatorResponse = await axios.post<AllocatorOutputData>(
-            `${process.env.ALLOCATOR_URL}request-allocation/` ||
+            `${process.env.ALLOCATOR_URL}/request-allocation/` ||
                 "http://localhost:8000/allocator/request-allocation/",
             input
         );
         await models.timetable.update(
             timetable,
             {
-                allocationToken: `${token}:${new Date().toISOString()}:${timeout}`,
+                allocationToken: `${token},${new Date().toISOString()},${timeout}`,
             },
             user
         );
