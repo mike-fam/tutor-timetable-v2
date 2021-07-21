@@ -5,7 +5,6 @@ import { RequestPageContainer } from "./containers/requests/RequestPageContainer
 import { TimetablePageContainer } from "./containers/timetable/TimetablePageContainer";
 import { AvailabilityPageContainer } from "./containers/availabilities/AvailabilityPageContainer";
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
-import { AllocatorPageContainer } from "./containers/allocator/AllocatorPageContainer";
 import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffPageContainer";
 import { PermissionDenied } from "./PermissionDenied";
 import { SecretRoute } from "./components/helpers/SecretRoute";
@@ -37,11 +36,6 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     path="/preferences"
                     component={PreferencePageContainer}
                     exact
-                />
-                <SecretRoute
-                    path="/allocator"
-                    component={AllocatorPageContainer}
-                    allowedRoles={[Role.CourseCoordinator]}
                 />
                 <SecretRoute
                     path="/course-staff"

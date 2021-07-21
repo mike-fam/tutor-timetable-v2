@@ -20,6 +20,7 @@ import { Models } from "../types/models";
 import parseISO from "date-fns/parseISO";
 import differenceInSeconds from "date-fns/differenceInSeconds";
 import { Max } from "class-validator";
+import keyBy from "lodash/keyBy";
 
 type WeekId = number;
 type SessionStreamId = string;
@@ -37,6 +38,18 @@ class ExtraGeneratedAllocationPattern extends BaseGeneratedAllocationPattern {
     weeks: number[];
 }
 
+@ObjectType()
+class AllocatorStream {
+    @Field()
+    streamId: string;
+
+    @Field(() => BaseGeneratedAllocationPattern)
+    baseAllocation: BaseGeneratedAllocationPattern;
+
+    @Field(() => [ExtraGeneratedAllocationPattern])
+    extraAllocations: ExtraGeneratedAllocationPattern[];
+}
+
 export enum AllocationStatus {
     REQUESTED = "REQUESTED",
     NOT_READY = "NOT_READY",
@@ -52,11 +65,8 @@ class AllocatorOutput {
     @Field()
     message: string;
 
-    @Field(() => BaseGeneratedAllocationPattern)
-    baseAllocation: BaseGeneratedAllocationPattern;
-
-    @Field(() => [ExtraGeneratedAllocationPattern])
-    extraAllocations: ExtraGeneratedAllocationPattern[];
+    @Field(() => [AllocatorStream])
+    allocatedStreams: AllocatorStream[];
 }
 
 @InputType()
@@ -127,18 +137,10 @@ type AllocatorInput = {
 export class AllocatorResolver {
     @Mutation(() => AllocatorOutput)
     async requestAllocation(
-        @Arg("requestAllocationInput", () => CourseTermIdInput)
+        @Arg("requestAllocationInput", () => RequestAllocationInput)
         { courseId, termId, staffIds, timeout }: RequestAllocationInput,
         @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
-        // TODO: This method should return the status of the request, can be one of
-        //  requested, not yet done, error, or generated
-        // TODO:
-        //  If already created, get and check redis store.
-        //  if allocation is generated less than {time limit} ago, use
-        //  if allocation is generated more than {time limit} ago,
-        //  request new allocation with new token
-
         const { user } = req;
         const timetable = await models.timetable.get(
             {
@@ -159,9 +161,9 @@ export class AllocatorResolver {
         // checks if token is already created and get time of token
         const existingToken = timetable.allocationToken;
         const output = new AllocatorOutput();
-        output.baseAllocation = new BaseGeneratedAllocationPattern();
-        output.baseAllocation.allocatedUsers = [];
-        output.extraAllocations = [];
+        output.status = AllocationStatus.ERROR;
+        output.message = "Something wrong happened";
+        output.allocatedStreams = [];
         //  If not created, create a new token and mark timestamp
         if (!existingToken) {
             output.message =
@@ -182,59 +184,74 @@ export class AllocatorResolver {
                     ? AllocationStatus.REQUESTED
                     : AllocationStatus.ERROR;
             return output;
-        } else {
-            const [token, timestamp, timeout] = existingToken.split(":");
-            const timestampDate = parseISO(timestamp);
-            const now = new Date();
-            const elapsedTime = differenceInSeconds(now, timestampDate);
-            const timeoutSeconds = parseInt(timeout);
-            // If allocation requested/generated a long time ago
-            if (elapsedTime > Math.max(3600, timeoutSeconds * 2)) {
-                output.message =
-                    "A request to generate a new allocation has been made. " +
-                    `The allocation will take at most ${timeout} seconds.`;
-                const status = await this.requestNewAllocation(
-                    timetable,
-                    term,
-                    sessionStreams,
-                    courseStaffs,
-                    staffIds,
-                    timeoutSeconds,
-                    models,
-                    user
-                );
-                output.status =
-                    status > 300
-                        ? AllocationStatus.ERROR
-                        : AllocationStatus.REQUESTED;
-                return output;
-            } else {
-                // If allocation requested not too long ago, try to get allocation
-                const allocationResponse = await axios.get<AllocatorOutputData>(
-                    `${process.env.ALLOCATOR_URL}request-allocation/${token}/`
-                );
-                if (allocationResponse.status > 300) {
-                    output.message = "Something went wrong";
-                    output.status = AllocationStatus.ERROR;
-                } else {
-                    output.status = allocationResponse.data.status;
-                    if (
-                        allocationResponse.data.status ===
-                        AllocationStatus.NOT_READY
-                    ) {
-                        return output;
-                    } else {
-                        // TODO: Handle generated allocation
-                    }
-                }
-            }
         }
-        output.baseAllocation = new BaseGeneratedAllocationPattern();
-        output.message = "";
-        output.baseAllocation.allocatedUsers = [];
-        output.extraAllocations = [];
-        output.status = AllocationStatus.REQUESTED;
-        return output;
+        const [token, timestamp, prevTimeout] = existingToken.split(":");
+        const timestampDate = parseISO(timestamp);
+        const now = new Date();
+        const elapsedTime = differenceInSeconds(now, timestampDate);
+        const prevTimeoutSeconds = parseInt(prevTimeout);
+        // If allocation requested/generated a long time ago
+        if (elapsedTime > Math.max(3600, prevTimeoutSeconds * 2)) {
+            output.message =
+                "A request to generate a new allocation has been made. " +
+                `The allocation will take at most ${timeout} seconds.`;
+            const status = await this.requestNewAllocation(
+                timetable,
+                term,
+                sessionStreams,
+                courseStaffs,
+                staffIds,
+                prevTimeoutSeconds,
+                models,
+                user
+            );
+            output.status =
+                status > 300
+                    ? AllocationStatus.ERROR
+                    : AllocationStatus.REQUESTED;
+            return output;
+        }
+        // If allocation requested not too long ago, try to get allocation
+        const allocationResponse = await axios.get<AllocatorOutputData>(
+            `${process.env.ALLOCATOR_URL}request-allocation/${token}/`
+        );
+        if (allocationResponse.status > 300) {
+            output.message = "Something went wrong";
+            output.status = AllocationStatus.ERROR;
+            return output;
+        }
+        output.status = allocationResponse.data.status;
+        if (allocationResponse.data.status === AllocationStatus.NOT_READY) {
+            output.message =
+                "Allocation is not yet ready. Please come back later.";
+            return output;
+        } else {
+            const streamByIds = keyBy(sessionStreams, (stream) => stream.id);
+            const generatedAllocations = allocationResponse.data.allocations;
+            const rootStreams = sessionStreams.filter(
+                (stream) => !stream.rootId
+            );
+            for (const rootStream of rootStreams) {
+                const allocatorStream = new AllocatorStream();
+                allocatorStream.streamId = rootStream.id;
+                allocatorStream.baseAllocation =
+                    new BaseGeneratedAllocationPattern();
+                allocatorStream.baseAllocation.allocatedUsers =
+                    generatedAllocations[rootStream.id];
+                allocatorStream.extraAllocations = [];
+                for (const secondaryStreamId of rootStream.secondaryStreamIds) {
+                    const secondaryAllocation =
+                        new ExtraGeneratedAllocationPattern();
+                    secondaryAllocation.weeks =
+                        streamByIds[secondaryStreamId].weeks;
+                    secondaryAllocation.allocatedUsers =
+                        generatedAllocations[secondaryStreamId];
+                    allocatorStream.extraAllocations.push(secondaryAllocation);
+                }
+                output.allocatedStreams.push(allocatorStream);
+            }
+            return output;
+        }
     }
 
     async requestNewAllocation(

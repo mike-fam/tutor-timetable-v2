@@ -1,37 +1,20 @@
 mutation RequestAllocation(
-    $courseTerm: CourseTermIdInput!
-    $staffIds: [String!]!
-    $newThreshold: Float
+    $requestAllocationInput: RequestAllocationInput!
 ) {
     requestAllocation(
-        courseTermInput: $courseTerm
-        staffIds: $staffIds
-        newThreshold: $newThreshold
+        requestAllocationInput: $requestAllocationInput
     ) {
         status
-        detail
-        type
-        token
-        allocations {
-            sessionStream {
-                id
-                name
-                startTime
-                endTime
-                day
-                location
-                weeks
-                numberOfStaff
+        message
+        allocatedStreams {
+            streamId
+            baseAllocation {
+                allocatedUsers
             }
-            staff {
-                id
-                username
-                name
+            extraAllocations {
+                allocatedUsers
+                weeks
             }
         }
     }
-}
-
-mutation ApplyAllocation($token: String!, $override: Boolean!) {
-    applyAllocation(allocationToken: $token, override: $override)
 }

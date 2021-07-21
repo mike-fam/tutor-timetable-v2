@@ -15,30 +15,30 @@ export type Scalars = {
   DateTime: string;
 };
 
-export type Allocation = {
-  __typename?: 'Allocation';
-  sessionStream: SessionStream;
-  staff: Array<User>;
-};
-
 export enum AllocationStatus {
-  Optimal = 'Optimal',
-  Infeasible = 'Infeasible'
-}
-
-export enum AllocationType {
-  Success = 'Success',
-  Failed = 'Failed'
+  Requested = 'REQUESTED',
+  NotReady = 'NOT_READY',
+  Error = 'ERROR',
+  Generated = 'GENERATED'
 }
 
 export type AllocatorOutput = {
   __typename?: 'AllocatorOutput';
   status: AllocationStatus;
-  type: AllocationType;
-  token: Scalars['String'];
-  detail: Scalars['String'];
-  runtime: Scalars['Float'];
-  allocations: Array<Allocation>;
+  message: Scalars['String'];
+  allocatedStreams: Array<AllocatorStream>;
+};
+
+export type AllocatorStream = {
+  __typename?: 'AllocatorStream';
+  streamId: Scalars['String'];
+  baseAllocation: BaseGeneratedAllocationPattern;
+  extraAllocations: Array<ExtraGeneratedAllocationPattern>;
+};
+
+export type BaseGeneratedAllocationPattern = {
+  __typename?: 'BaseGeneratedAllocationPattern';
+  allocatedUsers: Array<Scalars['String']>;
 };
 
 export type Course = {
@@ -95,6 +95,12 @@ export type EditRequestFormInputType = {
   closeRequest: Scalars['Boolean'];
 };
 
+export type ExtraGeneratedAllocationPattern = {
+  __typename?: 'ExtraGeneratedAllocationPattern';
+  allocatedUsers: Array<Scalars['String']>;
+  weeks: Array<Scalars['Int']>;
+};
+
 export enum FreezeState {
   Free = 'FREE',
   Lock = 'LOCK',
@@ -125,7 +131,6 @@ export enum ModificationType {
 export type Mutation = {
   __typename?: 'Mutation';
   requestAllocation: AllocatorOutput;
-  applyAllocation: Scalars['Boolean'];
   updateDetails: User;
   addTerm: Term;
   deleteTerms: Array<Term>;
@@ -154,15 +159,7 @@ export type Mutation = {
 
 
 export type MutationRequestAllocationArgs = {
-  newThreshold?: Maybe<Scalars['Float']>;
-  staffIds: Array<Scalars['String']>;
-  courseTermInput: CourseTermIdInput;
-};
-
-
-export type MutationApplyAllocationArgs = {
-  override: Scalars['Boolean'];
-  allocationToken: Scalars['String'];
+  requestAllocationInput: RequestAllocationInput;
 };
 
 
@@ -474,6 +471,13 @@ export type QueryGetOffersByRequestIdArgs = {
   requestId: Scalars['String'];
 };
 
+export type RequestAllocationInput = {
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+  staffIds: Array<Scalars['String']>;
+  timeout: Scalars['Int'];
+};
+
 export type RequestFormInputType = {
   title: Scalars['String'];
   preferences: Array<Scalars['String']>;
@@ -725,9 +729,7 @@ export type AddAvailabilitiesMutation = (
 );
 
 export type RequestAllocationMutationVariables = Exact<{
-  courseTerm: CourseTermIdInput;
-  staffIds: Array<Scalars['String']>;
-  newThreshold?: Maybe<Scalars['Float']>;
+  requestAllocationInput: RequestAllocationInput;
 }>;
 
 
@@ -735,29 +737,19 @@ export type RequestAllocationMutation = (
   { __typename?: 'Mutation' }
   & { requestAllocation: (
     { __typename?: 'AllocatorOutput' }
-    & Pick<AllocatorOutput, 'status' | 'detail' | 'type' | 'token'>
-    & { allocations: Array<(
-      { __typename?: 'Allocation' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'weeks' | 'numberOfStaff'>
-      ), staff: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'name'>
+    & Pick<AllocatorOutput, 'status' | 'message'>
+    & { allocatedStreams: Array<(
+      { __typename?: 'AllocatorStream' }
+      & Pick<AllocatorStream, 'streamId'>
+      & { baseAllocation: (
+        { __typename?: 'BaseGeneratedAllocationPattern' }
+        & Pick<BaseGeneratedAllocationPattern, 'allocatedUsers'>
+      ), extraAllocations: Array<(
+        { __typename?: 'ExtraGeneratedAllocationPattern' }
+        & Pick<ExtraGeneratedAllocationPattern, 'allocatedUsers' | 'weeks'>
       )> }
     )> }
   ) }
-);
-
-export type ApplyAllocationMutationVariables = Exact<{
-  token: Scalars['String'];
-  override: Scalars['Boolean'];
-}>;
-
-
-export type ApplyAllocationMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'applyAllocation'>
 );
 
 export type CourseQueryVariables = Exact<{
@@ -1812,31 +1804,18 @@ export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvaila
 export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 export const RequestAllocationDocument = gql`
-    mutation RequestAllocation($courseTerm: CourseTermIdInput!, $staffIds: [String!]!, $newThreshold: Float) {
-  requestAllocation(
-    courseTermInput: $courseTerm
-    staffIds: $staffIds
-    newThreshold: $newThreshold
-  ) {
+    mutation RequestAllocation($requestAllocationInput: RequestAllocationInput!) {
+  requestAllocation(requestAllocationInput: $requestAllocationInput) {
     status
-    detail
-    type
-    token
-    allocations {
-      sessionStream {
-        id
-        name
-        startTime
-        endTime
-        day
-        location
-        weeks
-        numberOfStaff
+    message
+    allocatedStreams {
+      streamId
+      baseAllocation {
+        allocatedUsers
       }
-      staff {
-        id
-        username
-        name
+      extraAllocations {
+        allocatedUsers
+        weeks
       }
     }
   }
@@ -1857,9 +1836,7 @@ export type RequestAllocationMutationFn = Apollo.MutationFunction<RequestAllocat
  * @example
  * const [requestAllocationMutation, { data, loading, error }] = useRequestAllocationMutation({
  *   variables: {
- *      courseTerm: // value for 'courseTerm'
- *      staffIds: // value for 'staffIds'
- *      newThreshold: // value for 'newThreshold'
+ *      requestAllocationInput: // value for 'requestAllocationInput'
  *   },
  * });
  */
@@ -1869,37 +1846,6 @@ export function useRequestAllocationMutation(baseOptions?: Apollo.MutationHookOp
 export type RequestAllocationMutationHookResult = ReturnType<typeof useRequestAllocationMutation>;
 export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
 export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<RequestAllocationMutation, RequestAllocationMutationVariables>;
-export const ApplyAllocationDocument = gql`
-    mutation ApplyAllocation($token: String!, $override: Boolean!) {
-  applyAllocation(allocationToken: $token, override: $override)
-}
-    `;
-export type ApplyAllocationMutationFn = Apollo.MutationFunction<ApplyAllocationMutation, ApplyAllocationMutationVariables>;
-
-/**
- * __useApplyAllocationMutation__
- *
- * To run a mutation, you first call `useApplyAllocationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useApplyAllocationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [applyAllocationMutation, { data, loading, error }] = useApplyAllocationMutation({
- *   variables: {
- *      token: // value for 'token'
- *      override: // value for 'override'
- *   },
- * });
- */
-export function useApplyAllocationMutation(baseOptions?: Apollo.MutationHookOptions<ApplyAllocationMutation, ApplyAllocationMutationVariables>) {
-        return Apollo.useMutation<ApplyAllocationMutation, ApplyAllocationMutationVariables>(ApplyAllocationDocument, baseOptions);
-      }
-export type ApplyAllocationMutationHookResult = ReturnType<typeof useApplyAllocationMutation>;
-export type ApplyAllocationMutationResult = Apollo.MutationResult<ApplyAllocationMutation>;
-export type ApplyAllocationMutationOptions = Apollo.BaseMutationOptions<ApplyAllocationMutation, ApplyAllocationMutationVariables>;
 export const CourseDocument = gql`
     query Course($courseId: String!) {
   course(courseId: $courseId) {
