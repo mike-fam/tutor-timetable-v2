@@ -68,7 +68,7 @@ export class Timetable
     @Column({ enum: FreezeState, default: FreezeState.FREE })
     temporaryRequestLock: FreezeState;
 
-    @Column({ type: "uuid", nullable: true })
+    @Column({ type: "varchar", nullable: true })
     allocationToken: string | null;
 
     public async getCourse(): Promise<Course> {
