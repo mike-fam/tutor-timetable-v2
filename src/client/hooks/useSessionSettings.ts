@@ -209,6 +209,7 @@ export const useSessionSettings = () => {
         if (!getStreamData) {
             return;
         }
+        setStreams((prev) => prev.clear());
         commitNewStreams(getStreamData.rootSessionStreams);
     }, [getStreamData, courseId, termId, commitNewStreams]);
     // Update sessions as well
@@ -216,6 +217,8 @@ export const useSessionSettings = () => {
         if (!getSessionsData) {
             return;
         }
+        setSessionToWeek((prev) => prev.clear());
+        setSessionsByWeek((prev) => prev.clear());
         commitNewSessions(getSessionsData.mergedSessions);
     }, [getSessionsData, commitNewSessions]);
 
