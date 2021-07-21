@@ -53,6 +53,7 @@ class AllocatorStream {
 export enum AllocationStatus {
     REQUESTED = "REQUESTED",
     NOT_READY = "NOT_READY",
+    NOT_EXIST = "NOT_EXIST",
     ERROR = "ERROR",
     GENERATED = "GENERATED",
 }
@@ -223,6 +224,27 @@ export class AllocatorResolver {
         if (allocationResponse.data.status === AllocationStatus.NOT_READY) {
             output.message =
                 "Allocation is not yet ready. Please come back later.";
+            return output;
+        } else if (
+            allocationResponse.data.status === AllocationStatus.NOT_EXIST
+        ) {
+            output.message =
+                "A request to generate a new allocation has been made. " +
+                `The allocation will take at most ${timeout} seconds.`;
+            const status = await this.requestNewAllocation(
+                timetable,
+                term,
+                sessionStreams,
+                courseStaffs,
+                staffIds,
+                timeout,
+                models,
+                user
+            );
+            output.status =
+                status === 200
+                    ? AllocationStatus.REQUESTED
+                    : AllocationStatus.ERROR;
             return output;
         }
         // Allocation generated
