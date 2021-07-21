@@ -13,12 +13,14 @@ type Props = {
     elements: [string, string][];
     selectedElements: string[];
     setSelectedElements: (keys: string[]) => any;
+    size?: string;
 };
 
 export const MultiSelect: FC<Props> = ({
     elements,
     selectedElements,
     setSelectedElements,
+    size,
 }) => {
     const selectedElemsRepr = useMemo(() => {
         return elements
@@ -33,7 +35,7 @@ export const MultiSelect: FC<Props> = ({
                 variant="outline"
                 w="25ch"
                 rightIcon={<ChevronDownIcon />}
-                size="sm"
+                size={size || "sm"}
             >
                 {selectedElemsRepr.substr(0, 18)}
                 {selectedElemsRepr.length >= 18 && "..."}

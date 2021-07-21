@@ -16,6 +16,8 @@ import { WeekNav } from "../../components/WeekNav";
 import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
 import { StreamSettingsDrawer } from "../../components/session-settings/StreamSettingsDrawer";
 import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
+import { AllocatorModal } from "./AllocatorModal";
+import { sentenceCase } from "change-case";
 
 type Props = {};
 
@@ -50,6 +52,11 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
         isOpen: isStreamDrawerOpen,
         onClose: closeStreamDrawer,
         onOpen: openStreamDrawer,
+    } = useDisclosure();
+    const {
+        isOpen: isAllocatorModalOpen,
+        onClose: closeAllocatorModal,
+        onOpen: openAllocatorModal,
     } = useDisclosure();
     const users = useUsersOfCourse(courseId, termId);
     return (
@@ -97,12 +104,20 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                                           Edit Sessions
                                       </Button>
                                   )}
-                            <Button colorScheme="green">
+                            <Button
+                                colorScheme="green"
+                                onClick={() => {
+                                    console.log("Opening");
+                                    openAllocatorModal();
+                                }}
+                            >
                                 Generate Allocation
                             </Button>
                             <Button
                                 colorScheme="green"
-                                onClick={openFetchModal}
+                                onClick={() => {
+                                    openFetchModal();
+                                }}
                             >
                                 Fetch from Public Timetable
                             </Button>
@@ -151,6 +166,16 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                     closeStreamDrawer();
                 }}
                 users={users}
+            />
+            <AllocatorModal
+                isOpen={isAllocatorModalOpen}
+                close={closeAllocatorModal}
+                users={users}
+                onSubmit={() => {}}
+                courseCode={course?.code || ""}
+                termName={
+                    term ? `${sentenceCase(term.type)}, ${term.year}` : ""
+                }
             />
         </Wrapper>
     );

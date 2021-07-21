@@ -2,6 +2,7 @@ import {
     Arg,
     Ctx,
     Field,
+    InputType,
     Int,
     Mutation,
     ObjectType,
@@ -18,6 +19,7 @@ import { CourseStaff, SessionStream, Term, Timetable, User } from "../entities";
 import { Models } from "../types/models";
 import parseISO from "date-fns/parseISO";
 import differenceInSeconds from "date-fns/differenceInSeconds";
+import { Max } from "class-validator";
 
 type WeekId = number;
 type SessionStreamId = string;
@@ -55,6 +57,16 @@ class AllocatorOutput {
 
     @Field(() => [ExtraGeneratedAllocationPattern])
     extraAllocations: ExtraGeneratedAllocationPattern[];
+}
+
+@InputType()
+class RequestAllocationInput extends CourseTermIdInput {
+    @Field(() => [String])
+    staffIds: string[];
+
+    @Field(() => Int)
+    @Max(7200)
+    timeout: number;
 }
 
 type AllocatorOutputData = {
@@ -117,10 +129,8 @@ type AllocatorInput = {
 export class AllocatorResolver {
     @Mutation(() => AllocatorOutput)
     async requestAllocation(
-        @Arg("courseTermInput", () => CourseTermIdInput)
-        { courseId, termId }: CourseTermIdInput,
-        @Arg("staffIds", () => [String]) staffIds: string[],
-        @Arg("timeout") timeout: number,
+        @Arg("requestAllocationInput", () => CourseTermIdInput)
+        { courseId, termId, staffIds, timeout }: RequestAllocationInput,
         @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
         // TODO: This method should return the status of the request, can be one of
@@ -157,7 +167,8 @@ export class AllocatorResolver {
             output.baseAllocation.allocatedUsers = [];
             output.extraAllocations = [];
             output.message =
-                "A request to generate a new allocation has been made.";
+                "A request to generate a new allocation has been made. " +
+                `The allocation will take at most ${timeout} seconds.`;
             const status = await this.requestNewAllocation(
                 timetable,
                 term,
@@ -179,8 +190,14 @@ export class AllocatorResolver {
             const now = new Date();
             const elapsedTime = differenceInSeconds(now, timestampDate);
             const timeoutSeconds = parseInt(timeout);
-            // If allocation generated a long time ago
+            // If allocation requested/generated a long time ago
             if (elapsedTime > Math.max(3600, timeoutSeconds * 2)) {
+                output.baseAllocation = new BaseGeneratedAllocationPattern();
+                output.baseAllocation.allocatedUsers = [];
+                output.extraAllocations = [];
+                output.message =
+                    "A request to generate a new allocation has been made. " +
+                    `The allocation will take at most ${timeout} seconds.`;
                 const status = await this.requestNewAllocation(
                     timetable,
                     term,
@@ -191,6 +208,13 @@ export class AllocatorResolver {
                     models,
                     user
                 );
+                output.status =
+                    status === 200
+                        ? AllocationStatus.REQUESTED
+                        : AllocationStatus.ERROR;
+                return output;
+            } else {
+                // If allocation requested not too long ago, try to get allocation
             }
         }
         output.baseAllocation = new BaseGeneratedAllocationPattern();
