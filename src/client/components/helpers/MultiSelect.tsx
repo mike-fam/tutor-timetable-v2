@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import React, { FC, useMemo } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import sortBy from "lodash/sortBy";
 
 type Props = {
     elements: [string, string][];
@@ -48,11 +49,13 @@ export const MultiSelect: FC<Props> = ({
                         setSelectedElements(values as string[]);
                     }}
                 >
-                    {elements.map(([elemKey, elem]) => (
-                        <MenuItemOption key={elemKey} value={elemKey}>
-                            {elem}
-                        </MenuItemOption>
-                    ))}
+                    {sortBy(elements, ([, elem]) => elem).map(
+                        ([elemKey, elem]) => (
+                            <MenuItemOption key={elemKey} value={elemKey}>
+                                {elem}
+                            </MenuItemOption>
+                        )
+                    )}
                 </MenuOptionGroup>
             </MenuList>
         </Menu>

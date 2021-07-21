@@ -71,8 +71,6 @@ class RequestAllocationInput extends CourseTermIdInput {
 
 type AllocatorOutputData = {
     status: AllocationStatus;
-    detail: string;
-    runtime: number;
     allocations: {
         [key: string]: Array<string>;
     };
@@ -161,11 +159,11 @@ export class AllocatorResolver {
         // checks if token is already created and get time of token
         const existingToken = timetable.allocationToken;
         const output = new AllocatorOutput();
+        output.baseAllocation = new BaseGeneratedAllocationPattern();
+        output.baseAllocation.allocatedUsers = [];
+        output.extraAllocations = [];
         //  If not created, create a new token and mark timestamp
         if (!existingToken) {
-            output.baseAllocation = new BaseGeneratedAllocationPattern();
-            output.baseAllocation.allocatedUsers = [];
-            output.extraAllocations = [];
             output.message =
                 "A request to generate a new allocation has been made. " +
                 `The allocation will take at most ${timeout} seconds.`;
@@ -192,9 +190,6 @@ export class AllocatorResolver {
             const timeoutSeconds = parseInt(timeout);
             // If allocation requested/generated a long time ago
             if (elapsedTime > Math.max(3600, timeoutSeconds * 2)) {
-                output.baseAllocation = new BaseGeneratedAllocationPattern();
-                output.baseAllocation.allocatedUsers = [];
-                output.extraAllocations = [];
                 output.message =
                     "A request to generate a new allocation has been made. " +
                     `The allocation will take at most ${timeout} seconds.`;
@@ -209,12 +204,29 @@ export class AllocatorResolver {
                     user
                 );
                 output.status =
-                    status === 200
-                        ? AllocationStatus.REQUESTED
-                        : AllocationStatus.ERROR;
+                    status > 300
+                        ? AllocationStatus.ERROR
+                        : AllocationStatus.REQUESTED;
                 return output;
             } else {
                 // If allocation requested not too long ago, try to get allocation
+                const allocationResponse = await axios.get<AllocatorOutputData>(
+                    `${process.env.ALLOCATOR_URL}request-allocation/${token}/`
+                );
+                if (allocationResponse.status > 300) {
+                    output.message = "Something went wrong";
+                    output.status = AllocationStatus.ERROR;
+                } else {
+                    output.status = allocationResponse.data.status;
+                    if (
+                        allocationResponse.data.status ===
+                        AllocationStatus.NOT_READY
+                    ) {
+                        return output;
+                    } else {
+                        // TODO: Handle generated allocation
+                    }
+                }
             }
         }
         output.baseAllocation = new BaseGeneratedAllocationPattern();

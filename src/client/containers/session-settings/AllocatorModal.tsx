@@ -12,9 +12,11 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Stack,
 } from "@chakra-ui/react";
 import { MultiSelect } from "../../components/helpers/MultiSelect";
 import { Role } from "../../generated/graphql";
+import { SimpleNumberInput } from "../../components/helpers/SimpleNumberInput";
 
 type Props = {
     isOpen: boolean;
@@ -34,6 +36,7 @@ export const AllocatorModal: React.FC<Props> = ({
     termName,
 }) => {
     const [selectedElems, setSelectedElems] = useState<string[]>([]);
+    const [timeout, setTimeout] = useState(3600);
     useEffect(() => {
         users.forEach((user, id) => {
             if (user.role === Role.CourseCoordinator) {
@@ -49,33 +52,51 @@ export const AllocatorModal: React.FC<Props> = ({
                 <ModalHeader>Generate Allocation</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <FormControl>
-                        <FormLabel>Term</FormLabel>
-                        <Input value={termName} isReadOnly />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Course</FormLabel>
-                        <Input value={courseCode} isReadOnly />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>Staff Included</FormLabel>
-                        <MultiSelect
-                            elements={users
-                                .entrySeq()
-                                .map(
-                                    ([id, user]) =>
-                                        [id, user.name] as [string, string]
-                                )
-                                .toArray()}
-                            selectedElements={selectedElems}
-                            setSelectedElements={setSelectedElems}
-                            size={"md"}
-                        />
-                    </FormControl>
+                    <Stack spacing={3}>
+                        <FormControl>
+                            <FormLabel>Term</FormLabel>
+                            <Input value={termName} isReadOnly />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Course</FormLabel>
+                            <Input value={courseCode} isReadOnly />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Staff Included</FormLabel>
+                            <MultiSelect
+                                elements={users
+                                    .entrySeq()
+                                    .map(
+                                        ([id, user]) =>
+                                            [id, user.name] as [string, string]
+                                    )
+                                    .toArray()}
+                                selectedElements={selectedElems}
+                                setSelectedElements={setSelectedElems}
+                                size={"md"}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>Timeout (seconds)</FormLabel>
+                            <SimpleNumberInput
+                                value={timeout}
+                                onChange={(value) => {
+                                    setTimeout(value);
+                                }}
+                            />
+                        </FormControl>
+                    </Stack>
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme="green" mr={3} onClick={close}>
+                    <Button
+                        colorScheme="green"
+                        mr={3}
+                        onClick={() => {
+                            onSubmit(selectedElems, timeout);
+                            close();
+                        }}
+                    >
                         Generate
                     </Button>
                     <Button variant="ghost" onClick={close}>
