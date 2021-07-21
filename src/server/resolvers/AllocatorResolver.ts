@@ -185,12 +185,13 @@ export class AllocatorResolver {
                     : AllocationStatus.ERROR;
             return output;
         }
+        // If token already created get timestamp
         const [token, timestamp, prevTimeout] = existingToken.split(":");
         const timestampDate = parseISO(timestamp);
         const now = new Date();
         const elapsedTime = differenceInSeconds(now, timestampDate);
         const prevTimeoutSeconds = parseInt(prevTimeout);
-        // If allocation requested/generated a long time ago
+        // If allocation requested/generated a long time ago, make new request
         if (elapsedTime > Math.max(3600, prevTimeoutSeconds * 2)) {
             output.message =
                 "A request to generate a new allocation has been made. " +
@@ -225,33 +226,30 @@ export class AllocatorResolver {
             output.message =
                 "Allocation is not yet ready. Please come back later.";
             return output;
-        } else {
-            const streamByIds = keyBy(sessionStreams, (stream) => stream.id);
-            const generatedAllocations = allocationResponse.data.allocations;
-            const rootStreams = sessionStreams.filter(
-                (stream) => !stream.rootId
-            );
-            for (const rootStream of rootStreams) {
-                const allocatorStream = new AllocatorStream();
-                allocatorStream.streamId = rootStream.id;
-                allocatorStream.baseAllocation =
-                    new BaseGeneratedAllocationPattern();
-                allocatorStream.baseAllocation.allocatedUsers =
-                    generatedAllocations[rootStream.id];
-                allocatorStream.extraAllocations = [];
-                for (const secondaryStreamId of rootStream.secondaryStreamIds) {
-                    const secondaryAllocation =
-                        new ExtraGeneratedAllocationPattern();
-                    secondaryAllocation.weeks =
-                        streamByIds[secondaryStreamId].weeks;
-                    secondaryAllocation.allocatedUsers =
-                        generatedAllocations[secondaryStreamId];
-                    allocatorStream.extraAllocations.push(secondaryAllocation);
-                }
-                output.allocatedStreams.push(allocatorStream);
-            }
-            return output;
         }
+        // Allocation generated
+        const streamByIds = keyBy(sessionStreams, (stream) => stream.id);
+        const generatedAllocations = allocationResponse.data.allocations;
+        const rootStreams = sessionStreams.filter((stream) => !stream.rootId);
+        for (const rootStream of rootStreams) {
+            const allocatorStream = new AllocatorStream();
+            allocatorStream.streamId = rootStream.id;
+            allocatorStream.baseAllocation =
+                new BaseGeneratedAllocationPattern();
+            allocatorStream.baseAllocation.allocatedUsers =
+                generatedAllocations[rootStream.id];
+            for (const secondaryStreamId of rootStream.secondaryStreamIds) {
+                const secondaryAllocation =
+                    new ExtraGeneratedAllocationPattern();
+                secondaryAllocation.weeks =
+                    streamByIds[secondaryStreamId].weeks;
+                secondaryAllocation.allocatedUsers =
+                    generatedAllocations[secondaryStreamId];
+                allocatorStream.extraAllocations.push(secondaryAllocation);
+            }
+            output.allocatedStreams.push(allocatorStream);
+        }
+        return output;
     }
 
     async requestNewAllocation(

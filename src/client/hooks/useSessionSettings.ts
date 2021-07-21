@@ -33,6 +33,7 @@ import {
 import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
 import isUndefined from "lodash/isUndefined";
+import { useRequestAllocation } from "./useGenerateAllocation";
 
 const streamResponseToState = (stream: StreamResponseType): StreamInput => {
     return {
@@ -184,6 +185,7 @@ export const useSessionSettings = () => {
         });
     }, []);
 
+    // INITIAL FETCH
     // Fetch one first time
     useEffect(() => {
         if (!courseId || !termId || week !== defaultInt) {
@@ -222,6 +224,7 @@ export const useSessionSettings = () => {
         commitNewSessions(getSessionsData.mergedSessions);
     }, [getSessionsData, commitNewSessions]);
 
+    // TIMETABLE STATE ACTIONS
     // Handle editing streams
     const editMultipleStreamSettings = useCallback(
         (newStreamInput: Partial<StreamInput>) => {
@@ -264,6 +267,7 @@ export const useSessionSettings = () => {
         [selectedStreams]
     );
 
+    // Handle create stream
     const createStream = useCallback((stream: StreamInput, id?: string) => {
         setStreams((prev) =>
             prev.set(id || uuid(), {
@@ -273,6 +277,7 @@ export const useSessionSettings = () => {
         );
     }, []);
 
+    // Handle delete stream
     const deleteStream = useCallback((streamId) => {
         setStreams((prev) => {
             if (!prev.has(streamId)) {
@@ -300,18 +305,14 @@ export const useSessionSettings = () => {
         });
     }, []);
 
+    // Handle delete multiple streams
     const deleteSelectedStreams = useCallback(() => {
         selectedStreams.forEach((streamId) => {
             deleteStream(streamId);
         });
     }, [selectedStreams, deleteStream]);
 
-    // Handle fetching from public timetable
-    const [
-        fetchFromPublicTimetable,
-        { data: publicTimetableData, loading: publicTimetableLoading },
-    ] = useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
-
+    // Handle restore stream
     const restoreStream = useCallback((streamId) => {
         setStreams((prev) => {
             if (!prev.has(streamId)) {
@@ -334,32 +335,6 @@ export const useSessionSettings = () => {
             return prev;
         });
     }, []);
-    const getStreamsFromPublicTimetable = useCallback(
-        (sessionTypes: SessionType[]) => {
-            if (courseId === defaultStr || termId === defaultStr) {
-                return;
-            }
-            fetchFromPublicTimetable({
-                variables: {
-                    courseTerm: {
-                        courseId,
-                        termId,
-                    },
-                    sessionTypes,
-                },
-            });
-        },
-        [courseId, termId, fetchFromPublicTimetable]
-    );
-
-    useEffect(() => {
-        if (!publicTimetableData) {
-            return;
-        }
-        publicTimetableData.fromPublicTimetable.forEach((stream) => {
-            createStream(streamResponseToState(stream));
-        });
-    }, [publicTimetableData, createStream]);
 
     // Handle editing sessions
     const editMultipleSessions = useCallback(
@@ -392,7 +367,41 @@ export const useSessionSettings = () => {
         [selectedSessions, sessionsToWeek, sessionsByWeek]
     );
 
-    // Handle submitting changes
+    // PUBLIC TIMETABLE
+    // Handle fetching from public timetable
+    const [
+        fetchFromPublicTimetable,
+        { data: publicTimetableData, loading: publicTimetableLoading },
+    ] = useLazyQueryWithError(useStreamsFromPublicTimetableLazyQuery, {});
+
+    const getStreamsFromPublicTimetable = useCallback(
+        (sessionTypes: SessionType[]) => {
+            if (courseId === defaultStr || termId === defaultStr) {
+                return;
+            }
+            fetchFromPublicTimetable({
+                variables: {
+                    courseTerm: {
+                        courseId,
+                        termId,
+                    },
+                    sessionTypes,
+                },
+            });
+        },
+        [courseId, termId, fetchFromPublicTimetable]
+    );
+
+    useEffect(() => {
+        if (!publicTimetableData) {
+            return;
+        }
+        publicTimetableData.fromPublicTimetable.forEach((stream) => {
+            createStream(streamResponseToState(stream));
+        });
+    }, [publicTimetableData, createStream]);
+
+    // SUBMITTING CHANGES
     const [
         submitUpdatedStream,
         { data: updatedStreamsData, loading: updatedStreamsLoading },
@@ -622,6 +631,58 @@ export const useSessionSettings = () => {
         );
     }, [updatedSessionAllocationsData, commitNewSessions]);
 
+    // GENERATE ALLOCATION
+    const [requestAllocation, generatedAllocations] = useRequestAllocation();
+    useEffect(() => {
+        if (!generatedAllocations || generatedAllocations.length === 0) {
+            return;
+        }
+        generatedAllocations.forEach(
+            ({ streamId, baseAllocation, extraAllocations }) => {
+                setStreams((prev) => {
+                    const stream = prev.get(streamId);
+                    // No idea how this would happen, but just to make sure
+                    if (!stream) {
+                        return prev;
+                    }
+                    let modificationType = stream.settingsModification;
+                    if (modificationType === ModificationType.Unchanged) {
+                        modificationType = ModificationType.Modified;
+                    } else if (modificationType === ModificationType.Removed) {
+                        modificationType = ModificationType.RemovedModified;
+                    }
+                    return prev.set(streamId, {
+                        ...stream,
+                        baseStaffRequirement: {
+                            ...stream.baseStaffRequirement,
+                            allocatedUsers: baseAllocation.allocatedUsers,
+                        },
+                        extraStaffRequirement: stream.extraStaffRequirement.map(
+                            (requirement) => {
+                                for (const extraAllocation of extraAllocations) {
+                                    if (
+                                        isEqual(
+                                            extraAllocation.weeks,
+                                            requirement.weeks
+                                        )
+                                    ) {
+                                        return {
+                                            ...requirement,
+                                            allocatedUsers:
+                                                extraAllocation.allocatedUsers,
+                                        };
+                                    }
+                                }
+                                return requirement;
+                            }
+                        ),
+                        settingsModification: modificationType,
+                    });
+                });
+            }
+        );
+    }, [generatedAllocations]);
+
     // TODO: Implement week cache
     return {
         selection: {
@@ -662,6 +723,7 @@ export const useSessionSettings = () => {
         actions: {
             getStreamsFromPublicTimetable,
             submitChanges,
+            requestAllocation,
         },
         base: {
             courseId,

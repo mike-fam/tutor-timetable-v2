@@ -42,7 +42,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
     } = selection;
     const { streamActions } = timetableState;
     const { deleteSelectedStreams, editMultipleStreamSettings } = streamActions;
-    const { submitChanges } = actions;
+    const { submitChanges, requestAllocation } = actions;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -107,7 +107,6 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                             <Button
                                 colorScheme="green"
                                 onClick={() => {
-                                    console.log("Opening");
                                     openAllocatorModal();
                                 }}
                             >
@@ -171,7 +170,9 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                 isOpen={isAllocatorModalOpen}
                 close={closeAllocatorModal}
                 users={users}
-                onSubmit={() => {}}
+                onSubmit={(users, timeout) => {
+                    requestAllocation(courseId, termId, users, timeout);
+                }}
                 courseCode={course?.code || ""}
                 termName={
                     term ? `${sentenceCase(term.type)}, ${term.year}` : ""
