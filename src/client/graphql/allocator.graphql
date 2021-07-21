@@ -1,9 +1,5 @@
-mutation RequestAllocation(
-    $requestAllocationInput: RequestAllocationInput!
-) {
-    requestAllocation(
-        requestAllocationInput: $requestAllocationInput
-    ) {
+mutation RequestAllocation($requestAllocationInput: RequestAllocationInput!) {
+    requestAllocation(requestAllocationInput: $requestAllocationInput) {
         status
         message
         allocatedStreams {

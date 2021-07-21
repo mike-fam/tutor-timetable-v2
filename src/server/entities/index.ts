@@ -3,9 +3,7 @@ import { SessionType } from "../types/session";
 import { TermType } from "../types/term";
 import { Role } from "../types/user";
 import { RequestStatus, RequestType } from "../types/request";
-import {
-    AllocationStatus,
-} from "../resolvers/AllocatorResolver";
+import { AllocationStatus } from "../resolvers/AllocatorResolver";
 import { OfferStatus } from "../types/offer";
 import { FreezeState } from "../types/timetable";
 

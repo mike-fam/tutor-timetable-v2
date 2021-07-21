@@ -1,3 +1,1 @@
-export const useGenerateAllocation = () => {
-
-}
+export const useGenerateAllocation = () => {};
