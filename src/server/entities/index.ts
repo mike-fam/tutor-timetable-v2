@@ -5,7 +5,6 @@ import { Role } from "../types/user";
 import { RequestStatus, RequestType } from "../types/request";
 import {
     AllocationStatus,
-    AllocationType,
 } from "../resolvers/AllocatorResolver";
 import { OfferStatus } from "../types/offer";
 import { FreezeState } from "../types/timetable";
@@ -32,10 +31,6 @@ registerEnumType(RequestStatus, {
 
 registerEnumType(OfferStatus, {
     name: "OfferStatus",
-});
-
-registerEnumType(AllocationType, {
-    name: "AllocationType",
 });
 
 registerEnumType(AllocationStatus, {
