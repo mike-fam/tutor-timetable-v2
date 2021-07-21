@@ -74,15 +74,6 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                             <MenuList style={{ margin: 0 }}>
                                 <MenuItem>
                                     <RouterLink
-                                        to="/allocator"
-                                        fullHeight
-                                        fullWidth
-                                    >
-                                        Allocator
-                                    </RouterLink>
-                                </MenuItem>
-                                <MenuItem>
-                                    <RouterLink
                                         to="/course-staff"
                                         fullHeight
                                         fullWidth
