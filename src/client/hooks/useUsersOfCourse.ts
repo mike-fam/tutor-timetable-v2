@@ -17,20 +17,20 @@ export const useUsersOfCourse = (courseId: string, termId: string) => {
     );
     const [fetchCourseStaff, { data }] = useLazyQueryWithError(
         useCourseStaffsLazyQuery,
-        {
+        {}
+    );
+    useEffect(() => {
+        if (!courseId || !termId) {
+            return;
+        }
+        fetchCourseStaff({
             variables: {
                 courseTermInput: {
                     courseId,
                     termId,
                 },
             },
-        }
-    );
-    useEffect(() => {
-        if (!courseId || !termId) {
-            return;
-        }
-        fetchCourseStaff();
+        });
     }, [courseId, termId, fetchCourseStaff]);
     useEffect(() => {
         if (!data) {

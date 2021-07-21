@@ -83,6 +83,7 @@ export const FormikExtraAllocations: React.FC<Props> = ({
                                                         }
                                                         size="sm"
                                                         renderLabel={false}
+                                                        sorted
                                                     />
                                                     <IconButton
                                                         colorScheme="red"

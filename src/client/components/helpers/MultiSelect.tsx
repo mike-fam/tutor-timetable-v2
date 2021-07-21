@@ -15,6 +15,7 @@ type Props = {
     selectedElements: string[];
     setSelectedElements: (keys: string[]) => any;
     size?: string;
+    sorted?: boolean;
 };
 
 export const MultiSelect: FC<Props> = ({
@@ -22,6 +23,7 @@ export const MultiSelect: FC<Props> = ({
     selectedElements,
     setSelectedElements,
     size,
+    sorted = false,
 }) => {
     const selectedElemsRepr = useMemo(() => {
         return elements
@@ -49,13 +51,14 @@ export const MultiSelect: FC<Props> = ({
                         setSelectedElements(values as string[]);
                     }}
                 >
-                    {sortBy(elements, ([, elem]) => elem).map(
-                        ([elemKey, elem]) => (
-                            <MenuItemOption key={elemKey} value={elemKey}>
-                                {elem}
-                            </MenuItemOption>
-                        )
-                    )}
+                    {(sorted
+                        ? sortBy(elements, ([, elem]) => elem)
+                        : elements
+                    ).map(([elemKey, elem]) => (
+                        <MenuItemOption key={elemKey} value={elemKey}>
+                            {elem}
+                        </MenuItemOption>
+                    ))}
                 </MenuOptionGroup>
             </MenuList>
         </Menu>

@@ -18,6 +18,7 @@ type Props = {
     options: Array<string | number>;
     optionToText?: (val: string | number) => string;
     renderLabel?: boolean;
+    sorted?: boolean;
 } & SelectProps;
 
 export const FormikSelect: React.FC<Props> = ({
@@ -26,6 +27,7 @@ export const FormikSelect: React.FC<Props> = ({
     options,
     optionToText = capitalCase,
     renderLabel = true,
+    sorted = false,
     ...props
 }) => {
     return (
@@ -39,8 +41,11 @@ export const FormikSelect: React.FC<Props> = ({
                         <option disabled value={defaultStr}>
                             Select a value
                         </option>
-                        {sortBy(options, (option) =>
-                            optionToText(option.toString())
+                        {(sorted
+                            ? sortBy(options, (option) =>
+                                  optionToText(option.toString())
+                              )
+                            : options
                         ).map((option) => (
                             <option value={option} key={option}>
                                 {optionToText(option.toString())}

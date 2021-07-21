@@ -67,6 +67,9 @@ export const StreamSettingsDrawer: FC<Props> = ({
                         return errors;
                     }}
                     onSubmit={(value) => {
+                        if (value.day) {
+                            value.day = Number(value.day);
+                        }
                         onSave(value);
                         close();
                     }}

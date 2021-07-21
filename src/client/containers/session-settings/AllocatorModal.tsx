@@ -73,7 +73,8 @@ export const AllocatorModal: React.FC<Props> = ({
                                     .toArray()}
                                 selectedElements={selectedElems}
                                 setSelectedElements={setSelectedElems}
-                                size={"md"}
+                                size="md"
+                                sorted
                             />
                         </FormControl>
                         <FormControl>
