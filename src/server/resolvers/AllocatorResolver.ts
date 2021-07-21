@@ -235,7 +235,7 @@ export class AllocatorResolver {
             allocatorStream.baseAllocation =
                 new BaseGeneratedAllocationPattern();
             allocatorStream.baseAllocation.allocatedUsers =
-                generatedAllocations[rootStream.id];
+                generatedAllocations[rootStream.id] || [];
             allocatorStream.extraAllocations = [];
             for (const secondaryStreamId of rootStream.secondaryStreamIds) {
                 const secondaryAllocation =
@@ -243,7 +243,7 @@ export class AllocatorResolver {
                 secondaryAllocation.weeks =
                     streamByIds[secondaryStreamId].weeks;
                 secondaryAllocation.allocatedUsers =
-                    generatedAllocations[secondaryStreamId];
+                    generatedAllocations[secondaryStreamId] || [];
                 allocatorStream.extraAllocations.push(secondaryAllocation);
             }
             output.allocatedStreams.push(allocatorStream);
