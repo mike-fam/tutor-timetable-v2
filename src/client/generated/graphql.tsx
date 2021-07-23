@@ -18,6 +18,7 @@ export type Scalars = {
 export enum AllocationStatus {
   Requested = 'REQUESTED',
   NotReady = 'NOT_READY',
+  NotExist = 'NOT_EXIST',
   Error = 'ERROR',
   Generated = 'GENERATED'
 }
@@ -1399,7 +1400,7 @@ export type SessionInfoFragment = (
   & Pick<Session, 'id' | 'location' | 'week'>
   & { sessionStream: (
     { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
     & { timetable: (
       { __typename?: 'Timetable' }
       & { term: (
@@ -1430,7 +1431,7 @@ export type GetSessionsQuery = (
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1462,7 +1463,7 @@ export type GetMergedSessionsQuery = (
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1492,7 +1493,7 @@ export type GetSessionByIdQuery = (
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1522,7 +1523,7 @@ export type UpdateSessionAllocationMutation = (
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1552,7 +1553,7 @@ export type UpdateSessionMutation = (
     & Pick<Session, 'id' | 'location' | 'week'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1679,6 +1680,7 @@ export const SessionInfoFragmentDoc = gql`
     startTime
     endTime
     day
+    numberOfStaff
     timetable {
       term {
         id
@@ -3115,6 +3117,7 @@ export const GetSessionsDocument = gql`
       startTime
       endTime
       day
+      numberOfStaff
       timetable {
         term {
           id
@@ -3173,6 +3176,7 @@ export const GetMergedSessionsDocument = gql`
       startTime
       endTime
       day
+      numberOfStaff
       timetable {
         term {
           id
@@ -3231,6 +3235,7 @@ export const GetSessionByIdDocument = gql`
       startTime
       endTime
       day
+      numberOfStaff
       timetable {
         term {
           id
@@ -3287,6 +3292,7 @@ export const UpdateSessionAllocationDocument = gql`
       startTime
       endTime
       day
+      numberOfStaff
       timetable {
         term {
           id
@@ -3342,6 +3348,7 @@ export const UpdateSessionDocument = gql`
       startTime
       endTime
       day
+      numberOfStaff
       timetable {
         term {
           id

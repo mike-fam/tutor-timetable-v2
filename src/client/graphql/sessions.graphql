@@ -6,6 +6,7 @@ fragment SessionInfo on Session {
         startTime
         endTime
         day
+        numberOfStaff
         timetable {
             term {
                 id
@@ -34,6 +35,7 @@ query GetSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
             startTime
             endTime
             day
+            numberOfStaff
             timetable {
                 term {
                     id
@@ -63,6 +65,7 @@ query GetMergedSessions($termId: String!, $week: Int!, $courseIds: [String!]!) {
             startTime
             endTime
             day
+            numberOfStaff
             timetable {
                 term {
                     id
@@ -92,6 +95,7 @@ query GetSessionById($sessionId: String!) {
             startTime
             endTime
             day
+            numberOfStaff
             timetable {
                 term {
                     id
@@ -123,6 +127,7 @@ mutation UpdateSessionAllocation(
             startTime
             endTime
             day
+            numberOfStaff
             timetable {
                 term {
                     id
@@ -152,6 +157,7 @@ mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
             startTime
             endTime
             day
+            numberOfStaff
             timetable {
                 term {
                     id

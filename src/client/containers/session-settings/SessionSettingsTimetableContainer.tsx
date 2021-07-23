@@ -136,15 +136,17 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                 stream?.baseStaffRequirement.allocatedUsers.map(
                     (userId) => users.get(userId)?.name || ""
                 ) || [],
-            ] as [number[], string[]];
-            const extraAllocations = stream?.extraStaffRequirement.map(
+                stream?.baseStaffRequirement.numberOfStaff || 0,
+            ] as [number[], string[], number];
+            const extraAllocations = (stream?.extraStaffRequirement.map(
                 (requirement) => [
-                    requirement.weeks || [],
+                    requirement.weeks,
                     requirement.allocatedUsers.map(
                         (userId) => users.get(userId)?.name || ""
-                    ) || [],
+                    ),
+                    requirement.numberOfStaff,
                 ]
-            ) as [number[], string[]][];
+            ) || []) as [number[], string[], number][];
             return {
                 courseCode: course?.code || "",
                 baseAllocation,
@@ -292,6 +294,9 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                                                 session?.sessionStream.timetable
                                                     .course.code || "",
                                             styles: sessionStyle(sessionId),
+                                            numberOfStaff:
+                                                session?.sessionStream
+                                                    .numberOfStaff || 0,
                                         };
                                     }}
                                     onClick={(sessionId) => {

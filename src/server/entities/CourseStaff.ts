@@ -2,7 +2,6 @@ import {
     Check,
     Column,
     Entity,
-    JoinColumn,
     ManyToOne,
     OneToOne,
     RelationId,
@@ -60,11 +59,9 @@ export class CourseStaff
         lazy: true,
         nullable: true,
     })
-    @JoinColumn()
     preference: Lazy<Preference> | undefined;
 
     @RelationId((courseStaff: CourseStaff) => courseStaff.preference)
-    @Column({ nullable: true })
     preferenceId: string;
 
     public async getCourse(): Promise<Course> {

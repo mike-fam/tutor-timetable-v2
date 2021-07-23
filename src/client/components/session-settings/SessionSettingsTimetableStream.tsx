@@ -18,8 +18,8 @@ export type SessionSettingsStyleProps = Omit<
 
 export type StreamSettingsCustomSessionProps = {
     courseCode: string;
-    baseAllocation: [number[], string[]];
-    extraAllocations: Array<[number[], string[]]>;
+    baseAllocation: [number[], string[], number];
+    extraAllocations: Array<[number[], string[], number]>;
     weekNames: string[];
     location: string;
     styles: SessionSettingsStyleProps;

@@ -1,5 +1,6 @@
 import React, { FC, Fragment } from "react";
 import {
+    chakra,
     Divider,
     ListItem,
     PopoverArrow,
@@ -13,8 +14,8 @@ import { weeksPatternRepr } from "../../utils/session-stream";
 type Props = {
     name: string;
     courseCode: string;
-    baseAllocation: [number[], string[]];
-    customAllocation: Array<[number[], string[]]>;
+    baseAllocation: [number[], string[], number];
+    customAllocation: Array<[number[], string[], number]>;
     weekNames: string[];
     location: string;
 };
@@ -27,6 +28,7 @@ export const TimetableStreamPopover: FC<Props> = ({
     baseAllocation,
     customAllocation,
 }) => {
+    const [baseWeeks, baseAllocatedUsers, baseNumberOfStaff] = baseAllocation;
     return (
         <>
             <PopoverArrow />
@@ -40,14 +42,27 @@ export const TimetableStreamPopover: FC<Props> = ({
                 </Text>
                 <Divider />
                 <Text>
-                    <strong>Base Allocations:</strong>
+                    <chakra.span fontWeight="bold">
+                        Base Allocations:
+                    </chakra.span>
                 </Text>
                 <Text>
-                    <em>{weeksPatternRepr(weekNames, baseAllocation[0])}:</em>
+                    <chakra.span fontWeight="bold">
+                        {weeksPatternRepr(weekNames, baseWeeks)}:{" "}
+                        <chakra.span
+                            color={
+                                baseAllocatedUsers.length < baseNumberOfStaff
+                                    ? "red.500"
+                                    : "green.500"
+                            }
+                        >
+                            {baseAllocatedUsers.length}/{baseNumberOfStaff}
+                        </chakra.span>
+                    </chakra.span>
                 </Text>
-                {baseAllocation[1].length > 0 ? (
+                {baseAllocatedUsers.length > 0 ? (
                     <UnorderedList>
-                        {baseAllocation[1].map((name, index) => (
+                        {baseAllocatedUsers.map((name, index) => (
                             <ListItem key={index}>{name}</ListItem>
                         ))}
                     </UnorderedList>
@@ -58,24 +73,37 @@ export const TimetableStreamPopover: FC<Props> = ({
                 <Text>
                     <strong>Extra Allocations:</strong>
                 </Text>
-                {customAllocation.map((allocation, key) => (
-                    <Fragment key={key}>
-                        <Text>
-                            <em>
-                                {weeksPatternRepr(weekNames, allocation[0])}:
-                            </em>
-                        </Text>
-                        {allocation[1].length > 0 ? (
-                            <UnorderedList>
-                                {allocation[1].map((name, index) => (
-                                    <ListItem key={index}>{name}</ListItem>
-                                ))}
-                            </UnorderedList>
-                        ) : (
-                            <Text>None</Text>
-                        )}
-                    </Fragment>
-                ))}
+                {customAllocation.map(
+                    ([weeks, allocatedUsers, numberOfStaff], key) => (
+                        <Fragment key={key}>
+                            <Text>
+                                <chakra.span fontStyle="italic">
+                                    {weeksPatternRepr(weekNames, weeks)}:{" "}
+                                    <chakra.span
+                                        fontWeight="bold"
+                                        color={
+                                            allocatedUsers.length <
+                                            numberOfStaff
+                                                ? "red.500"
+                                                : "green.500"
+                                        }
+                                    >
+                                        {allocatedUsers.length}/{numberOfStaff}
+                                    </chakra.span>
+                                </chakra.span>
+                            </Text>
+                            {allocatedUsers.length > 0 ? (
+                                <UnorderedList>
+                                    {allocatedUsers.map((name, index) => (
+                                        <ListItem key={index}>{name}</ListItem>
+                                    ))}
+                                </UnorderedList>
+                            ) : (
+                                <Text>None</Text>
+                            )}
+                        </Fragment>
+                    )
+                )}
             </PopoverBody>
         </>
     );

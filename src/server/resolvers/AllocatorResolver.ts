@@ -21,6 +21,7 @@ import parseISO from "date-fns/parseISO";
 import differenceInSeconds from "date-fns/differenceInSeconds";
 import { Max } from "class-validator";
 import keyBy from "lodash/keyBy";
+import { asyncMap } from "../../utils/array";
 
 type WeekId = number;
 type SessionStreamId = string;
@@ -190,6 +191,7 @@ export class AllocatorResolver {
         const now = new Date();
         const elapsedTime = differenceInSeconds(now, timestampDate);
         const prevTimeoutSeconds = parseInt(prevTimeout);
+        console.log(elapsedTime, prevTimeoutSeconds);
         // If allocation requested/generated a long time ago, make new request
         if (elapsedTime > Math.max(1800, prevTimeoutSeconds * 2)) {
             output.message =
@@ -303,37 +305,44 @@ export class AllocatorResolver {
             })
         );
         const staffInput: StaffInput[] = (
-            await Promise.all(
-                courseStaffs.map(async (courseStaff) => {
-                    const user = await courseStaff.user;
-                    const preference = await courseStaff.preference;
-                    const availabilities = await user.availabilities;
-                    return {
-                        id: user.id,
-                        name: user.name,
-                        new: courseStaff.isNew,
-                        type_preference: preference?.sessionType,
-                        max_contiguous_hours: preference?.maxContigHours,
-                        max_weekly_hours: preference?.maxWeeklyHours,
-                        availabilities: availabilities.reduce<
-                            {
-                                [key in IsoDay]?: Array<TimeslotInput>;
-                            }
-                        >((availabilities, timeSlot) => {
-                            return {
-                                ...availabilities,
-                                [timeSlot.day]: [
-                                    ...(availabilities[timeSlot.day] || []),
-                                    {
-                                        start_time: timeSlot.startTime,
-                                        end_time: timeSlot.endTime,
-                                    },
-                                ],
-                            };
-                        }, {}),
-                    };
-                })
-            )
+            await asyncMap(courseStaffs, async (courseStaff) => {
+                const staffMember = await models.user.getById(
+                    courseStaff.userId,
+                    user
+                );
+                const preference = await models.preference.getIfExists(
+                    { id: courseStaff.preferenceId },
+                    user
+                );
+                const availabilities = await models.timeslot.getByIds(
+                    staffMember.timeslotIds,
+                    user
+                );
+                return {
+                    id: staffMember.id,
+                    name: staffMember.name,
+                    new: courseStaff.isNew,
+                    type_preference: preference?.sessionType,
+                    max_contiguous_hours: preference?.maxContigHours,
+                    max_weekly_hours: preference?.maxWeeklyHours,
+                    availabilities: availabilities.reduce<
+                        {
+                            [key in IsoDay]?: Array<TimeslotInput>;
+                        }
+                    >((availabilities, timeSlot) => {
+                        return {
+                            ...availabilities,
+                            [timeSlot.day]: [
+                                ...(availabilities[timeSlot.day] || []),
+                                {
+                                    start_time: timeSlot.startTime,
+                                    end_time: timeSlot.endTime,
+                                },
+                            ],
+                        };
+                    }, {}),
+                };
+            })
         ).filter((staffInput) => staffIds.includes(staffInput.id));
         const token = uuid();
         const input: AllocatorInput = {

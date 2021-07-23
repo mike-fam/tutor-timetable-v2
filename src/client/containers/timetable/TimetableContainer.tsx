@@ -128,11 +128,13 @@ export const TimetableContainer: React.FC<Props> = () => {
                         sessionStream.allocatedUsers.map(
                             (allocatedUser) => allocatedUser.name
                         ),
+                        sessionStream.numberOfStaff,
                     ],
                     customAllocation: sessionStream.secondaryStreams.map(
                         (stream) => [
                             stream.weeks,
                             stream.allocatedUsers.map((user) => user.name),
+                            stream.numberOfStaff,
                         ]
                     ),
                     weekNames: sessionStream.timetable.term.weekNames,
@@ -155,6 +157,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                         (allocatedUser) => allocatedUser.name
                     ),
                     courseCode: session.sessionStream.timetable.course.code,
+                    numberOfStaff: session.sessionStream.numberOfStaff,
                 })
             );
         });
@@ -183,7 +186,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                                     key={key}
                                     custom={(streamId) =>
                                         streamInfo.get(streamId) || {
-                                            baseAllocation: [[], []],
+                                            baseAllocation: [[], [], 0],
                                             customAllocation: [],
                                             location: "",
                                             courseCode: "",
@@ -200,6 +203,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                                             allocation: [],
                                             location: "",
                                             courseCode: "",
+                                            numberOfStaff: 0,
                                         }
                                     }
                                 />

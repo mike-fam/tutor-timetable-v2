@@ -1,5 +1,6 @@
-import React, { FC, Fragment } from "react";
+import React, { FC } from "react";
 import {
+    chakra,
     ListItem,
     PopoverArrow,
     PopoverBody,
@@ -11,6 +12,7 @@ import {
 type Props = {
     name: string;
     allocation: string[];
+    numberOfStaff: number;
     location: string;
     courseCode: string;
 };
@@ -20,6 +22,7 @@ export const TimetableSessionPopover: FC<Props> = ({
     courseCode,
     location,
     allocation,
+    numberOfStaff,
 }) => {
     return (
         <>
@@ -32,7 +35,18 @@ export const TimetableSessionPopover: FC<Props> = ({
                 <Text>
                     <strong>Location:</strong> {location || "None"}
                 </Text>
-                <strong>Allocations:</strong>
+                <chakra.span fontWeight="bold">
+                    Allocations:{" "}
+                    <chakra.span
+                        color={
+                            allocation.length < numberOfStaff
+                                ? "red.500"
+                                : "green.500"
+                        }
+                    >
+                        {allocation.length}/{numberOfStaff}
+                    </chakra.span>
+                </chakra.span>
                 {allocation.length > 0 ? (
                     <UnorderedList>
                         {allocation.map((name, index) => (

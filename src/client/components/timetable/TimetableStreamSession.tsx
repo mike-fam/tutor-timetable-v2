@@ -7,8 +7,8 @@ import { TimetableStreamPopover } from "./TimetableStreamPopover";
 // weeks[], allocatedTutors[]
 export type StreamCustomSessionProps = {
     courseCode: string;
-    baseAllocation: [number[], string[]];
-    customAllocation: Array<[number[], string[]]>;
+    baseAllocation: [number[], string[], number];
+    customAllocation: Array<[number[], string[], number]>;
     weekNames: string[];
     location: string;
     theme?: SessionTheme;

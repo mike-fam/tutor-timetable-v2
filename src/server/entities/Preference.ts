@@ -1,4 +1,11 @@
-import { Check, Column, Entity, OneToOne, RelationId } from "typeorm";
+import {
+    Check,
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    RelationId,
+} from "typeorm";
 import { SessionType } from "../types/session";
 import { checkFieldValueInEnum, Lazy } from "../utils/query";
 import { CourseStaff } from "./CourseStaff";
@@ -35,6 +42,7 @@ export class Preference
     @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference, {
         lazy: true,
     })
+    @JoinColumn()
     courseStaff: Lazy<CourseStaff>;
 
     @RelationId((preference: Preference) => preference.courseStaff)

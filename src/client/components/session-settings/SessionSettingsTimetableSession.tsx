@@ -9,6 +9,7 @@ import {
 
 export type TimetableCustomSessionProps = {
     allocation: string[];
+    numberOfStaff: number;
     location: string;
     courseCode: string;
     styles: Omit<BoxProps, "onClick" | "_hover" | "id">;
@@ -18,7 +19,7 @@ export type Props = ClickableSessionProps<TimetableCustomSessionProps>;
 
 export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
     const { custom, sessionId, name } = props;
-    const { allocation, location, courseCode } = useMemo(
+    const { allocation, location, courseCode, numberOfStaff } = useMemo(
         () => custom(sessionId),
         [custom, sessionId]
     );
@@ -35,6 +36,7 @@ export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
                     allocation={allocation}
                     location={location}
                     courseCode={courseCode}
+                    numberOfStaff={numberOfStaff}
                 />
             }
         />
