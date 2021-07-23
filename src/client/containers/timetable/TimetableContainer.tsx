@@ -64,13 +64,22 @@ export const TimetableContainer: React.FC<Props> = () => {
                 return [];
             }
             return sessionStreamsData.rootSessionStreams
-                .filter(
-                    (stream) =>
-                        stream.allocatedUsers.some(
-                            (allocatedUser) =>
-                                allocatedUser.username === user.username
-                        ) || !displayMySessionsOnly
-                )
+                .filter((stream) => {
+                    if (!displayMySessionsOnly) {
+                        return true;
+                    }
+                    const allAllocatedUsers = stream.allocatedUsers.map(
+                        (user) => user.username
+                    );
+                    for (const secondaryStream of stream.secondaryStreams) {
+                        allAllocatedUsers.push(
+                            ...secondaryStream.allocatedUsers.map(
+                                (user) => user.username
+                            )
+                        );
+                    }
+                    return allAllocatedUsers.includes(user.username);
+                })
                 .map((sessionStream) => ({
                     id: sessionStream.id,
                     name: sessionStream.name,
