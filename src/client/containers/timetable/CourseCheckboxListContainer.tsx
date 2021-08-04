@@ -28,14 +28,10 @@ export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
         if (!data?.me?.courseStaffs || data.me.courseStaffs.length === 0) {
             return;
         }
+        setCourses((prev) => prev.clear());
         for (const courseStaff of data.me.courseStaffs) {
             const { id, code } = courseStaff.timetable.course;
-            if (courseStaff.timetable.term.id !== chosenTermId) {
-                setCourses((prev) => prev.remove(id));
-                setChosenCourses((prev) =>
-                    prev.remove(courseStaff.timetable.course.id)
-                );
-            } else {
+            if (courseStaff.timetable.term.id === chosenTermId) {
                 setCourses((prev) => prev.set(id, code));
                 setChosenCourses((prev) =>
                     prev.add(courseStaff.timetable.course.id)

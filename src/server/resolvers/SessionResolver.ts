@@ -351,4 +351,30 @@ export class SessionResolver {
     async date(@Root() root: Session): Promise<Date> {
         return root.date();
     }
+
+    @FieldResolver(() => Int)
+    async numberOfStaff(
+        @Root() root: Session,
+        @Ctx() { req, models }: MyContext
+    ): Promise<number> {
+        const { user } = req;
+        const week = root.week;
+        const rootStream = await models.sessionStream.getById(
+            root.sessionStreamId,
+            user
+        );
+        const secondaryStreams = await models.sessionStream.getByIds(
+            rootStream.secondaryStreamIds,
+            user
+        );
+        return (
+            rootStream.numberOfStaff +
+            secondaryStreams.reduce(
+                (numberOfStaff, stream) =>
+                    numberOfStaff +
+                    (stream.weeks.includes(week) ? stream.numberOfStaff : 0),
+                0
+            )
+        );
+    }
 }

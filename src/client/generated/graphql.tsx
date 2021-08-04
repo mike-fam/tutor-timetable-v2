@@ -514,6 +514,7 @@ export type Session = {
   preferredSwapOffers: Array<Offer>;
   acceptedOffers: Array<Offer>;
   date: Scalars['DateTime'];
+  numberOfStaff: Scalars['Int'];
 };
 
 export type SessionStream = {
@@ -1397,10 +1398,10 @@ export type DeleteSessionStreamsMutation = (
 
 export type SessionInfoFragment = (
   { __typename?: 'Session' }
-  & Pick<Session, 'id' | 'location' | 'week'>
+  & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
   & { sessionStream: (
     { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
     & { timetable: (
       { __typename?: 'Timetable' }
       & { term: (
@@ -1428,10 +1429,10 @@ export type GetSessionsQuery = (
   { __typename?: 'Query' }
   & { sessions: Array<(
     { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
+    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1460,10 +1461,10 @@ export type GetMergedSessionsQuery = (
   { __typename?: 'Query' }
   & { mergedSessions: Array<(
     { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
+    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1490,10 +1491,10 @@ export type GetSessionByIdQuery = (
   { __typename?: 'Query' }
   & { sessionById: (
     { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
+    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1520,10 +1521,10 @@ export type UpdateSessionAllocationMutation = (
   { __typename?: 'Mutation' }
   & { updateSessionAllocations: Array<(
     { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
+    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1550,10 +1551,10 @@ export type UpdateSessionMutation = (
   { __typename?: 'Mutation' }
   & { updateSession: Array<(
     { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week'>
+    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
     & { sessionStream: (
       { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day' | 'numberOfStaff'>
+      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
       & { timetable: (
         { __typename?: 'Timetable' }
         & { term: (
@@ -1680,7 +1681,6 @@ export const SessionInfoFragmentDoc = gql`
     startTime
     endTime
     day
-    numberOfStaff
     timetable {
       term {
         id
@@ -1693,6 +1693,7 @@ export const SessionInfoFragmentDoc = gql`
   }
   location
   week
+  numberOfStaff
   allocatedUsers {
     id
     username
@@ -3117,7 +3118,6 @@ export const GetSessionsDocument = gql`
       startTime
       endTime
       day
-      numberOfStaff
       timetable {
         term {
           id
@@ -3130,6 +3130,7 @@ export const GetSessionsDocument = gql`
     }
     location
     week
+    numberOfStaff
     allocatedUsers {
       id
       username
@@ -3176,7 +3177,6 @@ export const GetMergedSessionsDocument = gql`
       startTime
       endTime
       day
-      numberOfStaff
       timetable {
         term {
           id
@@ -3189,6 +3189,7 @@ export const GetMergedSessionsDocument = gql`
     }
     location
     week
+    numberOfStaff
     allocatedUsers {
       id
       username
@@ -3235,7 +3236,6 @@ export const GetSessionByIdDocument = gql`
       startTime
       endTime
       day
-      numberOfStaff
       timetable {
         term {
           id
@@ -3248,6 +3248,7 @@ export const GetSessionByIdDocument = gql`
     }
     location
     week
+    numberOfStaff
     allocatedUsers {
       id
       username
@@ -3292,7 +3293,6 @@ export const UpdateSessionAllocationDocument = gql`
       startTime
       endTime
       day
-      numberOfStaff
       timetable {
         term {
           id
@@ -3305,6 +3305,7 @@ export const UpdateSessionAllocationDocument = gql`
     }
     location
     week
+    numberOfStaff
     allocatedUsers {
       id
       username
@@ -3348,7 +3349,6 @@ export const UpdateSessionDocument = gql`
       startTime
       endTime
       day
-      numberOfStaff
       timetable {
         term {
           id
@@ -3361,6 +3361,7 @@ export const UpdateSessionDocument = gql`
     }
     location
     week
+    numberOfStaff
     allocatedUsers {
       id
       username

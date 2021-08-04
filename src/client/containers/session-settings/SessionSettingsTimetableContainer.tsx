@@ -295,8 +295,7 @@ export const SessionSettingsTimetableContainer: React.FC<Props> = ({
                                                     .course.code || "",
                                             styles: sessionStyle(sessionId),
                                             numberOfStaff:
-                                                session?.sessionStream
-                                                    .numberOfStaff || 0,
+                                                session?.numberOfStaff || 0,
                                         };
                                     }}
                                     onClick={(sessionId) => {

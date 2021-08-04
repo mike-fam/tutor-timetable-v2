@@ -166,7 +166,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                         (allocatedUser) => allocatedUser.name
                     ),
                     courseCode: session.sessionStream.timetable.course.code,
-                    numberOfStaff: session.sessionStream.numberOfStaff,
+                    numberOfStaff: session.numberOfStaff,
                 })
             );
         });
