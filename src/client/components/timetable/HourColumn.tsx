@@ -20,6 +20,7 @@ export const HourColumn: React.FC<Props> = ({
                 endTime - startTime
             }, ${timeslotHeight}px)`}
             gap={gap}
+            mt="auto"
         >
             {range(startTime, endTime).map((hour, key) => (
                 <Box
