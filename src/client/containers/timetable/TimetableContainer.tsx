@@ -23,6 +23,13 @@ import {
     StreamCustomSessionProps,
     TimetableStreamSession,
 } from "../../components/timetable/TimetableStreamSession";
+import { Box, Text } from "@chakra-ui/react";
+import { useTermMetadata } from "../../hooks/useTermMetadata";
+import { addWeeks } from "date-fns";
+import parseISO from "date-fns/parseISO";
+import format from "date-fns/format";
+import setDay from "date-fns/setDay";
+import isToday from "date-fns/isToday";
 
 type Props = {};
 
@@ -37,6 +44,7 @@ export const TimetableContainer: React.FC<Props> = () => {
         useContext(TimetableSettingsContext);
     const { chosenTermId, chosenWeek, chosenCourses } =
         useContext(TimetableContext);
+    const { chosenTerm } = useTermMetadata(chosenTermId);
     const { user } = useContext(UserContext);
     const { fetchSessions, sessionsData } = useContext(SessionsContext);
     const [
@@ -184,43 +192,66 @@ export const TimetableContainer: React.FC<Props> = () => {
                 displayedDays={displayedDays}
                 startTime={dayStartTime}
                 endTime={dayEndTime}
-                renderDay={(dayProps, key) => (
-                    <Day
-                        {...dayProps}
-                        renderTimeSlot={(key) => <TimeSlot key={key} />}
-                        renderSession={(sessionProps, key) =>
-                            chosenWeek === defaultInt ? (
-                                <TimetableStreamSession
-                                    {...sessionProps}
-                                    key={key}
-                                    custom={(streamId) =>
-                                        streamInfo.get(streamId) || {
-                                            baseAllocation: [[], [], 0],
-                                            customAllocation: [],
-                                            location: "",
-                                            courseCode: "",
-                                            weekNames: [],
-                                        }
+                renderDay={(dayProps, key) => {
+                    const date =
+                        chosenTerm &&
+                        setDay(
+                            addWeeks(
+                                parseISO(chosenTerm.startDate),
+                                chosenWeek
+                            ),
+                            dayProps.day
+                        );
+                    return (
+                        <Box key={key}>
+                            {date && (
+                                <Text
+                                    fontWeight={
+                                        isToday(date) ? "bold" : "regular"
                                     }
-                                />
-                            ) : (
-                                <TimetableSession2
-                                    {...sessionProps}
-                                    key={key}
-                                    custom={(sessionId) =>
-                                        sessionInfo.get(sessionId) || {
-                                            allocation: [],
-                                            location: "",
-                                            courseCode: "",
-                                            numberOfStaff: 0,
-                                        }
-                                    }
-                                />
-                            )
-                        }
-                        key={key}
-                    />
-                )}
+                                >
+                                    {format(date, "dd/MM")}
+                                    {isToday(date) && " (Today)"}
+                                </Text>
+                            )}
+                            <Day
+                                {...dayProps}
+                                renderTimeSlot={(key) => <TimeSlot key={key} />}
+                                renderSession={(sessionProps, key) =>
+                                    chosenWeek === defaultInt ? (
+                                        <TimetableStreamSession
+                                            {...sessionProps}
+                                            key={key}
+                                            custom={(streamId) =>
+                                                streamInfo.get(streamId) || {
+                                                    baseAllocation: [[], [], 0],
+                                                    customAllocation: [],
+                                                    location: "",
+                                                    courseCode: "",
+                                                    weekNames: [],
+                                                }
+                                            }
+                                        />
+                                    ) : (
+                                        <TimetableSession2
+                                            {...sessionProps}
+                                            key={key}
+                                            custom={(sessionId) =>
+                                                sessionInfo.get(sessionId) || {
+                                                    allocation: [],
+                                                    location: "",
+                                                    courseCode: "",
+                                                    numberOfStaff: 0,
+                                                }
+                                            }
+                                        />
+                                    )
+                                }
+                                key={key}
+                            />
+                        </Box>
+                    );
+                }}
             />
         </Loadable>
     );
