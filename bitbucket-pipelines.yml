@@ -33,7 +33,7 @@ pipelines:
             - ./scripts/staging/deploy.sh $(cut -d'/' -f2 <<<$BITBUCKET_BRANCH | tr '[:upper:]' '[:lower:]')
   branches:
     development:
-#      - step: *build-test
+      - step: *build-test
       - step:
           name: 'Push changes back to github'
           script:
