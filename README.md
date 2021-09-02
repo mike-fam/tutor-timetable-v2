@@ -91,9 +91,14 @@ to run the docker images. This will run the backend app and the frontend
 app, and populate the database with seed data. If the database is already 
 populated, it will skip this initialisation step.
 
-***Note***: *Do **not** run `docker-compose up` since there is no 
+***Notes***:
+   * Do **not** run `docker-compose up` since there is no 
 `docker-compose.yml` file as of now. If you want to copy one of the 
-compose files over, make sure to not commit it to the repo.*
+compose files over, make sure to not commit it to the repo.
+   * If you fail to run the command and get an exit code of 137, try 
+allocating more memory to the docker images, 4GB should be enough. You
+can do that by going to Docker Desktop > Settings > Resources.
+
 
 The backend app is now available at `localhost` port 5000. The frontend 
 React server is available at `localhost` port 3000. The Postgres server 
