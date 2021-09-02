@@ -41,7 +41,9 @@ git clone git@bitbucket.org:elipse-team/tutor-tt.git && cd tutor-tt
 ### Creating a .env file
 
 We then need to create a new `.env` file to specify the environment 
-variables. Copy the template `.env.example` file to make a new `.env` file
+variables. Copy the template `.env.example` file to make a new `.env` file.
+
+Make sure you use `cp` when updating the env to avoid a symlink.
 
 ```shell
 cp .env.example .env

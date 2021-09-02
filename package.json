@@ -63,7 +63,7 @@
   "proxy": "http://localhost:5000",
   "scripts": {
     "client-dev": "node src/client/scripts/start.js",
-    "server-dev": "ts-node-dev src/server/server.ts --watch src/server/**/*.ts,.env",
+    "server-dev": "yarn migration-run && ts-node-dev src/server/server.ts --watch src/server/**/*.ts,.env",
     "dev": "concurrently \"yarn server-dev\" \"yarn client-dev\"",
     "client-build": "node src/client/scripts/build.js",
     "server-build": "tsc -p tsconfig.server.json",

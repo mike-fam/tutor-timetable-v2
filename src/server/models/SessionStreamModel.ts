@@ -212,6 +212,11 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
                 );
             }
         }
+        // If is admin
+        if (user.isAdmin) {
+            await stream.allocate(...staffUsers);
+            return;
+        }
         // If not course coordinator
         if (!(await user.isCoordinatorOf(course, term))) {
             throw new Error(PERM_ERR);
@@ -363,7 +368,7 @@ export class SessionStreamModel extends BaseModel<SessionStream> {
                 );
             }
         }
-        if (await user.isCoordinatorOf(course, term)) {
+        if (user.isAdmin || (await user.isCoordinatorOf(course, term))) {
             await stream.deallocate(...staff);
         }
         throw new Error(PERM_ERR);

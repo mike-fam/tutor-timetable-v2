@@ -1,34 +1,53 @@
-image: bqmpham/node-postgresql
+image: node:14
+
+definitions:
+  services:
+    postgres-test:
+      image: postgres:13
+      variables:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: tutor-timetable-v2-test
+  steps:
+    - step: &build-test
+        name: Lint, Test and Test Build
+        script:
+          - yarn
+          - yarn eslint-check && yarn prettier-check
+          - yarn build
+          - cp .env.example .env && yarn test
+        services:
+          - postgres-test
 
 pipelines:
+  pull-requests:
+    "**":
+      - step: *build-test
+    "{feature,story,bugfix}/*":
+      - step: *build-test
+      - step:
+          name: 'Deployment to Staging'
+          deployment: staging
+          script:
+            - chmod +x ./scripts/staging/deploy.sh
+            - ./scripts/staging/deploy.sh $(cut -d'/' -f2 <<<$BITBUCKET_BRANCH | tr '[:upper:]' '[:lower:]')
   branches:
     development:
-      - step:
-          name: "Lint, Test and Test Build"
-          script:
-            - yarn
-            - yarn build
-            - yarn eslint-check && yarn prettier-check
-#            - /etc/init.d/postgresql start && cp .env.example .env && yarn test
+#      - step: *build-test
       - step:
           name: 'Push changes back to github'
           script:
             # Note: I know that this is repetitive, but YAML doesn't have anyway to reduce
             # the duplicated code :( https://github.com/yaml/yaml/issues/35
-            - SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
-            - echo "$PRIVATE_KEY_B64" | base64 --decode > "$SSH_PATH/deploy_key"
-            - chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
-            - eval $(ssh-agent)
-            - ssh-add "$SSH_PATH/deploy_key"
+#            - SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
+#            - echo "$PRIVATE_KEY_B64" | base64 --decode > "$SSH_PATH/deploy_key"
+#            - chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
+#            - eval $(ssh-agent)
+#            - ssh-add "$SSH_PATH/deploy_key"
             - git config user.name "Mike Pham"
             - git config user.email "31090859+mike-fam@users.noreply.github.com"
             - git remote add github git@github.com:mike-fam/tutor-timetable-v2.git
             - git push github development:main
-      - step:
-          name: 'Deployment to Staging'
-          deployment: staging
-          script:
-            - echo "Your deployment to staging script goes here..."
       - step:
           name: 'Deployment to Production'
           deployment: production
