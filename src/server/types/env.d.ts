@@ -14,5 +14,6 @@ declare namespace NodeJS {
         NODE_ENV: string;
         MAIL_SERVER: string;
         MAIL_PORT: string;
+        ENABLE_PLAYGROUND: string;
     }
 }

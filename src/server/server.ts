@@ -6,6 +6,12 @@ import { createServer } from "http";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import Redis from "ioredis";
+import { RedisPubSub } from "graphql-redis-subscriptions";
+import { execute, subscribe } from "graphql";
+import {
+    ConnectionContext,
+    SubscriptionServer,
+} from "subscriptions-transport-ws";
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
@@ -58,14 +64,17 @@ import { SessionStreamModel } from "./models/SessionStreamModel";
 import { TimetableModel } from "./models/TimetableModel";
 import { PreferenceModel } from "./models/PreferenceModel";
 import { TermModel } from "./models/TermModel";
-import { RedisPubSub } from "graphql-redis-subscriptions";
 import { NotificationResolver } from "./resolvers/NotificationResolver";
 import { NotificationModel } from "./models/NotificationModel";
+import {
+    ApolloServerPluginLandingPageDisabled,
+    ApolloServerPluginLandingPageGraphQLPlayground,
+} from "apollo-server-core";
 
 const main = async () => {
     await createConnection(ormconfig);
     const app: Express = express();
-    const server = createServer(app);
+    const httpServer = createServer(app);
     const port = process.env.PORT || 5000;
 
     // Automatically serve the index.html file from the build folder
@@ -92,32 +101,34 @@ const main = async () => {
         subscriber: new Redis(options),
     });
 
+    const schema = await buildSchema({
+        resolvers: [
+            AvailabilityResolver,
+            HelloResolver,
+            UserResolver,
+            TermResolver,
+            CourseResolver,
+            CourseStaffResolver,
+            SessionStreamResolver,
+            TimetableResolver,
+            SessionResolver,
+            PreferenceResolver,
+            StaffRequestResolver,
+            AllocatorResolver,
+            OfferResolver,
+            UserSettingsResolver,
+            NotificationResolver,
+        ],
+        pubSub,
+        dateScalarMode: "isoDate",
+        globalMiddlewares: [LoadersInjector],
+        authChecker: ({ context: { req } }: { context: MyContext }) =>
+            !!req.user,
+        orphanedTypes: [StreamInput],
+    });
+
     const apolloServer = new ApolloServer({
-        schema: await buildSchema({
-            resolvers: [
-                AvailabilityResolver,
-                HelloResolver,
-                UserResolver,
-                TermResolver,
-                CourseResolver,
-                CourseStaffResolver,
-                SessionStreamResolver,
-                TimetableResolver,
-                SessionResolver,
-                PreferenceResolver,
-                StaffRequestResolver,
-                AllocatorResolver,
-                OfferResolver,
-                UserSettingsResolver,
-                NotificationResolver,
-            ],
-            pubSub,
-            dateScalarMode: "isoDate",
-            globalMiddlewares: [LoadersInjector],
-            authChecker: ({ context: { req } }: { context: MyContext }) =>
-                !!req.user,
-            orphanedTypes: [StreamInput],
-        }),
+        schema,
         context: ({ req, res }): MyContext => {
             const loaders = {
                 course: createLoader(Course),
@@ -155,13 +166,37 @@ const main = async () => {
                 },
             };
         },
-        subscriptions: {
-            path: "/graphql",
-        },
+        plugins: [
+            {
+                serverWillStart: async () => ({
+                    drainServer: async () => subscriptionServer.close(),
+                }),
+            },
+            process.env.NODE_ENV === "production" &&
+            process.env.ENABLE_PLAYGROUND !== "true"
+                ? ApolloServerPluginLandingPageDisabled()
+                : ApolloServerPluginLandingPageGraphQLPlayground(),
+        ],
     });
 
+    const subscriptionServer = SubscriptionServer.create(
+        {
+            schema,
+            execute,
+            subscribe,
+            onConnect: async (
+                connectionParams: Object,
+                webSocket: WebSocket,
+                context: ConnectionContext
+            ) => {
+                console.log(context);
+            },
+        },
+        { server: httpServer, path: apolloServer.graphqlPath }
+    );
+
+    await apolloServer.start();
     apolloServer.applyMiddleware({ app });
-    apolloServer.installSubscriptionHandlers(server);
 
     // Catch-all route
     app.use("*", (_, res: Response) => {
@@ -170,12 +205,11 @@ const main = async () => {
         });
     });
 
-    server.listen(port, () => {
+    httpServer.listen(port, () => {
         console.log(`Listening on port ${port}`);
     });
 };
 
 main().catch((err) => {
     console.error(err);
-    console.error(err.details);
 });

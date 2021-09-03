@@ -31,6 +31,7 @@ DB_HOST=localhost
 DB_PORT=5434
 DB_NAME=tutor_timetable_v2
 NODE_ENV=production
+ENABLE_PLAYGROUND=true
 "
 
 PUB_KEY=$(ssh-keygen -y -f /opt/atlassian/pipelines/agent/ssh/id_rsa)

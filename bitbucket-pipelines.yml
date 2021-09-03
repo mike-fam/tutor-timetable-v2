@@ -54,10 +54,11 @@ pipelines:
             - ssh-add "$SSH_PATH/deploy_key"
             - >-
               ssh -i "$SSH_PATH/deploy_key" "$USER@$HOST"
-              "cd /var/www/nodejs/tutor-timetable-v2 &&
-              git reset HEAD --hard &&
-              git checkout main &&
-              git pull && yarn &&
+              "cd /var/www/nodejs/ &&
+              rm -rf tutor-timetable-v2 &&
+              git clone git@github.com:mike-fam/tutor-timetable-v2.git &&
+              cd tutor-timetable-v2 &&
+              yarn &&
               rm -rf build &&
               yarn build &&
               yarn migration-run &&
