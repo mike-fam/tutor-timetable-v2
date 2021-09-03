@@ -8,10 +8,7 @@ import { createConnection } from "typeorm";
 import Redis from "ioredis";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { execute, subscribe } from "graphql";
-import {
-    ConnectionContext,
-    SubscriptionServer,
-} from "subscriptions-transport-ws";
+import { SubscriptionServer } from "subscriptions-transport-ws";
 import ormconfig from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
