@@ -37,13 +37,6 @@ pipelines:
       - step:
           name: 'Push changes back to github'
           script:
-            # Note: I know that this is repetitive, but YAML doesn't have anyway to reduce
-            # the duplicated code :( https://github.com/yaml/yaml/issues/35
-#            - SSH_PATH="$HOME/.ssh" && mkdir -p "$SSH_PATH" && touch "$SSH_PATH/known_hosts"
-#            - echo "$PRIVATE_KEY_B64" | base64 --decode > "$SSH_PATH/deploy_key"
-#            - chmod 700 "$SSH_PATH" && chmod 600 "$SSH_PATH/known_hosts" "$SSH_PATH/deploy_key"
-#            - eval $(ssh-agent)
-#            - ssh-add "$SSH_PATH/deploy_key"
             - git config user.name "Mike Pham"
             - git config user.email "31090859+mike-fam@users.noreply.github.com"
             - git remote add github git@github.com:mike-fam/tutor-timetable-v2.git

@@ -134,6 +134,12 @@ setUpDb() {
 			ON CONFLICT (username) DO UPDATE SET "isAdmin" = true;
 		SQL
 	done
+	for i in {1..20}; do
+		psql tutor_timetable_v2 <<-SQL
+			INSERT INTO public."user" (username, name, email, "isAdmin", "settingsId") VALUES ('uqfoobar$i', 'Dummy User $i', 'uqfoobar@uq.edu.au', false, NULL)
+			ON CONFLICT (username) DO NOTHING;
+		SQL
+	done
 	psql tutor_timetable_v2 <<-SQL
 		INSERT INTO public.course (code, title, id) VALUES
 			('CSSE1001', 'Introduction to Software Engineering', '0a2e6669-f8aa-45e9-8aeb-7a92ed495871')
