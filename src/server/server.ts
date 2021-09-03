@@ -184,13 +184,13 @@ const main = async () => {
             schema,
             execute,
             subscribe,
-            onConnect: async (
-                connectionParams: Object,
-                webSocket: WebSocket,
-                context: ConnectionContext
-            ) => {
-                console.log(context);
-            },
+            // onConnect: async (
+            //     connectionParams: Object,
+            //     webSocket: WebSocket,
+            //     context: ConnectionContext
+            // ) => {
+            //     console.log(context);
+            // },
         },
         { server: httpServer, path: apolloServer.graphqlPath }
     );
