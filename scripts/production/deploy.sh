@@ -25,7 +25,7 @@ NODE_ENV=production
 cloneAndDeploy() {
 	cd /var/www/nodejs/
 	rm -rf tutor-timetable-v2
-	git clone "$BITBUCKET_GIT_SSH_ORIGIN"
+	git clone "$BITBUCKET_GIT_SSH_ORIGIN" tutor-timetable-v2
 	cd tutor-timetable-v2
 	echo "$ENV_FILE" > .env
 	yarn
@@ -41,6 +41,8 @@ ssh-add /opt/atlassian/pipelines/agent/ssh/id_rsa
 
 # shellcheck disable=SC2029
 ssh "$UQ_USERNAME@$PRODUCTION_ZONE" "
+	set -ex
 	$(declare -f cloneAndDeploy)
 	$(declare -p UQ_PW BITBUCKET_GIT_SSH_ORIGIN ENV_FILE)
+	cloneAndDeploy
 "
