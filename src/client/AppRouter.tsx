@@ -10,6 +10,7 @@ import { PermissionDenied } from "./PermissionDenied";
 import { SecretRoute } from "./components/helpers/SecretRoute";
 import { Role } from "./generated/graphql";
 import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
+import { AdminPageContainer } from "./containers/timetable-admin/AdminPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -46,6 +47,11 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     path="/session-settings"
                     component={SessionSettingsPageContainer}
                     allowedRoles={[Role.CourseCoordinator]}
+                />
+                <SecretRoute
+                    path="/admin"
+                    component={AdminPageContainer}
+                    allowedRoles={[]}
                 />
             </Switch>
         </BrowserRouter>

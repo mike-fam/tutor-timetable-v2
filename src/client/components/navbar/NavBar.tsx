@@ -41,11 +41,9 @@ export const NavBar: React.FunctionComponent<Props> = () => {
         <>
             <Box w="100%" bgColor={bgColor}>
                 <Flex w="80%" mx="auto" h={14} alignItems="center">
-                    <Box>
-                        <Heading size="md" fontWeight="normal">
-                            Tutor TimeTable
-                        </Heading>
-                    </Box>
+                    <Heading size="md" fontWeight="normal">
+                        Tutor TimeTable
+                    </Heading>
                     <Spacer />
                     <RouterLink to="/" fullHeight>
                         <NavBarMenuButton>Home</NavBarMenuButton>
@@ -90,6 +88,17 @@ export const NavBar: React.FunctionComponent<Props> = () => {
                                         Session Settings
                                     </RouterLink>
                                 </MenuItem>
+                                {user.isAdmin && (
+                                    <MenuItem>
+                                        <RouterLink
+                                            to="/admin"
+                                            fullHeight
+                                            fullWidth
+                                        >
+                                            Top-level Admin
+                                        </RouterLink>
+                                    </MenuItem>
+                                )}
                             </MenuList>
                         </Menu>
                     )}

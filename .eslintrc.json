@@ -8,13 +8,13 @@
         "eslint:recommended",
         "react-app",
         "prettier",
-        "prettier/@typescript-eslint",
-        "prettier/react",
-        "prettier/standard",
         "plugin:jsdoc/recommended"
     ],
     "parser": "@typescript-eslint/parser",
-    "ignorePatterns": ["config/**", "node_modules"],
+    "ignorePatterns": [
+        "config/**",
+        "node_modules"
+    ],
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -25,13 +25,21 @@
     "plugins": [
         "react",
         "@typescript-eslint",
-        "prettier",
-        "jsdoc"
+        "jsdoc",
+        "prettier"
     ],
     "rules": {
-        "semi": ["warn", "always"],
-        "quotes": ["warn", "double"],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "react/prop-types": 0,
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["warn"]
+        "@typescript-eslint/no-unused-vars": [
+            "warn"
+        ],
+        "no-unused-expressions": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 }
