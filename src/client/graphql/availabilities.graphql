@@ -1,0 +1,26 @@
+mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
+    updateAvailabilities(timeslots: $timeslots) {
+        id
+        day
+        startTime
+        endTime
+    }
+}
+
+query MyAvailability {
+    myAvailability {
+        id
+        startTime
+        endTime
+        day
+    }
+}
+
+mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
+    updateAvailabilities(timeslots: $timeslots) {
+        id
+        day
+        startTime
+        endTime
+    }
+}

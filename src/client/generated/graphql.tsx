@@ -699,37 +699,6 @@ export type UpdateDetailsMutation = (
   ) }
 );
 
-export type AcceptOfferMutationVariables = Exact<{
-  offerId: Scalars['String'];
-  offerSessionSwapId?: Maybe<Scalars['String']>;
-}>;
-
-
-export type AcceptOfferMutation = (
-  { __typename?: 'Mutation' }
-  & { acceptOffer: (
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { acceptedSession?: Maybe<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id'>
-    )> }
-  ) }
-);
-
-export type AddAvailabilitiesMutationVariables = Exact<{
-  timeslots: Array<TimeslotInput>;
-}>;
-
-
-export type AddAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
-  )> }
-);
-
 export type RequestAllocationMutationVariables = Exact<{
   requestAllocationInput: RequestAllocationInput;
 }>;
@@ -752,6 +721,43 @@ export type RequestAllocationMutation = (
       )> }
     )> }
   ) }
+);
+
+export type AddAvailabilitiesMutationVariables = Exact<{
+  timeslots: Array<TimeslotInput>;
+}>;
+
+
+export type AddAvailabilitiesMutation = (
+  { __typename?: 'Mutation' }
+  & { updateAvailabilities: Array<(
+    { __typename?: 'Timeslot' }
+    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+  )> }
+);
+
+export type MyAvailabilityQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyAvailabilityQuery = (
+  { __typename?: 'Query' }
+  & { myAvailability: Array<(
+    { __typename?: 'Timeslot' }
+    & Pick<Timeslot, 'id' | 'startTime' | 'endTime' | 'day'>
+  )> }
+);
+
+export type UpdateAvailabilitiesMutationVariables = Exact<{
+  timeslots: Array<TimeslotInput>;
+}>;
+
+
+export type UpdateAvailabilitiesMutation = (
+  { __typename?: 'Mutation' }
+  & { updateAvailabilities: Array<(
+    { __typename?: 'Timeslot' }
+    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
+  )> }
 );
 
 export type CourseQueryVariables = Exact<{
@@ -812,6 +818,81 @@ export type RemoveCourseStaffMutation = (
   & Pick<Mutation, 'removeCourseStaff'>
 );
 
+export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HelloQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'hello'>
+);
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'name' | 'email' | 'isAdmin'>
+    & { courseStaffs: Array<(
+      { __typename?: 'CourseStaff' }
+      & Pick<CourseStaff, 'role'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code'>
+        ), term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ) }
+      ) }
+    )> }
+  ) }
+);
+
+export type MyCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyCoursesQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'User' }
+    & { courseStaffs: Array<(
+      { __typename?: 'CourseStaff' }
+      & Pick<CourseStaff, 'role'>
+      & { timetable: (
+        { __typename?: 'Timetable' }
+        & { course: (
+          { __typename?: 'Course' }
+          & Pick<Course, 'id' | 'code' | 'title'>
+        ), term: (
+          { __typename?: 'Term' }
+          & Pick<Term, 'id'>
+        ) }
+      ) }
+    )> }
+  ) }
+);
+
+export type AcceptOfferMutationVariables = Exact<{
+  offerId: Scalars['String'];
+  offerSessionSwapId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type AcceptOfferMutation = (
+  { __typename?: 'Mutation' }
+  & { acceptOffer: (
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { acceptedSession?: Maybe<(
+      { __typename?: 'Session' }
+      & Pick<Session, 'id'>
+    )> }
+  ) }
+);
+
 export type CreateOfferMutationVariables = Exact<{
   offerDetails: OfferInputType;
 }>;
@@ -832,6 +913,113 @@ export type CreateOfferMutation = (
         & Pick<SessionStream, 'id' | 'name'>
       ) }
     )> }
+  ) }
+);
+
+export type GetOfferByIdQueryVariables = Exact<{
+  offerId: Scalars['String'];
+}>;
+
+
+export type GetOfferByIdQuery = (
+  { __typename?: 'Query' }
+  & { getOfferById: (
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username'>
+    ), preferences: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name'>
+      ) }
+    )>, request: (
+      { __typename?: 'StaffRequest' }
+      & Pick<StaffRequest, 'id' | 'status'>
+      & { requester: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ), swapPreference: Array<(
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'id' | 'name'>
+        ) }
+      )>, session: (
+        { __typename?: 'Session' }
+        & { sessionStream: (
+          { __typename?: 'SessionStream' }
+          & Pick<SessionStream, 'id' | 'name'>
+        ) }
+      ) }
+    ) }
+  ) }
+);
+
+export type GetOffersByRequestIdQueryVariables = Exact<{
+  requestId: Scalars['String'];
+}>;
+
+
+export type GetOffersByRequestIdQuery = (
+  { __typename?: 'Query' }
+  & { getOffersByRequestId: Array<(
+    { __typename?: 'Offer' }
+    & Pick<Offer, 'id'>
+    & { preferences: Array<(
+      { __typename?: 'Session' }
+      & Pick<Session, 'id' | 'week'>
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
+      ) }
+    )>, user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'name'>
+    ) }
+  )> }
+);
+
+export type MyPreferenceQueryVariables = Exact<{
+  preferenceFind: CourseTermIdInput;
+}>;
+
+
+export type MyPreferenceQuery = (
+  { __typename?: 'Query' }
+  & { myPreference?: Maybe<(
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+    & { courseStaff: (
+      { __typename?: 'CourseStaff' }
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'username'>
+      ) }
+    ) }
+  )> }
+);
+
+export type PreferenceByUsernameQueryVariables = Exact<{
+  courseTermId: CourseTermIdInput;
+  username: Scalars['String'];
+}>;
+
+
+export type PreferenceByUsernameQuery = (
+  { __typename?: 'Query' }
+  & { preferenceByUsername: (
+    { __typename?: 'Preference' }
+    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+    & { courseStaff: (
+      { __typename?: 'CourseStaff' }
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'username'>
+      ) }
+    ) }
   ) }
 );
 
@@ -899,70 +1087,30 @@ export type DeleteRequestMutation = (
   & Pick<Mutation, 'deleteRequestById'>
 );
 
-export type GetOfferByIdQueryVariables = Exact<{
-  offerId: Scalars['String'];
+export type EditRequestMutationVariables = Exact<{
+  requestDetails: EditRequestFormInputType;
 }>;
 
 
-export type GetOfferByIdQuery = (
-  { __typename?: 'Query' }
-  & { getOfferById: (
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    ), preferences: Array<(
+export type EditRequestMutation = (
+  { __typename?: 'Mutation' }
+  & { editExistingRequest: (
+    { __typename?: 'StaffRequest' }
+    & Pick<StaffRequest, 'id' | 'title' | 'description' | 'status' | 'type'>
+    & { session: (
       { __typename?: 'Session' }
       & { sessionStream: (
         { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name'>
+        & Pick<SessionStream, 'name'>
       ) }
-    )>, request: (
-      { __typename?: 'StaffRequest' }
-      & Pick<StaffRequest, 'id' | 'status'>
-      & { requester: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ), swapPreference: Array<(
-        { __typename?: 'Session' }
-        & { sessionStream: (
-          { __typename?: 'SessionStream' }
-          & Pick<SessionStream, 'id' | 'name'>
-        ) }
-      )>, session: (
-        { __typename?: 'Session' }
-        & { sessionStream: (
-          { __typename?: 'SessionStream' }
-          & Pick<SessionStream, 'id' | 'name'>
-        ) }
+    ), swapPreference: Array<(
+      { __typename?: 'Session' }
+      & { sessionStream: (
+        { __typename?: 'SessionStream' }
+        & Pick<SessionStream, 'name'>
       ) }
-    ) }
+    )> }
   ) }
-);
-
-export type GetOffersByRequestIdQueryVariables = Exact<{
-  requestId: Scalars['String'];
-}>;
-
-
-export type GetOffersByRequestIdQuery = (
-  { __typename?: 'Query' }
-  & { getOffersByRequestId: Array<(
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { preferences: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      ) }
-    )>, user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ) }
-  )> }
 );
 
 export type GetRequestByIdQueryVariables = Exact<{
@@ -1123,115 +1271,6 @@ export type GetRequestsByTermIdQuery = (
       ) }
     )> }
   )> }
-);
-
-export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type HelloQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
-);
-
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MeQuery = (
-  { __typename?: 'Query' }
-  & { me: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'email' | 'isAdmin'>
-    & { courseStaffs: Array<(
-      { __typename?: 'CourseStaff' }
-      & Pick<CourseStaff, 'role'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ), term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ) }
-      ) }
-    )> }
-  ) }
-);
-
-export type MyAvailabilityQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MyAvailabilityQuery = (
-  { __typename?: 'Query' }
-  & { myAvailability: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'startTime' | 'endTime' | 'day'>
-  )> }
-);
-
-export type MyCoursesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MyCoursesQuery = (
-  { __typename?: 'Query' }
-  & { me: (
-    { __typename?: 'User' }
-    & { courseStaffs: Array<(
-      { __typename?: 'CourseStaff' }
-      & Pick<CourseStaff, 'role'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code' | 'title'>
-        ), term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ) }
-      ) }
-    )> }
-  ) }
-);
-
-export type MyPreferenceQueryVariables = Exact<{
-  preferenceFind: CourseTermIdInput;
-}>;
-
-
-export type MyPreferenceQuery = (
-  { __typename?: 'Query' }
-  & { myPreference?: Maybe<(
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-    & { courseStaff: (
-      { __typename?: 'CourseStaff' }
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
-    ) }
-  )> }
-);
-
-export type PreferenceByUsernameQueryVariables = Exact<{
-  courseTermId: CourseTermIdInput;
-  username: Scalars['String'];
-}>;
-
-
-export type PreferenceByUsernameQuery = (
-  { __typename?: 'Query' }
-  & { preferenceByUsername: (
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-    & { courseStaff: (
-      { __typename?: 'CourseStaff' }
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
-    ) }
-  ) }
 );
 
 export type GetSessionStreamsQueryVariables = Exact<{
@@ -1619,19 +1658,6 @@ export type TermQuery = (
   ) }
 );
 
-export type UpdateAvailabilitiesMutationVariables = Exact<{
-  timeslots: Array<TimeslotInput>;
-}>;
-
-
-export type UpdateAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
-  )> }
-);
-
 export type UpdatePreferenceMutationVariables = Exact<{
   preferenceFind: CourseTermIdInput;
   preference: PreferenceInput;
@@ -1643,32 +1669,6 @@ export type UpdatePreferenceMutation = (
   & { updatePreference: (
     { __typename?: 'Preference' }
     & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-  ) }
-);
-
-export type EditRequestMutationVariables = Exact<{
-  requestDetails: EditRequestFormInputType;
-}>;
-
-
-export type EditRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { editExistingRequest: (
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'description' | 'status' | 'type'>
-    & { session: (
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'name'>
-      ) }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'name'>
-      ) }
-    )> }
   ) }
 );
 
@@ -1735,77 +1735,6 @@ export function useUpdateDetailsMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateDetailsMutationHookResult = ReturnType<typeof useUpdateDetailsMutation>;
 export type UpdateDetailsMutationResult = Apollo.MutationResult<UpdateDetailsMutation>;
 export type UpdateDetailsMutationOptions = Apollo.BaseMutationOptions<UpdateDetailsMutation, UpdateDetailsMutationVariables>;
-export const AcceptOfferDocument = gql`
-    mutation AcceptOffer($offerId: String!, $offerSessionSwapId: String) {
-  acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId) {
-    id
-    acceptedSession {
-      id
-    }
-  }
-}
-    `;
-export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation, AcceptOfferMutationVariables>;
-
-/**
- * __useAcceptOfferMutation__
- *
- * To run a mutation, you first call `useAcceptOfferMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAcceptOfferMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [acceptOfferMutation, { data, loading, error }] = useAcceptOfferMutation({
- *   variables: {
- *      offerId: // value for 'offerId'
- *      offerSessionSwapId: // value for 'offerSessionSwapId'
- *   },
- * });
- */
-export function useAcceptOfferMutation(baseOptions?: Apollo.MutationHookOptions<AcceptOfferMutation, AcceptOfferMutationVariables>) {
-        return Apollo.useMutation<AcceptOfferMutation, AcceptOfferMutationVariables>(AcceptOfferDocument, baseOptions);
-      }
-export type AcceptOfferMutationHookResult = ReturnType<typeof useAcceptOfferMutation>;
-export type AcceptOfferMutationResult = Apollo.MutationResult<AcceptOfferMutation>;
-export type AcceptOfferMutationOptions = Apollo.BaseMutationOptions<AcceptOfferMutation, AcceptOfferMutationVariables>;
-export const AddAvailabilitiesDocument = gql`
-    mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
-  updateAvailabilities(timeslots: $timeslots) {
-    id
-    day
-    startTime
-    endTime
-  }
-}
-    `;
-export type AddAvailabilitiesMutationFn = Apollo.MutationFunction<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
-
-/**
- * __useAddAvailabilitiesMutation__
- *
- * To run a mutation, you first call `useAddAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddAvailabilitiesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addAvailabilitiesMutation, { data, loading, error }] = useAddAvailabilitiesMutation({
- *   variables: {
- *      timeslots: // value for 'timeslots'
- *   },
- * });
- */
-export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>) {
-        return Apollo.useMutation<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>(AddAvailabilitiesDocument, baseOptions);
-      }
-export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
-export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
-export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
 export const RequestAllocationDocument = gql`
     mutation RequestAllocation($requestAllocationInput: RequestAllocationInput!) {
   requestAllocation(requestAllocationInput: $requestAllocationInput) {
@@ -1849,6 +1778,111 @@ export function useRequestAllocationMutation(baseOptions?: Apollo.MutationHookOp
 export type RequestAllocationMutationHookResult = ReturnType<typeof useRequestAllocationMutation>;
 export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
 export type RequestAllocationMutationOptions = Apollo.BaseMutationOptions<RequestAllocationMutation, RequestAllocationMutationVariables>;
+export const AddAvailabilitiesDocument = gql`
+    mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
+  updateAvailabilities(timeslots: $timeslots) {
+    id
+    day
+    startTime
+    endTime
+  }
+}
+    `;
+export type AddAvailabilitiesMutationFn = Apollo.MutationFunction<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
+
+/**
+ * __useAddAvailabilitiesMutation__
+ *
+ * To run a mutation, you first call `useAddAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddAvailabilitiesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addAvailabilitiesMutation, { data, loading, error }] = useAddAvailabilitiesMutation({
+ *   variables: {
+ *      timeslots: // value for 'timeslots'
+ *   },
+ * });
+ */
+export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>) {
+        return Apollo.useMutation<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>(AddAvailabilitiesDocument, baseOptions);
+      }
+export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
+export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
+export type AddAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>;
+export const MyAvailabilityDocument = gql`
+    query MyAvailability {
+  myAvailability {
+    id
+    startTime
+    endTime
+    day
+  }
+}
+    `;
+
+/**
+ * __useMyAvailabilityQuery__
+ *
+ * To run a query within a React component, call `useMyAvailabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyAvailabilityQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyAvailabilityQuery(baseOptions?: Apollo.QueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
+        return Apollo.useQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
+      }
+export function useMyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
+          return Apollo.useLazyQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
+        }
+export type MyAvailabilityQueryHookResult = ReturnType<typeof useMyAvailabilityQuery>;
+export type MyAvailabilityLazyQueryHookResult = ReturnType<typeof useMyAvailabilityLazyQuery>;
+export type MyAvailabilityQueryResult = Apollo.QueryResult<MyAvailabilityQuery, MyAvailabilityQueryVariables>;
+export const UpdateAvailabilitiesDocument = gql`
+    mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
+  updateAvailabilities(timeslots: $timeslots) {
+    id
+    day
+    startTime
+    endTime
+  }
+}
+    `;
+export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
+
+/**
+ * __useUpdateAvailabilitiesMutation__
+ *
+ * To run a mutation, you first call `useUpdateAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAvailabilitiesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAvailabilitiesMutation, { data, loading, error }] = useUpdateAvailabilitiesMutation({
+ *   variables: {
+ *      timeslots: // value for 'timeslots'
+ *   },
+ * });
+ */
+export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>) {
+        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, baseOptions);
+      }
+export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
+export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
+export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
 export const CourseDocument = gql`
     query Course($courseId: String!) {
   course(courseId: $courseId) {
@@ -1993,6 +2027,164 @@ export function useRemoveCourseStaffMutation(baseOptions?: Apollo.MutationHookOp
 export type RemoveCourseStaffMutationHookResult = ReturnType<typeof useRemoveCourseStaffMutation>;
 export type RemoveCourseStaffMutationResult = Apollo.MutationResult<RemoveCourseStaffMutation>;
 export type RemoveCourseStaffMutationOptions = Apollo.BaseMutationOptions<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>;
+export const HelloDocument = gql`
+    query Hello {
+  hello
+}
+    `;
+
+/**
+ * __useHelloQuery__
+ *
+ * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHelloQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
+        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+      }
+export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+        }
+export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
+export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
+export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    name
+    email
+    isAdmin
+    courseStaffs {
+      timetable {
+        course {
+          id
+          code
+        }
+        term {
+          id
+        }
+      }
+      role
+    }
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const MyCoursesDocument = gql`
+    query MyCourses {
+  me {
+    courseStaffs {
+      timetable {
+        course {
+          id
+          code
+          title
+        }
+        term {
+          id
+        }
+      }
+      role
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyCoursesQuery__
+ *
+ * To run a query within a React component, call `useMyCoursesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyCoursesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyCoursesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyCoursesQuery(baseOptions?: Apollo.QueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
+        return Apollo.useQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
+      }
+export function useMyCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
+          return Apollo.useLazyQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
+        }
+export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
+export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQuery>;
+export type MyCoursesQueryResult = Apollo.QueryResult<MyCoursesQuery, MyCoursesQueryVariables>;
+export const AcceptOfferDocument = gql`
+    mutation AcceptOffer($offerId: String!, $offerSessionSwapId: String) {
+  acceptOffer(offerId: $offerId, offerSessionSwapId: $offerSessionSwapId) {
+    id
+    acceptedSession {
+      id
+    }
+  }
+}
+    `;
+export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation, AcceptOfferMutationVariables>;
+
+/**
+ * __useAcceptOfferMutation__
+ *
+ * To run a mutation, you first call `useAcceptOfferMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptOfferMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptOfferMutation, { data, loading, error }] = useAcceptOfferMutation({
+ *   variables: {
+ *      offerId: // value for 'offerId'
+ *      offerSessionSwapId: // value for 'offerSessionSwapId'
+ *   },
+ * });
+ */
+export function useAcceptOfferMutation(baseOptions?: Apollo.MutationHookOptions<AcceptOfferMutation, AcceptOfferMutationVariables>) {
+        return Apollo.useMutation<AcceptOfferMutation, AcceptOfferMutationVariables>(AcceptOfferDocument, baseOptions);
+      }
+export type AcceptOfferMutationHookResult = ReturnType<typeof useAcceptOfferMutation>;
+export type AcceptOfferMutationResult = Apollo.MutationResult<AcceptOfferMutation>;
+export type AcceptOfferMutationOptions = Apollo.BaseMutationOptions<AcceptOfferMutation, AcceptOfferMutationVariables>;
 export const CreateOfferDocument = gql`
     mutation CreateOffer($offerDetails: OfferInputType!) {
   createOffer(offerDetails: $offerDetails) {
@@ -2035,6 +2227,199 @@ export function useCreateOfferMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOfferMutationHookResult = ReturnType<typeof useCreateOfferMutation>;
 export type CreateOfferMutationResult = Apollo.MutationResult<CreateOfferMutation>;
 export type CreateOfferMutationOptions = Apollo.BaseMutationOptions<CreateOfferMutation, CreateOfferMutationVariables>;
+export const GetOfferByIdDocument = gql`
+    query getOfferById($offerId: String!) {
+  getOfferById(offerId: $offerId) {
+    id
+    user {
+      id
+      username
+    }
+    preferences {
+      sessionStream {
+        id
+        name
+      }
+    }
+    request {
+      id
+      requester {
+        id
+        username
+      }
+      swapPreference {
+        sessionStream {
+          id
+          name
+        }
+      }
+      status
+      session {
+        sessionStream {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOfferByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOfferByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOfferByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOfferByIdQuery({
+ *   variables: {
+ *      offerId: // value for 'offerId'
+ *   },
+ * });
+ */
+export function useGetOfferByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
+        return Apollo.useQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+      }
+export function useGetOfferByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+        }
+export type GetOfferByIdQueryHookResult = ReturnType<typeof useGetOfferByIdQuery>;
+export type GetOfferByIdLazyQueryHookResult = ReturnType<typeof useGetOfferByIdLazyQuery>;
+export type GetOfferByIdQueryResult = Apollo.QueryResult<GetOfferByIdQuery, GetOfferByIdQueryVariables>;
+export const GetOffersByRequestIdDocument = gql`
+    query getOffersByRequestId($requestId: String!) {
+  getOffersByRequestId(requestId: $requestId) {
+    id
+    preferences {
+      id
+      sessionStream {
+        id
+        name
+        startTime
+        endTime
+        day
+      }
+      week
+    }
+    user {
+      id
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOffersByRequestIdQuery__
+ *
+ * To run a query within a React component, call `useGetOffersByRequestIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOffersByRequestIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOffersByRequestIdQuery({
+ *   variables: {
+ *      requestId: // value for 'requestId'
+ *   },
+ * });
+ */
+export function useGetOffersByRequestIdQuery(baseOptions: Apollo.QueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
+        return Apollo.useQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+      }
+export function useGetOffersByRequestIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+        }
+export type GetOffersByRequestIdQueryHookResult = ReturnType<typeof useGetOffersByRequestIdQuery>;
+export type GetOffersByRequestIdLazyQueryHookResult = ReturnType<typeof useGetOffersByRequestIdLazyQuery>;
+export type GetOffersByRequestIdQueryResult = Apollo.QueryResult<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>;
+export const MyPreferenceDocument = gql`
+    query MyPreference($preferenceFind: CourseTermIdInput!) {
+  myPreference(preferenceFindInput: $preferenceFind) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+    courseStaff {
+      user {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyPreferenceQuery__
+ *
+ * To run a query within a React component, call `useMyPreferenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyPreferenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyPreferenceQuery({
+ *   variables: {
+ *      preferenceFind: // value for 'preferenceFind'
+ *   },
+ * });
+ */
+export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+      }
+export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
+          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+        }
+export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
+export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
+export type MyPreferenceQueryResult = Apollo.QueryResult<MyPreferenceQuery, MyPreferenceQueryVariables>;
+export const PreferenceByUsernameDocument = gql`
+    query PreferenceByUsername($courseTermId: CourseTermIdInput!, $username: String!) {
+  preferenceByUsername(courseTermId: $courseTermId, username: $username) {
+    maxContigHours
+    maxWeeklyHours
+    sessionType
+    courseStaff {
+      user {
+        username
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePreferenceByUsernameQuery__
+ *
+ * To run a query within a React component, call `usePreferenceByUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePreferenceByUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePreferenceByUsernameQuery({
+ *   variables: {
+ *      courseTermId: // value for 'courseTermId'
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function usePreferenceByUsernameQuery(baseOptions: Apollo.QueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
+        return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+      }
+export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
+          return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+        }
+export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
+export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
+export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>;
 export const CreateRequestDocument = gql`
     mutation CreateRequest($requestDetails: RequestFormInputType!) {
   createRequest(requestDetails: $requestDetails) {
@@ -2154,118 +2539,52 @@ export function useDeleteRequestMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteRequestMutationHookResult = ReturnType<typeof useDeleteRequestMutation>;
 export type DeleteRequestMutationResult = Apollo.MutationResult<DeleteRequestMutation>;
 export type DeleteRequestMutationOptions = Apollo.BaseMutationOptions<DeleteRequestMutation, DeleteRequestMutationVariables>;
-export const GetOfferByIdDocument = gql`
-    query getOfferById($offerId: String!) {
-  getOfferById(offerId: $offerId) {
+export const EditRequestDocument = gql`
+    mutation EditRequest($requestDetails: EditRequestFormInputType!) {
+  editExistingRequest(requestDetails: $requestDetails) {
     id
-    user {
-      id
-      username
-    }
-    preferences {
+    title
+    description
+    status
+    type
+    session {
       sessionStream {
-        id
         name
       }
     }
-    request {
-      id
-      requester {
-        id
-        username
-      }
-      swapPreference {
-        sessionStream {
-          id
-          name
-        }
-      }
-      status
-      session {
-        sessionStream {
-          id
-          name
-        }
+    swapPreference {
+      sessionStream {
+        name
       }
     }
   }
 }
     `;
+export type EditRequestMutationFn = Apollo.MutationFunction<EditRequestMutation, EditRequestMutationVariables>;
 
 /**
- * __useGetOfferByIdQuery__
+ * __useEditRequestMutation__
  *
- * To run a query within a React component, call `useGetOfferByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOfferByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useEditRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useGetOfferByIdQuery({
+ * const [editRequestMutation, { data, loading, error }] = useEditRequestMutation({
  *   variables: {
- *      offerId: // value for 'offerId'
+ *      requestDetails: // value for 'requestDetails'
  *   },
  * });
  */
-export function useGetOfferByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
-        return Apollo.useQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+export function useEditRequestMutation(baseOptions?: Apollo.MutationHookOptions<EditRequestMutation, EditRequestMutationVariables>) {
+        return Apollo.useMutation<EditRequestMutation, EditRequestMutationVariables>(EditRequestDocument, baseOptions);
       }
-export function useGetOfferByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
-        }
-export type GetOfferByIdQueryHookResult = ReturnType<typeof useGetOfferByIdQuery>;
-export type GetOfferByIdLazyQueryHookResult = ReturnType<typeof useGetOfferByIdLazyQuery>;
-export type GetOfferByIdQueryResult = Apollo.QueryResult<GetOfferByIdQuery, GetOfferByIdQueryVariables>;
-export const GetOffersByRequestIdDocument = gql`
-    query getOffersByRequestId($requestId: String!) {
-  getOffersByRequestId(requestId: $requestId) {
-    id
-    preferences {
-      id
-      sessionStream {
-        id
-        name
-        startTime
-        endTime
-        day
-      }
-      week
-    }
-    user {
-      id
-      username
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useGetOffersByRequestIdQuery__
- *
- * To run a query within a React component, call `useGetOffersByRequestIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOffersByRequestIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetOffersByRequestIdQuery({
- *   variables: {
- *      requestId: // value for 'requestId'
- *   },
- * });
- */
-export function useGetOffersByRequestIdQuery(baseOptions: Apollo.QueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
-        return Apollo.useQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
-      }
-export function useGetOffersByRequestIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
-        }
-export type GetOffersByRequestIdQueryHookResult = ReturnType<typeof useGetOffersByRequestIdQuery>;
-export type GetOffersByRequestIdLazyQueryHookResult = ReturnType<typeof useGetOffersByRequestIdLazyQuery>;
-export type GetOffersByRequestIdQueryResult = Apollo.QueryResult<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>;
+export type EditRequestMutationHookResult = ReturnType<typeof useEditRequestMutation>;
+export type EditRequestMutationResult = Apollo.MutationResult<EditRequestMutation>;
+export type EditRequestMutationOptions = Apollo.BaseMutationOptions<EditRequestMutation, EditRequestMutationVariables>;
 export const GetRequestByIdDocument = gql`
     query getRequestById($requestId: String!) {
   getRequestById(requestId: $requestId) {
@@ -2535,244 +2854,6 @@ export function useGetRequestsByTermIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetRequestsByTermIdQueryHookResult = ReturnType<typeof useGetRequestsByTermIdQuery>;
 export type GetRequestsByTermIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByTermIdLazyQuery>;
 export type GetRequestsByTermIdQueryResult = Apollo.QueryResult<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>;
-export const HelloDocument = gql`
-    query Hello {
-  hello
-}
-    `;
-
-/**
- * __useHelloQuery__
- *
- * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
- * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useHelloQuery({
- *   variables: {
- *   },
- * });
- */
-export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
-        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
-      }
-export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
-          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
-        }
-export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
-export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
-export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
-export const MeDocument = gql`
-    query Me {
-  me {
-    id
-    username
-    name
-    email
-    isAdmin
-    courseStaffs {
-      timetable {
-        course {
-          id
-          code
-        }
-        term {
-          id
-        }
-      }
-      role
-    }
-  }
-}
-    `;
-
-/**
- * __useMeQuery__
- *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-      }
-export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-        }
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const MyAvailabilityDocument = gql`
-    query MyAvailability {
-  myAvailability {
-    id
-    startTime
-    endTime
-    day
-  }
-}
-    `;
-
-/**
- * __useMyAvailabilityQuery__
- *
- * To run a query within a React component, call `useMyAvailabilityQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyAvailabilityQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMyAvailabilityQuery(baseOptions?: Apollo.QueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
-        return Apollo.useQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
-      }
-export function useMyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
-          return Apollo.useLazyQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
-        }
-export type MyAvailabilityQueryHookResult = ReturnType<typeof useMyAvailabilityQuery>;
-export type MyAvailabilityLazyQueryHookResult = ReturnType<typeof useMyAvailabilityLazyQuery>;
-export type MyAvailabilityQueryResult = Apollo.QueryResult<MyAvailabilityQuery, MyAvailabilityQueryVariables>;
-export const MyCoursesDocument = gql`
-    query MyCourses {
-  me {
-    courseStaffs {
-      timetable {
-        course {
-          id
-          code
-          title
-        }
-        term {
-          id
-        }
-      }
-      role
-    }
-  }
-}
-    `;
-
-/**
- * __useMyCoursesQuery__
- *
- * To run a query within a React component, call `useMyCoursesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyCoursesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyCoursesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMyCoursesQuery(baseOptions?: Apollo.QueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
-        return Apollo.useQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
-      }
-export function useMyCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
-          return Apollo.useLazyQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
-        }
-export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
-export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQuery>;
-export type MyCoursesQueryResult = Apollo.QueryResult<MyCoursesQuery, MyCoursesQueryVariables>;
-export const MyPreferenceDocument = gql`
-    query MyPreference($preferenceFind: CourseTermIdInput!) {
-  myPreference(preferenceFindInput: $preferenceFind) {
-    maxContigHours
-    maxWeeklyHours
-    sessionType
-    courseStaff {
-      user {
-        username
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useMyPreferenceQuery__
- *
- * To run a query within a React component, call `useMyPreferenceQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyPreferenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyPreferenceQuery({
- *   variables: {
- *      preferenceFind: // value for 'preferenceFind'
- *   },
- * });
- */
-export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
-        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
-      }
-export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
-          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
-        }
-export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
-export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
-export type MyPreferenceQueryResult = Apollo.QueryResult<MyPreferenceQuery, MyPreferenceQueryVariables>;
-export const PreferenceByUsernameDocument = gql`
-    query PreferenceByUsername($courseTermId: CourseTermIdInput!, $username: String!) {
-  preferenceByUsername(courseTermId: $courseTermId, username: $username) {
-    maxContigHours
-    maxWeeklyHours
-    sessionType
-    courseStaff {
-      user {
-        username
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __usePreferenceByUsernameQuery__
- *
- * To run a query within a React component, call `usePreferenceByUsernameQuery` and pass it any options that fit your needs.
- * When your component renders, `usePreferenceByUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePreferenceByUsernameQuery({
- *   variables: {
- *      courseTermId: // value for 'courseTermId'
- *      username: // value for 'username'
- *   },
- * });
- */
-export function usePreferenceByUsernameQuery(baseOptions: Apollo.QueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-        return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
-      }
-export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-          return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
-        }
-export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
-export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
-export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>;
 export const GetSessionStreamsDocument = gql`
     query GetSessionStreams($termId: String!, $courseIds: [String!]!) {
   sessionStreams(courseIds: $courseIds, termId: $termId) {
@@ -3535,41 +3616,6 @@ export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQ
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
-export const UpdateAvailabilitiesDocument = gql`
-    mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
-  updateAvailabilities(timeslots: $timeslots) {
-    id
-    day
-    startTime
-    endTime
-  }
-}
-    `;
-export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
-
-/**
- * __useUpdateAvailabilitiesMutation__
- *
- * To run a mutation, you first call `useUpdateAvailabilitiesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateAvailabilitiesMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateAvailabilitiesMutation, { data, loading, error }] = useUpdateAvailabilitiesMutation({
- *   variables: {
- *      timeslots: // value for 'timeslots'
- *   },
- * });
- */
-export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>) {
-        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, baseOptions);
-      }
-export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
-export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
-export type UpdateAvailabilitiesMutationOptions = Apollo.BaseMutationOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>;
 export const UpdatePreferenceDocument = gql`
     mutation UpdatePreference($preferenceFind: CourseTermIdInput!, $preference: PreferenceInput!) {
   updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
@@ -3605,49 +3651,3 @@ export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
 export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
 export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
-export const EditRequestDocument = gql`
-    mutation EditRequest($requestDetails: EditRequestFormInputType!) {
-  editExistingRequest(requestDetails: $requestDetails) {
-    id
-    title
-    description
-    status
-    type
-    session {
-      sessionStream {
-        name
-      }
-    }
-    swapPreference {
-      sessionStream {
-        name
-      }
-    }
-  }
-}
-    `;
-export type EditRequestMutationFn = Apollo.MutationFunction<EditRequestMutation, EditRequestMutationVariables>;
-
-/**
- * __useEditRequestMutation__
- *
- * To run a mutation, you first call `useEditRequestMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditRequestMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editRequestMutation, { data, loading, error }] = useEditRequestMutation({
- *   variables: {
- *      requestDetails: // value for 'requestDetails'
- *   },
- * });
- */
-export function useEditRequestMutation(baseOptions?: Apollo.MutationHookOptions<EditRequestMutation, EditRequestMutationVariables>) {
-        return Apollo.useMutation<EditRequestMutation, EditRequestMutationVariables>(EditRequestDocument, baseOptions);
-      }
-export type EditRequestMutationHookResult = ReturnType<typeof useEditRequestMutation>;
-export type EditRequestMutationResult = Apollo.MutationResult<EditRequestMutation>;
-export type EditRequestMutationOptions = Apollo.BaseMutationOptions<EditRequestMutation, EditRequestMutationVariables>;

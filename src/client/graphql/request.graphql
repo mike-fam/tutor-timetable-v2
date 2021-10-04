@@ -1,3 +1,90 @@
+mutation CreateRequest($requestDetails: RequestFormInputType!) {
+    createRequest(requestDetails: $requestDetails) {
+        id
+        title
+        status
+        type
+        description
+        requester {
+            id
+            username
+            name
+        }
+        session {
+            id
+            sessionStream {
+                id
+                name
+                startTime
+                endTime
+                weeks
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+            allocatedUsers {
+                username
+                name
+            }
+        }
+        swapPreference {
+            id
+            sessionStream {
+                id
+                name
+                startTime
+                endTime
+                weeks
+                timetable {
+                    course {
+                        id
+                        code
+                    }
+                    term {
+                        id
+                        weekNames
+                        startDate
+                    }
+                }
+            }
+            week
+        }
+    }
+}
+
+mutation DeleteRequest($requestId: String!) {
+    deleteRequestById(requestId: $requestId)
+}
+
+mutation EditRequest($requestDetails: EditRequestFormInputType!) {
+    editExistingRequest(requestDetails: $requestDetails) {
+        id
+        title
+        description
+        status
+        type
+        session {
+            sessionStream {
+                name
+            }
+        }
+        swapPreference {
+            sessionStream {
+                name
+            }
+        }
+    }
+}
+
 query getRequestById($requestId: String!) {
     getRequestById(requestId: $requestId) {
         id

@@ -1,3 +1,0 @@
-mutation DeleteRequest($requestId: String!) {
-    deleteRequestById(requestId: $requestId)
-}
