@@ -1,7 +1,7 @@
 import React, { RefObject, useContext, useEffect, useState } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 import { Variants } from "framer-motion";
-import { MotionBox } from "./MotionBox";
+import { MotionBox } from "../MotionBox";
 import { useColorModeValue, useOutsideClick } from "@chakra-ui/react";
 
 type Props = {};

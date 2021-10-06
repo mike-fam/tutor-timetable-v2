@@ -6,7 +6,7 @@ import { CourseStaffsQuery } from "../../generated/graphql";
 import { defaultStr } from "../../constants";
 import { capitalCase } from "change-case";
 import sortBy from "lodash/sortBy";
-import { HelpIcon } from "../../components/helpers/HelpIcon";
+import { HelpIcon } from "../helpers/HelpIcon";
 import { redacted } from "../../../server/constants";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
     removeCourseStaff: (courseStaffId: string) => void;
 };
 
-export const CourseStaffTableContainer: React.FC<Props> = ({
+export const CourseStaffTable: React.FC<Props> = ({
     term,
     course,
     removeCourseStaff,
@@ -55,12 +55,6 @@ export const CourseStaffTableContainer: React.FC<Props> = ({
                         <Td>{capitalCase(courseStaff.role)}</Td>
                         <Td>{courseStaff.isNew ? "New" : "Experienced"}</Td>
                         <Td isNumeric>
-                            {/*<IconButton*/}
-                            {/*    aria-label="edit-staff"*/}
-                            {/*    colorScheme="blue"*/}
-                            {/*    icon={<Icon as={BsPencilSquare} />}*/}
-                            {/*    size="md"*/}
-                            {/*/>*/}
                             <IconButton
                                 ml={2}
                                 aria-label="remove-staff"

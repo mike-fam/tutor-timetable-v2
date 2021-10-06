@@ -28,7 +28,7 @@ import { useTermCourse } from "../../hooks/useTermCourse";
 import { TermResponseType } from "../../types/term";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { capitalCase } from "change-case";
-import { CourseStaffTableContainer } from "./CourseStaffTableContainer";
+import { CourseStaffTable } from "../../components/course-staff/CourseStaffTable";
 import { AddCourseStaffModal } from "./AddCourseStaffModal";
 import { defaultStr } from "../../constants";
 import {
@@ -169,7 +169,7 @@ export const CourseStaffPageContainer: React.FC<Props> = () => {
                 {termId !== defaultStr && courseId !== defaultStr && (
                     <Loadable isLoading={!getCourseStaffData}>
                         <Box h="80vh" overflow="auto">
-                            <CourseStaffTableContainer
+                            <CourseStaffTable
                                 term={termId}
                                 course={courseId}
                                 courseStaffs={courseStaff.valueSeq().toArray()}

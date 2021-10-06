@@ -11,10 +11,10 @@ import {
 } from "../../constants/timetable";
 import { leftFillNum, modificationTypeToTheme } from "../../utils/availability";
 import { sessionStyleFromProps } from "../../utils/timetable";
-import { ContextMenu } from "../helpers/ContextMenu";
-import { ContextMenuTrigger } from "../helpers/ContextMenuTrigger";
-import { ContextMenuList } from "../helpers/ContextMenuList";
-import { ContextMenuItem } from "../helpers/ContextMenuItem";
+import { ContextMenu } from "../helpers/context-menu/ContextMenu";
+import { ContextMenuTrigger } from "../helpers/context-menu/ContextMenuTrigger";
+import { ContextMenuList } from "../helpers/context-menu/ContextMenuList";
+import { ContextMenuItem } from "../helpers/context-menu/ContextMenuItem";
 import { ModificationType } from "../../generated/graphql";
 
 export type AvailabilityCustomSessionProps = {

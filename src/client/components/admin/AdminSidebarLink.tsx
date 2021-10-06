@@ -33,7 +33,7 @@ export const AdminSidebarLink: React.FC<Props> = ({
             borderRadius="5px"
             fontWeight={selected ? "600" : "500"}
             bgColor={selected ? bgColour : "none"}
-            color={selected ? textColour : "black"}
+            color={selected ? textColour : "inherit"}
             p={1}
         >
             {name}

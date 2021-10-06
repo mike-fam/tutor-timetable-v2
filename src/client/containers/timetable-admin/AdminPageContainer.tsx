@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Grid, GridItem, Heading, UnorderedList } from "@chakra-ui/react";
-import { AdminSidebarLink } from "../../components/AdminSidebarLink";
+import { AdminSidebarLink } from "../../components/admin/AdminSidebarLink";
 import { defaultStr } from "../../constants";
 
 type Props = {};
 
 const pages = ["Term", "Course", "Timetable"];
 
-export const AdminPageContainer: React.FC<Props> = ({}) => {
+export const AdminPageContainer: React.FC<Props> = () => {
     const [selectedPage, selectPage] = useState(defaultStr);
     return (
         <Wrapper>
