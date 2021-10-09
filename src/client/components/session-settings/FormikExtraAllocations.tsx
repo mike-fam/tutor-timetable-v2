@@ -16,7 +16,7 @@ import { FieldArray, useField } from "formik";
 import { StreamStaffRequirement } from "../../generated/graphql";
 import { weeksPatternRepr } from "../../utils/session-stream";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { FormikSelect } from "../helpers/FormikSelect";
+import { FormikSelect } from "../helpers/formik/FormikSelect";
 
 type Props = {
     name: string;

@@ -1,10 +1,10 @@
 import React from "react";
 import { Role } from "../../generated/graphql";
 import { StaffSeniority } from "../../types/courseStaff";
-import { FormikInput } from "../helpers/FormikInput";
+import { FormikInput } from "../helpers/formik/FormikInput";
 import { Stack, Textarea } from "@chakra-ui/react";
-import { FormikSelect } from "../helpers/FormikSelect";
-import { FormikRadioGroup } from "../helpers/FormikRadioGroup";
+import { FormikSelect } from "../helpers/formik/FormikSelect";
+import { FormikRadioGroup } from "../helpers/formik/FormikRadioGroup";
 
 type Props = {
     multipleStaff: boolean;

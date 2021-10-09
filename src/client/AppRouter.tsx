@@ -10,7 +10,7 @@ import { PermissionDenied } from "./PermissionDenied";
 import { SecretRoute } from "./components/helpers/SecretRoute";
 import { Role } from "./generated/graphql";
 import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
-import { AdminPageContainer } from "./containers/timetable-admin/AdminPageContainer";
+import { AdminPageContainer } from "./containers/admin/AdminPageContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (

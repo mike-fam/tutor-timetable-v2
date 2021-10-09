@@ -12,8 +12,8 @@ import {
     useMutationWithError,
 } from "../../hooks/useApolloHooksWithError";
 import { Loadable } from "../../components/helpers/Loadable";
-import { FormikInput } from "../../components/helpers/FormikInput";
-import { FormikSelect } from "../../components/helpers/FormikSelect";
+import { FormikInput } from "../../components/helpers/formik/FormikInput";
+import { FormikSelect } from "../../components/helpers/formik/FormikSelect";
 import uniq from "lodash/uniq";
 import { capitalCase } from "change-case";
 import { Button, Divider, Stack } from "@chakra-ui/react";

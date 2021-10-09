@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack } from "@chakra-ui/react";
-import { FormikInput } from "../helpers/FormikInput";
-import { FormikSelect } from "../helpers/FormikSelect";
+import { FormikInput } from "../helpers/formik/FormikInput";
+import { FormikSelect } from "../helpers/formik/FormikSelect";
 import { SessionType, StreamInput } from "../../generated/graphql";
 import { sentenceCase } from "change-case";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";
-import { FormikTimeInput } from "../helpers/FormikTimeInput";
+import { FormikTimeInput } from "../helpers/formik/FormikTimeInput";
 import { FormikBaseStaffRequirement } from "./FormikBaseStaffRequirement";
 import { FormikExtraStaffRequirement } from "./FormikExtraStaffRequirement";
 

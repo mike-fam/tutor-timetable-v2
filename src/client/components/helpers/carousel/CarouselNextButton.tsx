@@ -1,19 +1,19 @@
 import React, { useContext } from "react";
-import { BsChevronLeft } from "react-icons/bs";
 import { CarouselContext } from "./Carousel";
+import { BsChevronRight } from "react-icons/all";
 import { IconButton, IconButtonProps } from "@chakra-ui/react";
 
 type Props = {
     as?: IconButtonProps["icon"];
 };
 
-export const CarouselPrevButton: React.FC<Props> = ({ as }) => {
-    const { previousSlide } = useContext(CarouselContext);
+export const CarouselNextButton: React.FC<Props> = ({ as }) => {
+    const { nextSlide } = useContext(CarouselContext);
     return (
         <IconButton
-            aria-label="previous-slide"
-            icon={as || <BsChevronLeft />}
-            onClick={() => previousSlide()}
+            aria-label="next-slide"
+            icon={as || <BsChevronRight />}
+            onClick={() => nextSlide()}
             isRound
             variant="ghost"
         />

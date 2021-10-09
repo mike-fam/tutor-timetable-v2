@@ -8,7 +8,7 @@ import {
     SelectProps,
 } from "@chakra-ui/react";
 import { capitalCase } from "change-case";
-import { defaultStr } from "../../constants";
+import { defaultStr } from "../../../constants";
 import { v4 as uuid } from "uuid";
 import sortBy from "lodash/sortBy";
 

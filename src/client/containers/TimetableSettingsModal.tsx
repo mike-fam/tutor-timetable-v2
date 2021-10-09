@@ -11,11 +11,11 @@ import {
 import React, { useContext } from "react";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { Form, Formik, FormikErrors } from "formik";
-import { FormikNumberInput } from "../components/helpers/FormikNumberInput";
+import { FormikNumberInput } from "../components/helpers/formik/FormikNumberInput";
 import { IsoDay } from "../../types/date";
-import { FormikCheckboxGroup } from "../components/helpers/FormikCheckboxGroup";
+import { FormikCheckboxGroup } from "../components/helpers/formik/FormikCheckboxGroup";
 import { isoNumberToDay } from "../../utils/date";
-import { FormikRadioGroup } from "../components/helpers/FormikRadioGroup";
+import { FormikRadioGroup } from "../components/helpers/formik/FormikRadioGroup";
 import { TimetableDisplayMode } from "../types/timetable";
 
 type Props = {

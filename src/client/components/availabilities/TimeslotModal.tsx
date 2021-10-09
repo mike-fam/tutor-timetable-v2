@@ -15,9 +15,9 @@ import { ModifyTimeslotParams } from "../../types/availability";
 import { Form, Formik, FormikErrors } from "formik";
 import { IsoDay } from "../../../types/date";
 import { TimeslotInput } from "../../generated/graphql";
-import { FormikSelect } from "../helpers/FormikSelect";
+import { FormikSelect } from "../helpers/formik/FormikSelect";
 import { isoNumberToDay } from "../../../utils/date";
-import { FormikTimeInput } from "../helpers/FormikTimeInput";
+import { FormikTimeInput } from "../helpers/formik/FormikTimeInput";
 
 type Props = {
     isOpen: boolean;
