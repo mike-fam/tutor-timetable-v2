@@ -4,6 +4,7 @@ import { useQueryWithError } from "./useApolloHooksWithError";
 import { TermQuery, useTermsQuery } from "../generated/graphql";
 import { getCurrentTerm, getCurrentWeek } from "../utils/term";
 import { parseISO } from "date-fns";
+import { today } from "../constants/date";
 
 export const useDefaultTerm = () => {
     const [chosenTermId, setChosenTermId] = useState(defaultStr);
@@ -18,7 +19,6 @@ export const useDefaultTerm = () => {
         if (termsLoading) {
             return;
         }
-        const today = new Date();
         // possibly an error happened
         if (!termsData) {
             return;

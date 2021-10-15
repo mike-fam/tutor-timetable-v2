@@ -11,10 +11,13 @@ import range from "lodash/range";
 import { WeekPreviewCard } from "../../components/admin/WeekPreviewCard";
 import { endOfISOWeek, subWeeks } from "date-fns";
 import startOfISOWeek from "date-fns/startOfISOWeek";
+import { CalendarCore } from "../../components/helpers/calendar/CalendarCore";
+import { CalendarMonth } from "../../types/calendar";
 
 type Props = {};
 
 const pages = ["Term", "Course", "Timetable"];
+const today = new Date();
 
 export const AdminPageContainer: React.FC<Props> = () => {
     const [selectedPage, selectPage] = useState(defaultStr);
@@ -37,35 +40,49 @@ export const AdminPageContainer: React.FC<Props> = () => {
                         </li>
                     ))}
                 </UnorderedList>
-                <Carousel
-                    d="flex"
-                    cycle
-                    slideWidth={180}
-                    gutters={30}
-                    width={1000}
-                    slideHeight={200}
-                    alignItems="center"
-                    animate
-                >
-                    <CarouselPrevButton />
-                    <CarouselSlides>
-                        {range(1, 15).map((i) => (
-                            <WeekPreviewCard
-                                name={`Week ${i}`}
-                                startDate={subWeeks(
-                                    startOfISOWeek(new Date()),
-                                    14 - i
-                                )}
-                                endDate={subWeeks(
-                                    endOfISOWeek(new Date()),
-                                    14 - i
-                                )}
-                                key={i}
-                            />
-                        ))}
-                    </CarouselSlides>
-                    <CarouselNextButton />
-                </Carousel>
+                <GridItem>
+                    <CalendarCore
+                        selectedDays={[]}
+                        onDateClick={() => {}}
+                        onDateMouseLeave={() => {}}
+                        onDateMouseOver={() => {}}
+                        selectedDateRanges={[
+                            [new Date(2021, 9, 1), new Date(2021, 10, 15)],
+                        ]}
+                        firstDate={new Date(2017, 1, 15)}
+                        lastDate={new Date(2050, 11, 15)}
+                    />
+                    <Carousel
+                        d="flex"
+                        cycle
+                        slideWidth={180}
+                        gutters={30}
+                        width={1000}
+                        slideHeight={200}
+                        alignItems="center"
+                        visibleSlidesInView={15}
+                        animate
+                    >
+                        <CarouselPrevButton />
+                        <CarouselSlides>
+                            {range(1, 15).map((i) => (
+                                <WeekPreviewCard
+                                    name={`Week ${i}`}
+                                    startDate={subWeeks(
+                                        startOfISOWeek(new Date()),
+                                        14 - i
+                                    )}
+                                    endDate={subWeeks(
+                                        endOfISOWeek(new Date()),
+                                        14 - i
+                                    )}
+                                    key={i}
+                                />
+                            ))}
+                        </CarouselSlides>
+                        <CarouselNextButton />
+                    </Carousel>
+                </GridItem>
             </Grid>
         </Wrapper>
     );

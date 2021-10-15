@@ -7,8 +7,15 @@ type Props = {
 };
 
 export const CarouselSlide: React.FC<Props> = ({ slideIndex, children }) => {
-    const { slideWidth, slideHeight, gutters, width, height, currentSlide } =
-        useContext(CarouselContext);
+    const {
+        slideWidth,
+        slideHeight,
+        gutters,
+        width,
+        height,
+        currentSlide,
+        visibleSlidesInView,
+    } = useContext(CarouselContext);
     const middleWidth = useMemo(() => width / 2, [width]);
     const leftEdgeCurrentSlide = useMemo(
         () => middleWidth - slideWidth / 2,
@@ -25,7 +32,13 @@ export const CarouselSlide: React.FC<Props> = ({ slideIndex, children }) => {
                 (slideIndex - currentSlide) * (slideWidth + gutters)
             }px`}
             top={`${(height - slideHeight) / 2}px`}
-            transition="0.1s ease"
+            transition="all 0.3s ease"
+            opacity={
+                Math.abs(currentSlide - slideIndex) * 2 + 1 <=
+                visibleSlidesInView
+                    ? 1
+                    : 0
+            }
         >
             {children}
         </Box>

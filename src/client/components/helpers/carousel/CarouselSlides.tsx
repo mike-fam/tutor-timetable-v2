@@ -36,6 +36,7 @@ export const CarouselSlides: React.FC<Props> = ({ children, ...boxProps }) => {
                 boxShadow:
                     `${featherWidth}px 0 ${featherBlur}px -${featherBlur}px ${featherColor} inset, ` +
                     `-${featherWidth}px 0 ${featherBlur}px -${featherBlur}px ${featherColor} inset`,
+                pointerEvents: "none",
             }}
             {...boxProps}
         >

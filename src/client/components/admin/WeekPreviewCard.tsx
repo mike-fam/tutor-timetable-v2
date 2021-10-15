@@ -19,12 +19,11 @@ export const WeekPreviewCard: React.FC<Props> = ({
     const weekTitleColor = useColorModeValue(red["600"], red["500"]);
     return (
         <VStack
-            border={`2px solid ${borderColor}`}
             borderRadius="20px"
             width="100%"
             height="100%"
             justify="center"
-            boxShadow={`0px 0px 10px 1px ${borderColor}`}
+            boxShadow={`0px 0px 5px 1px ${borderColor}`}
         >
             <Text
                 fontSize="3xl"

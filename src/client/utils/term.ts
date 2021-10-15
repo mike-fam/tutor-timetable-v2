@@ -4,9 +4,9 @@ import isAfter from "date-fns/isAfter";
 import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
 import { TermResponseType } from "../types/term";
+import { today } from "../constants/date";
 
 export const getCurrentTerm = (terms: Array<TermResponseType>) => {
-    const today = new Date();
     // Choose current term by default
     for (const term of terms) {
         if (
@@ -32,7 +32,7 @@ export const getCurrentWeek = (term?: TermResponseType) => {
         return 0;
     }
     return differenceInWeeks(
-        startOfISOWeek(new Date()),
+        startOfISOWeek(today),
         startOfISOWeek(parseISO(term.startDate))
     );
 };
