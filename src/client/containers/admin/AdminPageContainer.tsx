@@ -47,10 +47,10 @@ export const AdminPageContainer: React.FC<Props> = () => {
                         onDateMouseLeave={() => {}}
                         onDateMouseOver={() => {}}
                         selectedDateRanges={[
-                            [new Date(2021, 9, 1), new Date(2021, 10, 15)],
+                            [new Date(2021, 9, 1), new Date(2021, 1, 15)],
                         ]}
                         firstDate={new Date(2017, 1, 15)}
-                        lastDate={new Date(2050, 11, 15)}
+                        lastDate={new Date(2050, 10, 15)}
                     />
                     <Carousel
                         d="flex"

@@ -18,6 +18,8 @@ import {
 import { CalendarDaysView } from "./CalendarDaysView";
 import { CalendarMonthsView } from "./CalendarMonthsView";
 import { useCalendarTime } from "../../../hooks/useCalendarTime";
+import { CalendarYearsView } from "./CalendarYearsView";
+import { useTermCourse } from "../../../hooks/useTermCourse";
 
 type Props = {
     firstDate?: Date;
@@ -35,6 +37,8 @@ type Props = {
     initialYear?: number;
 };
 
+export type CalendarViewMode = "days" | "months" | "years";
+
 export const CalendarCore: React.FC<Props> = ({
     firstDate,
     lastDate,
@@ -46,7 +50,6 @@ export const CalendarCore: React.FC<Props> = ({
     onDateClick,
     onDateMouseOver = () => {},
     onDateMouseLeave = () => {},
-    dateFormat = "MMM yyyy",
     initialMonth,
     initialYear,
 }) => {
@@ -59,9 +62,7 @@ export const CalendarCore: React.FC<Props> = ({
         goPreviousMonth,
         goNextMonth,
     } = useCalendarTime(initialMonth, initialYear);
-    const [viewMode, setViewMode] = useState<"days" | "months" | "years">(
-        "months"
-    );
+    const [viewMode, setViewMode] = useState<CalendarViewMode>("days");
     const viewedDate = useMemo(() => new Date(year, month), [year, month]);
     const glowColour = useColorModeValue(
         theme.colors.blue["300"],
@@ -83,6 +84,90 @@ export const CalendarCore: React.FC<Props> = ({
             });
         }
     }, [lastDate, setCalendarTime]);
+    const setNextView = useCallback(() => {
+        switch (viewMode) {
+            case "days":
+                setViewMode("months");
+                break;
+            case "months":
+                setViewMode("years");
+                break;
+        }
+    }, [viewMode]);
+    const dateTitle = useMemo(() => {
+        switch (viewMode) {
+            case "days":
+                return format(viewedDate, "MMM yyyy");
+            case "months":
+                return format(viewedDate, "yyyy");
+            case "years":
+                return "Choose year:";
+        }
+    }, [viewedDate, viewMode]);
+    const calendarView = useMemo(() => {
+        switch (viewMode) {
+            case "days":
+                return (
+                    <CalendarDaysView
+                        onDateClick={onDateClick}
+                        onDateMouseLeave={onDateMouseLeave}
+                        onDateMouseOver={onDateMouseOver}
+                        viewedMonth={{ month, year }}
+                        selectedDays={selectedDays}
+                        selectedDateRanges={selectedDateRanges}
+                        firstDate={firstDate}
+                        lastDate={lastDate}
+                        disableBefore={disableBefore}
+                        disableAfter={disableAfter}
+                        disabledDays={disabledDays}
+                    />
+                );
+            case "months":
+                return (
+                    <CalendarMonthsView
+                        viewedYear={year}
+                        setViewedMonth={(month) => {
+                            setMonth(month);
+                            setViewMode("days");
+                        }}
+                        firstDate={firstDate}
+                        lastDate={lastDate}
+                        disableBefore={disableBefore}
+                        disableAfter={disableAfter}
+                    />
+                );
+            case "years":
+                return (
+                    <CalendarYearsView
+                        viewedYear={year}
+                        setViewedYear={(year) => {
+                            setYear(year);
+                            setViewMode("months");
+                        }}
+                        firstDate={firstDate}
+                        lastDate={lastDate}
+                        disableBefore={disableBefore}
+                        disableAfter={disableAfter}
+                    />
+                );
+        }
+    }, [
+        disableAfter,
+        disableBefore,
+        disabledDays,
+        firstDate,
+        lastDate,
+        month,
+        onDateClick,
+        onDateMouseLeave,
+        onDateMouseOver,
+        selectedDateRanges,
+        selectedDays,
+        setMonth,
+        viewMode,
+        year,
+    ]);
+    const hoverColour = useColorModeValue("gray.200", "gray.600");
     return (
         <VStack
             w={96}
@@ -107,28 +192,65 @@ export const CalendarCore: React.FC<Props> = ({
                     icon={<BsChevronLeft />}
                     variant="ghost"
                     onClick={() => {
-                        goPreviousMonth();
+                        switch (viewMode) {
+                            case "days":
+                                goPreviousMonth();
+                                break;
+                            case "months":
+                                setYear((prev) => prev - 1);
+                                break;
+                            case "years":
+                                setYear((prev) => prev - 12);
+                        }
                     }}
                     isRound
                     disabled={
-                        month === firstDate?.getMonth() &&
-                        year === firstDate?.getFullYear()
+                        !!firstDate &&
+                        (viewMode === "days"
+                            ? month === firstDate.getMonth() &&
+                              year === firstDate.getFullYear()
+                            : viewMode === "months"
+                            ? year <= firstDate.getFullYear()
+                            : year - 5 < firstDate.getFullYear())
                     }
                 />
-                <Box flex={1} textAlign="center" fontSize="md">
-                    {format(viewedDate, dateFormat)}
+                <Box
+                    flex={1}
+                    textAlign="center"
+                    fontSize="md"
+                    _hover={{ bg: hoverColour, cursor: "pointer" }}
+                    onClick={() => setNextView()}
+                    h={10}
+                    lineHeight={10}
+                    borderRadius={4}
+                >
+                    {dateTitle}
                 </Box>
                 <IconButton
                     aria-label="next-month"
                     icon={<BsChevronRight />}
                     variant="ghost"
                     onClick={() => {
-                        goNextMonth();
+                        switch (viewMode) {
+                            case "days":
+                                goNextMonth();
+                                break;
+                            case "months":
+                                setYear((prev) => prev + 1);
+                                break;
+                            case "years":
+                                setYear((prev) => prev + 12);
+                        }
                     }}
                     isRound
                     disabled={
-                        month === lastDate?.getMonth() &&
-                        year === lastDate?.getFullYear()
+                        !!lastDate &&
+                        (viewMode === "days"
+                            ? month === lastDate.getMonth() &&
+                              year === lastDate.getFullYear()
+                            : viewMode === "months"
+                            ? year >= lastDate.getFullYear()
+                            : year + 8 > lastDate.getFullYear())
                     }
                 />
                 <IconButton
@@ -143,23 +265,7 @@ export const CalendarCore: React.FC<Props> = ({
                 />
             </Flex>
             <Divider />
-            {viewMode === "days" ? (
-                <CalendarDaysView
-                    onDateClick={onDateClick}
-                    onDateMouseLeave={onDateMouseLeave}
-                    onDateMouseOver={onDateMouseOver}
-                    viewedMonth={{ month, year }}
-                    selectedDays={selectedDays}
-                    selectedDateRanges={selectedDateRanges}
-                    firstDate={firstDate}
-                    lastDate={lastDate}
-                    disableBefore={disableBefore}
-                    disableAfter={disableAfter}
-                    disabledDays={disabledDays}
-                />
-            ) : viewMode === "months" ? (
-                <CalendarMonthsView viewedYear={year} setViewedYear={setYear} />
-            ) : null}
+            {calendarView}
         </VStack>
     );
 };
