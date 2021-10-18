@@ -39,6 +39,7 @@ export const CarouselSlide: React.FC<Props> = ({ slideIndex, children }) => {
                     ? 1
                     : 0
             }
+            zIndex={-1}
         >
             {children}
         </Box>

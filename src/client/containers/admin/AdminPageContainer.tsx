@@ -13,14 +13,17 @@ import { endOfISOWeek, subWeeks } from "date-fns";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import { CalendarCore } from "../../components/helpers/calendar/CalendarCore";
 import { CalendarMonth } from "../../types/calendar";
+import { today } from "../../constants/date";
+import { CalendarInputSingleDate } from "../../components/helpers/calendar/CalendarInputSingleDate";
+import { CalendarInputSingleRange } from "../../components/helpers/calendar/CalendarInputSingleRange";
 
 type Props = {};
 
 const pages = ["Term", "Course", "Timetable"];
-const today = new Date();
 
 export const AdminPageContainer: React.FC<Props> = () => {
     const [selectedPage, selectPage] = useState(defaultStr);
+    const [date, setDate] = useState(today);
     return (
         <Wrapper>
             <Grid templateColumns="1fr 6fr" gap={6}>
@@ -41,17 +44,7 @@ export const AdminPageContainer: React.FC<Props> = () => {
                     ))}
                 </UnorderedList>
                 <GridItem>
-                    <CalendarCore
-                        selectedDays={[]}
-                        onDateClick={() => {}}
-                        onDateMouseLeave={() => {}}
-                        onDateMouseOver={() => {}}
-                        selectedDateRanges={[
-                            [new Date(2021, 9, 1), new Date(2021, 1, 15)],
-                        ]}
-                        firstDate={new Date(2017, 1, 15)}
-                        lastDate={new Date(2050, 10, 15)}
-                    />
+                    <CalendarInputSingleRange value={[]} onChange={() => {}}
                     <Carousel
                         d="flex"
                         cycle

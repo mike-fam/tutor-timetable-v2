@@ -26,7 +26,6 @@ export const CarouselSlides: React.FC<Props> = ({ children, ...boxProps }) => {
             overflow="hidden"
             _after={{
                 content: '""',
-                zIndex: 1000,
                 display: "block",
                 position: "absolute",
                 height: "100%",
