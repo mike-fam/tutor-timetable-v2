@@ -1,5 +1,6 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import * as Apollo from "@apollo/client";
+import { gql } from "@apollo/client";
+
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -43,17 +44,22 @@ export type BaseGeneratedAllocationPattern = {
 };
 
 export type Course = {
-  __typename?: 'Course';
-  id: Scalars['String'];
-  code: Scalars['String'];
-  title: Scalars['String'];
+  __typename?: "Course";
+  id: Scalars["String"];
+  code: Scalars["String"];
+  title: Scalars["String"];
   timetables: Array<Timetable>;
 };
 
+export type CourseInput = {
+  code: Scalars["String"];
+  title: Scalars["String"];
+};
+
 export type CourseStaff = {
-  __typename?: 'CourseStaff';
-  id: Scalars['String'];
-  isNew: Scalars['Boolean'];
+  __typename?: "CourseStaff";
+  id: Scalars["String"];
+  isNew: Scalars["Boolean"];
   role: Role;
   timetable: Timetable;
   user: User;
@@ -146,12 +152,13 @@ export type Mutation = {
   addStreamStaff: SessionStream;
   updateSessionAllocations: Array<Session>;
   updateSession: Array<Session>;
-  deleteSessions: Array<Scalars['String']>;
+  deleteSessions: Array<Scalars["String"]>;
   updateAvailabilities: Array<Timeslot>;
   updatePreference: Preference;
   createRequest: StaffRequest;
   editExistingRequest: StaffRequest;
-  deleteRequestById: Scalars['String'];
+  deleteRequestById: Scalars["String"];
+  createCourse: Course;
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
@@ -279,7 +286,12 @@ export type MutationEditExistingRequestArgs = {
 
 
 export type MutationDeleteRequestByIdArgs = {
-  requestId: Scalars['String'];
+  requestId: Scalars["String"];
+};
+
+
+export type MutationCreateCourseArgs = {
+  courseInput: CourseInput;
 };
 
 
@@ -766,12 +778,29 @@ export type CourseQueryVariables = Exact<{
 
 
 export type CourseQuery = (
-  { __typename?: 'Query' }
-  & { course: (
-    { __typename?: 'Course' }
-    & Pick<Course, 'code' | 'title'>
-  ) }
-);
+    { __typename?: "Query" }
+    & {
+  course: (
+      { __typename?: "Course" }
+      & Pick<Course, "code" | "title">
+      )
+}
+    );
+
+export type CreateCourseMutationVariables = Exact<{
+  courseInput: CourseInput;
+}>;
+
+
+export type CreateCourseMutation = (
+    { __typename?: "Mutation" }
+    & {
+  createCourse: (
+      { __typename?: "Course" }
+      & Pick<Course, "id" | "code" | "title">
+      )
+}
+    );
 
 export type CourseStaffsQueryVariables = Exact<{
   courseTermInput: CourseTermIdInput;
@@ -779,9 +808,10 @@ export type CourseStaffsQueryVariables = Exact<{
 
 
 export type CourseStaffsQuery = (
-  { __typename?: 'Query' }
-  & { courseStaffs: Array<(
-    { __typename?: 'CourseStaff' }
+    { __typename?: "Query" }
+    & {
+  courseStaffs: Array<(
+      { __typename?: "CourseStaff" }
     & Pick<CourseStaff, 'id' | 'role' | 'isNew'>
     & { user: (
       { __typename?: 'User' }
@@ -1909,24 +1939,61 @@ export const CourseDocument = gql`
  * });
  */
 export function useCourseQuery(baseOptions: Apollo.QueryHookOptions<CourseQuery, CourseQueryVariables>) {
-        return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
-      }
+  return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+}
+
 export function useCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>) {
-          return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
-        }
+  return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+}
+
 export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
 export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
 export type CourseQueryResult = Apollo.QueryResult<CourseQuery, CourseQueryVariables>;
-export const CourseStaffsDocument = gql`
-    query CourseStaffs($courseTermInput: CourseTermIdInput!) {
-  courseStaffs(courseTermInput: $courseTermInput) {
-    id
-    role
-    user {
+export const CreateCourseDocument = gql`
+  mutation CreateCourse($courseInput: CourseInput!) {
+    createCourse(courseInput: $courseInput) {
       id
-      username
-      name
+      code
+      title
     }
+  }
+`;
+export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutation, CreateCourseMutationVariables>;
+
+/**
+ * __useCreateCourseMutation__
+ *
+ * To run a mutation, you first call `useCreateCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCourseMutation, { data, loading, error }] = useCreateCourseMutation({
+ *   variables: {
+ *      courseInput: // value for 'courseInput'
+ *   },
+ * });
+ */
+export function useCreateCourseMutation(baseOptions?: Apollo.MutationHookOptions<CreateCourseMutation, CreateCourseMutationVariables>) {
+  return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, baseOptions);
+}
+
+export type CreateCourseMutationHookResult = ReturnType<typeof useCreateCourseMutation>;
+export type CreateCourseMutationResult = Apollo.MutationResult<CreateCourseMutation>;
+export type CreateCourseMutationOptions = Apollo.BaseMutationOptions<CreateCourseMutation, CreateCourseMutationVariables>;
+export const CourseStaffsDocument = gql`
+  query CourseStaffs($courseTermInput: CourseTermIdInput!) {
+    courseStaffs(courseTermInput: $courseTermInput) {
+      id
+      role
+      user {
+        id
+        username
+        name
+      }
     isNew
   }
 }

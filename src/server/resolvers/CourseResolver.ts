@@ -1,6 +1,25 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import {
+    Arg,
+    Ctx,
+    Field,
+    FieldResolver,
+    InputType,
+    Mutation,
+    Query,
+    Resolver,
+    Root,
+} from "type-graphql";
 import { Course, Timetable } from "../entities";
 import { MyContext } from "../types/context";
+
+@InputType()
+export class CourseInput {
+    @Field()
+    code: string;
+
+    @Field()
+    title: string;
+}
 
 @Resolver(() => Course)
 export class CourseResolver {
@@ -15,6 +34,14 @@ export class CourseResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Course> {
         return await models.course.getById(courseId, req.user);
+    }
+
+    @Mutation(() => Course)
+    async createCourse(
+        @Arg("courseInput") { code, title }: CourseInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Course> {
+        return await models.course.create({ code, title }, req.user);
     }
 
     @FieldResolver(() => [Timetable])

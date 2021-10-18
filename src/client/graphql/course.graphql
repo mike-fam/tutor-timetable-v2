@@ -4,3 +4,11 @@ query Course($courseId: String!) {
         title
     }
 }
+
+mutation CreateCourse($courseInput: CourseInput!) {
+    createCourse(courseInput: $courseInput) {
+        id
+        code
+        title
+    }
+}
