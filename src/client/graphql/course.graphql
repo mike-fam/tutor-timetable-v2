@@ -5,6 +5,14 @@ query Course($courseId: String!) {
     }
 }
 
+query Courses {
+    courses {
+        id
+        code
+        title
+    }
+}
+
 mutation CreateCourse($courseInput: CourseInput!) {
     createCourse(courseInput: $courseInput) {
         id

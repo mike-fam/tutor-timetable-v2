@@ -2,9 +2,9 @@ import React, { createContext, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Grid, GridItem, Heading, UnorderedList } from "@chakra-ui/react";
 import { AdminSidebarLink } from "../../components/admin/AdminSidebarLink";
-import { CourseForm } from "../../components/admin/CourseForm";
-import { AddOrSelect } from "../../components/admin/AddOrSelect";
 import { AdminPage } from "../../types/admin";
+import { AdminMiniRoute } from "../../components/admin/AdminMiniRoute";
+import { AdminCourseContainer } from "./AdminCourseContainer";
 
 type Props = {};
 
@@ -41,19 +41,10 @@ export const AdminPageContainer: React.FC<Props> = () => {
                         ))}
                     </UnorderedList>
                     <GridItem>
-                        <AddOrSelect
-                            elementType={currentPage}
-                            elements={[]}
-                            onAdd={() => {}}
-                            onSelect={() => {}}
+                        <AdminMiniRoute
+                            page="Course"
+                            component={AdminCourseContainer}
                         />
-                        {currentPage === "Course" ? (
-                            <CourseForm submit={() => {}} editMode="add" />
-                        ) : currentPage === "Timetable" ? (
-                            "Timetable here"
-                        ) : (
-                            "Term here"
-                        )}
                     </GridItem>
                 </Grid>
             </Wrapper>

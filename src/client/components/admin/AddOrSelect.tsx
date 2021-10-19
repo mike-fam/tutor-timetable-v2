@@ -31,7 +31,7 @@ export const AddOrSelect: React.FC<Props> = ({
     return (
         <>
             <FormControl mt={3}>
-                <FormLabel>Choose {elementType}:</FormLabel>
+                <FormLabel>Choose a {elementType}:</FormLabel>
                 <Dropdown
                     options={elementMap}
                     elementType={elementType}
@@ -39,9 +39,9 @@ export const AddOrSelect: React.FC<Props> = ({
                     value={selectedValue || defaultStr}
                 />
             </FormControl>
-            <Text>or</Text>
+            <Text my={2}>or</Text>
             <Button colorScheme="green" onClick={onAdd}>
-                Add {elementType}
+                Add a new {elementType}
             </Button>
         </>
     );

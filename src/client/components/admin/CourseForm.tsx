@@ -24,7 +24,7 @@ export const CourseForm: React.FC<Props> = ({
             <Form>
                 <FormikInput name="code" label="Course code" />
                 <FormikInput name="title" label="Course title" />
-                <Button type="submit">
+                <Button mt={3} type="submit">
                     {editMode === "add" ? "Add" : "Save"} Course
                 </Button>
             </Form>
