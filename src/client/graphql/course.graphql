@@ -13,8 +13,17 @@ query Courses {
     }
 }
 
+
 mutation CreateCourse($courseInput: CourseInput!) {
     createCourse(courseInput: $courseInput) {
+        id
+        code
+        title
+    }
+}
+
+mutation UpdateCourse($courseInput: UpdateCourseInput!) {
+    updateCourse(courseInput: $courseInput) {
         id
         code
         title

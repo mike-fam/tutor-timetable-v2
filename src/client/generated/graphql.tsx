@@ -44,26 +44,26 @@ export type BaseGeneratedAllocationPattern = {
 };
 
 export type Course = {
-    __typename?: "Course";
-    id: Scalars["String"];
-    code: Scalars["String"];
-    title: Scalars["String"];
-    timetables: Array<Timetable>;
+  __typename?: "Course";
+  id: Scalars["String"];
+  code: Scalars["String"];
+  title: Scalars["String"];
+  timetables: Array<Timetable>;
 };
 
 export type CourseInput = {
-    code: Scalars["String"];
-    title: Scalars["String"];
+  code: Scalars["String"];
+  title: Scalars["String"];
 };
 
 export type CourseStaff = {
-    __typename?: "CourseStaff";
-    id: Scalars["String"];
-    isNew: Scalars["Boolean"];
-    role: Role;
-    timetable: Timetable;
-    user: User;
-    preference: Preference;
+  __typename?: "CourseStaff";
+  id: Scalars["String"];
+  isNew: Scalars["Boolean"];
+  role: Role;
+  timetable: Timetable;
+  user: User;
+  preference: Preference;
 };
 
 export type CourseStaffInput = {
@@ -136,33 +136,34 @@ export enum ModificationType {
 }
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   requestAllocation: AllocatorOutput;
   updateDetails: User;
   addTerm: Term;
   deleteTerms: Array<Term>;
   addCourseStaff: CourseStaff;
-    addUsersToCourse: Array<CourseStaff>;
-    removeCourseStaff: Scalars["String"];
-    addMergedSessionStreams: Array<SessionStream>;
-    addBasedSessionStream: SessionStream;
-    addSessionStream: SessionStream;
-    deleteSessionStreams: Array<Scalars["String"]>;
-    updateSessionStreams: Array<SessionStream>;
-    addStreamStaff: SessionStream;
-    updateSessionAllocations: Array<Session>;
-    updateSession: Array<Session>;
-    deleteSessions: Array<Scalars["String"]>;
-    updateAvailabilities: Array<Timeslot>;
-    updatePreference: Preference;
-    createRequest: StaffRequest;
-    editExistingRequest: StaffRequest;
-    deleteRequestById: Scalars["String"];
-    createCourse: Course;
-    createOffer: Offer;
-    editExistingOffer: Offer;
-    removeOffer: Offer;
-    acceptOffer: Offer;
+  addUsersToCourse: Array<CourseStaff>;
+  removeCourseStaff: Scalars["String"];
+  addMergedSessionStreams: Array<SessionStream>;
+  addBasedSessionStream: SessionStream;
+  addSessionStream: SessionStream;
+  deleteSessionStreams: Array<Scalars["String"]>;
+  updateSessionStreams: Array<SessionStream>;
+  addStreamStaff: SessionStream;
+  updateSessionAllocations: Array<Session>;
+  updateSession: Array<Session>;
+  deleteSessions: Array<Scalars["String"]>;
+  updateAvailabilities: Array<Timeslot>;
+  updatePreference: Preference;
+  createRequest: StaffRequest;
+  editExistingRequest: StaffRequest;
+  deleteRequestById: Scalars["String"];
+  createCourse: Course;
+  updateCourse: Course;
+  createOffer: Offer;
+  editExistingOffer: Offer;
+  removeOffer: Offer;
+  acceptOffer: Offer;
 };
 
 
@@ -286,12 +287,17 @@ export type MutationEditExistingRequestArgs = {
 
 
 export type MutationDeleteRequestByIdArgs = {
-    requestId: Scalars["String"];
+  requestId: Scalars["String"];
 };
 
 
 export type MutationCreateCourseArgs = {
   courseInput: CourseInput;
+};
+
+
+export type MutationUpdateCourseArgs = {
+  courseInput: UpdateCourseInput;
 };
 
 
@@ -639,8 +645,8 @@ export type TimeslotInput = {
 };
 
 export type Timetable = {
-  __typename?: 'Timetable';
-  id: Scalars['String'];
+  __typename?: "Timetable";
+  id: Scalars["String"];
   permanentRequestLock: FreezeState;
   temporaryRequestLock: FreezeState;
   course: Course;
@@ -649,14 +655,20 @@ export type Timetable = {
   sessionStreams: Array<SessionStream>;
 };
 
+export type UpdateCourseInput = {
+  code: Scalars["String"];
+  title: Scalars["String"];
+  id: Scalars["String"];
+};
+
 export type UpdateDetailsInputType = {
-  email: Scalars['String'];
-  name: Scalars['String'];
+  email: Scalars["String"];
+  name: Scalars["String"];
 };
 
 export type UpdateSessionAllocationInput = {
-  rootSessionId: Scalars['String'];
-  newAllocation: Array<Scalars['String']>;
+  rootSessionId: Scalars["String"];
+  newAllocation: Array<Scalars["String"]>;
 };
 
 export type UpdateSessionInput = {
@@ -765,26 +777,27 @@ export type UpdateAvailabilitiesMutationVariables = Exact<{
 
 
 export type UpdateAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-        & Pick<Timeslot, "id" | "day" | "startTime" | "endTime">
-        )>
+    { __typename?: "Mutation" }
+    & {
+  updateAvailabilities: Array<(
+      { __typename?: "Timeslot" }
+      & Pick<Timeslot, "id" | "day" | "startTime" | "endTime">
+      )>
 }
     );
 
 export type CourseQueryVariables = Exact<{
-    courseId: Scalars["String"];
+  courseId: Scalars["String"];
 }>;
 
 
 export type CourseQuery = (
     { __typename?: "Query" }
     & {
-    course: (
-        { __typename?: "Course" }
-        & Pick<Course, "code" | "title">
-        )
+  course: (
+      { __typename?: "Course" }
+      & Pick<Course, "code" | "title">
+      )
 }
     );
 
@@ -794,25 +807,40 @@ export type CoursesQueryVariables = Exact<{ [key: string]: never; }>;
 export type CoursesQuery = (
     { __typename?: "Query" }
     & {
-    courses: Array<(
-        { __typename?: "Course" }
-        & Pick<Course, "id" | "code" | "title">
-        )>
+  courses: Array<(
+      { __typename?: "Course" }
+      & Pick<Course, "id" | "code" | "title">
+      )>
 }
     );
 
 export type CreateCourseMutationVariables = Exact<{
-    courseInput: CourseInput;
+  courseInput: CourseInput;
 }>;
 
 
 export type CreateCourseMutation = (
     { __typename?: "Mutation" }
     & {
-    createCourse: (
-        { __typename?: "Course" }
-        & Pick<Course, "id" | "code" | "title">
-        )
+  createCourse: (
+      { __typename?: "Course" }
+      & Pick<Course, "id" | "code" | "title">
+      )
+}
+    );
+
+export type UpdateCourseMutationVariables = Exact<{
+  courseInput: UpdateCourseInput;
+}>;
+
+
+export type UpdateCourseMutation = (
+    { __typename?: "Mutation" }
+    & {
+  updateCourse: (
+      { __typename?: "Course" }
+      & Pick<Course, "id" | "code" | "title">
+      )
 }
     );
 
@@ -824,16 +852,16 @@ export type CourseStaffsQueryVariables = Exact<{
 export type CourseStaffsQuery = (
     { __typename?: "Query" }
     & {
-    courseStaffs: Array<(
-        { __typename?: "CourseStaff" }
-        & Pick<CourseStaff, "id" | "role" | "isNew">
-        & {
-        user: (
-            { __typename?: "User" }
-            & Pick<User, "id" | "username" | "name">
-            )
-    }
-        )>
+  courseStaffs: Array<(
+      { __typename?: "CourseStaff" }
+      & Pick<CourseStaff, "id" | "role" | "isNew">
+      & {
+    user: (
+        { __typename?: "User" }
+        & Pick<User, "id" | "username" | "name">
+        )
+  }
+      )>
 }
     );
 
@@ -1956,24 +1984,22 @@ export const CourseDocument = gql`
  * });
  */
 export function useCourseQuery(baseOptions: Apollo.QueryHookOptions<CourseQuery, CourseQueryVariables>) {
-    return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+  return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
 }
-
 export function useCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>) {
-    return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+  return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
 }
-
 export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
 export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
 export type CourseQueryResult = Apollo.QueryResult<CourseQuery, CourseQueryVariables>;
 export const CoursesDocument = gql`
-    query Courses {
-        courses {
-            id
-            code
-            title
-        }
+  query Courses {
+    courses {
+      id
+      code
+      title
     }
+  }
 `;
 
 /**
@@ -1992,24 +2018,22 @@ export const CoursesDocument = gql`
  * });
  */
 export function useCoursesQuery(baseOptions?: Apollo.QueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
-    return Apollo.useQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
+  return Apollo.useQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
 }
-
 export function useCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
-    return Apollo.useLazyQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
+  return Apollo.useLazyQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
 }
-
 export type CoursesQueryHookResult = ReturnType<typeof useCoursesQuery>;
 export type CoursesLazyQueryHookResult = ReturnType<typeof useCoursesLazyQuery>;
 export type CoursesQueryResult = Apollo.QueryResult<CoursesQuery, CoursesQueryVariables>;
 export const CreateCourseDocument = gql`
-    mutation CreateCourse($courseInput: CourseInput!) {
-        createCourse(courseInput: $courseInput) {
-            id
-            code
-            title
-        }
+  mutation CreateCourse($courseInput: CourseInput!) {
+    createCourse(courseInput: $courseInput) {
+      id
+      code
+      title
     }
+  }
 `;
 export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutation, CreateCourseMutationVariables>;
 
@@ -2031,24 +2055,60 @@ export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutatio
  * });
  */
 export function useCreateCourseMutation(baseOptions?: Apollo.MutationHookOptions<CreateCourseMutation, CreateCourseMutationVariables>) {
-    return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, baseOptions);
+  return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, baseOptions);
 }
+
 export type CreateCourseMutationHookResult = ReturnType<typeof useCreateCourseMutation>;
 export type CreateCourseMutationResult = Apollo.MutationResult<CreateCourseMutation>;
 export type CreateCourseMutationOptions = Apollo.BaseMutationOptions<CreateCourseMutation, CreateCourseMutationVariables>;
-export const CourseStaffsDocument = gql`
-    query CourseStaffs($courseTermInput: CourseTermIdInput!) {
-        courseStaffs(courseTermInput: $courseTermInput) {
-            id
-            role
-            user {
-                id
-                username
-                name
-            }
-            isNew
-        }
+export const UpdateCourseDocument = gql`
+  mutation UpdateCourse($courseInput: UpdateCourseInput!) {
+    updateCourse(courseInput: $courseInput) {
+      id
+      code
+      title
     }
+  }
+`;
+export type UpdateCourseMutationFn = Apollo.MutationFunction<UpdateCourseMutation, UpdateCourseMutationVariables>;
+
+/**
+ * __useUpdateCourseMutation__
+ *
+ * To run a mutation, you first call `useUpdateCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCourseMutation, { data, loading, error }] = useUpdateCourseMutation({
+ *   variables: {
+ *      courseInput: // value for 'courseInput'
+ *   },
+ * });
+ */
+export function useUpdateCourseMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCourseMutation, UpdateCourseMutationVariables>) {
+  return Apollo.useMutation<UpdateCourseMutation, UpdateCourseMutationVariables>(UpdateCourseDocument, baseOptions);
+}
+
+export type UpdateCourseMutationHookResult = ReturnType<typeof useUpdateCourseMutation>;
+export type UpdateCourseMutationResult = Apollo.MutationResult<UpdateCourseMutation>;
+export type UpdateCourseMutationOptions = Apollo.BaseMutationOptions<UpdateCourseMutation, UpdateCourseMutationVariables>;
+export const CourseStaffsDocument = gql`
+  query CourseStaffs($courseTermInput: CourseTermIdInput!) {
+    courseStaffs(courseTermInput: $courseTermInput) {
+      id
+      role
+      user {
+        id
+        username
+        name
+      }
+      isNew
+    }
+  }
 `;
 
 /**

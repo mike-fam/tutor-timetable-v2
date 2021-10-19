@@ -8,7 +8,7 @@ import {
 } from "../hooks/useApolloHooksWithError";
 import { useMeQuery, useNotificationsSubscription } from "../generated/graphql";
 import { UserContext } from "../utils/user";
-import { ErrorContext } from "../utils/errors";
+import { FeedbackContext } from "../utils/errors";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { UserState } from "../types/user";
 import { Footer } from "../Footer";
@@ -32,6 +32,19 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                 description: error.message,
                 position: "bottom",
                 status: "error",
+                isClosable: true,
+                duration: 9000,
+            });
+        },
+        [toast]
+    );
+    const addSuccess = useCallback(
+        (title?: string, description?: string) => {
+            toast({
+                title: title || "Success",
+                description: description || "Operation successful",
+                position: "bottom",
+                status: "success",
                 isClosable: true,
                 duration: 9000,
             });
@@ -106,7 +119,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                 setUser,
             }}
         >
-            <ErrorContext.Provider value={{ addError }}>
+            <FeedbackContext.Provider value={{ addError, addSuccess }}>
                 <TimetableSettingsContext.Provider
                     value={{
                         displayedDays,
@@ -129,7 +142,7 @@ export const WrapperContainer: React.FC<Props> = ({ children }) => {
                         <Footer />
                     </SessionsContext.Provider>
                 </TimetableSettingsContext.Provider>
-            </ErrorContext.Provider>
+            </FeedbackContext.Provider>
         </UserContext.Provider>
     );
 };

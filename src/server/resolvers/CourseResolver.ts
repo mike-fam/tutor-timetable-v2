@@ -21,6 +21,12 @@ export class CourseInput {
     title: string;
 }
 
+@InputType()
+export class UpdateCourseInput extends CourseInput {
+    @Field()
+    id: string;
+}
+
 @Resolver(() => Course)
 export class CourseResolver {
     @Query(() => [Course])
@@ -42,6 +48,14 @@ export class CourseResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Course> {
         return await models.course.create({ code, title }, req.user);
+    }
+
+    @Mutation(() => Course)
+    async updateCourse(
+        @Arg("courseInput") { id, code, title }: UpdateCourseInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Course> {
+        return await models.course.update({ id }, { code, title }, req.user);
     }
 
     @FieldResolver(() => [Timetable])
