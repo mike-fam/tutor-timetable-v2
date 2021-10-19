@@ -1,4 +1,14 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
+import {
+    Arg,
+    Ctx,
+    Field,
+    FieldResolver,
+    InputType,
+    Mutation,
+    Query,
+    Resolver,
+    Root,
+} from "type-graphql";
 import {
     Course,
     CourseStaff,
@@ -8,6 +18,31 @@ import {
 } from "../entities";
 
 import { MyContext } from "../types/context";
+import { FreezeState } from "../types/timetable";
+
+@InputType()
+export class TimetableInput {
+    @Field()
+    courseId: string;
+
+    @Field()
+    termId: string;
+
+    @Field()
+    permanentRequestLock: FreezeState;
+
+    @Field()
+    temporaryRequestLock: FreezeState;
+
+    @Field()
+    allocationToken: FreezeState;
+}
+
+@InputType()
+export class UpdateTimetableInput extends TimetableInput {
+    @Field()
+    id: string;
+}
 
 @Resolver(() => Timetable)
 export class TimetableResolver {
@@ -23,6 +58,26 @@ export class TimetableResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
         return await models.timetable.get({ courseId, termId }, req.user);
+    }
+
+    @Mutation(() => Timetable)
+    async createTimetable(
+        @Arg("timetableInput") { courseId, termId }: TimetableInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
+        return await models.timetable.create({ courseId, termId }, req.user);
+    }
+
+    @Mutation(() => Timetable)
+    async updateTimetable(
+        @Arg("timetableInput") { id, courseId, termId }: UpdateTimetableInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
+        return await models.timetable.update(
+            { id },
+            { courseId, termId },
+            req.user
+        );
     }
 
     @Query(() => Timetable)
