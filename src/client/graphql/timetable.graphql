@@ -1,0 +1,27 @@
+query Timetables {
+    timetables {
+        id
+        code
+        title
+    }
+}
+
+mutation CreateTimetable($timetableInput: TimetableInput!) {
+    createTimetable(timetableInput: $timetableInput) {
+        id
+        code
+        title
+    }
+}
+
+mutation UpdateTimetable($timetableInput: UpdateTimetableInput!) {
+    updateTimetable(timetableInput: $timetableInput) {
+        id
+        code
+        title
+    }
+}
+
+mutation DeleteTimetable($timetableId: String!) {
+    deleteTimetable(timetableId: $timetableId)
+}

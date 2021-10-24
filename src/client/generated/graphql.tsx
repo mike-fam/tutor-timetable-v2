@@ -150,6 +150,8 @@ export type Mutation = {
   deleteSessionStreams: Array<Scalars["String"]>;
   updateSessionStreams: Array<SessionStream>;
   addStreamStaff: SessionStream;
+  createTimetable: Timetable;
+  updateTimetable: Timetable;
   updateSessionAllocations: Array<Session>;
   updateSession: Array<Session>;
   deleteSessions: Array<Scalars["String"]>;
@@ -160,6 +162,7 @@ export type Mutation = {
   deleteRequestById: Scalars["String"];
   createCourse: Course;
   updateCourse: Course;
+  deleteCourse: Scalars["String"];
   createOffer: Offer;
   editExistingOffer: Offer;
   removeOffer: Offer;
@@ -244,9 +247,19 @@ export type MutationUpdateSessionStreamsArgs = {
 
 
 export type MutationAddStreamStaffArgs = {
-  updateSessions: Scalars['Boolean'];
-  newStaffs: Array<Scalars['String']>;
-  streamId: Scalars['String'];
+  updateSessions: Scalars["Boolean"];
+  newStaffs: Array<Scalars["String"]>;
+  streamId: Scalars["String"];
+};
+
+
+export type MutationCreateTimetableArgs = {
+  timetableInput: TimetableInput;
+};
+
+
+export type MutationUpdateTimetableArgs = {
+  timetableInput: UpdateTimetableInput;
 };
 
 
@@ -298,6 +311,11 @@ export type MutationCreateCourseArgs = {
 
 export type MutationUpdateCourseArgs = {
   courseInput: UpdateCourseInput;
+};
+
+
+export type MutationDeleteCourseArgs = {
+  courseId: Scalars["String"];
 };
 
 
@@ -426,8 +444,7 @@ export type QueryFromPublicTimetableArgs = {
 
 
 export type QueryTimetableArgs = {
-  termId: Scalars['String'];
-  courseId: Scalars['String'];
+  courseTermId: CourseTermIdInput;
 };
 
 
@@ -655,6 +672,14 @@ export type Timetable = {
   sessionStreams: Array<SessionStream>;
 };
 
+export type TimetableInput = {
+  courseId: Scalars["String"];
+  termId: Scalars["String"];
+  permanentRequestLock: Scalars["String"];
+  temporaryRequestLock: Scalars["String"];
+  allocationToken: Scalars["String"];
+};
+
 export type UpdateCourseInput = {
   code: Scalars["String"];
   title: Scalars["String"];
@@ -679,22 +704,31 @@ export type UpdateSessionInput = {
 export type UpdateStreamInput = {
   name: Scalars['String'];
   type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  location: Scalars['String'];
+  day: Scalars["Int"];
+  startTime: Scalars["Float"];
+  endTime: Scalars["Float"];
+  location: Scalars["String"];
   baseStaffRequirement: StreamStaffRequirement;
   extraStaffRequirement: Array<StreamStaffRequirement>;
-  streamId: Scalars['String'];
+  streamId: Scalars["String"];
+};
+
+export type UpdateTimetableInput = {
+  courseId: Scalars["String"];
+  termId: Scalars["String"];
+  permanentRequestLock: Scalars["String"];
+  temporaryRequestLock: Scalars["String"];
+  allocationToken: Scalars["String"];
+  id: Scalars["String"];
 };
 
 export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  username: Scalars['String'];
-  name: Scalars['String'];
-  isAdmin: Scalars['Boolean'];
-  email: Scalars['String'];
+  __typename?: "User";
+  id: Scalars["String"];
+  username: Scalars["String"];
+  name: Scalars["String"];
+  isAdmin: Scalars["Boolean"];
+  email: Scalars["String"];
   notifications: Array<Notification>;
   courseStaffs: Array<CourseStaff>;
   requests: Array<StaffRequest>;
@@ -842,6 +876,16 @@ export type UpdateCourseMutation = (
       & Pick<Course, "id" | "code" | "title">
       )
 }
+    );
+
+export type DeleteCourseMutationVariables = Exact<{
+  courseId: Scalars["String"];
+}>;
+
+
+export type DeleteCourseMutation = (
+    { __typename?: "Mutation" }
+    & Pick<Mutation, "deleteCourse">
     );
 
 export type CourseStaffsQueryVariables = Exact<{
@@ -1088,15 +1132,36 @@ export type PreferenceByUsernameQuery = (
   & { preferenceByUsername: (
     { __typename?: 'Preference' }
     & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-    & { courseStaff: (
-      { __typename?: 'CourseStaff' }
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
-    ) }
-  ) }
-);
+      & {
+    courseStaff: (
+        { __typename?: "CourseStaff" }
+        & {
+      user: (
+          { __typename?: "User" }
+          & Pick<User, "username">
+          )
+    }
+        )
+  }
+      )
+}
+    );
+
+export type UpdatePreferenceMutationVariables = Exact<{
+  preferenceFind: CourseTermIdInput;
+  preference: PreferenceInput;
+}>;
+
+
+export type UpdatePreferenceMutation = (
+    { __typename?: "Mutation" }
+    & {
+  updatePreference: (
+      { __typename?: "Preference" }
+      & Pick<Preference, "maxContigHours" | "maxWeeklyHours" | "sessionType">
+      )
+}
+    );
 
 export type CreateRequestMutationVariables = Exact<{
   requestDetails: RequestFormInputType;
@@ -1104,9 +1169,10 @@ export type CreateRequestMutationVariables = Exact<{
 
 
 export type CreateRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { createRequest: (
-    { __typename?: 'StaffRequest' }
+    { __typename?: "Mutation" }
+    & {
+  createRequest: (
+      { __typename?: "StaffRequest" }
     & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
     & { requester: (
       { __typename?: 'User' }
@@ -1733,20 +1799,6 @@ export type TermQuery = (
   ) }
 );
 
-export type UpdatePreferenceMutationVariables = Exact<{
-  preferenceFind: CourseTermIdInput;
-  preference: PreferenceInput;
-}>;
-
-
-export type UpdatePreferenceMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePreference: (
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-  ) }
-);
-
 export const SessionInfoFragmentDoc = gql`
     fragment SessionInfo on Session {
   id
@@ -2057,7 +2109,6 @@ export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutatio
 export function useCreateCourseMutation(baseOptions?: Apollo.MutationHookOptions<CreateCourseMutation, CreateCourseMutationVariables>) {
   return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, baseOptions);
 }
-
 export type CreateCourseMutationHookResult = ReturnType<typeof useCreateCourseMutation>;
 export type CreateCourseMutationResult = Apollo.MutationResult<CreateCourseMutation>;
 export type CreateCourseMutationOptions = Apollo.BaseMutationOptions<CreateCourseMutation, CreateCourseMutationVariables>;
@@ -2096,6 +2147,37 @@ export function useUpdateCourseMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateCourseMutationHookResult = ReturnType<typeof useUpdateCourseMutation>;
 export type UpdateCourseMutationResult = Apollo.MutationResult<UpdateCourseMutation>;
 export type UpdateCourseMutationOptions = Apollo.BaseMutationOptions<UpdateCourseMutation, UpdateCourseMutationVariables>;
+export const DeleteCourseDocument = gql`
+  mutation DeleteCourse($courseId: String!) {
+    deleteCourse(courseId: $courseId)
+  }
+`;
+export type DeleteCourseMutationFn = Apollo.MutationFunction<DeleteCourseMutation, DeleteCourseMutationVariables>;
+
+/**
+ * __useDeleteCourseMutation__
+ *
+ * To run a mutation, you first call `useDeleteCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCourseMutation, { data, loading, error }] = useDeleteCourseMutation({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCourseMutation, DeleteCourseMutationVariables>) {
+  return Apollo.useMutation<DeleteCourseMutation, DeleteCourseMutationVariables>(DeleteCourseDocument, baseOptions);
+}
+
+export type DeleteCourseMutationHookResult = ReturnType<typeof useDeleteCourseMutation>;
+export type DeleteCourseMutationResult = Apollo.MutationResult<DeleteCourseMutation>;
+export type DeleteCourseMutationOptions = Apollo.BaseMutationOptions<DeleteCourseMutation, DeleteCourseMutationVariables>;
 export const CourseStaffsDocument = gql`
   query CourseStaffs($courseTermInput: CourseTermIdInput!) {
     courseStaffs(courseTermInput: $courseTermInput) {
@@ -2591,24 +2673,62 @@ export const PreferenceByUsernameDocument = gql`
  * });
  */
 export function usePreferenceByUsernameQuery(baseOptions: Apollo.QueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-        return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
-      }
+  return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+}
+
 export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-          return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
-        }
+  return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+}
+
 export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
 export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
 export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>;
+export const UpdatePreferenceDocument = gql`
+  mutation UpdatePreference($preferenceFind: CourseTermIdInput!, $preference: PreferenceInput!) {
+    updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
+      maxContigHours
+      maxWeeklyHours
+      sessionType
+    }
+  }
+`;
+export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
+
+/**
+ * __useUpdatePreferenceMutation__
+ *
+ * To run a mutation, you first call `useUpdatePreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePreferenceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePreferenceMutation, { data, loading, error }] = useUpdatePreferenceMutation({
+ *   variables: {
+ *      preferenceFind: // value for 'preferenceFind'
+ *      preference: // value for 'preference'
+ *   },
+ * });
+ */
+export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>) {
+  return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, baseOptions);
+}
+
+export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
+export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
+export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
 export const CreateRequestDocument = gql`
-    mutation CreateRequest($requestDetails: RequestFormInputType!) {
-  createRequest(requestDetails: $requestDetails) {
-    id
-    title
-    status
-    type
-    description
-    requester {
+  mutation CreateRequest($requestDetails: RequestFormInputType!) {
+    createRequest(requestDetails: $requestDetails) {
       id
+      title
+      status
+      type
+      description
+      requester {
+        id
       username
       name
     }
@@ -3795,38 +3915,3 @@ export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQ
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
-export const UpdatePreferenceDocument = gql`
-    mutation UpdatePreference($preferenceFind: CourseTermIdInput!, $preference: PreferenceInput!) {
-  updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
-    maxContigHours
-    maxWeeklyHours
-    sessionType
-  }
-}
-    `;
-export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
-
-/**
- * __useUpdatePreferenceMutation__
- *
- * To run a mutation, you first call `useUpdatePreferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePreferenceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePreferenceMutation, { data, loading, error }] = useUpdatePreferenceMutation({
- *   variables: {
- *      preferenceFind: // value for 'preferenceFind'
- *      preference: // value for 'preference'
- *   },
- * });
- */
-export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>) {
-        return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, baseOptions);
-      }
-export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
-export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
-export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;

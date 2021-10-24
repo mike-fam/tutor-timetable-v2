@@ -58,6 +58,15 @@ export class CourseResolver {
         return await models.course.update({ id }, { code, title }, req.user);
     }
 
+    @Mutation(() => String)
+    async deleteCourse(
+        @Arg("courseId") courseId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<string> {
+        await models.course.delete({ id: courseId }, req.user);
+        return courseId;
+    }
+
     @FieldResolver(() => [Timetable])
     async timetables(
         @Root() course: Course,

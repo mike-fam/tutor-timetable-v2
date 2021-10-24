@@ -19,6 +19,7 @@ import {
 
 import { MyContext } from "../types/context";
 import { FreezeState } from "../types/timetable";
+import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
 export class TimetableInput {
@@ -53,8 +54,7 @@ export class TimetableResolver {
 
     @Query(() => Timetable)
     async timetable(
-        @Arg("courseId") courseId: string,
-        @Arg("termId") termId: string,
+        @Arg("courseTermId") { courseId, termId }: CourseTermIdInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
         return await models.timetable.get({ courseId, termId }, req.user);
@@ -78,6 +78,14 @@ export class TimetableResolver {
             { courseId, termId },
             req.user
         );
+    }
+
+    @Mutation(() => String)
+    async deleteTimetable(
+        @Arg("timetableId") timetableId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timetable> {
+        return await models.timetable.delete({ id: timetableId }, req.user);
     }
 
     @Query(() => Timetable)

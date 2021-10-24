@@ -26,3 +26,14 @@ query PreferenceByUsername(
         }
     }
 }
+
+mutation UpdatePreference(
+    $preferenceFind: CourseTermIdInput!
+    $preference: PreferenceInput!
+) {
+    updatePreference(preferenceFind: $preferenceFind, preference: $preference) {
+        maxContigHours
+        maxWeeklyHours
+        sessionType
+    }
+}
