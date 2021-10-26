@@ -93,8 +93,8 @@ export const AdminCourseContainer: React.FC = () => {
                     setChosenCourse(void 0);
                     setUpdated(true);
                 }}
-                onSelect={(courseCode) => {
-                    setChosenCourse(courseCode);
+                onSelect={(courseId) => {
+                    setChosenCourse(courseId);
                     setUpdated(true);
                 }}
                 selectedValue={chosenCourse}

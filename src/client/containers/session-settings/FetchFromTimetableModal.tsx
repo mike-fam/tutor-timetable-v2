@@ -17,6 +17,7 @@ import {
 import { Set } from "immutable";
 import { sentenceCase } from "change-case";
 import { SimpleCheckboxList } from "../../components/helpers/SimpleCheckboxList";
+import { formatTerm } from "../../utils/term";
 
 type Props = {
     fetchFromTimetable: (sessionTypes: SessionType[]) => any;
@@ -47,10 +48,7 @@ export const FetchFromTimetableModal: FC<Props> = ({
                         <FormControl>
                             <FormLabel>Term</FormLabel>
                             <Input
-                                value={
-                                    term &&
-                                    `${sentenceCase(term.type)}, ${term.year}`
-                                }
+                                value={term && formatTerm(term)}
                                 readOnly={true}
                             />
                         </FormControl>

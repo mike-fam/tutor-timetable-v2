@@ -1,24 +1,54 @@
 query Timetables {
     timetables {
         id
-        code
-        title
+        course {
+            id
+            code
+        }
+        term {
+            id
+            type
+            year
+        }
+        permanentRequestLock
+        temporaryRequestLock
+        allocationToken
     }
 }
 
 mutation CreateTimetable($timetableInput: TimetableInput!) {
     createTimetable(timetableInput: $timetableInput) {
         id
-        code
-        title
+        course {
+            id
+            code
+        }
+        term {
+            id
+            type
+            year
+        }
+        permanentRequestLock
+        temporaryRequestLock
+        allocationToken
     }
 }
 
-mutation UpdateTimetable($timetableInput: UpdateTimetableInput!) {
+mutation UpdateTimetable($timetableInput: TimetableInput!) {
     updateTimetable(timetableInput: $timetableInput) {
         id
-        code
-        title
+        course {
+            id
+            code
+        }
+        term {
+            id
+            type
+            year
+        }
+        permanentRequestLock
+        temporaryRequestLock
+        allocationToken
     }
 }
 

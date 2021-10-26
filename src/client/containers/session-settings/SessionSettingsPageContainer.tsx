@@ -17,7 +17,7 @@ import { FetchFromTimetableModal } from "./FetchFromTimetableModal";
 import { StreamSettingsDrawer } from "../../components/session-settings/StreamSettingsDrawer";
 import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
 import { AllocatorModal } from "./AllocatorModal";
-import { sentenceCase } from "change-case";
+import { formatTerm } from "../../utils/term";
 
 type Props = {};
 
@@ -174,9 +174,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                     requestAllocation(courseId, termId, users, timeout);
                 }}
                 courseCode={course?.code || ""}
-                termName={
-                    term ? `${sentenceCase(term.type)}, ${term.year}` : ""
-                }
+                termName={term ? formatTerm(term) : ""}
             />
         </Wrapper>
     );

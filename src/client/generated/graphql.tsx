@@ -152,6 +152,7 @@ export type Mutation = {
   addStreamStaff: SessionStream;
   createTimetable: Timetable;
   updateTimetable: Timetable;
+  deleteTimetable: Scalars["String"];
   updateSessionAllocations: Array<Session>;
   updateSession: Array<Session>;
   deleteSessions: Array<Scalars["String"]>;
@@ -260,6 +261,11 @@ export type MutationCreateTimetableArgs = {
 
 export type MutationUpdateTimetableArgs = {
   timetableInput: UpdateTimetableInput;
+};
+
+
+export type MutationDeleteTimetableArgs = {
+  timetableId: Scalars["String"];
 };
 
 
@@ -666,6 +672,7 @@ export type Timetable = {
   id: Scalars["String"];
   permanentRequestLock: FreezeState;
   temporaryRequestLock: FreezeState;
+  allocationToken?: Maybe<Scalars["String"]>;
   course: Course;
   term: Term;
   courseStaffs: Array<CourseStaff>;
@@ -702,7 +709,7 @@ export type UpdateSessionInput = {
 };
 
 export type UpdateStreamInput = {
-  name: Scalars['String'];
+  name: Scalars["String"];
   type: SessionType;
   day: Scalars["Int"];
   startTime: Scalars["Float"];
@@ -1128,10 +1135,11 @@ export type PreferenceByUsernameQueryVariables = Exact<{
 
 
 export type PreferenceByUsernameQuery = (
-  { __typename?: 'Query' }
-  & { preferenceByUsername: (
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
+    { __typename?: "Query" }
+    & {
+  preferenceByUsername: (
+      { __typename?: "Preference" }
+      & Pick<Preference, "maxContigHours" | "maxWeeklyHours" | "sessionType">
       & {
     courseStaff: (
         { __typename?: "CourseStaff" }
@@ -1173,16 +1181,18 @@ export type CreateRequestMutation = (
     & {
   createRequest: (
       { __typename?: "StaffRequest" }
-    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
-    & { requester: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ), session: (
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
+      & Pick<StaffRequest, "id" | "title" | "status" | "type" | "description">
+      & {
+    requester: (
+        { __typename?: "User" }
+        & Pick<User, "id" | "username" | "name">
+        ), session: (
+        { __typename?: "Session" }
+        & Pick<Session, "id" | "week">
+        & {
+      sessionStream: (
+          { __typename?: "SessionStream" }
+          & Pick<SessionStream, "id" | "name" | "startTime" | "endTime" | "weeks">
         & { timetable: (
           { __typename?: 'Timetable' }
           & { course: (
@@ -1792,22 +1802,104 @@ export type TermQueryVariables = Exact<{
 
 
 export type TermQuery = (
-  { __typename?: 'Query' }
-  & { term: (
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  ) }
-);
+    { __typename?: "Query" }
+    & {
+  term: (
+      { __typename?: "Term" }
+      & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
+      )
+}
+    );
+
+export type TimetablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TimetablesQuery = (
+    { __typename?: "Query" }
+    & {
+  timetables: Array<(
+      { __typename?: "Timetable" }
+      & Pick<Timetable, "id" | "permanentRequestLock" | "temporaryRequestLock" | "allocationToken">
+      & {
+    course: (
+        { __typename?: "Course" }
+        & Pick<Course, "id" | "code">
+        ), term: (
+        { __typename?: "Term" }
+        & Pick<Term, "id" | "type" | "year">
+        )
+  }
+      )>
+}
+    );
+
+export type CreateTimetableMutationVariables = Exact<{
+  timetableInput: TimetableInput;
+}>;
+
+
+export type CreateTimetableMutation = (
+    { __typename?: "Mutation" }
+    & {
+  createTimetable: (
+      { __typename?: "Timetable" }
+      & Pick<Timetable, "id" | "permanentRequestLock" | "temporaryRequestLock" | "allocationToken">
+      & {
+    course: (
+        { __typename?: "Course" }
+        & Pick<Course, "id" | "code">
+        ), term: (
+        { __typename?: "Term" }
+        & Pick<Term, "id" | "type" | "year">
+        )
+  }
+      )
+}
+    );
+
+export type UpdateTimetableMutationVariables = Exact<{
+  timetableInput: UpdateTimetableInput;
+}>;
+
+
+export type UpdateTimetableMutation = (
+    { __typename?: "Mutation" }
+    & {
+  updateTimetable: (
+      { __typename?: "Timetable" }
+      & Pick<Timetable, "id" | "permanentRequestLock" | "temporaryRequestLock" | "allocationToken">
+      & {
+    course: (
+        { __typename?: "Course" }
+        & Pick<Course, "id" | "code">
+        ), term: (
+        { __typename?: "Term" }
+        & Pick<Term, "id" | "type" | "year">
+        )
+  }
+      )
+}
+    );
+
+export type DeleteTimetableMutationVariables = Exact<{
+  timetableId: Scalars["String"];
+}>;
+
+
+export type DeleteTimetableMutation = (
+    { __typename?: "Mutation" }
+    & Pick<Mutation, "deleteTimetable">
+    );
 
 export const SessionInfoFragmentDoc = gql`
-    fragment SessionInfo on Session {
-  id
-  sessionStream {
+  fragment SessionInfo on Session {
     id
-    name
-    startTime
-    endTime
-    day
+    sessionStream {
+      id
+      name
+      startTime
+      endTime
+      day
     timetable {
       term {
         id
@@ -2143,7 +2235,6 @@ export type UpdateCourseMutationFn = Apollo.MutationFunction<UpdateCourseMutatio
 export function useUpdateCourseMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCourseMutation, UpdateCourseMutationVariables>) {
   return Apollo.useMutation<UpdateCourseMutation, UpdateCourseMutationVariables>(UpdateCourseDocument, baseOptions);
 }
-
 export type UpdateCourseMutationHookResult = ReturnType<typeof useUpdateCourseMutation>;
 export type UpdateCourseMutationResult = Apollo.MutationResult<UpdateCourseMutation>;
 export type UpdateCourseMutationOptions = Apollo.BaseMutationOptions<UpdateCourseMutation, UpdateCourseMutationVariables>;
@@ -2174,7 +2265,6 @@ export type DeleteCourseMutationFn = Apollo.MutationFunction<DeleteCourseMutatio
 export function useDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCourseMutation, DeleteCourseMutationVariables>) {
   return Apollo.useMutation<DeleteCourseMutation, DeleteCourseMutationVariables>(DeleteCourseDocument, baseOptions);
 }
-
 export type DeleteCourseMutationHookResult = ReturnType<typeof useDeleteCourseMutation>;
 export type DeleteCourseMutationResult = Apollo.MutationResult<DeleteCourseMutation>;
 export type DeleteCourseMutationOptions = Apollo.BaseMutationOptions<DeleteCourseMutation, DeleteCourseMutationVariables>;
@@ -2675,11 +2765,9 @@ export const PreferenceByUsernameDocument = gql`
 export function usePreferenceByUsernameQuery(baseOptions: Apollo.QueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
   return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
 }
-
 export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
   return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
 }
-
 export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
 export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
 export type PreferenceByUsernameQueryResult = Apollo.QueryResult<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>;
@@ -2715,7 +2803,6 @@ export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenc
 export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>) {
   return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, baseOptions);
 }
-
 export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
 export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
 export type UpdatePreferenceMutationOptions = Apollo.BaseMutationOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>;
@@ -2729,16 +2816,16 @@ export const CreateRequestDocument = gql`
       description
       requester {
         id
-      username
-      name
-    }
-    session {
-      id
-      sessionStream {
-        id
+        username
         name
-        startTime
-        endTime
+      }
+      session {
+        id
+        sessionStream {
+          id
+          name
+          startTime
+          endTime
         weeks
         timetable {
           course {
@@ -3907,11 +3994,180 @@ export const TermDocument = gql`
  * });
  */
 export function useTermQuery(baseOptions: Apollo.QueryHookOptions<TermQuery, TermQueryVariables>) {
-        return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
-      }
+  return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+}
+
 export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>) {
-          return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
-        }
+  return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+}
+
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
+export const TimetablesDocument = gql`
+  query Timetables {
+    timetables {
+      id
+      course {
+        id
+        code
+      }
+      term {
+        id
+        type
+        year
+      }
+      permanentRequestLock
+      temporaryRequestLock
+      allocationToken
+    }
+  }
+`;
+
+/**
+ * __useTimetablesQuery__
+ *
+ * To run a query within a React component, call `useTimetablesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTimetablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTimetablesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTimetablesQuery(baseOptions?: Apollo.QueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
+  return Apollo.useQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
+}
+
+export function useTimetablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
+  return Apollo.useLazyQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
+}
+
+export type TimetablesQueryHookResult = ReturnType<typeof useTimetablesQuery>;
+export type TimetablesLazyQueryHookResult = ReturnType<typeof useTimetablesLazyQuery>;
+export type TimetablesQueryResult = Apollo.QueryResult<TimetablesQuery, TimetablesQueryVariables>;
+export const CreateTimetableDocument = gql`
+  mutation CreateTimetable($timetableInput: TimetableInput!) {
+    createTimetable(timetableInput: $timetableInput) {
+      id
+      course {
+        id
+        code
+      }
+      term {
+        id
+        type
+        year
+      }
+      permanentRequestLock
+      temporaryRequestLock
+      allocationToken
+    }
+  }
+`;
+export type CreateTimetableMutationFn = Apollo.MutationFunction<CreateTimetableMutation, CreateTimetableMutationVariables>;
+
+/**
+ * __useCreateTimetableMutation__
+ *
+ * To run a mutation, you first call `useCreateTimetableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTimetableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTimetableMutation, { data, loading, error }] = useCreateTimetableMutation({
+ *   variables: {
+ *      timetableInput: // value for 'timetableInput'
+ *   },
+ * });
+ */
+export function useCreateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<CreateTimetableMutation, CreateTimetableMutationVariables>) {
+  return Apollo.useMutation<CreateTimetableMutation, CreateTimetableMutationVariables>(CreateTimetableDocument, baseOptions);
+}
+
+export type CreateTimetableMutationHookResult = ReturnType<typeof useCreateTimetableMutation>;
+export type CreateTimetableMutationResult = Apollo.MutationResult<CreateTimetableMutation>;
+export type CreateTimetableMutationOptions = Apollo.BaseMutationOptions<CreateTimetableMutation, CreateTimetableMutationVariables>;
+export const UpdateTimetableDocument = gql`
+  mutation UpdateTimetable($timetableInput: UpdateTimetableInput!) {
+    updateTimetable(timetableInput: $timetableInput) {
+      id
+      course {
+        id
+        code
+      }
+      term {
+        id
+        type
+        year
+      }
+      permanentRequestLock
+      temporaryRequestLock
+      allocationToken
+    }
+  }
+`;
+export type UpdateTimetableMutationFn = Apollo.MutationFunction<UpdateTimetableMutation, UpdateTimetableMutationVariables>;
+
+/**
+ * __useUpdateTimetableMutation__
+ *
+ * To run a mutation, you first call `useUpdateTimetableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTimetableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTimetableMutation, { data, loading, error }] = useUpdateTimetableMutation({
+ *   variables: {
+ *      timetableInput: // value for 'timetableInput'
+ *   },
+ * });
+ */
+export function useUpdateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTimetableMutation, UpdateTimetableMutationVariables>) {
+  return Apollo.useMutation<UpdateTimetableMutation, UpdateTimetableMutationVariables>(UpdateTimetableDocument, baseOptions);
+}
+
+export type UpdateTimetableMutationHookResult = ReturnType<typeof useUpdateTimetableMutation>;
+export type UpdateTimetableMutationResult = Apollo.MutationResult<UpdateTimetableMutation>;
+export type UpdateTimetableMutationOptions = Apollo.BaseMutationOptions<UpdateTimetableMutation, UpdateTimetableMutationVariables>;
+export const DeleteTimetableDocument = gql`
+  mutation DeleteTimetable($timetableId: String!) {
+    deleteTimetable(timetableId: $timetableId)
+  }
+`;
+export type DeleteTimetableMutationFn = Apollo.MutationFunction<DeleteTimetableMutation, DeleteTimetableMutationVariables>;
+
+/**
+ * __useDeleteTimetableMutation__
+ *
+ * To run a mutation, you first call `useDeleteTimetableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTimetableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTimetableMutation, { data, loading, error }] = useDeleteTimetableMutation({
+ *   variables: {
+ *      timetableId: // value for 'timetableId'
+ *   },
+ * });
+ */
+export function useDeleteTimetableMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTimetableMutation, DeleteTimetableMutationVariables>) {
+  return Apollo.useMutation<DeleteTimetableMutation, DeleteTimetableMutationVariables>(DeleteTimetableDocument, baseOptions);
+}
+
+export type DeleteTimetableMutationHookResult = ReturnType<typeof useDeleteTimetableMutation>;
+export type DeleteTimetableMutationResult = Apollo.MutationResult<DeleteTimetableMutation>;
+export type DeleteTimetableMutationOptions = Apollo.BaseMutationOptions<DeleteTimetableMutation, DeleteTimetableMutationVariables>;

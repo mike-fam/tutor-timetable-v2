@@ -3,8 +3,7 @@ import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
 import { Map } from "immutable";
-import { sentenceCase } from "change-case";
-import { getCurrentTerm } from "../utils/term";
+import { formatTerm, getCurrentTerm } from "../utils/term";
 
 type Props = {
     chooseTerm: (termId: string) => void;
@@ -27,12 +26,7 @@ export const TermSelectContainer: React.FC<Props> = ({
             chooseTerm(getCurrentTerm(data.terms).id);
         }
         for (const term of data.terms) {
-            setTermsMap((termsMap) =>
-                termsMap.set(
-                    term.id,
-                    `${sentenceCase(term.type)}, ${term.year}`
-                )
-            );
+            setTermsMap((termsMap) => termsMap.set(term.id, formatTerm(term)));
         }
     }, [loading, data, chooseTerm]);
     return (

@@ -5,6 +5,7 @@ import { AdminSidebarLink } from "../../components/admin/AdminSidebarLink";
 import { AdminPage } from "../../types/admin";
 import { AdminMiniRoute } from "../../components/admin/AdminMiniRoute";
 import { AdminCourseContainer } from "./AdminCourseContainer";
+import { AdminTimetableContainer } from "./AdminTimetableContainer";
 
 type Props = {};
 
@@ -44,6 +45,10 @@ export const AdminPageContainer: React.FC<Props> = () => {
                         <AdminMiniRoute
                             page="Course"
                             component={AdminCourseContainer}
+                        />
+                        <AdminMiniRoute
+                            page="Timetable"
+                            component={AdminTimetableContainer}
                         />
                     </GridItem>
                 </Grid>

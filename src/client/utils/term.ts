@@ -5,6 +5,8 @@ import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
 import { TermResponseType } from "../types/term";
 import { today } from "../constants/date";
+import { TermType } from "../generated/graphql";
+import { sentenceCase } from "change-case";
 
 export const getCurrentTerm = (terms: Array<TermResponseType>) => {
     // Choose current term by default
@@ -36,3 +38,6 @@ export const getCurrentWeek = (term?: TermResponseType) => {
         startOfISOWeek(parseISO(term.startDate))
     );
 };
+
+export const formatTerm = (term: { type: TermType; year: number }) =>
+    `${sentenceCase(term.type)}, ${term.year}`;

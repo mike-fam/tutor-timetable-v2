@@ -12,8 +12,8 @@ import { useContext, useEffect, useMemo } from "react";
 import { FeedbackContext } from "../utils/errors";
 
 export const useQueryWithError = <T, S>(
-    useApolloQuery: (baseOptions: QueryHookOptions<T, S>) => QueryResult<T, S>,
-    baseOptions: QueryHookOptions<T, S>
+    useApolloQuery: (baseOptions?: QueryHookOptions<T, S>) => QueryResult<T, S>,
+    baseOptions?: QueryHookOptions<T, S>
 ) => {
     const queryResult = useApolloQuery(baseOptions);
     const { addError } = useContext(FeedbackContext);
@@ -29,9 +29,9 @@ export const useQueryWithError = <T, S>(
 
 export const useMutationWithError = <T, S>(
     useApolloMutation: (
-        baseOptions: MutationHookOptions<T, S>
+        baseOptions?: MutationHookOptions<T, S>
     ) => MutationTuple<T, S>,
-    baseOptions: MutationHookOptions<T, S>
+    baseOptions?: MutationHookOptions<T, S>
 ) => {
     const mutationResult = useApolloMutation(baseOptions);
     const { addError } = useContext(FeedbackContext);
@@ -47,9 +47,9 @@ export const useMutationWithError = <T, S>(
 
 export const useMutationWithStatus = <T, S>(
     useApolloMutation: (
-        baseOptions: MutationHookOptions<T, S>
+        baseOptions?: MutationHookOptions<T, S>
     ) => MutationTuple<T, S>,
-    baseOptions: MutationHookOptions<T, S>,
+    baseOptions?: MutationHookOptions<T, S>,
     successMessage?: { title: string; description: string }
 ) => {
     const mutationResult = useMutationWithError(useApolloMutation, baseOptions);

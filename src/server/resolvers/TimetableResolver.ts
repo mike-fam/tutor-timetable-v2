@@ -39,12 +39,6 @@ export class TimetableInput {
     allocationToken: FreezeState;
 }
 
-@InputType()
-export class UpdateTimetableInput extends TimetableInput {
-    @Field()
-    id: string;
-}
-
 @Resolver(() => Timetable)
 export class TimetableResolver {
     @Query(() => [Timetable])
@@ -62,20 +56,21 @@ export class TimetableResolver {
 
     @Mutation(() => Timetable)
     async createTimetable(
-        @Arg("timetableInput") { courseId, termId }: TimetableInput,
+        @Arg("timetableInput") timetableInput: TimetableInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
-        return await models.timetable.create({ courseId, termId }, req.user);
+        return await models.timetable.create(timetableInput, req.user);
     }
 
     @Mutation(() => Timetable)
     async updateTimetable(
-        @Arg("timetableInput") { id, courseId, termId }: UpdateTimetableInput,
+        @Arg("timetableInput") timetableInput: TimetableInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
+        const { courseId, termId, ...rest } = timetableInput;
         return await models.timetable.update(
-            { id },
             { courseId, termId },
+            rest,
             req.user
         );
     }

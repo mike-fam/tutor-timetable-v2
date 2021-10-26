@@ -39,6 +39,7 @@ export class TimetableModel extends BaseModel<Timetable> {
      * They are course coordinator of that timetable, AND ALL of the following
      * conditions hold
      *      They don't change the course and the term of the timetable
+     *      They don't change the allocation token
      *
      * @param {Timetable} timetable timetable object to update
      * @param {Partial<Timetable>} updatedFields fields to update
@@ -70,6 +71,12 @@ export class TimetableModel extends BaseModel<Timetable> {
         if (
             updatedFields.course &&
             (await updatedFields.course).id !== course.id
+        ) {
+            return { hasPerm: false };
+        }
+        if (
+            updatedFields.allocationToken &&
+            updatedFields.allocationToken !== timetable.allocationToken
         ) {
             return { hasPerm: false };
         }

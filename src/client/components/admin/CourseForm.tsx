@@ -3,7 +3,7 @@ import React from "react";
 import { CourseInput } from "../../generated/graphql";
 import { FormikInput } from "../helpers/formik/FormikInput";
 import { AdminEditMode } from "../../types/admin";
-import { Button } from "@chakra-ui/react";
+import { Button, VStack } from "@chakra-ui/react";
 
 type Props = {
     initialValues?: CourseInput;
@@ -25,16 +25,18 @@ export const CourseForm: React.FC<Props> = ({
             enableReinitialize
         >
             <Form>
-                <FormikInput name="code" label="Course code" />
-                <FormikInput name="title" label="Course title" />
-                <Button
-                    mt={3}
-                    type="submit"
-                    isLoading={loading}
-                    colorScheme="blue"
-                >
-                    {editMode === "add" ? "Add" : "Save"} Course
-                </Button>
+                <VStack spacing={4}>
+                    <FormikInput name="code" label="Course code" />
+                    <FormikInput name="title" label="Course title" />
+                    <Button
+                        type="submit"
+                        isLoading={loading}
+                        colorScheme="blue"
+                        alignSelf="flex-start"
+                    >
+                        {editMode === "add" ? "Add" : "Save"} Course
+                    </Button>
+                </VStack>
             </Form>
         </Formik>
     );

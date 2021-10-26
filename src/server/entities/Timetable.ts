@@ -68,6 +68,7 @@ export class Timetable
     @Column({ enum: FreezeState, default: FreezeState.FREE })
     temporaryRequestLock: FreezeState;
 
+    @Field(() => String, { nullable: true })
     @Column({ type: "varchar", nullable: true })
     allocationToken: string | null;
 
