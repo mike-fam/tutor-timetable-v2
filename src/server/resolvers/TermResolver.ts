@@ -1,10 +1,9 @@
 import {
     Arg,
-    Args,
-    ArgsType,
     Ctx,
     Field,
     FieldResolver,
+    InputType,
     Int,
     Mutation,
     Query,
@@ -14,10 +13,9 @@ import {
 import { Term, Timetable } from "../entities";
 import { TermType } from "../types/term";
 import { MyContext } from "../types/context";
-import { In } from "typeorm";
 
-@ArgsType()
-class TermArgs {
+@InputType()
+class TermInput {
     @Field(() => TermType)
     type: TermType;
 
@@ -32,6 +30,15 @@ class TermArgs {
 
     @Field(() => [String])
     weekNames: Array<string>;
+
+    @Field()
+    isActive: boolean;
+}
+
+@InputType()
+class UpdateTermInput extends TermInput {
+    @Field()
+    id: string;
 }
 
 @Resolver(() => Term)
@@ -55,22 +62,31 @@ export class TermResolver {
     }
 
     @Mutation(() => Term)
-    async addTerm(
-        @Args() termArgs: TermArgs,
+    async createTerm(
+        @Arg("termInput") termInput: TermInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Term> {
-        return await models.term.create(termArgs, req.user);
+        return await models.term.create(termInput, req.user);
     }
 
-    @Mutation(() => [Term])
-    async deleteTerms(
-        @Arg("id", () => [String]) termIds: Array<string>,
+    @Mutation(() => Term)
+    async updateTerm(
+        @Arg("termInput") { id, ...updatedFields }: UpdateTermInput,
         @Ctx() { req, models }: MyContext
-    ): Promise<Term[]> {
-        return await models.term.deleteMany({ id: In(termIds) }, req.user);
-        // const terms = await Term.findByIds(termIds);
-        // terms.forEach((term) => term.remove());
-        // return terms;
+    ): Promise<Term> {
+        if (updatedFields.isActive) {
+            await models.term.update({}, { isActive: false }, req.user);
+        }
+        return await models.term.update({ id }, updatedFields, req.user);
+    }
+
+    @Mutation(() => String)
+    async deleteTerm(
+        @Arg("termId") termId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<string> {
+        await models.term.delete({ id: termId }, req.user);
+        return termId;
     }
 
     @FieldResolver(() => [Timetable])

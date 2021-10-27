@@ -23,3 +23,33 @@ query Term($termId: String!) {
         numberOfWeeks
     }
 }
+
+mutation CreateTerm($termInput: TermInput!) {
+    createTerm(termInput: $termInput) {
+        id
+        type
+        year
+        startDate
+        endDate
+        weekNames
+        isActive
+        numberOfWeeks
+    }
+}
+
+mutation UpdateTerm($termInput: UpdateTermInput!) {
+    updateTerm(termInput: $termInput) {
+        id
+        type
+        year
+        startDate
+        endDate
+        weekNames
+        isActive
+        numberOfWeeks
+    }
+}
+
+mutation DeleteTerm($termId: String!) {
+    deleteTerm(termId: $termId)
+}

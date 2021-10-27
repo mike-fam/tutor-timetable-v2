@@ -23,7 +23,7 @@ type Props = {};
 
 type TimetableResponseType = CreateTimetableMutation["createTimetable"];
 
-export const AdminTimetableContainer: React.FC<Props> = ({}) => {
+export const AdminTimetableContainer: React.FC<Props> = () => {
     const [chosenTimetableId, setChosenTimetableId] = useState<string>();
     const [updated, setUpdated] = useState(false);
     const [
@@ -159,10 +159,7 @@ export const AdminTimetableContainer: React.FC<Props> = ({}) => {
                             } else {
                                 await updateTimetable({
                                     variables: {
-                                        timetableInput: {
-                                            id: chosenTimetableId,
-                                            ...values,
-                                        },
+                                        timetableInput: values,
                                     },
                                 });
                                 setUpdated(false);

@@ -62,7 +62,8 @@
     "typedi": "^0.10.0",
     "typeorm": "^0.2.29",
     "uuid": "^8.3.2",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "zen-observable": "^0.8.15"
   },
   "proxy": "http://localhost:5000",
   "scripts": {

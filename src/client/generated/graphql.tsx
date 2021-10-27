@@ -139,8 +139,9 @@ export type Mutation = {
   __typename?: "Mutation";
   requestAllocation: AllocatorOutput;
   updateDetails: User;
-  addTerm: Term;
-  deleteTerms: Array<Term>;
+  createTerm: Term;
+  updateTerm: Term;
+  deleteTerm: Scalars["String"];
   addCourseStaff: CourseStaff;
   addUsersToCourse: Array<CourseStaff>;
   removeCourseStaff: Scalars["String"];
@@ -181,17 +182,18 @@ export type MutationUpdateDetailsArgs = {
 };
 
 
-export type MutationAddTermArgs = {
-  type: TermType;
-  year: Scalars['Float'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
+export type MutationCreateTermArgs = {
+  termInput: TermInput;
 };
 
 
-export type MutationDeleteTermsArgs = {
-  id: Array<Scalars['String']>;
+export type MutationUpdateTermArgs = {
+  termInput: UpdateTermInput;
+};
+
+
+export type MutationDeleteTermArgs = {
+  termId: Scalars["String"];
 };
 
 
@@ -201,7 +203,7 @@ export type MutationAddCourseStaffArgs = {
 
 
 export type MutationAddUsersToCourseArgs = {
-  usernames: Array<Scalars['String']>;
+  usernames: Array<Scalars["String"]>;
   courseStaffInput: CourseStaffInput;
 };
 
@@ -260,7 +262,7 @@ export type MutationCreateTimetableArgs = {
 
 
 export type MutationUpdateTimetableArgs = {
-  timetableInput: UpdateTimetableInput;
+  timetableInput: TimetableInput;
 };
 
 
@@ -632,22 +634,31 @@ export type Term = {
   __typename?: 'Term';
   id: Scalars['String'];
   type: TermType;
-  year: Scalars['Int'];
-  startDate: Scalars['DateTime'];
-  endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
-  isActive: Scalars['Boolean'];
+  year: Scalars["Int"];
+  startDate: Scalars["DateTime"];
+  endDate: Scalars["DateTime"];
+  weekNames: Array<Scalars["String"]>;
+  isActive: Scalars["Boolean"];
   timetables: Array<Timetable>;
-  numberOfWeeks: Scalars['Int'];
+  numberOfWeeks: Scalars["Int"];
+};
+
+export type TermInput = {
+  type: TermType;
+  year: Scalars["Float"];
+  startDate: Scalars["DateTime"];
+  endDate: Scalars["DateTime"];
+  weekNames: Array<Scalars["String"]>;
+  isActive: Scalars["Boolean"];
 };
 
 export enum TermType {
-  Semester_1 = 'SEMESTER_1',
-  Semester_2 = 'SEMESTER_2',
-  SummerSemester = 'SUMMER_SEMESTER',
-  Trimester_1 = 'TRIMESTER_1',
-  Trimester_2 = 'TRIMESTER_2',
-  Trimester_3 = 'TRIMESTER_3'
+  Semester_1 = "SEMESTER_1",
+  Semester_2 = "SEMESTER_2",
+  SummerSemester = "SUMMER_SEMESTER",
+  Trimester_1 = "TRIMESTER_1",
+  Trimester_2 = "TRIMESTER_2",
+  Trimester_3 = "TRIMESTER_3"
 }
 
 export type Timeslot = {
@@ -720,12 +731,13 @@ export type UpdateStreamInput = {
   streamId: Scalars["String"];
 };
 
-export type UpdateTimetableInput = {
-  courseId: Scalars["String"];
-  termId: Scalars["String"];
-  permanentRequestLock: Scalars["String"];
-  temporaryRequestLock: Scalars["String"];
-  allocationToken: Scalars["String"];
+export type UpdateTermInput = {
+  type: TermType;
+  year: Scalars["Float"];
+  startDate: Scalars["DateTime"];
+  endDate: Scalars["DateTime"];
+  weekNames: Array<Scalars["String"]>;
+  isActive: Scalars["Boolean"];
   id: Scalars["String"];
 };
 
@@ -1193,16 +1205,20 @@ export type CreateRequestMutation = (
       sessionStream: (
           { __typename?: "SessionStream" }
           & Pick<SessionStream, "id" | "name" | "startTime" | "endTime" | "weeks">
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
+          & {
+        timetable: (
+            { __typename?: "Timetable" }
+            & {
+          course: (
+              { __typename?: "Course" }
+              & Pick<Course, "id" | "code">
+              ), term: (
+              { __typename?: "Term" }
+              & Pick<Term, "id" | "weekNames" | "startDate">
+              )
+        }
+            )
+      }
       ), allocatedUsers: Array<(
         { __typename?: 'User' }
         & Pick<User, 'username' | 'name'>
@@ -1792,12 +1808,13 @@ export type TermsQuery = (
   { __typename?: 'Query' }
   & { terms: Array<(
     { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  )> }
-);
+      & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
+      )>
+}
+    );
 
 export type TermQueryVariables = Exact<{
-  termId: Scalars['String'];
+  termId: Scalars["String"];
 }>;
 
 
@@ -1809,6 +1826,46 @@ export type TermQuery = (
       & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
       )
 }
+    );
+
+export type CreateTermMutationVariables = Exact<{
+  termInput: TermInput;
+}>;
+
+
+export type CreateTermMutation = (
+    { __typename?: "Mutation" }
+    & {
+  createTerm: (
+      { __typename?: "Term" }
+      & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
+      )
+}
+    );
+
+export type UpdateTermMutationVariables = Exact<{
+  termInput: UpdateTermInput;
+}>;
+
+
+export type UpdateTermMutation = (
+    { __typename?: "Mutation" }
+    & {
+  updateTerm: (
+      { __typename?: "Term" }
+      & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
+      )
+}
+    );
+
+export type DeleteTermMutationVariables = Exact<{
+  termId: Scalars["String"];
+}>;
+
+
+export type DeleteTermMutation = (
+    { __typename?: "Mutation" }
+    & Pick<Mutation, "deleteTerm">
     );
 
 export type TimetablesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1858,7 +1915,7 @@ export type CreateTimetableMutation = (
     );
 
 export type UpdateTimetableMutationVariables = Exact<{
-  timetableInput: UpdateTimetableInput;
+  timetableInput: TimetableInput;
 }>;
 
 
@@ -1900,16 +1957,16 @@ export const SessionInfoFragmentDoc = gql`
       startTime
       endTime
       day
-    timetable {
-      term {
-        id
-      }
-      course {
-        id
-        code
+      timetable {
+        term {
+          id
+        }
+        course {
+          id
+          code
+        }
       }
     }
-  }
   location
   week
   numberOfStaff
@@ -2826,16 +2883,16 @@ export const CreateRequestDocument = gql`
           name
           startTime
           endTime
-        weeks
-        timetable {
-          course {
-            id
-            code
-          }
-          term {
-            id
-            weekNames
-            startDate
+          weeks
+          timetable {
+            course {
+              id
+              code
+            }
+            term {
+              id
+              weekNames
+              startDate
           }
         }
       }
@@ -4004,6 +4061,117 @@ export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQ
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
+export const CreateTermDocument = gql`
+  mutation CreateTerm($termInput: TermInput!) {
+    createTerm(termInput: $termInput) {
+      id
+      type
+      year
+      startDate
+      endDate
+      weekNames
+      isActive
+      numberOfWeeks
+    }
+  }
+`;
+export type CreateTermMutationFn = Apollo.MutationFunction<CreateTermMutation, CreateTermMutationVariables>;
+
+/**
+ * __useCreateTermMutation__
+ *
+ * To run a mutation, you first call `useCreateTermMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTermMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTermMutation, { data, loading, error }] = useCreateTermMutation({
+ *   variables: {
+ *      termInput: // value for 'termInput'
+ *   },
+ * });
+ */
+export function useCreateTermMutation(baseOptions?: Apollo.MutationHookOptions<CreateTermMutation, CreateTermMutationVariables>) {
+  return Apollo.useMutation<CreateTermMutation, CreateTermMutationVariables>(CreateTermDocument, baseOptions);
+}
+
+export type CreateTermMutationHookResult = ReturnType<typeof useCreateTermMutation>;
+export type CreateTermMutationResult = Apollo.MutationResult<CreateTermMutation>;
+export type CreateTermMutationOptions = Apollo.BaseMutationOptions<CreateTermMutation, CreateTermMutationVariables>;
+export const UpdateTermDocument = gql`
+  mutation UpdateTerm($termInput: UpdateTermInput!) {
+    updateTerm(termInput: $termInput) {
+      id
+      type
+      year
+      startDate
+      endDate
+      weekNames
+      isActive
+      numberOfWeeks
+    }
+  }
+`;
+export type UpdateTermMutationFn = Apollo.MutationFunction<UpdateTermMutation, UpdateTermMutationVariables>;
+
+/**
+ * __useUpdateTermMutation__
+ *
+ * To run a mutation, you first call `useUpdateTermMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTermMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTermMutation, { data, loading, error }] = useUpdateTermMutation({
+ *   variables: {
+ *      termInput: // value for 'termInput'
+ *   },
+ * });
+ */
+export function useUpdateTermMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTermMutation, UpdateTermMutationVariables>) {
+  return Apollo.useMutation<UpdateTermMutation, UpdateTermMutationVariables>(UpdateTermDocument, baseOptions);
+}
+
+export type UpdateTermMutationHookResult = ReturnType<typeof useUpdateTermMutation>;
+export type UpdateTermMutationResult = Apollo.MutationResult<UpdateTermMutation>;
+export type UpdateTermMutationOptions = Apollo.BaseMutationOptions<UpdateTermMutation, UpdateTermMutationVariables>;
+export const DeleteTermDocument = gql`
+  mutation DeleteTerm($termId: String!) {
+    deleteTerm(termId: $termId)
+  }
+`;
+export type DeleteTermMutationFn = Apollo.MutationFunction<DeleteTermMutation, DeleteTermMutationVariables>;
+
+/**
+ * __useDeleteTermMutation__
+ *
+ * To run a mutation, you first call `useDeleteTermMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTermMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTermMutation, { data, loading, error }] = useDeleteTermMutation({
+ *   variables: {
+ *      termId: // value for 'termId'
+ *   },
+ * });
+ */
+export function useDeleteTermMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTermMutation, DeleteTermMutationVariables>) {
+  return Apollo.useMutation<DeleteTermMutation, DeleteTermMutationVariables>(DeleteTermDocument, baseOptions);
+}
+
+export type DeleteTermMutationHookResult = ReturnType<typeof useDeleteTermMutation>;
+export type DeleteTermMutationResult = Apollo.MutationResult<DeleteTermMutation>;
+export type DeleteTermMutationOptions = Apollo.BaseMutationOptions<DeleteTermMutation, DeleteTermMutationVariables>;
 export const TimetablesDocument = gql`
   query Timetables {
     timetables {
@@ -4042,11 +4210,9 @@ export const TimetablesDocument = gql`
 export function useTimetablesQuery(baseOptions?: Apollo.QueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
   return Apollo.useQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
 }
-
 export function useTimetablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
   return Apollo.useLazyQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
 }
-
 export type TimetablesQueryHookResult = ReturnType<typeof useTimetablesQuery>;
 export type TimetablesLazyQueryHookResult = ReturnType<typeof useTimetablesLazyQuery>;
 export type TimetablesQueryResult = Apollo.QueryResult<TimetablesQuery, TimetablesQueryVariables>;
@@ -4091,12 +4257,11 @@ export type CreateTimetableMutationFn = Apollo.MutationFunction<CreateTimetableM
 export function useCreateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<CreateTimetableMutation, CreateTimetableMutationVariables>) {
   return Apollo.useMutation<CreateTimetableMutation, CreateTimetableMutationVariables>(CreateTimetableDocument, baseOptions);
 }
-
 export type CreateTimetableMutationHookResult = ReturnType<typeof useCreateTimetableMutation>;
 export type CreateTimetableMutationResult = Apollo.MutationResult<CreateTimetableMutation>;
 export type CreateTimetableMutationOptions = Apollo.BaseMutationOptions<CreateTimetableMutation, CreateTimetableMutationVariables>;
 export const UpdateTimetableDocument = gql`
-  mutation UpdateTimetable($timetableInput: UpdateTimetableInput!) {
+  mutation UpdateTimetable($timetableInput: TimetableInput!) {
     updateTimetable(timetableInput: $timetableInput) {
       id
       course {
@@ -4136,7 +4301,6 @@ export type UpdateTimetableMutationFn = Apollo.MutationFunction<UpdateTimetableM
 export function useUpdateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTimetableMutation, UpdateTimetableMutationVariables>) {
   return Apollo.useMutation<UpdateTimetableMutation, UpdateTimetableMutationVariables>(UpdateTimetableDocument, baseOptions);
 }
-
 export type UpdateTimetableMutationHookResult = ReturnType<typeof useUpdateTimetableMutation>;
 export type UpdateTimetableMutationResult = Apollo.MutationResult<UpdateTimetableMutation>;
 export type UpdateTimetableMutationOptions = Apollo.BaseMutationOptions<UpdateTimetableMutation, UpdateTimetableMutationVariables>;
@@ -4167,7 +4331,6 @@ export type DeleteTimetableMutationFn = Apollo.MutationFunction<DeleteTimetableM
 export function useDeleteTimetableMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTimetableMutation, DeleteTimetableMutationVariables>) {
   return Apollo.useMutation<DeleteTimetableMutation, DeleteTimetableMutationVariables>(DeleteTimetableDocument, baseOptions);
 }
-
 export type DeleteTimetableMutationHookResult = ReturnType<typeof useDeleteTimetableMutation>;
 export type DeleteTimetableMutationResult = Apollo.MutationResult<DeleteTimetableMutation>;
 export type DeleteTimetableMutationOptions = Apollo.BaseMutationOptions<DeleteTimetableMutation, DeleteTimetableMutationVariables>;
