@@ -77,7 +77,7 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
                 setEnd(void 0);
                 setStart(date);
             }
-    ,    },
+        },
         [start, end, wholeWeeksOnly]
     );
     useEffect(() => {
@@ -103,7 +103,7 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
     return (
         <>
             <Input
-                v,alue={
+                value={
                     from && to
                         ? `${format(from, dateFormat)} to ${format(
                               to,
@@ -123,7 +123,7 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
                             selectedDays={[]}
                             onDateClick={(date) => {
                                 onDateClick(date);
-                            },}
+                            }}
                             selectedDateRanges={
                                 (!start
                                     ? []
