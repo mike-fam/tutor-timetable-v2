@@ -17,6 +17,7 @@ import {
 } from "../../generated/graphql";
 import { useMap } from "../../hooks/useMap";
 import { today } from "../../constants/date";
+import { CalendarInputSingleRange } from "../../components/helpers/calendar/CalendarInputSingleRange";
 
 type Props = {};
 
@@ -107,6 +108,10 @@ export const AdminTermContainer: React.FC<Props> = ({}) => {
                 selectedValue={chosenTermId}
             />
             <Divider my={4} />
+            <CalendarInputSingleRange
+                value={[undefined, undefined]}
+                onChange={() => {}}
+            />
             {updated && (
                 <>
                     {/*<TermFormContainer*/}

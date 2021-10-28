@@ -31,6 +31,7 @@ type Props = {
     onDateClick: (date: Date) => void;
     onDateMouseOver?: (date: Date) => void;
     onDateMouseLeave?: (date: Date) => void;
+    onCalendarMouseLeave?: () => void;
     initialMonth?: number;
     initialYear?: number;
 };
@@ -50,6 +51,7 @@ export const CalendarCore = forwardRef<HTMLDivElement, Props>(
             onDateClick,
             onDateMouseOver = () => {},
             onDateMouseLeave = () => {},
+            onCalendarMouseLeave = () => {},
             initialMonth,
             initialYear,
         },
@@ -271,7 +273,9 @@ export const CalendarCore = forwardRef<HTMLDivElement, Props>(
                     />
                 </Flex>
                 <Divider />
-                {calendarView}
+                <Box w="100%" onMouseLeave={onCalendarMouseLeave}>
+                    {calendarView}
+                </Box>
             </VStack>
         );
     }

@@ -164,7 +164,7 @@ export const CalendarDaysView: React.FC<Props> = ({
                         <CalendarDay
                             day={day.getDate()}
                             currentMonth={viewedMonth.month === day.getMonth()}
-                            key={dayIndex}
+                            key={day.toISOString()}
                             bold={isSameDay(today, day)}
                             onClick={() => onDateClick(day)}
                             onMouseOver={() => {
