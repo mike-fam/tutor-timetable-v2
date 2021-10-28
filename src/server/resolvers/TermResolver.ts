@@ -13,6 +13,8 @@ import {
 import { Term, Timetable } from "../entities";
 import { TermType } from "../types/term";
 import { MyContext } from "../types/context";
+import startOfISOWeek from "date-fns/startOfISOWeek";
+import endOfISOWeek from "date-fns/endOfISOWeek";
 
 @InputType()
 class TermInput {
@@ -66,6 +68,9 @@ export class TermResolver {
         @Arg("termInput") termInput: TermInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Term> {
+        const { startDate, endDate } = termInput;
+        termInput.startDate = startOfISOWeek(startDate);
+        termInput.endDate = endOfISOWeek(endDate);
         return await models.term.create(termInput, req.user);
     }
 
@@ -77,6 +82,9 @@ export class TermResolver {
         if (updatedFields.isActive) {
             await models.term.update({}, { isActive: false }, req.user);
         }
+        const { startDate, endDate } = updatedFields;
+        updatedFields.startDate = startOfISOWeek(startDate);
+        updatedFields.endDate = endOfISOWeek(endDate);
         return await models.term.update({ id }, updatedFields, req.user);
     }
 

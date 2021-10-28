@@ -4,7 +4,6 @@ import { Term, useTermsQuery } from "../generated/graphql";
 import { useQueryWithError } from "../hooks/useApolloHooksWithError";
 import { TimetableContext } from "../utils/timetable";
 import differenceInWeeks from "date-fns/differenceInWeeks";
-import parseISO from "date-fns/parseISO";
 import { Map } from "immutable";
 
 type Props = {};
@@ -30,9 +29,7 @@ export const WeekNavContainer: React.FunctionComponent<Props> = () => {
             return;
         }
         const { startDate, endDate } = chosenTerm;
-        setWeeksNum(
-            differenceInWeeks(parseISO(endDate), parseISO(startDate)) + 1
-        );
+        setWeeksNum(differenceInWeeks(endDate, startDate) + 1);
     }, [loading, data, chosenTermId, termMap]);
     return (
         <WeekNav

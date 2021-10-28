@@ -26,7 +26,6 @@ import {
 import { Box, Text } from "@chakra-ui/react";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import { addWeeks } from "date-fns";
-import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
 import setDay from "date-fns/setDay";
 import isToday from "date-fns/isToday";
@@ -196,10 +195,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                     const date =
                         chosenTerm &&
                         setDay(
-                            addWeeks(
-                                parseISO(chosenTerm.startDate),
-                                chosenWeek
-                            ),
+                            addWeeks(chosenTerm.startDate, chosenWeek),
                             dayProps.day
                         );
                     return (

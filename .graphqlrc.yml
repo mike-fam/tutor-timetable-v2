@@ -11,4 +11,4 @@ extensions:
                     - typescript-react-apollo
                 config:
                     scalars:
-                        DateTime: string
+                        DateTime: Date

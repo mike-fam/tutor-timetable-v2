@@ -1,5 +1,5 @@
 import isBefore from "date-fns/isBefore";
-import { parseISO, startOfISOWeek } from "date-fns";
+import startOfISOWeek from "date-fns/startOfISOWeek";
 import isAfter from "date-fns/isAfter";
 import maxBy from "lodash/maxBy";
 import differenceInWeeks from "date-fns/differenceInWeeks";
@@ -11,22 +11,19 @@ import { sentenceCase } from "change-case";
 export const getCurrentTerm = (terms: Array<TermResponseType>) => {
     // Choose current term by default
     for (const term of terms) {
-        if (
-            isBefore(today, parseISO(term.endDate)) &&
-            isAfter(today, parseISO(term.startDate))
-        ) {
+        if (isBefore(today, term.endDate) && isAfter(today, term.startDate)) {
             return term;
         }
     }
     // no suitable term, set chosen term to the latest.
-    return maxBy(terms, (term) => parseISO(term.startDate))!;
+    return maxBy(terms, (term) => term.startDate)!;
 };
 
 export const getWeeksNum = (term?: TermResponseType) => {
     if (!term) {
         return 0;
     }
-    return differenceInWeeks(parseISO(term.endDate), parseISO(term.startDate));
+    return differenceInWeeks(term.endDate, term.startDate);
 };
 
 export const getCurrentWeek = (term?: TermResponseType) => {
@@ -35,7 +32,7 @@ export const getCurrentWeek = (term?: TermResponseType) => {
     }
     return differenceInWeeks(
         startOfISOWeek(today),
-        startOfISOWeek(parseISO(term.startDate))
+        startOfISOWeek(term.startDate)
     );
 };
 

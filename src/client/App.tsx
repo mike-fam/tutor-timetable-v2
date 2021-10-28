@@ -15,6 +15,10 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { RetryLink } from "@apollo/client/link/retry";
 import { __prod__ } from "../constants";
 import Observable from "zen-observable";
+import {
+    convertDataToHaveDates,
+    sanitiseVariableWithDates,
+} from "./utils/apollo-link";
 
 const httpLink = new HttpLink({
     uri: "/graphql",
@@ -22,13 +26,13 @@ const httpLink = new HttpLink({
 
 const retryLink = new RetryLink();
 
+// Link to convert all date strings to Date object
 const dateLink = new ApolloLink((operation, forward) => {
-    console.log("sending", operation.query);
+    console.log(sanitiseVariableWithDates(operation.variables));
     // Workaround
     // https://github.com/apollographql/apollo-client/issues/5295#issuecomment-607744565
     return Observable.from(forward(operation)).map((data) => {
-        console.log("Receiving", data);
-        return data;
+        return convertDataToHaveDates(data);
     });
 });
 

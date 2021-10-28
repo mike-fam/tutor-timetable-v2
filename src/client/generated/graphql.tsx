@@ -13,7 +13,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: string;
+  DateTime: Date;
 };
 
 export enum AllocationStatus {
@@ -631,8 +631,8 @@ export type SubscriptionNotificationsArgs = {
 };
 
 export type Term = {
-  __typename?: 'Term';
-  id: Scalars['String'];
+  __typename?: "Term";
+  id: Scalars["String"];
   type: TermType;
   year: Scalars["Int"];
   startDate: Scalars["DateTime"];
@@ -1219,16 +1219,18 @@ export type CreateRequestMutation = (
         }
             )
       }
-      ), allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'username' | 'name'>
-      )> }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
+          ), allocatedUsers: Array<(
+          { __typename?: "User" }
+          & Pick<User, "username" | "name">
+          )>
+    }
+        ), swapPreference: Array<(
+        { __typename?: "Session" }
+        & Pick<Session, "id" | "week">
+        & {
+      sessionStream: (
+          { __typename?: "SessionStream" }
+          & Pick<SessionStream, "id" | "name" | "startTime" | "endTime" | "weeks">
         & { timetable: (
           { __typename?: 'Timetable' }
           & { course: (
@@ -1805,9 +1807,10 @@ export type TermsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TermsQuery = (
-  { __typename?: 'Query' }
-  & { terms: Array<(
-    { __typename?: 'Term' }
+    { __typename?: "Query" }
+    & {
+  terms: Array<(
+      { __typename?: "Term" }
       & Pick<Term, "id" | "type" | "year" | "startDate" | "endDate" | "weekNames" | "isActive" | "numberOfWeeks">
       )>
 }
@@ -1967,16 +1970,16 @@ export const SessionInfoFragmentDoc = gql`
         }
       }
     }
-  location
-  week
-  numberOfStaff
-  allocatedUsers {
-    id
-    username
-    name
+    location
+    week
+    numberOfStaff
+    allocatedUsers {
+      id
+      username
+      name
+    }
   }
-}
-    `;
+`;
 export const UpdateDetailsDocument = gql`
     mutation updateDetails($details: UpdateDetailsInputType!) {
   updateDetails(details: $details) {
@@ -2893,16 +2896,16 @@ export const CreateRequestDocument = gql`
               id
               weekNames
               startDate
+            }
           }
         }
+        week
+        allocatedUsers {
+          username
+          name
+        }
       }
-      week
-      allocatedUsers {
-        username
-        name
-      }
-    }
-    swapPreference {
+      swapPreference {
       id
       sessionStream {
         id
@@ -4053,11 +4056,9 @@ export const TermDocument = gql`
 export function useTermQuery(baseOptions: Apollo.QueryHookOptions<TermQuery, TermQueryVariables>) {
   return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
 }
-
 export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>) {
   return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
 }
-
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
 export type TermQueryResult = Apollo.QueryResult<TermQuery, TermQueryVariables>;
@@ -4097,7 +4098,6 @@ export type CreateTermMutationFn = Apollo.MutationFunction<CreateTermMutation, C
 export function useCreateTermMutation(baseOptions?: Apollo.MutationHookOptions<CreateTermMutation, CreateTermMutationVariables>) {
   return Apollo.useMutation<CreateTermMutation, CreateTermMutationVariables>(CreateTermDocument, baseOptions);
 }
-
 export type CreateTermMutationHookResult = ReturnType<typeof useCreateTermMutation>;
 export type CreateTermMutationResult = Apollo.MutationResult<CreateTermMutation>;
 export type CreateTermMutationOptions = Apollo.BaseMutationOptions<CreateTermMutation, CreateTermMutationVariables>;
@@ -4137,7 +4137,6 @@ export type UpdateTermMutationFn = Apollo.MutationFunction<UpdateTermMutation, U
 export function useUpdateTermMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTermMutation, UpdateTermMutationVariables>) {
   return Apollo.useMutation<UpdateTermMutation, UpdateTermMutationVariables>(UpdateTermDocument, baseOptions);
 }
-
 export type UpdateTermMutationHookResult = ReturnType<typeof useUpdateTermMutation>;
 export type UpdateTermMutationResult = Apollo.MutationResult<UpdateTermMutation>;
 export type UpdateTermMutationOptions = Apollo.BaseMutationOptions<UpdateTermMutation, UpdateTermMutationVariables>;
@@ -4168,7 +4167,6 @@ export type DeleteTermMutationFn = Apollo.MutationFunction<DeleteTermMutation, D
 export function useDeleteTermMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTermMutation, DeleteTermMutationVariables>) {
   return Apollo.useMutation<DeleteTermMutation, DeleteTermMutationVariables>(DeleteTermDocument, baseOptions);
 }
-
 export type DeleteTermMutationHookResult = ReturnType<typeof useDeleteTermMutation>;
 export type DeleteTermMutationResult = Apollo.MutationResult<DeleteTermMutation>;
 export type DeleteTermMutationOptions = Apollo.BaseMutationOptions<DeleteTermMutation, DeleteTermMutationVariables>;

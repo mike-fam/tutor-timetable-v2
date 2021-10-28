@@ -16,7 +16,6 @@ import { UserContext } from "../../utils/user";
 import minBy from "lodash/minBy";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 import range from "lodash/range";
-import parseISO from "date-fns/parseISO";
 import { addDays, addWeeks, startOfISOWeek } from "date-fns";
 import { IsoDay } from "../../../types/date";
 import uniq from "lodash/uniq";
@@ -104,9 +103,8 @@ export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
             if (!request) {
                 return true;
             }
-            const termStartDate = parseISO(
-                request.session.sessionStream.timetable.term.startDate
-            );
+            const termStartDate =
+                request.session.sessionStream.timetable.term.startDate;
             if (session.id === request.session.id) {
                 return true;
             }

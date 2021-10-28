@@ -77,8 +77,8 @@ export const AdminTermContainer: React.FC<Props> = ({}) => {
             return {
                 type: TermType.Semester_1,
                 year: today.getFullYear(),
-                startDate: today.toISOString(),
-                endDate: today.toISOString(),
+                startDate: today,
+                endDate: today,
                 weekNames: [],
                 isActive: false,
             };

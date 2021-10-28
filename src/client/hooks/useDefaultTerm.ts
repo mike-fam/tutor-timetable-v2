@@ -3,7 +3,6 @@ import { defaultInt, defaultStr } from "../constants";
 import { useQueryWithError } from "./useApolloHooksWithError";
 import { TermQuery, useTermsQuery } from "../generated/graphql";
 import { getCurrentTerm, getCurrentWeek } from "../utils/term";
-import { parseISO } from "date-fns";
 import { today } from "../constants/date";
 
 export const useDefaultTerm = () => {
@@ -31,8 +30,8 @@ export const useDefaultTerm = () => {
         setChosenTerm(chosenTerm);
         // choose current week if current term found
         setChosenTermId(chosenTerm.id);
-        const startDate = parseISO(chosenTerm.startDate);
-        const endDate = parseISO(chosenTerm.endDate);
+        const startDate = chosenTerm.startDate;
+        const endDate = chosenTerm.endDate;
         // Choose current week if possible, otherwise choose "All weeks"
         setChosenWeek(
             startDate < today && today < endDate
