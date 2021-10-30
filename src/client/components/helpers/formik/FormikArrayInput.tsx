@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useField } from "formik";
 import {
     Box,
@@ -22,7 +22,7 @@ type Props<T> = {
     strToValue: (str: string) => T;
     valueToStr: (value: T, index: number) => string;
     defaultValue: (index: number) => T;
-    helpText?: (value: T, index: number) => string;
+    helpText?: (value: T, index: number) => string | undefined;
 };
 
 export const FormikArrayInput = <T,>({
@@ -37,7 +37,10 @@ export const FormikArrayInput = <T,>({
     const [, { value: values }, { setValue: setValues }] =
         useField<Array<T>>(name);
     // To prevent re-rendering and keep inputs focused on change
-    const [valuesClone, { setValue: setValueClones }] = useArray(values);
+    const [valuesClone, { setValue: setValueClones }] = useArray<T>(values);
+    useEffect(() => {
+        setValueClones(values);
+    }, [setValueClones, values]);
     return (
         <FormControl>
             <HStack alignItems="baseline">

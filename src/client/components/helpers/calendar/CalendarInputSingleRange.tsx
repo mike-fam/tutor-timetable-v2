@@ -110,6 +110,9 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
         if (!from || !to) {
             return "";
         }
+        if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+            return "";
+        }
         let result = `${format(from, dateFormat)} to ${format(to, dateFormat)}`;
         if (wholeWeeksOnly) {
             result += ` (${differenceInCalendarISOWeeks(to, from) + 1} weeks)`;

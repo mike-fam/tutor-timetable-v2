@@ -25,12 +25,12 @@ export const FormikDateRangeInput: React.FC<Props> = ({
 }) => {
     const [
         ,
-        { value: from, touched: touchedFrom },
+        { value: from },
         { setValue: setValueFrom, setTouched: setTouchedFrom },
     ] = useField<Date>(nameFrom);
     const [
         ,
-        { value: to, touched: touchedTo },
+        { value: to },
         { setValue: setValueTo, setTouched: setTouchedTo },
     ] = useField<Date>(nameTo);
     return (
@@ -40,7 +40,7 @@ export const FormikDateRangeInput: React.FC<Props> = ({
             </FormLabel>
             <CalendarInputSingleRange
                 {...props}
-                value={touchedFrom && touchedTo ? [from, to] : [void 0, void 0]}
+                value={[from, to]}
                 onChange={([newFrom, newTo]) => {
                     setTouchedFrom(true);
                     setTouchedTo(true);

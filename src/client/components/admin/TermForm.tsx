@@ -3,7 +3,6 @@ import React from "react";
 import { TermInput, TermType } from "../../generated/graphql";
 import { AdminEditMode } from "../../types/admin";
 import { Button, Switch, VStack } from "@chakra-ui/react";
-import { today } from "../../constants/date";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import endOfISOWeek from "date-fns/endOfISOWeek";
 import { FormikSelect } from "../helpers/formik/FormikSelect";
@@ -17,7 +16,7 @@ import addWeeks from "date-fns/addWeeks";
 import format from "date-fns/format";
 
 type Props = {
-    initialValues?: TermInput;
+    initialValues: TermInput;
     submit: (values: TermInput) => void;
     editMode: AdminEditMode;
     loading?: boolean;
@@ -31,16 +30,7 @@ export const TermForm: React.FC<Props> = ({
 }) => {
     return (
         <Formik<TermInput>
-            initialValues={
-                initialValues || {
-                    type: TermType.Semester_1,
-                    year: today.getFullYear(),
-                    startDate: startOfISOWeek(today),
-                    endDate: endOfISOWeek(today),
-                    weekNames: [],
-                    isActive: false,
-                }
-            }
+            initialValues={initialValues}
             onSubmit={submit}
             enableReinitialize
         >
@@ -77,8 +67,14 @@ export const TermForm: React.FC<Props> = ({
                             columns={3}
                             helpText={(value, index) => {
                                 const dateFormat = "dd MMM yyyy";
+                                if (
+                                    isNaN(values.startDate.getTime()) ||
+                                    isNaN(values.endDate.getTime())
+                                ) {
+                                    return void 0;
+                                }
                                 const startOfWeek = addWeeks(
-                                    values.startDate,
+                                    startOfISOWeek(values.startDate),
                                     index
                                 );
                                 const endOfWeek = endOfISOWeek(startOfWeek);
@@ -95,7 +91,7 @@ export const TermForm: React.FC<Props> = ({
                             colorScheme="blue"
                             alignSelf="flex-start"
                         >
-                            {editMode === "add" ? "Add" : "Save"} Course
+                            {editMode === "add" ? "Add" : "Save"} Term
                         </Button>
                     </VStack>
                 </Form>
