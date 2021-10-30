@@ -83,12 +83,12 @@ export const TermForm: React.FC<Props> = ({
                                 );
                                 const endOfWeek = endOfISOWeek(startOfWeek);
                                 return `${format(
-     ,                               startOfWeek,
+                                    startOfWeek,
                                     dateFormat
                                 )} to ${format(endOfWeek, dateFormat)}`;
                             }}
                         />
-                        <FormikCheck,box name="isActive" as={Switch} />
+                        <FormikCheckbox name="isActive" as={Switch} />
                         <Button
                             type="submit"
                             isLoading={loading}
