@@ -153,6 +153,7 @@ export const CalendarDaysView: React.FC<Props> = ({
                     textAlign="center"
                     fontWeight="bold"
                     mb={4}
+                    key={day}
                 >
                     {day}
                 </Box>

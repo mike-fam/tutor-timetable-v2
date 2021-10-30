@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import {
     Box,
     HStack,
@@ -15,8 +21,9 @@ import endOfISOWeek from "date-fns/endOfISOWeek";
 import startOfISOWeek from "date-fns/startOfISOWeek";
 import { today } from "../../../constants/date";
 import isSameDay from "date-fns/isSameDay";
+import differenceInCalendarISOWeeks from "date-fns/differenceInCalendarISOWeeks";
 
-type Props = Omit<InputProps, "value" | "onChange"> & {
+export type Props = Omit<InputProps, "value" | "onChange"> & {
     dateFormat?: string;
     value: [Date?, Date?];
     onChange: (dateRange: [Date, Date]) => void;
@@ -99,18 +106,21 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
             setEndPreview(void 0);
         }
     }, [start, end, isOpen]);
+    const dateString = useMemo(() => {
+        if (!from || !to) {
+            return "";
+        }
+        let result = `${format(from, dateFormat)} to ${format(to, dateFormat)}`;
+        if (wholeWeeksOnly) {
+            result += ` (${differenceInCalendarISOWeeks(to, from) + 1} weeks)`;
+        }
+        return result;
+    }, [from, to, dateFormat, wholeWeeksOnly]);
 
     return (
         <>
             <Input
-                value={
-                    from && to
-                        ? `${format(from, dateFormat)} to ${format(
-                              to,
-                              dateFormat
-                          )}`
-                        : ""
-                }
+                value={dateString}
                 ref={referenceRef}
                 onClick={onToggle}
                 placeholder="Select Date Range"
@@ -118,65 +128,42 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
             />
             {isOpen && (
                 <Box ref={popperRef} zIndex={1}>
-                    <HStack ref={calendarRef}>
-                        <CalendarCore
-                            selectedDays={[]}
-                            onDateClick={(date) => {
-                                onDateClick(date);
-                            }}
-                            selectedDateRanges={
-                                (!start
-                                    ? []
-                                    : end
-                                    ? [[start, end]]
-                                    : endPreview
-                                    ? [[start, endPreview]]
-                                    : []) as [Date, Date][]
-                            }
-                            firstDate={firstDate}
-                            lastDate={lastDate}
-                            disableBefore={disableBefore}
-                            disableAfter={disableAfter}
-                            disabledDays={disabledDays}
-                            onDateMouseOver={(date) => {
-                                onDateMouseOver(date);
-                            }}
-                            initialMonth={from?.getMonth() || today.getMonth()}
-                            initialYear={
-                                from?.getFullYear() || today.getFullYear()
-                            }
-                            onCalendarMouseLeave={() => {
-                                setEndPreview(void 0);
-                            }}
-                        />
-                        <CalendarCore
-                            selectedDays={start ? [start] : []}
-                            onDateClick={(date) => {
-                                onDateClick(date);
-                            }}
-                            selectedDateRanges={
-                                (!start
-                                    ? []
-                                    : end
-                                    ? [[start, end]]
-                                    : endPreview
-                                    ? [[start, endPreview]]
-                                    : []) as [Date, Date][]
-                            }
-                            firstDate={firstDate}
-                            lastDate={lastDate}
-                            disableBefore={disableBefore}
-                            disableAfter={disableAfter}
-                            disabledDays={disabledDays}
-                            onDateMouseOver={onDateMouseOver}
-                            initialMonth={from?.getMonth() || today.getMonth()}
-                            initialYear={
-                                from?.getFullYear() || today.getFullYear()
-                            }
-                            onCalendarMouseLeave={() => {
-                                setEndPreview(void 0);
-                            }}
-                        />
+                    <HStack ref={calendarRef} alignItems="baseline">
+                        {[from, to].map((day, index) => (
+                            <CalendarCore
+                                key={index}
+                                selectedDays={start ? [start] : []}
+                                onDateClick={(date) => {
+                                    onDateClick(date);
+                                }}
+                                selectedDateRanges={
+                                    (!start
+                                        ? []
+                                        : end
+                                        ? [[start, end]]
+                                        : endPreview
+                                        ? [[start, endPreview]]
+                                        : []) as [Date, Date][]
+                                }
+                                firstDate={firstDate}
+                                lastDate={lastDate}
+                                disableBefore={disableBefore}
+                                disableAfter={disableAfter}
+                                disabledDays={disabledDays}
+                                onDateMouseOver={(date) => {
+                                    onDateMouseOver(date);
+                                }}
+                                initialMonth={
+                                    day?.getMonth() || today.getMonth()
+                                }
+                                initialYear={
+                                    day?.getFullYear() || today.getFullYear()
+                                }
+                                onCalendarMouseLeave={() => {
+                                    setEndPreview(void 0);
+                                }}
+                            />
+                        ))}
                     </HStack>
                 </Box>
             )}

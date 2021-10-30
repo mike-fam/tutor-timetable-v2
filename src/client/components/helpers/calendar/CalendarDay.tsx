@@ -2,7 +2,6 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 type Props = {
-    hovered?: boolean;
     selected?: boolean;
     subSelected?: boolean;
     day: number;
@@ -15,7 +14,6 @@ type Props = {
 };
 
 export const CalendarDay: React.FC<Props> = ({
-    hovered = false,
     selected = false,
     subSelected = false,
     day,
@@ -32,34 +30,32 @@ export const CalendarDay: React.FC<Props> = ({
     return (
         <Box
             bgColor={
-                selected || hovered
+                selected
                     ? selectedColour
                     : subSelected
                     ? subSelectedColour
                     : undefined
             }
             color={
-                disabled
+                selected
+                    ? "white"
+                    : disabled
                     ? disabledColour
                     : !currentMonth
                     ? "gray"
-                    : selected
-                    ? "white"
                     : undefined
             }
             _hover={
                 disabled
                     ? { cursor: "default" }
                     : {
-                          background: selectedColour,
-                          color: "white",
+                          background: subSelectedColour,
                           cursor: "pointer",
                       }
             }
             w="100%"
             h={12}
             p={2}
-            borderRadius={hovered ? 5 : undefined}
             fontWeight={bold ? "bold" : "regular"}
             textAlign="center"
             lineHeight={8}

@@ -68,6 +68,9 @@ export class TermResolver {
         @Arg("termInput") termInput: TermInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Term> {
+        if (termInput.isActive) {
+            await models.term.update({}, { isActive: false }, req.user);
+        }
         const { startDate, endDate } = termInput;
         termInput.startDate = startOfISOWeek(startDate);
         termInput.endDate = endOfISOWeek(endDate);

@@ -113,7 +113,11 @@ export const CalendarCore = forwardRef<HTMLDivElement, Props>(
                 case "days":
                     return (
                         <CalendarDaysView
-                            onDateClick={onDateClick}
+                            onDateClick={(date) => {
+                                onDateClick(date);
+                                setMonth(date.getMonth());
+                                setYear(date.getFullYear());
+                            }}
                             onDateMouseLeave={onDateMouseLeave}
                             onDateMouseOver={onDateMouseOver}
                             viewedMonth={{ month, year }}

@@ -28,7 +28,7 @@ const retryLink = new RetryLink();
 
 // Link to convert all date strings to Date object
 const dateLink = new ApolloLink((operation, forward) => {
-    console.log(sanitiseVariableWithDates(operation.variables));
+    operation.variables = sanitiseVariableWithDates(operation.variables);
     // Workaround
     // https://github.com/apollographql/apollo-client/issues/5295#issuecomment-607744565
     return Observable.from(forward(operation)).map((data) => {

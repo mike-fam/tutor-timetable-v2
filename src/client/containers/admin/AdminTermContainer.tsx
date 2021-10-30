@@ -17,11 +17,11 @@ import {
 } from "../../generated/graphql";
 import { useMap } from "../../hooks/useMap";
 import { today } from "../../constants/date";
-import { CalendarInputSingleRange } from "../../components/helpers/calendar/CalendarInputSingleRange";
+import { TermForm } from "../../components/admin/TermForm";
 
 type Props = {};
 
-export const AdminTermContainer: React.FC<Props> = ({}) => {
+export const AdminTermContainer: React.FC<Props> = () => {
     const [chosenTermId, setChosenTermId] = useState<string>();
     const [updated, setUpdated] = useState(false);
     const [createTerm, { data: createdTerm, loading: isCreatingTerm }] =
@@ -108,37 +108,33 @@ export const AdminTermContainer: React.FC<Props> = ({}) => {
                 selectedValue={chosenTermId}
             />
             <Divider my={4} />
-            <CalendarInputSingleRange
-                value={[undefined, undefined]}
-                onChange={() => {}}
-            />
             {updated && (
                 <>
-                    {/*<TermFormContainer*/}
-                    {/*    loading={isUpdatingTerm || isCreatingTerm}*/}
-                    {/*    submit={async (values) => {*/}
-                    {/*        if (!chosenTermId) {*/}
-                    {/*            await createTerm({*/}
-                    {/*                variables: {*/}
-                    {/*                    termInput: values,*/}
-                    {/*                },*/}
-                    {/*            });*/}
-                    {/*            setUpdated(false);*/}
-                    {/*        } else {*/}
-                    {/*            await updateTerm({*/}
-                    {/*                variables: {*/}
-                    {/*                    termInput: {*/}
-                    {/*                        id: chosenTermId,*/}
-                    {/*                        ...values,*/}
-                    {/*                    },*/}
-                    {/*                },*/}
-                    {/*            });*/}
-                    {/*            setUpdated(false);*/}
-                    {/*        }*/}
-                    {/*    }}*/}
-                    {/*    editMode={chosenTermId ? "edit" : "add"}*/}
-                    {/*    initialValues={initialValues}*/}
-                    {/*/>*/}
+                    <TermForm
+                        loading={isUpdatingTerm || isCreatingTerm}
+                        submit={async (values) => {
+                            if (!chosenTermId) {
+                                await createTerm({
+                                    variables: {
+                                        termInput: values,
+                                    },
+                                });
+                                setUpdated(false);
+                            } else {
+                                await updateTerm({
+                                    variables: {
+                                        termInput: {
+                                            id: chosenTermId,
+                                            ...values,
+                                        },
+                                    },
+                                });
+                                setUpdated(false);
+                            }
+                        }}
+                        editMode={chosenTermId ? "edit" : "add"}
+                        initialValues={initialValues}
+                    />
                     {chosenTermId && (
                         <Button
                             mt={1}
