@@ -16,6 +16,7 @@ export const CarouselNextButton: React.FC<Props> = ({ as }) => {
             onClick={() => nextSlide()}
             isRound
             variant="ghost"
+            mx={2}
         />
     );
 };

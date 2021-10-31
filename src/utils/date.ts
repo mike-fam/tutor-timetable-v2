@@ -36,3 +36,7 @@ export const timeStringToHours = (
     const date = parse(timeString, formatString, new Date());
     return date.getHours() + date.getMinutes() / 60;
 };
+
+export const isDateValid = (date: Date) => {
+    return !isNaN(date.getTime());
+};

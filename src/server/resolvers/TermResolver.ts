@@ -69,7 +69,7 @@ export class TermResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Term> {
         if (termInput.isActive) {
-            await models.term.update({}, { isActive: false }, req.user);
+            await models.term.updateMany({}, { isActive: false }, req.user);
         }
         const { startDate, endDate } = termInput;
         termInput.startDate = startOfISOWeek(startDate);
@@ -83,7 +83,7 @@ export class TermResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Term> {
         if (updatedFields.isActive) {
-            await models.term.update({}, { isActive: false }, req.user);
+            await models.term.updateMany({}, { isActive: false }, req.user);
         }
         const { startDate, endDate } = updatedFields;
         updatedFields.startDate = startOfISOWeek(startDate);

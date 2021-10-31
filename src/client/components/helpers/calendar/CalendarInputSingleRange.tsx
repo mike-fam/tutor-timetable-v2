@@ -22,6 +22,7 @@ import startOfISOWeek from "date-fns/startOfISOWeek";
 import { today } from "../../../constants/date";
 import isSameDay from "date-fns/isSameDay";
 import differenceInCalendarISOWeeks from "date-fns/differenceInCalendarISOWeeks";
+import { isDateValid } from "../../../../utils/date";
 
 export type Props = Omit<InputProps, "value" | "onChange"> & {
     dateFormat?: string;
@@ -110,7 +111,7 @@ export const CalendarInputSingleRange: React.FC<Props> = ({
         if (!from || !to) {
             return "";
         }
-        if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+        if (!isDateValid(from) || !isDateValid(to)) {
             return "";
         }
         let result = `${format(from, dateFormat)} to ${format(to, dateFormat)}`;

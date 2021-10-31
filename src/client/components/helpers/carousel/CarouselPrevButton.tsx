@@ -16,6 +16,7 @@ export const CarouselPrevButton: React.FC<Props> = ({ as }) => {
             onClick={() => previousSlide()}
             isRound
             variant="ghost"
+            mx={2}
         />
     );
 };

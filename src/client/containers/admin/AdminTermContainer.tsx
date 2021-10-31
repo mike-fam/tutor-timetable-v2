@@ -18,6 +18,7 @@ import {
 import { useMap } from "../../hooks/useMap";
 import { today } from "../../constants/date";
 import { TermForm } from "../../components/admin/TermForm";
+import omit from "lodash/omit";
 
 type Props = {};
 
@@ -84,7 +85,7 @@ export const AdminTermContainer: React.FC<Props> = () => {
                 isActive: false,
             };
         }
-        return terms.get(chosenTermId)!;
+        return omit(terms.get(chosenTermId)!, "numberOfWeeks");
     }, [terms, chosenTermId]);
     return (
         <>
@@ -131,6 +132,7 @@ export const AdminTermContainer: React.FC<Props> = () => {
                                 });
                                 setUpdated(false);
                             }
+                            setChosenTermId(void 0);
                         }}
                         editMode={chosenTermId ? "edit" : "add"}
                         initialValues={initialValues}

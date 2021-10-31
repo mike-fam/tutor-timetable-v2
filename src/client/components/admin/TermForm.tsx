@@ -14,6 +14,8 @@ import identity from "lodash/identity";
 import { FormikCheckbox } from "../helpers/formik/FormikCheckbox";
 import addWeeks from "date-fns/addWeeks";
 import format from "date-fns/format";
+import { isDateValid } from "../../../utils/date";
+import { WeekCarousel } from "./WeekCarousel";
 
 type Props = {
     initialValues: TermInput;
@@ -68,8 +70,8 @@ export const TermForm: React.FC<Props> = ({
                             helpText={(value, index) => {
                                 const dateFormat = "dd MMM yyyy";
                                 if (
-                                    isNaN(values.startDate.getTime()) ||
-                                    isNaN(values.endDate.getTime())
+                                    !isDateValid(values.startDate) ||
+                                    !isDateValid(values.endDate)
                                 ) {
                                     return void 0;
                                 }
@@ -85,6 +87,11 @@ export const TermForm: React.FC<Props> = ({
                             }}
                         />
                         <FormikCheckbox name="isActive" as={Switch} />
+                        <WeekCarousel
+                            startDate={values.startDate}
+                            endDate={values.endDate}
+                            weekNames={values.weekNames}
+                        />
                         <Button
                             type="submit"
                             isLoading={loading}

@@ -9,6 +9,7 @@ import endOfISOWeek from "date-fns/endOfISOWeek";
 import addWeeks from "date-fns/addWeeks";
 import { CarouselNextButton } from "../helpers/carousel/CarouselNextButton";
 import differenceInWeeks from "date-fns/differenceInWeeks";
+import { isDateValid } from "../../../utils/date";
 
 type Props = {
     startDate: Date;
@@ -21,6 +22,9 @@ export const WeekCarousel: React.FC<Props> = ({
     endDate,
     weekNames,
 }) => {
+    if (!isDateValid(startDate) || !isDateValid(endDate)) {
+        return null;
+    }
     startDate = startOfISOWeek(startDate);
     endDate = startOfISOWeek(endDate);
     const weekNum = differenceInWeeks(endDate, startDate) + 1;
@@ -28,6 +32,7 @@ export const WeekCarousel: React.FC<Props> = ({
         <Carousel
             d="flex"
             cycle
+            initialSlide={3}
             slideWidth={180}
             gutters={30}
             width={1000}
@@ -40,7 +45,7 @@ export const WeekCarousel: React.FC<Props> = ({
             <CarouselSlides>
                 {range(weekNum).map((i) => (
                     <WeekPreviewCard
-                        name={weekNames[i] || `Week [${i + 1}]`}
+                        name={weekNames[i] || `Week ${i}`}
                         startDate={addWeeks(startDate, i)}
                         endDate={endOfISOWeek(addWeeks(startDate, i))}
                         key={i}
