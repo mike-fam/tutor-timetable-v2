@@ -80,4 +80,3 @@ query getOffersByRequestId($requestId: String!) {
         }
     }
 }
-

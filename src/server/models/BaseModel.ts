@@ -154,7 +154,7 @@ export abstract class BaseModel<T extends BaseEntity> {
     public async updateMany(
         toUpdateFind: FindConditions<T> | T,
         updatedFields: Partial<T>,
-        user: User,
+        user: User
     ): Promise<T[]> {
         const updated: T[] = [];
         const toUpdate: T[] = await (this.entityCls as any).find(toUpdateFind);
@@ -162,7 +162,7 @@ export abstract class BaseModel<T extends BaseEntity> {
             const { hasPerm, errMsg } = await this.permUpdate(
                 updateCandidate,
                 updatedFields,
-                user,
+                user
             );
             if (!hasPerm) {
                 throw new Error(errMsg || PERM_ERR);
@@ -179,7 +179,7 @@ export abstract class BaseModel<T extends BaseEntity> {
     public async update(
         toUpdateFind: FindConditions<T> | T,
         updatedFields: Partial<T>,
-        user: User,
+        user: User
     ): Promise<T> {
         let toUpdate: T;
         if (toUpdateFind instanceof this.entityCls) {

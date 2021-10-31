@@ -13,7 +13,6 @@ query Courses {
     }
 }
 
-
 mutation CreateCourse($courseInput: CourseInput!) {
     createCourse(courseInput: $courseInput) {
         id
