@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, MouseEvent, useMemo } from "react";
 import {
     ClickableSession,
     Props as ClickableSessionProps,
@@ -7,7 +7,6 @@ import { PopoverSession } from "../timetable/PopoverSession";
 import { TimetableStreamPopover } from "../timetable/TimetableStreamPopover";
 import { BoxProps } from "@chakra-ui/react";
 import { ContextMenu } from "../helpers/context-menu/ContextMenu";
-import { ContextMenuTrigger } from "../helpers/context-menu/ContextMenuTrigger";
 import { ContextMenuList } from "../helpers/context-menu/ContextMenuList";
 import { ContextMenuItem } from "../helpers/context-menu/ContextMenuItem";
 
@@ -47,45 +46,55 @@ export const SessionSettingsTimetableStream: FC<Props> = (props) => {
     } = useMemo(() => custom(sessionId), [custom, sessionId]);
     return (
         <ContextMenu>
-            <ContextMenuTrigger>
-                <PopoverSession
-                    sessionComponent={
-                        <ClickableSession {...props} {...styles} p={1}>
-                            {name}
-                        </ClickableSession>
-                    }
-                    popoverContent={
-                        <TimetableStreamPopover
-                            name={name}
-                            courseCode={courseCode}
-                            baseAllocation={baseAllocation}
-                            customAllocation={extraAllocations}
-                            weekNames={weekNames}
-                            location={location}
-                        />
-                    }
-                />
-            </ContextMenuTrigger>
-            <ContextMenuList>
-                <ContextMenuItem onClick={() => editStream(sessionId)}>
-                    Edit
-                </ContextMenuItem>
-                {isDeleted ? (
-                    <ContextMenuItem
-                        onClick={() => restoreStream(sessionId)}
-                        colorScheme="green"
-                    >
-                        Restore
-                    </ContextMenuItem>
-                ) : (
-                    <ContextMenuItem
-                        onClick={() => deleteStream(sessionId)}
-                        colorScheme="red"
-                    >
-                        Delete
-                    </ContextMenuItem>
-                )}
-            </ContextMenuList>
+            {({ openMenu }) => (
+                <>
+                    <PopoverSession
+                        sessionComponent={
+                            <ClickableSession
+                                {...props}
+                                {...styles}
+                                p={1}
+                                onContextMenu={(event: MouseEvent) => {
+                                    event.preventDefault();
+                                    openMenu(event.clientX, event.clientY);
+                                }}
+                            >
+                                {name}
+                            </ClickableSession>
+                        }
+                        popoverContent={
+                            <TimetableStreamPopover
+                                name={name}
+                                courseCode={courseCode}
+                                baseAllocation={baseAllocation}
+                                customAllocation={extraAllocations}
+                                weekNames={weekNames}
+                                location={location}
+                            />
+                        }
+                    />
+                    <ContextMenuList>
+                        <ContextMenuItem onClick={() => editStream(sessionId)}>
+                            Edit
+                        </ContextMenuItem>
+                        {isDeleted ? (
+                            <ContextMenuItem
+                                onClick={() => restoreStream(sessionId)}
+                                colorScheme="green"
+                            >
+                                Restore
+                            </ContextMenuItem>
+                        ) : (
+                            <ContextMenuItem
+                                onClick={() => deleteStream(sessionId)}
+                                colorScheme="red"
+                            >
+                                Delete
+                            </ContextMenuItem>
+                        )}
+                    </ContextMenuList>
+                </>
+            )}
         </ContextMenu>
     );
 };

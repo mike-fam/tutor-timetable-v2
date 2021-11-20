@@ -1,7 +1,11 @@
 import { useDisclosure } from "@chakra-ui/react";
-import React, { RefObject, useRef, useState } from "react";
+import React, { RefObject, useCallback, useRef, useState } from "react";
 
-type Props = {};
+type Props = {
+    children:
+        | React.ReactNode
+        | ((contextMenu: ContextMenuState) => React.ReactNode);
+};
 
 type MousePosition = {
     x: number;
@@ -11,10 +15,9 @@ type MousePosition = {
 type ContextMenuState = {
     isOpen: boolean;
     closeMenu: Function;
-    openMenu: Function;
+    openMenu: (x: number, y: number) => void;
     menuRef?: RefObject<HTMLDivElement>;
     position: MousePosition;
-    setPosition: React.Dispatch<React.SetStateAction<MousePosition>>;
 };
 
 export const ContextMenuContext = React.createContext<ContextMenuState>({
@@ -23,25 +26,31 @@ export const ContextMenuContext = React.createContext<ContextMenuState>({
     openMenu: () => {},
     menuRef: undefined,
     position: { x: 0, y: 0 },
-    setPosition: () => {},
 });
 
 export const ContextMenu: React.FC<Props> = ({ children }) => {
-    const { isOpen, onClose: closeMenu, onOpen: openMenu } = useDisclosure();
+    const { isOpen, onClose: closeMenu, onOpen } = useDisclosure();
     const [position, setPosition] = useState<MousePosition>({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
+    const openMenu = useCallback(
+        (x: number, y: number) => {
+            setPosition({ x, y });
+            onOpen();
+        },
+        [onOpen]
+    );
+    const contextMenuState = {
+        isOpen,
+        closeMenu,
+        openMenu,
+        menuRef,
+        position,
+    };
     return (
-        <ContextMenuContext.Provider
-            value={{
-                isOpen,
-                closeMenu,
-                openMenu,
-                menuRef,
-                position,
-                setPosition,
-            }}
-        >
-            {children}
+        <ContextMenuContext.Provider value={contextMenuState}>
+            {typeof children === "function"
+                ? children(contextMenuState)
+                : children}
         </ContextMenuContext.Provider>
     );
 };

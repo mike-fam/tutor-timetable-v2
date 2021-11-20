@@ -1,18 +1,21 @@
-import { Box } from "@chakra-ui/react";
-import React, { MouseEvent, useContext } from "react";
+import { Box, BoxProps } from "@chakra-ui/react";
+import React, { useContext } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 
-type Props = {};
+type Props = Omit<BoxProps, "onContextMenu">;
 
-export const ContextMenuTrigger: React.FC<Props> = ({ children }) => {
-    const { openMenu, setPosition } = useContext(ContextMenuContext);
+export const ContextMenuTrigger: React.FC<Props> = ({
+    children,
+    ...boxProps
+}) => {
+    const { openMenu } = useContext(ContextMenuContext);
     return (
         <Box
-            onContextMenu={(event: MouseEvent) => {
-                event.preventDefault();
-                setPosition({ x: event.clientX, y: event.clientY });
-                openMenu();
+            onContextMenu={(e) => {
+                e.preventDefault();
+                openMenu(e.clientX, e.clientY);
             }}
+            {...boxProps}
         >
             {children}
         </Box>

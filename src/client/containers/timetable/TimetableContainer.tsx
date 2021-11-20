@@ -200,7 +200,7 @@ export const TimetableContainer: React.FC<Props> = () => {
                         );
                     return (
                         <Box key={key}>
-                            {date && (
+                            {date && chosenWeek !== defaultInt && (
                                 <Text
                                     fontWeight={
                                         isToday(date) ? "bold" : "regular"
