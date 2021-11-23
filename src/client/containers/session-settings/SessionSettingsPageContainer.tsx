@@ -7,6 +7,12 @@ import {
     Button,
     Heading,
     HStack,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuGroup,
+    MenuItem,
+    MenuList,
     Stack,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -18,6 +24,7 @@ import { StreamSettingsDrawer } from "../../components/session-settings/StreamSe
 import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
 import { AllocatorModal } from "./AllocatorModal";
 import { formatTerm } from "../../utils/term";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 type Props = {};
 
@@ -42,7 +49,7 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
     } = selection;
     const { streamActions } = timetableState;
     const { deleteSelectedStreams, editMultipleStreamSettings } = streamActions;
-    const { submitChanges, requestAllocation } = actions;
+    const { submitChanges, requestAllocation, checkAllocation } = actions;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -104,22 +111,46 @@ export const SessionSettingsPageContainer: React.FC<Props> = () => {
                                           Edit Sessions
                                       </Button>
                                   )}
-                            <Button
-                                colorScheme="green"
-                                onClick={() => {
-                                    openAllocatorModal();
-                                }}
-                            >
-                                Generate Allocation
-                            </Button>
-                            <Button
-                                colorScheme="green"
-                                onClick={() => {
-                                    openFetchModal();
-                                }}
-                            >
-                                Fetch from Public Timetable
-                            </Button>
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    rightIcon={<ChevronDownIcon />}
+                                    colorScheme="green"
+                                >
+                                    Tools
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuGroup title="Allocation">
+                                        <MenuItem
+                                            onClick={() => {
+                                                openAllocatorModal();
+                                            }}
+                                        >
+                                            Request Allocation
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                checkAllocation(
+                                                    courseId,
+                                                    termId
+                                                );
+                                            }}
+                                        >
+                                            Check Allocation
+                                        </MenuItem>
+                                    </MenuGroup>
+                                    <MenuDivider />
+                                    <MenuGroup title="Sessions">
+                                        <MenuItem
+                                            onClick={() => {
+                                                openFetchModal();
+                                            }}
+                                        >
+                                            Fetch from Public Timetable
+                                        </MenuItem>
+                                    </MenuGroup>
+                                </MenuList>
+                            </Menu>
                             <Button
                                 colorScheme="blue"
                                 onClick={() => submitChanges()}

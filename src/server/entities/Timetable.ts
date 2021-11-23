@@ -68,10 +68,6 @@ export class Timetable
     @Column({ enum: FreezeState, default: FreezeState.FREE })
     temporaryRequestLock: FreezeState;
 
-    @Field(() => String, { nullable: true })
-    @Column({ type: "varchar", nullable: true })
-    allocationToken: string | null;
-
     public async getCourse(): Promise<Course> {
         return await Utils.loaders.course.load(this.courseId);
     }

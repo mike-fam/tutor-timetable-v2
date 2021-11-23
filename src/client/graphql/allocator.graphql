@@ -1,6 +1,25 @@
 mutation RequestAllocation($requestAllocationInput: RequestAllocationInput!) {
     requestAllocation(requestAllocationInput: $requestAllocationInput) {
-        status
+        type
+        title
+        message
+        allocatedStreams {
+            streamId
+            baseAllocation {
+                allocatedUsers
+            }
+            extraAllocations {
+                allocatedUsers
+                weeks
+            }
+        }
+    }
+}
+
+query CheckAllocation($timetableInput: CourseTermIdInput!) {
+    checkAllocation(timetableInput: $timetableInput) {
+        type
+        title
         message
         allocatedStreams {
             streamId

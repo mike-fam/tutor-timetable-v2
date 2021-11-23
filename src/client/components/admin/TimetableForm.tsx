@@ -6,7 +6,6 @@ import { Button, VStack } from "@chakra-ui/react";
 import { FormikSelect } from "../helpers/formik/FormikSelect";
 import { defaultStr } from "../../constants";
 import { sentenceCase } from "change-case";
-import { FormikInput } from "../helpers/formik/FormikInput";
 
 type Props = {
     initialValues?: TimetableInput;
@@ -37,7 +36,6 @@ export const TimetableForm: React.FC<Props> = ({
                     termId: "",
                     permanentRequestLock: FreezeState.Free,
                     temporaryRequestLock: FreezeState.Free,
-                    allocationToken: "",
                 }
             }
             onSubmit={submit}
@@ -77,7 +75,6 @@ export const TimetableForm: React.FC<Props> = ({
                         ]}
                         optionToText={(val) => sentenceCase(val as string)}
                     />
-                    <FormikInput name="allocationToken" />
                     <Button
                         type="submit"
                         isLoading={loading}

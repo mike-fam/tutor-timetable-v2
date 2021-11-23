@@ -102,19 +102,13 @@ export const AdminTimetableContainer: React.FC<Props> = () => {
                 allocationToken: defaultStr,
             };
         }
-        const {
-            course,
-            term,
-            permanentRequestLock,
-            temporaryRequestLock,
-            allocationToken,
-        } = timetables.get(chosenTimetableId)!;
+        const { course, term, permanentRequestLock, temporaryRequestLock } =
+            timetables.get(chosenTimetableId)!;
         return {
             courseId: course.id,
             termId: term.id,
             permanentRequestLock,
             temporaryRequestLock,
-            allocationToken: allocationToken || defaultStr,
         };
     }, [timetables, chosenTimetableId]);
     return (

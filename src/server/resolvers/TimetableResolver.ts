@@ -22,21 +22,12 @@ import { FreezeState } from "../types/timetable";
 import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
-export class TimetableInput {
-    @Field()
-    courseId: string;
-
-    @Field()
-    termId: string;
-
+export class TimetableInput extends CourseTermIdInput {
     @Field()
     permanentRequestLock: FreezeState;
 
     @Field()
     temporaryRequestLock: FreezeState;
-
-    @Field()
-    allocationToken: FreezeState;
 }
 
 @Resolver(() => Timetable)

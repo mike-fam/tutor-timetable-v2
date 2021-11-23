@@ -74,12 +74,6 @@ export class TimetableModel extends BaseModel<Timetable> {
         ) {
             return { hasPerm: false };
         }
-        if (
-            updatedFields.allocationToken &&
-            updatedFields.allocationToken !== timetable.allocationToken
-        ) {
-            return { hasPerm: false };
-        }
         return { hasPerm: true };
     }
 

@@ -33,7 +33,7 @@ import {
 import isEqual from "lodash/isEqual";
 import omitBy from "lodash/omitBy";
 import isUndefined from "lodash/isUndefined";
-import { useRequestAllocation } from "./useGenerateAllocation";
+import { useAllocationQueries } from "./useAllocationQueries";
 
 const streamResponseToState = (stream: StreamResponseType): StreamInput => {
     return {
@@ -632,12 +632,13 @@ export const useSessionSettings = () => {
     }, [updatedSessionAllocationsData, commitNewSessions]);
 
     // GENERATE ALLOCATION
-    const [requestAllocation, generatedAllocations] = useRequestAllocation();
+    const { requestAllocation, checkAllocation, allocationResult } =
+        useAllocationQueries();
     useEffect(() => {
-        if (!generatedAllocations || generatedAllocations.length === 0) {
+        if (!allocationResult || allocationResult.length === 0) {
             return;
         }
-        generatedAllocations.forEach(
+        allocationResult.forEach(
             ({ streamId, baseAllocation, extraAllocations }) => {
                 setStreams((prev) => {
                     const stream = prev.get(streamId);
@@ -681,7 +682,7 @@ export const useSessionSettings = () => {
                 });
             }
         );
-    }, [generatedAllocations]);
+    }, [allocationResult]);
 
     // TODO: Implement week cache
     return {
@@ -724,6 +725,7 @@ export const useSessionSettings = () => {
             getStreamsFromPublicTimetable,
             submitChanges,
             requestAllocation,
+            checkAllocation,
         },
         base: {
             courseId,

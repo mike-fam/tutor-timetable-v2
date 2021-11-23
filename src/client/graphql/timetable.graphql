@@ -12,7 +12,6 @@ query Timetables {
         }
         permanentRequestLock
         temporaryRequestLock
-        allocationToken
     }
 }
 
@@ -30,7 +29,6 @@ mutation CreateTimetable($timetableInput: TimetableInput!) {
         }
         permanentRequestLock
         temporaryRequestLock
-        allocationToken
     }
 }
 
@@ -48,7 +46,6 @@ mutation UpdateTimetable($timetableInput: TimetableInput!) {
         }
         permanentRequestLock
         temporaryRequestLock
-        allocationToken
     }
 }
 
