@@ -55,6 +55,7 @@ export enum AllocationStatus {
     NOT_EXIST = "NOT_EXIST",
     ERROR = "ERROR",
     GENERATED = "GENERATED",
+    FAILED = "FAILED",
 }
 
 @ObjectType()
@@ -67,9 +68,6 @@ class AllocatorOutput {
 
     @Field()
     message: string;
-
-    @Field({ nullable: true })
-    runtime?: number;
 
     @Field(() => [AllocatorStream])
     allocatedStreams: AllocatorStream[];
@@ -89,8 +87,7 @@ type AllocatorOutputData = {
     type: AllocationStatus;
     title: string;
     message: string;
-    runtime?: number;
-    allocations: {
+    result?: {
         [key: string]: Array<string>;
     };
 };
@@ -104,8 +101,7 @@ type SessionStreamInput = {
     id: SessionStreamId;
     name: string;
     type: SessionType;
-    start_time: number;
-    end_time: number;
+    time: [number, number];
     number_of_tutors: number;
     location: string;
     day: IsoDay;
@@ -199,9 +195,8 @@ export class AllocatorResolver {
             user
         );
         // Check allocation
-        const allocationResponse = await axios.post<AllocatorOutputData>(
-            `${process.env.ALLOCATOR_URL}/check-allocation/`,
-            { timetableId: timetable.id }
+        const allocationResponse = await axios.get<AllocatorOutputData>(
+            `${process.env.ALLOCATOR_URL}/check-allocation/${timetable.id}`
         );
         return AllocatorResolver.allocationDataToOutput(
             allocationResponse.data,
@@ -217,11 +212,10 @@ export class AllocatorResolver {
         output.title = allocationData.title;
         output.type = allocationData.type;
         output.message = allocationData.message;
-        output.runtime = allocationData.runtime;
         output.allocatedStreams = [];
-        if (allocationData.allocations) {
+        if (allocationData.result) {
             const streamByIds = keyBy(sessionStreams, (stream) => stream.id);
-            const generatedAllocations = allocationData.allocations;
+            const generatedAllocations = allocationData.result;
             const rootStreams = sessionStreams.filter(
                 (stream) => !stream.rootId
             );
@@ -268,8 +262,7 @@ export class AllocatorResolver {
                 id: sessionStream.id,
                 name: sessionStream.name,
                 type: sessionStream.type,
-                start_time: sessionStream.startTime,
-                end_time: sessionStream.endTime,
+                time: [sessionStream.startTime, sessionStream.endTime],
                 number_of_tutors: sessionStream.numberOfStaff,
                 day: sessionStream.day,
                 weeks: sessionStream.weeks,

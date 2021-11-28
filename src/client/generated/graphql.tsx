@@ -20,7 +20,8 @@ export enum AllocationStatus {
   NotReady = 'NOT_READY',
   NotExist = 'NOT_EXIST',
   Error = 'ERROR',
-  Generated = 'GENERATED'
+  Generated = 'GENERATED',
+  Failed = 'FAILED'
 }
 
 export type AllocatorOutput = {
@@ -28,7 +29,6 @@ export type AllocatorOutput = {
   type: AllocationStatus;
   title: Scalars['String'];
   message: Scalars['String'];
-  runtime?: Maybe<Scalars['Float']>;
   allocatedStreams: Array<AllocatorStream>;
 };
 

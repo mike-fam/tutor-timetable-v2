@@ -21,6 +21,7 @@ export const useAllocationQueries = () => {
     const [checkAllocationQuery, { data: checkAllocationData }] =
         useLazyQueryWithError(useCheckAllocationLazyQuery, {
             errorPolicy: "all",
+            fetchPolicy: "network-only",
         });
     const [allocationResult, setAllocationResult] =
         useState<AllocationResultType["allocatedStreams"]>();
@@ -41,37 +42,31 @@ export const useAllocationQueries = () => {
     }, [checkAllocationData]);
     const displayMessage = useCallback(
         (allocationResult: AllocationResultType) => {
+            const toastDisplay = {
+                title: allocationResult.title,
+                description: allocationResult.message,
+                duration: 10000,
+                isClosable: true,
+            };
             if (allocationResult.type === AllocationStatus.Error) {
                 toast({
                     status: "error",
-                    title: "Allocation Error",
-                    description: allocationResult.message,
-                    duration: null,
-                    isClosable: true,
+                    ...toastDisplay,
                 });
             } else if (allocationResult.type === AllocationStatus.Requested) {
                 toast({
-                    status: "info",
-                    title: "Allocation Requested",
-                    description: allocationResult.message,
-                    duration: null,
-                    isClosable: true,
+                    status: "success",
+                    ...toastDisplay,
                 });
             } else if (allocationResult.type === AllocationStatus.Generated) {
                 toast({
                     status: "success",
-                    title: "Allocation Generated",
-                    description: allocationResult.message,
-                    duration: null,
-                    isClosable: true,
+                    ...toastDisplay,
                 });
             } else if (allocationResult.type === AllocationStatus.NotReady) {
                 toast({
                     status: "info",
-                    title: "Allocation Not Yet Ready",
-                    description: allocationResult.message,
-                    duration: null,
-                    isClosable: true,
+                    ...toastDisplay,
                 });
             }
         },
