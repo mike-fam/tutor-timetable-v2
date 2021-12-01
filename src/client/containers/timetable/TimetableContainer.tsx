@@ -49,7 +49,9 @@ export const TimetableContainer: React.FC<Props> = () => {
     const [
         getRootSessionStreams,
         { data: sessionStreamsData, loading: sessionStreamsLoading },
-    ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {});
+    ] = useLazyQueryWithError(useGetRootSessionStreamsLazyQuery, {
+        fetchPolicy: "cache-and-network",
+    });
     useEffect(() => {
         if (
             chosenWeek !== defaultInt ||

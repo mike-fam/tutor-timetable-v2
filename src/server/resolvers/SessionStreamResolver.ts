@@ -165,7 +165,7 @@ export class SessionStreamResolver {
         @Arg("courseIds", () => [String]) courseIds: string[],
         @Ctx() { req, models }: MyContext
     ): Promise<SessionStream[]> {
-        const timetable = await models.timetable.get(
+        const timetables = await models.timetable.getMany(
             {
                 where: courseIds.map((courseId) => ({
                     termId,
@@ -174,15 +174,16 @@ export class SessionStreamResolver {
             },
             req.user
         );
-        return await models.sessionStream.getMany(
+        const streams = await models.sessionStream.getMany(
             {
-                where: {
+                where: timetables.map((timetable) => ({
                     timetableId: timetable.id,
                     rootId: IsNull(),
-                },
+                })),
             },
             req.user
         );
+        return streams;
     }
 
     @Mutation(() => SessionStream)
