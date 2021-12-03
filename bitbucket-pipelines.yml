@@ -42,6 +42,12 @@ pipelines:
             - git remote add github git@github.com:mike-fam/tutor-timetable-v2.git
             - git push github development:main
       - step:
+          name: 'Deployment to Staging'
+          deployment: staging
+          script:
+            - chmod +x ./scripts/staging/deploy.sh
+            - ./scripts/staging/deploy.sh tutor-timetable-staging
+      - step:
           name: 'Deployment to Production'
           deployment: production
           trigger: 'manual'
