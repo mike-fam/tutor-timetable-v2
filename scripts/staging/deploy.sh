@@ -114,7 +114,7 @@ setUpService() {
 	git config user.email "$BITBUCKET_BRANCH@no-reply.com"
 	git config user.name "$BITBUCKET_BRANCH"
 	git checkout "$BITBUCKET_BRANCH"
-	if [ -z "$BITBUCKET_PR_DESTINATION_BRANCH" ]; then
+	if [ -n "$BITBUCKET_PR_DESTINATION_BRANCH" ]; then
     git checkout "$BITBUCKET_PR_DESTINATION_BRANCH"
     git merge "$BITBUCKET_BRANCH"
 	fi
