@@ -8,7 +8,7 @@ import {
     useCheckAllocationLazyQuery,
     useRequestAllocationMutation,
 } from "../generated/graphql";
-import { useToast } from "@chakra-ui/react";
+import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 
 type AllocationResultType = RequestAllocationMutation["requestAllocation"];
@@ -48,27 +48,26 @@ export const useAllocationQueries = () => {
                 duration: 10000,
                 isClosable: true,
             };
-            if (allocationResult.type === AllocationStatus.Error) {
-                toast({
-                    status: "error",
-                    ...toastDisplay,
-                });
-            } else if (allocationResult.type === AllocationStatus.Requested) {
-                toast({
-                    status: "success",
-                    ...toastDisplay,
-                });
-            } else if (allocationResult.type === AllocationStatus.Generated) {
-                toast({
-                    status: "success",
-                    ...toastDisplay,
-                });
-            } else if (allocationResult.type === AllocationStatus.NotReady) {
-                toast({
-                    status: "info",
-                    ...toastDisplay,
-                });
+            const { type } = allocationResult;
+            let status: UseToastOptions["status"];
+            if (
+                type === AllocationStatus.Error ||
+                type === AllocationStatus.NotExist
+            ) {
+                status = "error";
+            } else if (type === AllocationStatus.Requested) {
+                status = "success";
+            } else if (type === AllocationStatus.Generated) {
+                status = "success";
+            } else if (type === AllocationStatus.NotReady) {
+                status = "info";
+            } else if (type === AllocationStatus.Failed) {
+                status = "warning";
             }
+            toast({
+                status,
+                ...toastDisplay,
+            });
         },
         [toast]
     );

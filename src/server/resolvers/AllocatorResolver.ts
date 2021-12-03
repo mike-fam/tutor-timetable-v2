@@ -79,7 +79,7 @@ class RequestAllocationInput extends CourseTermIdInput {
     staffIds: string[];
 
     @Field(() => Int)
-    @Max(7200)
+    @Max(14400)
     timeout: number;
 }
 
