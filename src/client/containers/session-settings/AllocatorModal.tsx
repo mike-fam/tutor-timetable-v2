@@ -3,6 +3,7 @@ import { UserMap } from "../../hooks/useUsersOfCourse";
 import {
     Button,
     FormControl,
+    FormHelperText,
     FormLabel,
     Input,
     Modal,
@@ -53,6 +54,7 @@ export const AllocatorModal: React.FC<Props> = ({
                 <ModalCloseButton />
                 <ModalBody>
                     <Stack spacing={3}>
+                        {/*TODO: Use Formik here */}
                         <FormControl>
                             <FormLabel>Term</FormLabel>
                             <Input value={termName} isReadOnly />
@@ -84,7 +86,15 @@ export const AllocatorModal: React.FC<Props> = ({
                                 onChange={(value) => {
                                     setTimeout(value);
                                 }}
+                                max={14400}
                             />
+                            <FormHelperText>
+                                Allocation process will stop after exceeding
+                                timeout. A longer timeout value will yield
+                                better results. The allocation process can also
+                                stop early if it finds the best result is found
+                                before the timeout is reached.
+                            </FormHelperText>
                         </FormControl>
                     </Stack>
                 </ModalBody>
