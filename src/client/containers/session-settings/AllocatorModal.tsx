@@ -89,9 +89,10 @@ export const AllocatorModal: React.FC<Props> = ({
                                 max={14400}
                             />
                             <FormHelperText>
-                                Allocation process will stop after exceeding
-                                timeout. {"\n"}A longer timeout value will yield
-                                better results. {"\n"}
+                                Allocation process will stop after exceeding the
+                                timeout. <br />
+                                A longer timeout value will yield better
+                                results. <br />
                                 The allocation process can also stop early if
                                 the best result is found before the timeout is
                                 reached.
