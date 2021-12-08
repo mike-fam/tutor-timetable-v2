@@ -60,7 +60,7 @@ export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
         );
         if (filteredSessions.size === 0) {
             const timetable = request.session.sessionStream.timetable;
-            fetchSessions(timetable.term.id, timetable.course.id, week);
+            fetchSessions(timetable.term.id, [timetable.course.id], week);
             return;
         }
         setSessionId(filteredSessions.valueSeq().toArray()[0].id);

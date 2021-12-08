@@ -42,7 +42,7 @@ export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
         }
         fetchSessions(
             session.sessionStream.timetable.term.id,
-            session.sessionStream.timetable.course.id,
+            [session.sessionStream.timetable.course.id],
             session.week
         );
     }, [sessions, session, fetchSessions]);

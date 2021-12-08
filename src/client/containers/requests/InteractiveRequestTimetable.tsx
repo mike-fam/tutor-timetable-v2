@@ -35,7 +35,7 @@ export const InteractiveRequestTimetable: React.FC<Props> = ({
     const { sessionsData, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
         for (const courseId of chosenCourseIds) {
-            fetchSessions(chosenTermId, courseId, chosenWeek);
+            fetchSessions(chosenTermId, [courseId], chosenWeek);
         }
     }, [fetchSessions, chosenTermId, chosenCourseIds, chosenWeek]);
     const { weekNum, chosenTerm } = useTermMetadata(chosenTermId);

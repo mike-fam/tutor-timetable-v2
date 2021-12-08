@@ -132,9 +132,7 @@ export const TimetableContainer: React.FC<Props> = () => {
         ) {
             return;
         }
-        chosenCourses.forEach((courseId) => {
-            fetchSessions(chosenTermId, courseId, chosenWeek);
-        });
+        fetchSessions(chosenTermId, chosenCourses.toArray(), chosenWeek);
     }, [chosenTermId, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {
         sessionStreamsData?.rootSessionStreams.forEach((sessionStream) => {

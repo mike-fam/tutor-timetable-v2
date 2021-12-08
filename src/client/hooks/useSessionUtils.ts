@@ -21,16 +21,18 @@ export const useSessionUtils = (): SessionUtil => {
         Map<string, SessionResponseType>()
     );
     const [getSession, { data: sessionsData, loading: getSessionsLoading }] =
-        useLazyQueryWithError(useGetMergedSessionsLazyQuery, {});
+        useLazyQueryWithError(useGetMergedSessionsLazyQuery, {
+            fetchPolicy: "cache-and-network",
+        });
     const [
         getSessionById,
         { data: sessionData, loading: getSessionByIdLoading },
     ] = useLazyQueryWithError(useGetSessionByIdLazyQuery, {});
     const fetchSessions = useCallback(
-        (termId: string, courseId: string, chosenWeek: number) => {
+        (termId: string, courseIds: string[], chosenWeek: number) => {
             if (
                 termId === defaultStr ||
-                courseId === defaultStr ||
+                courseIds.length === 0 ||
                 chosenWeek === defaultInt
             ) {
                 return;
@@ -38,7 +40,7 @@ export const useSessionUtils = (): SessionUtil => {
             getSession({
                 variables: {
                     termId,
-                    courseIds: [courseId],
+                    courseIds,
                     week: chosenWeek,
                 },
             });

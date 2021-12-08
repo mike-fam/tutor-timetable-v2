@@ -53,7 +53,7 @@ export const RequestTimetableContainer: React.FC<Props> = ({
 
     useEffect(() => {
         for (const courseId of chosenCourses) {
-            fetchSessions(chosenTerm, courseId, chosenWeek);
+            fetchSessions(chosenTerm, [courseId], chosenWeek);
         }
     }, [chosenTerm, chosenCourses, chosenWeek, fetchSessions]);
     useEffect(() => {

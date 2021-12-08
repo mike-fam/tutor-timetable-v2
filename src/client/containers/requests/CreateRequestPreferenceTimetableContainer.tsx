@@ -49,7 +49,7 @@ export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
     );
     const { sessions, fetchSessions } = useContext(SessionsContext);
     useEffect(() => {
-        fetchSessions(chosenTermId, chosenCourseId, chosenWeek);
+        fetchSessions(chosenTermId, [chosenCourseId], chosenWeek);
     }, [chosenTermId, chosenCourseId, chosenWeek, fetchSessions]);
 
     // Do not filter any sessions

@@ -19,7 +19,7 @@ export type SessionUtil = {
     sessionsData?: GetMergedSessionsQuery;
     fetchSessions: (
         termId: string,
-        courseId: string,
+        courseIds: string[],
         chosenWeek: number
     ) => void;
     fetchSessionById: (sessionId: string) => void;
