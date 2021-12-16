@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
@@ -28,7 +28,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 
 type Props = {};
 
-export const SessionSettingsPageContainer: React.FC<Props> = () => {
+export const SessionSettingsPageContainer: FC<Props> = () => {
     const { base, loading, selection, timetableState, actions } =
         useSessionSettings();
     const {

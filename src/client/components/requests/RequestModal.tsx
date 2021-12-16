@@ -9,7 +9,7 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 
 export enum RequestModalType {
     View = "View",
@@ -24,7 +24,7 @@ type Props = {
     onClose: () => void;
 };
 
-export const RequestModal: React.FunctionComponent<Props> = (props: Props) => {
+export const RequestModal: FC<Props> = (props: Props) => {
     return (
         <Modal size={"6xl"} isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />

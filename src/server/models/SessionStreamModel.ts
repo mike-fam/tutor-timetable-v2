@@ -7,10 +7,10 @@ import {
     User,
 } from "../entities";
 import { PermissionState } from "../types/permission";
-import asyncFilter from "node-filter-async";
 import { OfferStatus } from "../types/offer";
 import { PERM_ERR } from "../constants";
 import { DataLoaders } from "../types/dataloaders";
+import { asyncFilter } from "../../utils/array";
 
 export class SessionStreamModel extends BaseModel<SessionStream> {
     public constructor(loaders: DataLoaders) {

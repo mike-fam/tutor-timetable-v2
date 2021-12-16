@@ -1,5 +1,5 @@
+import { FC } from "react";
 import { Form, Formik } from "formik";
-import React from "react";
 import { TermInput, TermType } from "../../generated/graphql";
 import { AdminEditMode } from "../../types/admin";
 import { Button, Switch, VStack } from "@chakra-ui/react";
@@ -24,7 +24,7 @@ type Props = {
     loading?: boolean;
 };
 
-export const TermForm: React.FC<Props> = ({
+export const TermForm: FC<Props> = ({
     initialValues,
     submit,
     editMode,

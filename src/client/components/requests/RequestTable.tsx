@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import { FC, useContext, useRef, useState } from "react";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -30,7 +30,7 @@ type Props = {
     deleteLoading: boolean;
 };
 
-export const RequestTable: React.FC<Props> = ({
+export const RequestTable: FC<Props> = ({
     requestList,
     openOfferModal,
     openViewRequestModal,

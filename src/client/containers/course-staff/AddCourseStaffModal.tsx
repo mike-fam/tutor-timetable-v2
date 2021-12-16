@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import {
     Button,
     Modal,
@@ -28,7 +28,7 @@ type Props = {
     loading: boolean;
 };
 
-export const AddCourseStaffModal: React.FC<Props> = ({
+export const AddCourseStaffModal: FC<Props> = ({
     isOpen,
     onClose,
     onSubmit,

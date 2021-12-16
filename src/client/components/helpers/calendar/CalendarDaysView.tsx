@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { Box, Grid } from "@chakra-ui/react";
 import range from "lodash/range";
 import differenceInDays from "date-fns/differenceInDays";
@@ -28,7 +28,7 @@ type Props = {
     onDateMouseLeave?: (date: Date) => void;
 };
 
-export const CalendarDaysView: React.FC<Props> = ({
+export const CalendarDaysView: FC<Props> = ({
     firstDate,
     lastDate,
     disableAfter,

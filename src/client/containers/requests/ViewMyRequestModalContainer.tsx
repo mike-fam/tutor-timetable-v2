@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import {
@@ -31,7 +31,7 @@ type Props = {
     onClose: () => void;
 };
 
-export const ViewMyRequestModalContainer: React.FC<Props> = ({
+export const ViewMyRequestModalContainer: FC<Props> = ({
     requestId,
     isOpen,
     onClose,

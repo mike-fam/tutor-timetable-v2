@@ -1,4 +1,5 @@
-import React, {
+import {
+    FC,
     useCallback,
     useContext,
     useEffect,
@@ -27,7 +28,7 @@ import { defaultInt, defaultStr } from "../../constants";
 
 type Props = {};
 
-export const AvailabilityTimetableContainer: React.FC<Props> = () => {
+export const AvailabilityTimetableContainer: FC<Props> = () => {
     // Timetable settings stuff
     const { displayedDays, dayStartTime, dayEndTime } = useContext(
         TimetableSettingsContext

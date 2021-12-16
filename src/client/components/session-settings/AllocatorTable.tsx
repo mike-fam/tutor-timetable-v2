@@ -15,7 +15,7 @@ import {
     Thead,
     Tr,
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { usePreferenceByUsernameLazyQuery } from "../../generated/graphql";
 import { Map } from "immutable";
 import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
@@ -37,7 +37,7 @@ type Props = {
     termId: string;
 };
 
-export const AllocatorTable: React.FC<Props> = ({
+export const AllocatorTable: FC<Props> = ({
     staffMetadata,
     courseId,
     termId,

@@ -1,15 +1,21 @@
-import asyncFilter from "node-filter-async";
-
 export const asyncMap = async <T, R>(
     array: Array<T>,
-    predicate: (elem: T) => Promise<R>
+    transform: (elem: T, index?: number) => Promise<R>
 ) => {
-    return await Promise.all(array.map(predicate));
+    return await Promise.all(array.map(transform));
+};
+
+export const asyncFilter = async <T>(
+    array: Array<T>,
+    predicate: (elem: T, index?: number) => Promise<boolean>
+): Promise<Array<T>> => {
+    const predicateValues = await asyncMap(array, predicate);
+    return array.filter((_, index) => predicateValues[index]);
 };
 
 export const asyncSome = async <T>(
     array: Array<T>,
-    predicate: (elem: T) => Promise<boolean>
+    predicate: (elem: T, index?: number) => Promise<boolean>
 ) => {
     return (await asyncFilter(array, predicate)).length !== 0;
 };

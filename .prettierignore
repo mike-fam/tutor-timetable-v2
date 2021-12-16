@@ -1,2 +1,4 @@
 src/server/migrations/*
 src/client/generated/*
+src/client/scripts/*
+src/client/config/*

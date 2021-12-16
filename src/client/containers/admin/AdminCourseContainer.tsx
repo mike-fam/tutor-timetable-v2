@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { AddOrSelect } from "../../components/admin/AddOrSelect";
 import { CourseForm } from "../../components/admin/CourseForm";
 import {
@@ -16,7 +16,7 @@ import {
 import { Button, Divider } from "@chakra-ui/react";
 import { useMap } from "../../hooks/useMap";
 
-export const AdminCourseContainer: React.FC = () => {
+export const AdminCourseContainer: FC = () => {
     const [chosenCourse, setChosenCourse] = useState<string>();
     const [updated, setUpdated] = useState(false);
     const [createCourse, { data: createdCourse, loading: isCreatingCourse }] =

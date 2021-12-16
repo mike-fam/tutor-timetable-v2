@@ -1,4 +1,4 @@
-import React, { SelectHTMLAttributes } from "react";
+import { FC, SelectHTMLAttributes } from "react";
 import { Select, SelectProps } from "@chakra-ui/react";
 import { Map } from "immutable";
 import { defaultStr } from "../../constants";
@@ -10,11 +10,7 @@ type Props = Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> &
         elementType?: string;
     };
 
-export const Dropdown: React.FunctionComponent<Props> = ({
-    options,
-    elementType,
-    ...props
-}) => {
+export const Dropdown: FC<Props> = ({ options, elementType, ...props }) => {
     return (
         <Select {...props}>
             <option disabled value={defaultStr}>

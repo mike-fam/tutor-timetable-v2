@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { Carousel } from "../helpers/carousel/Carousel";
 import { CarouselPrevButton } from "../helpers/carousel/CarouselPrevButton";
 import { CarouselSlides } from "../helpers/carousel/CarouselSlides";
@@ -17,11 +17,7 @@ type Props = {
     weekNames: string[];
 };
 
-export const WeekCarousel: React.FC<Props> = ({
-    startDate,
-    endDate,
-    weekNames,
-}) => {
+export const WeekCarousel: FC<Props> = ({ startDate, endDate, weekNames }) => {
     if (!isDateValid(startDate) || !isDateValid(endDate)) {
         return null;
     }

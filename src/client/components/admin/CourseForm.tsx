@@ -1,5 +1,5 @@
+import { FC } from "react";
 import { Form, Formik } from "formik";
-import React from "react";
 import { CourseInput } from "../../generated/graphql";
 import { FormikInput } from "../helpers/formik/FormikInput";
 import { AdminEditMode } from "../../types/admin";
@@ -12,7 +12,7 @@ type Props = {
     loading?: boolean;
 };
 
-export const CourseForm: React.FC<Props> = ({
+export const CourseForm: FC<Props> = ({
     initialValues,
     submit,
     editMode,

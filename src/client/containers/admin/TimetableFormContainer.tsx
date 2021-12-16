@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { TimetableForm } from "../../components/admin/TimetableForm";
 import {
     CourseQuery,
@@ -19,7 +19,7 @@ type Props = {
     loading?: boolean;
 };
 
-export const TimetableFormContainer: React.FC<Props> = ({
+export const TimetableFormContainer: FC<Props> = ({
     submit,
     editMode,
     loading,

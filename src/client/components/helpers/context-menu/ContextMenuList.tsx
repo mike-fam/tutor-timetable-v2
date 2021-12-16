@@ -1,4 +1,4 @@
-import React, { RefObject, useContext, useEffect, useState } from "react";
+import { FC, RefObject, useContext, useEffect, useState } from "react";
 import { ContextMenuContext } from "./ContextMenu";
 import { Variants } from "framer-motion";
 import { MotionBox } from "../MotionBox";
@@ -36,7 +36,7 @@ type Position = {
     bottom?: number | string;
 };
 
-export const ContextMenuList: React.FC<Props> = ({ children }) => {
+export const ContextMenuList: FC<Props> = ({ children }) => {
     const {
         closeMenu,
         isOpen,

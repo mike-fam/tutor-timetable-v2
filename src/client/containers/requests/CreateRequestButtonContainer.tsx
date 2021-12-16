@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { useRequestFormState } from "../../hooks/useRequestFormState";
 import { StepModal } from "../../components/helpers/StepModal";
@@ -15,7 +15,7 @@ import { RequestContext } from "../../hooks/useRequestUtils";
 
 type Props = {};
 
-export const CreateRequestButtonContainer: React.FC<Props> = () => {
+export const CreateRequestButtonContainer: FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const formState = useRequestFormState();

@@ -1,5 +1,5 @@
 import { Center, Text, useDisclosure, useToast } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { OfferRequestModalContainer } from "../../containers/requests/OfferRequestModalContainer";
 import { RequestResponse } from "../../types/requests";
 import { Loadable } from "../helpers/Loadable";
@@ -15,10 +15,7 @@ type Props = {
     loading: boolean;
 };
 
-export const RequestList: React.FunctionComponent<Props> = ({
-    requestList,
-    loading,
-}) => {
+export const RequestList: FC<Props> = ({ requestList, loading }) => {
     const {
         isOpen: isOpenOffer,
         onClose: onCloseOffer,

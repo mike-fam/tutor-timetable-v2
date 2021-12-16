@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { StepModal } from "../../components/helpers/StepModal";
 import { StepModalStep } from "../../components/helpers/StepModalStep";
 import { ViewRequestContainer } from "./ViewRequestContainer";
@@ -12,7 +12,7 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
 };
-export const OfferRequestModalContainer: React.FunctionComponent<Props> = ({
+export const OfferRequestModalContainer: FC<Props> = ({
     isOpen,
     onClose,
     requestId,

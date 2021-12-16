@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { Box, Grid, useColorModeValue } from "@chakra-ui/react";
 import range from "lodash/range";
 
@@ -11,7 +11,7 @@ type Props = {
     disableAfter?: Date;
 };
 
-export const CalendarYearsView: React.FC<Props> = ({
+export const CalendarYearsView: FC<Props> = ({
     viewedYear,
     setViewedYear,
     firstDate,

@@ -14,7 +14,7 @@ import {
     Tr,
     useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import {
     useLazyQueryWithError,
     useMutationWithError,
@@ -45,10 +45,7 @@ const hourToTime = (hour: number) => {
         .padStart(2, "0")}`;
 };
 
-export const OfferListContainer: React.FC<Props> = ({
-    requestId,
-    closeModal,
-}) => {
+export const OfferListContainer: FC<Props> = ({ requestId, closeModal }) => {
     const [getOffers, { data: offerData }] = useLazyQueryWithError(
         useGetOffersByRequestIdLazyQuery,
         {}

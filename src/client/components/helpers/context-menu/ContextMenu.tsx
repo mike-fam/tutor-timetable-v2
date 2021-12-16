@@ -1,10 +1,16 @@
 import { useDisclosure } from "@chakra-ui/react";
-import React, { RefObject, useCallback, useRef, useState } from "react";
+import {
+    createContext,
+    FC,
+    ReactNode,
+    RefObject,
+    useCallback,
+    useRef,
+    useState,
+} from "react";
 
 type Props = {
-    children:
-        | React.ReactNode
-        | ((contextMenu: ContextMenuState) => React.ReactNode);
+    children: ReactNode | ((contextMenu: ContextMenuState) => ReactNode);
 };
 
 type MousePosition = {
@@ -20,7 +26,7 @@ type ContextMenuState = {
     position: MousePosition;
 };
 
-export const ContextMenuContext = React.createContext<ContextMenuState>({
+export const ContextMenuContext = createContext<ContextMenuState>({
     isOpen: false,
     closeMenu: () => {},
     openMenu: () => {},
@@ -28,7 +34,7 @@ export const ContextMenuContext = React.createContext<ContextMenuState>({
     position: { x: 0, y: 0 },
 });
 
-export const ContextMenu: React.FC<Props> = ({ children }) => {
+export const ContextMenu: FC<Props> = ({ children }) => {
     const { isOpen, onClose: closeMenu, onOpen } = useDisclosure();
     const [position, setPosition] = useState<MousePosition>({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);

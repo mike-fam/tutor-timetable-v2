@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { useField } from "formik";
 import {
     Box,
@@ -22,11 +22,7 @@ type Props = {
     users: UserMap;
 };
 
-export const FormikBaseAllocation: React.FC<Props> = ({
-    name,
-    weekNames,
-    users,
-}) => {
+export const FormikBaseAllocation: FC<Props> = ({ name, weekNames, users }) => {
     const [
         ,
         { value: baseAllocatedUsers },

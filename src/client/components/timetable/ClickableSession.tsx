@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 import { Props as SessionProps, Session } from "../timetable/Session";
 import { useColorMode } from "@chakra-ui/react";
 

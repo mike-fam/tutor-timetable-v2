@@ -1,5 +1,6 @@
-import React, {
+import {
     Dispatch,
+    FC,
     SetStateAction,
     useCallback,
     useEffect,
@@ -17,7 +18,7 @@ type Props = {
     chosenTermId: string;
 };
 
-export const CourseCheckboxListContainer: React.FunctionComponent<Props> = ({
+export const CourseCheckboxListContainer: FC<Props> = ({
     chosenCourses,
     setChosenCourses,
     chosenTermId,

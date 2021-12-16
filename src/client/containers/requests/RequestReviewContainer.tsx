@@ -1,5 +1,5 @@
 import { Grid, ListItem, Text, UnorderedList } from "@chakra-ui/react";
-import React, { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { useLazyQueryWithError } from "../../hooks/useApolloHooksWithError";
 import { useCourseLazyQuery } from "../../generated/graphql";
 import { capitalCase } from "change-case";
@@ -15,7 +15,7 @@ type Props = Pick<
     termId: string;
 };
 
-export const RequestReviewContainer: React.FC<Props> = ({
+export const RequestReviewContainer: FC<Props> = ({
     title,
     course,
     description,

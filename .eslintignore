@@ -1,3 +1,4 @@
 src/server/migrations/*
 src/client/generated/graphql.tsx
 src/client/scripts/*
+src/client/config/*

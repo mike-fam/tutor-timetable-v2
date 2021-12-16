@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { Dispatch, FC, SetStateAction, useContext, useEffect } from "react";
 import { RequestTimetableContainer } from "./RequestTimetableContainer";
 import { useTermsQuery } from "../../generated/graphql";
 import { WeekNav } from "../../components/WeekNav";
@@ -20,7 +20,7 @@ type Props = {
     getSessionTheme: (session: SessionResponseType) => SessionTheme;
 };
 
-export const InteractiveRequestTimetable: React.FC<Props> = ({
+export const InteractiveRequestTimetable: FC<Props> = ({
     chosenCourseIds,
     chosenTermId,
     chooseSession,

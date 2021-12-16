@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import { FC, Fragment } from "react";
 import { UserMap } from "../../hooks/useUsersOfCourse";
 import { v4 as uuid } from "uuid";
 import {
@@ -24,7 +24,7 @@ type Props = {
     users: UserMap;
 };
 
-export const FormikExtraAllocations: React.FC<Props> = ({
+export const FormikExtraAllocations: FC<Props> = ({
     name,
     weekNames,
     users,

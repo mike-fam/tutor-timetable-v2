@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import { defaultStr } from "../../constants";
 import {
     RequestStatus,
@@ -24,7 +24,7 @@ import {
 import { UserContext } from "../../utils/user";
 import { RequestContext, useRequestUtils } from "../../hooks/useRequestUtils";
 
-export const RequestPageContainer: React.FunctionComponent = () => {
+export const RequestPageContainer: FC = () => {
     // Get Current Term
     const { data: termsData } = useTermsQuery();
     const [chosenTerm, setChosenTerm] = useState(defaultStr);

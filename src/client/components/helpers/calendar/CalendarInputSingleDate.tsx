@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { FC, useRef } from "react";
 import {
     Box,
     Input,
@@ -23,7 +23,7 @@ type Props = Omit<InputProps, "value" | "onChange"> & {
     onDateMouseLeave?: (date: Date) => void;
 };
 
-export const CalendarInputSingleDate: React.FC<Props> = ({
+export const CalendarInputSingleDate: FC<Props> = ({
     dateFormat = "dd/MM/yyyy",
     value,
     onChange,

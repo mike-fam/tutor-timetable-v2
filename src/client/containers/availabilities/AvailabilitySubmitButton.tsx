@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import React, { useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import {
     ModificationType,
     useUpdateAvailabilitiesMutation,
@@ -9,7 +9,7 @@ import { AvailabilityContext } from "../../utils/availability";
 
 type Props = {};
 
-export const AvailabilitySubmitButton: React.FC<Props> = () => {
+export const AvailabilitySubmitButton: FC<Props> = () => {
     const { timeslots, setTimeslots } = useContext(AvailabilityContext);
     const [updateAvailabilities, { loading: updateLoading }] =
         useMutationWithError(useUpdateAvailabilitiesMutation, {

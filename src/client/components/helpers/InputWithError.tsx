@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import {
     FormControl,
     FormErrorMessage,
@@ -12,7 +12,7 @@ type Props = InputProps & {
     label: string;
 };
 
-export const InputWithError: React.FC<Props> = ({
+export const InputWithError: FC<Props> = ({
     onBlur,
     onChange,
     validate,

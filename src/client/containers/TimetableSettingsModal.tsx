@@ -1,3 +1,4 @@
+import { FC, useContext } from "react";
 import {
     Button,
     Modal,
@@ -8,7 +9,6 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { Form, Formik, FormikErrors } from "formik";
 import { FormikNumberInput } from "../components/helpers/formik/FormikNumberInput";
@@ -23,10 +23,7 @@ type Props = {
     onClose: () => void;
 };
 
-export const TimetableSettingsModal: React.FC<Props> = ({
-    isOpen,
-    onClose,
-}) => {
+export const TimetableSettingsModal: FC<Props> = ({ isOpen, onClose }) => {
     const {
         displayedDays,
         setDisplayedDays,

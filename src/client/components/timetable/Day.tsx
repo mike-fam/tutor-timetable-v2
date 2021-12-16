@@ -1,5 +1,5 @@
 import { Grid, Text } from "@chakra-ui/react";
-import React, { PropsWithChildren, ReactElement, useMemo } from "react";
+import { PropsWithChildren, ReactElement, useMemo } from "react";
 import range from "lodash/range";
 import { IsoDay } from "../../../types/date";
 import { isoNumberToDay } from "../../../utils/date";

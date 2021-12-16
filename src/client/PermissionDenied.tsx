@@ -1,10 +1,10 @@
-import React from "react";
+import { FC } from "react";
 import { Center, Text } from "@chakra-ui/react";
 import { Wrapper } from "./components/helpers/Wrapper";
 
 type Props = {};
 
-export const PermissionDenied: React.FC<Props> = () => {
+export const PermissionDenied: FC<Props> = () => {
     return (
         <Wrapper>
             <Center>

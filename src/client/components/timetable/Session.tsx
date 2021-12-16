@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import React, { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 import { sessionStyleFromProps } from "../../utils/timetable";
 import { useSessionBgColour } from "../../hooks/useSessionBgColour";
 import omit from "lodash/omit";

@@ -2,12 +2,12 @@ import { User } from "../entities";
 import { CANT_FIND, PERM_ERR } from "../constants";
 import { BaseEntity } from "../entities/BaseEntity";
 import { DeepPartial, FindConditions, ObjectType } from "typeorm";
-import asyncFilter from "node-filter-async";
 import { PermissionState } from "../types/permission";
 import DataLoader from "dataloader";
 import has from "lodash/has";
 import { DataLoaders } from "../types/dataloaders";
 import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
+import { asyncFilter } from "../../utils/array";
 
 type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { WeekNav } from "../components/WeekNav";
 import { Term, useTermsQuery } from "../generated/graphql";
 import { useQueryWithError } from "../hooks/useApolloHooksWithError";
@@ -9,7 +9,7 @@ import { Map } from "immutable";
 type Props = {};
 
 // Placeholder data
-export const WeekNavContainer: React.FunctionComponent<Props> = () => {
+export const WeekNavContainer: FC<Props> = () => {
     const { chosenTermId, chosenWeek, chooseWeek } =
         useContext(TimetableContext);
     const { data, loading } = useQueryWithError(useTermsQuery, {});

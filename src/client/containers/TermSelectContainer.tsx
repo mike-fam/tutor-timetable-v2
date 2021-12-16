@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Dropdown } from "../components/helpers/Dropdown";
 import { useTermsQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
@@ -11,7 +11,7 @@ type Props = {
     maxW?: number | string;
 };
 
-export const TermSelectContainer: React.FC<Props> = ({
+export const TermSelectContainer: FC<Props> = ({
     chooseTerm,
     chosenTerm,
     maxW,

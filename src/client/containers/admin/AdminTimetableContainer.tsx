@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import {
     useMutationWithStatus,
     useQueryWithError,
@@ -23,7 +23,7 @@ type Props = {};
 
 type TimetableResponseType = CreateTimetableMutation["createTimetable"];
 
-export const AdminTimetableContainer: React.FC<Props> = () => {
+export const AdminTimetableContainer: FC<Props> = () => {
     const [chosenTimetableId, setChosenTimetableId] = useState<string>();
     const [updated, setUpdated] = useState(false);
     const [

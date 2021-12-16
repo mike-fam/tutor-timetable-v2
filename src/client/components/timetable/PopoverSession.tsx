@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import { Props as SessionProps } from "./Session";
 import { Popover, PopoverContent, PopoverTrigger } from "@chakra-ui/react";
 

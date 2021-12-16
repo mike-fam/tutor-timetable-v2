@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 import { Day } from "../../components/timetable/Day";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { useSessionUtils } from "../../hooks/useSessionUtils";
@@ -17,7 +17,7 @@ type Props = {
     sessionId: string;
 };
 
-export const OfferDayTimetablePreview: React.FC<Props> = ({ sessionId }) => {
+export const OfferDayTimetablePreview: FC<Props> = ({ sessionId }) => {
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);
     const { sessions, fetchSessions, fetchSessionById, loading } =
         useSessionUtils();

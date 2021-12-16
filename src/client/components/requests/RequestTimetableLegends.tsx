@@ -1,9 +1,9 @@
-import React from "react";
+import { FC } from "react";
 import { Text } from "@chakra-ui/react";
 
 type Props = {};
 
-export const RequestTimetableLegends: React.FC<Props> = () => {
+export const RequestTimetableLegends: FC<Props> = () => {
     return (
         <>
             <Text color="red.500" fontWeight="bold">

@@ -1,5 +1,5 @@
 import { Box, Grid } from "@chakra-ui/react";
-import React, { PropsWithChildren, ReactElement } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 import { Props as DayProps } from "./Day";
 import { gap, timetableTimeslotHeight } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";

@@ -1,17 +1,17 @@
-import React from "react";
 import { Role } from "../../generated/graphql";
 import { StaffSeniority } from "../../types/courseStaff";
 import { FormikInput } from "../helpers/formik/FormikInput";
 import { Stack, Textarea } from "@chakra-ui/react";
 import { FormikSelect } from "../helpers/formik/FormikSelect";
 import { FormikRadioGroup } from "../helpers/formik/FormikRadioGroup";
+import { FC } from "react";
 
 type Props = {
     multipleStaff: boolean;
     editable?: boolean;
 };
 
-export const CourseStaffForm: React.FC<Props> = ({
+export const CourseStaffForm: FC<Props> = ({
     multipleStaff,
     editable = false,
 }) => {

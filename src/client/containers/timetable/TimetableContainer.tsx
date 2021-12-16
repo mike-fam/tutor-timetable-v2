@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { Day } from "../../components/timetable/Day";
 import { TimeSlot } from "../../components/timetable/TimeSlot";
@@ -32,7 +32,7 @@ import isToday from "date-fns/isToday";
 
 type Props = {};
 
-export const TimetableContainer: React.FC<Props> = () => {
+export const TimetableContainer: FC<Props> = () => {
     const [sessionInfo, setSessionsInfo] = useState<
         Map<string, TimetableCustomSessionProps>
     >(Map<string, TimetableCustomSessionProps>());

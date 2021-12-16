@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { Loadable } from "../../components/helpers/Loadable";
 import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
@@ -31,7 +31,7 @@ type Props = {
     users: UserMap;
 };
 
-export const SessionSettingsTimetableContainer: React.FC<Props> = ({
+export const SessionSettingsTimetableContainer: FC<Props> = ({
     loading,
     timetableState,
     selectActions,

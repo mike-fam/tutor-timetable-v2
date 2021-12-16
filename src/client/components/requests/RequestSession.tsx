@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import {
     TimetableCustomSessionProps,
     TimetableSession,
@@ -16,7 +16,7 @@ type Props = Omit<
     "_hover" | "onClick" | "opacity"
 >;
 
-export const RequestSession: React.FC<Props> = (props) => {
+export const RequestSession: FC<Props> = (props) => {
     const { colorMode } = useColorMode();
     const { disabled, onClick } = props.custom(props.sessionId);
     return (

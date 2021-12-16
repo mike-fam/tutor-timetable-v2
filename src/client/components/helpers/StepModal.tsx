@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, FC, useCallback, useMemo, useState } from "react";
 import {
     Button,
     HStack,
@@ -28,7 +28,7 @@ export const StepModalContext = createContext<StepModalState>({
     currentStep: 0,
 });
 
-export const StepModal: React.FC<Props> = ({
+export const StepModal: FC<Props> = ({
     onSubmit,
     stepCount,
     validateStep,

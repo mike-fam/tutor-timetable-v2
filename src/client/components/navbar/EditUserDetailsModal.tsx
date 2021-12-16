@@ -8,7 +8,7 @@ import {
     ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 
 type Props = {
     isOpen: boolean;
@@ -17,7 +17,7 @@ type Props = {
     submitButton: () => ReactElement;
 };
 
-export const EditUserDetailsModal: React.FC<Props> = (props: Props) => {
+export const EditUserDetailsModal: FC<Props> = (props: Props) => {
     return (
         <>
             <Modal isOpen={props.isOpen} onClose={props.closeModal}>

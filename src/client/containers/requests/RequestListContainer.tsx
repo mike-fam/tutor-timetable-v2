@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import { FC, useContext, useEffect, useMemo } from "react";
 import { RequestList } from "../../components/requests/RequestList";
 import { RequestResponse } from "../../types/requests";
 import { defaultStr } from "../../constants";
@@ -10,10 +10,7 @@ type Props = {
     termId: string;
 };
 
-export const RequestListContainer: React.FunctionComponent<Props> = ({
-    filters,
-    termId,
-}) => {
+export const RequestListContainer: FC<Props> = ({ filters, termId }) => {
     const { requests, fetchRequests, loading } = useContext(RequestContext);
     useEffect(() => {
         if (termId === defaultStr) {

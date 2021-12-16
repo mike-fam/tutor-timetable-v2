@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { firstLineHeight, gap } from "../../constants/timetable";
 import range from "lodash/range";
 import { Box, Grid } from "@chakra-ui/react";
@@ -9,7 +9,7 @@ type Props = {
     timeslotHeight: number;
 };
 
-export const HourColumn: React.FC<Props> = ({
+export const HourColumn: FC<Props> = ({
     startTime,
     endTime,
     timeslotHeight,

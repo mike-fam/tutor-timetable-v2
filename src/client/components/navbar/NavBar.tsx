@@ -15,10 +15,10 @@ import {
     useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import { FC, useContext } from "react";
 import { UserContext } from "../../utils/user";
 import { NavBarMenuButton } from "./NavBarMenuButton";
-import { BsPersonFill } from "react-icons/all";
+import { BsPersonFill } from "react-icons/bs";
 import { EditUserDetailsModalContainer } from "../../containers/navbar/EditUserDetailsModalContainer";
 import { TimetableSettingsModal } from "../../containers/TimetableSettingsModal";
 import { Role } from "../../generated/graphql";
@@ -26,7 +26,7 @@ import { RouterLink } from "../helpers/RouterLink";
 
 type Props = {};
 
-export const NavBar: React.FunctionComponent<Props> = () => {
+export const NavBar: FC<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
     const { user } = useContext(UserContext);

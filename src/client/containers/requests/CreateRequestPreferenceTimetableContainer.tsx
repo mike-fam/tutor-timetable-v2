@@ -1,4 +1,5 @@
-import React, {
+import {
+    FC,
     useCallback,
     useContext,
     useEffect,
@@ -32,7 +33,7 @@ type Props = {
     removePreference: (sessionId: string) => void;
 };
 
-export const CreateRequestPreferenceTimetableContainer: React.FC<Props> = ({
+export const CreateRequestPreferenceTimetableContainer: FC<Props> = ({
     chosenCourseId,
     chosenTermId,
     chosenSession,

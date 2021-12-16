@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import {
     CalendarInputSingleRange,
     Props as CalendarRangeInputProps,
@@ -15,7 +15,7 @@ type Props = Omit<CalendarRangeInputProps, "value" | "onChange"> & {
     onChange?: (range: [Date, Date]) => void;
 };
 
-export const FormikDateRangeInput: React.FC<Props> = ({
+export const FormikDateRangeInput: FC<Props> = ({
     nameFrom,
     nameTo,
     label,

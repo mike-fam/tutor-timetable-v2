@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import { AvailabilityTimetableContainer } from "./AvailabilityTimetableContainer";
 import { Map } from "immutable";
 import { AvailabilityContext } from "../../utils/availability";
@@ -10,7 +10,7 @@ import { AvailabilityHelpIcon } from "../../components/availabilities/Availabili
 
 type Props = {};
 
-export const AvailabilityPageContainer: React.FC<Props> = () => {
+export const AvailabilityPageContainer: FC<Props> = () => {
     const [existingTimeslots, setExistingTimeslots] = useState(
         Map<string, TimeslotInput>()
     );

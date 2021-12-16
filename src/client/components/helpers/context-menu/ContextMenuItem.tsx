@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useContext, useState } from "react";
+import { FC, MouseEventHandler, useContext, useState } from "react";
 import { Button } from "@chakra-ui/react";
 import { ContextMenuContext } from "./ContextMenu";
 
@@ -8,7 +8,7 @@ type Props = {
     disabled?: boolean;
 };
 
-export const ContextMenuItem: React.FC<Props> = ({
+export const ContextMenuItem: FC<Props> = ({
     children,
     onClick,
     colorScheme,

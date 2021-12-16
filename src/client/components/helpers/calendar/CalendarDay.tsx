@@ -1,5 +1,5 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
+import { FC } from "react";
 
 type Props = {
     selected?: boolean;
@@ -13,7 +13,7 @@ type Props = {
     disabled?: boolean;
 };
 
-export const CalendarDay: React.FC<Props> = ({
+export const CalendarDay: FC<Props> = ({
     selected = false,
     subSelected = false,
     day,

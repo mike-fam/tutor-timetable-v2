@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
 import { Box, Center, Icon, VStack } from "@chakra-ui/react";
 import { MdDragHandle } from "react-icons/md";
 import { Props as SessionProps, Session } from "../timetable/Session";
@@ -27,7 +27,7 @@ export type AvailabilityCustomSessionProps = {
 
 type Props = SessionProps<AvailabilityCustomSessionProps>;
 
-export const AvailabilitySession: React.FC<Props> = (props) => {
+export const AvailabilitySession: FC<Props> = (props) => {
     const { custom, sessionId } = props;
     const {
         updateSession,

@@ -4,7 +4,7 @@ import {
     FormLabel,
     Input,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import { FC, useContext } from "react";
 import { UserContext } from "../../utils/user";
 import { InputWithError } from "../helpers/InputWithError";
 
@@ -15,7 +15,7 @@ type Props = {
     setEmail: (email: string) => void;
 };
 
-export const EditUserForm: React.FC<Props> = (props: Props) => {
+export const EditUserForm: FC<Props> = (props: Props) => {
     const { user } = useContext(UserContext);
 
     return (

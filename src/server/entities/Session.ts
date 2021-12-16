@@ -25,9 +25,9 @@ import addDays from "date-fns/addDays";
 import addWeeks from "date-fns/addWeeks";
 import setHours from "date-fns/setHours";
 import setMinutes from "date-fns/setMinutes";
-import asyncFilter from "node-filter-async";
 import isBefore from "date-fns/isBefore";
 import differenceBy from "lodash/differenceBy";
+import { asyncFilter } from "../../utils/array";
 
 @ObjectType()
 @Entity()

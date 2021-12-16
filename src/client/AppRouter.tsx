@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/navbar/NavBar";
 import { RequestPageContainer } from "./containers/requests/RequestPageContainer";
 import { TimetablePageContainer } from "./containers/timetable/TimetablePageContainer";
@@ -12,48 +12,44 @@ import { Role } from "./generated/graphql";
 import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
 import { AdminPageContainer } from "./containers/admin/AdminPageContainer";
 
-export const AppRouter: React.FunctionComponent<{}> = () => {
+export const AppRouter: FC = () => {
     return (
         <BrowserRouter>
             <NavBar />
-            <Switch>
-                <Route path="/" component={TimetablePageContainer} exact />
+            <Routes>
+                <Route path="/" element={<TimetablePageContainer />} />
                 <Route
                     path="/permission-denied"
-                    component={PermissionDenied}
-                    exact
+                    element={<PermissionDenied />}
                 />
                 <SecretRoute
                     path="/requests"
-                    component={RequestPageContainer}
-                    exact
+                    element={<RequestPageContainer />}
                 />
                 <SecretRoute
                     path="/availabilities"
-                    component={AvailabilityPageContainer}
-                    exact
+                    element={<AvailabilityPageContainer />}
                 />
                 <SecretRoute
                     path="/preferences"
-                    component={PreferencePageContainer}
-                    exact
+                    element={<PreferencePageContainer />}
                 />
                 <SecretRoute
                     path="/course-staff"
-                    component={CourseStaffPageContainer}
+                    element={<CourseStaffPageContainer />}
                     allowedRoles={[Role.CourseCoordinator]}
                 />
                 <SecretRoute
                     path="/session-settings"
-                    component={SessionSettingsPageContainer}
+                    element={<SessionSettingsPageContainer />}
                     allowedRoles={[Role.CourseCoordinator]}
                 />
                 <SecretRoute
                     path="/admin"
-                    component={AdminPageContainer}
+                    element={<AdminPageContainer />}
                     allowedRoles={[]}
                 />
-            </Switch>
+            </Routes>
         </BrowserRouter>
     );
 };

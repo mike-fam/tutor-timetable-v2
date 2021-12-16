@@ -1,3 +1,4 @@
+import { FC } from "react";
 import {
     FormControl,
     FormErrorMessage,
@@ -10,7 +11,6 @@ import {
     NumberInputStepper,
 } from "@chakra-ui/react";
 import { useField } from "formik";
-import React from "react";
 import { camelCase, capitalCase } from "change-case";
 
 type Props = {
@@ -21,7 +21,7 @@ type Props = {
     min?: number;
 } & NumberInputFieldProps;
 
-export const FormikNumberInput: React.FC<Props> = ({
+export const FormikNumberInput: FC<Props> = ({
     name,
     id,
     label,

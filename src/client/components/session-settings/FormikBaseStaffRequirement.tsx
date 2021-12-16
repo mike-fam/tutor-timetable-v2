@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { useField } from "formik";
 import { Box, FormControl, FormLabel } from "@chakra-ui/react";
 import range from "lodash/range";

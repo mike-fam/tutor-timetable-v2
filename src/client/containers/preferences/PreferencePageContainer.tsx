@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { PreferenceUpdateContainer } from "./PreferenceUpdateContainer";
@@ -8,7 +8,7 @@ import { useTermCourse } from "../../hooks/useTermCourse";
 
 type Props = {};
 
-export const PreferencePageContainer: React.FC<Props> = () => {
+export const PreferencePageContainer: FC<Props> = () => {
     const { termId, changeTerm, courseId, changeCourse } = useTermCourse();
     return (
         <Wrapper>

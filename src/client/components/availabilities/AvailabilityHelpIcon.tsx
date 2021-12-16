@@ -1,10 +1,10 @@
-import React from "react";
+import { FC } from "react";
 import { ListItem, UnorderedList } from "@chakra-ui/react";
 import { HelpIcon } from "../helpers/HelpIcon";
 
 type Props = {};
 
-export const AvailabilityHelpIcon: React.FC<Props> = () => {
+export const AvailabilityHelpIcon: FC<Props> = () => {
     return (
         <HelpIcon>
             <UnorderedList>

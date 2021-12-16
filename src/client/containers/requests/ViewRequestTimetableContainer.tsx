@@ -1,4 +1,5 @@
-import React, {
+import {
+    FC,
     useCallback,
     useContext,
     useEffect,
@@ -16,9 +17,7 @@ type Props = {
     requestId: string;
 };
 
-export const ViewRequestTimetableContainer: React.FC<Props> = ({
-    requestId,
-}) => {
+export const ViewRequestTimetableContainer: FC<Props> = ({ requestId }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
     const request = useMemo(
         () => requests.get(requestId),

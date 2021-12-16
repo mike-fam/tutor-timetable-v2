@@ -1,5 +1,6 @@
-import React, {
+import {
     Dispatch,
+    FC,
     SetStateAction,
     useCallback,
     useContext,
@@ -22,7 +23,7 @@ type Props = {
     chooseSession: Dispatch<SetStateAction<string>>;
 };
 
-export const CreateRequestSessionTimetableContainer: React.FC<Props> = ({
+export const CreateRequestSessionTimetableContainer: FC<Props> = ({
     chosenCourseId,
     chosenTermId,
     chooseSession,

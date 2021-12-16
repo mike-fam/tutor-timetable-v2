@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import {
     Button,
     Divider,
@@ -29,7 +29,7 @@ type Props = {
     ) => void;
 };
 
-export const TimeslotModal: React.FC<Props> = ({
+export const TimeslotModal: FC<Props> = ({
     isOpen,
     close,
     timeslot,

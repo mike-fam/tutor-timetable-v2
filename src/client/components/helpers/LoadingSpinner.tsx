@@ -1,9 +1,9 @@
-import React from "react";
+import { FC } from "react";
 import { Box, Center, Spinner } from "@chakra-ui/react";
 
 type Props = {};
 
-export const LoadingSpinner: React.FC<Props> = () => {
+export const LoadingSpinner: FC<Props> = () => {
     return (
         <Box w="100%" h="100%">
             <Center h="100%">

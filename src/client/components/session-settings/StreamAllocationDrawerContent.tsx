@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { StreamInput } from "../../generated/graphql";
 import { Stack } from "@chakra-ui/react";
 import { FormikBaseAllocation } from "./FormikBaseAllocation";
@@ -11,7 +11,7 @@ type Props = {
     users: UserMap;
 };
 
-export const StreamAllocationDrawerContent: React.FC<Props> = ({
+export const StreamAllocationDrawerContent: FC<Props> = ({
     stream,
     weekNames,
     users,

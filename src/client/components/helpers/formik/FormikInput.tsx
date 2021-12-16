@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { Field, FieldProps } from "formik";
 import {
     FormControl,
@@ -16,7 +16,7 @@ type Props = {
     type?: string;
 } & InputProps;
 
-export const FormikInput: React.FC<Props> = ({
+export const FormikInput: FC<Props> = ({
     name,
     id,
     label,

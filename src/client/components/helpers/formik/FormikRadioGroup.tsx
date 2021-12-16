@@ -1,7 +1,7 @@
+import { FC } from "react";
 import { FormControl, FormLabel, Radio, Stack } from "@chakra-ui/react";
 import { capitalCase } from "change-case";
 import { useField } from "formik";
-import React from "react";
 
 type Props = {
     name: string;
@@ -11,7 +11,7 @@ type Props = {
     stackDirection?: "row" | "column";
 };
 
-export const FormikRadioGroup: React.FC<Props> = ({
+export const FormikRadioGroup: FC<Props> = ({
     name,
     values,
     label,

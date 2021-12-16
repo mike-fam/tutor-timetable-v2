@@ -1,5 +1,5 @@
+import { Dispatch, FC, SetStateAction } from "react";
 import { Tab, TabList, Tabs } from "@chakra-ui/react";
-import React from "react";
 import range from "lodash/range";
 
 type Props = {
@@ -7,12 +7,12 @@ type Props = {
     weekNames: Array<string>;
     weeksNum: number;
     chosenWeek: number;
-    chooseWeek: React.Dispatch<React.SetStateAction<number>>;
+    chooseWeek: Dispatch<SetStateAction<number>>;
     disabled?: number[];
     tabSize?: "sm" | "md" | "lg";
 };
 
-export const WeekNav: React.FunctionComponent<Props> = ({
+export const WeekNav: FC<Props> = ({
     weekNames,
     weeksNum,
     chooseWeek,

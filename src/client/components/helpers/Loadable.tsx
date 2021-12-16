@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
     children: ReactElement | null;
 };
 
-export const Loadable: React.FC<Props> = ({
+export const Loadable: FC<Props> = ({
     isLoading,
     renderLoading = () => <LoadingSpinner />,
     children,

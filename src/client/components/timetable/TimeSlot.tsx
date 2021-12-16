@@ -1,9 +1,9 @@
+import { FC } from "react";
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
 
 type Props = {};
 
-export const TimeSlot: React.FC<Props> = ({ children }) => {
+export const TimeSlot: FC<Props> = ({ children }) => {
     const evenStripes = useColorModeValue("lightgrey", "#2B6CB0");
     const oddStripes = useColorModeValue("darkgrey", "#2C5282");
     return (

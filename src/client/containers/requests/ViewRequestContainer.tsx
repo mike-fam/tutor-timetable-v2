@@ -1,5 +1,6 @@
 import { Box, Grid, HStack, IconButton, Stack, Text } from "@chakra-ui/react";
-import React, {
+import {
+    FC,
     useCallback,
     useContext,
     useEffect,
@@ -10,7 +11,7 @@ import { OfferDayTimetablePreview } from "./OfferDayTimetablePreview";
 import { RequestContext } from "../../hooks/useRequestUtils";
 import { defaultInt, defaultStr } from "../../constants";
 import { RequestType } from "../../generated/graphql";
-import { BsChevronLeft, BsChevronRight } from "react-icons/all";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { SessionsContext } from "../../hooks/useSessionUtils";
 import { useTermMetadata } from "../../hooks/useTermMetadata";
 
@@ -18,7 +19,7 @@ type Props = {
     requestId: string;
 };
 
-export const ViewRequestContainer: React.FC<Props> = ({ requestId }) => {
+export const ViewRequestContainer: FC<Props> = ({ requestId }) => {
     const { requests, fetchRequestById } = useContext(RequestContext);
     const [sessionId, setSessionId] = useState(defaultStr);
     const [week, setWeek] = useState(defaultInt);

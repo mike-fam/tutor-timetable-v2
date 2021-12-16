@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
     data: { id: string; cells: (string | ReactNode)[] }[];
 };
 
-export const StripeTable: React.FC<Props> = ({ columns, data }) => {
+export const StripeTable: FC<Props> = ({ columns, data }) => {
     return (
         <Table variant="striped">
             <Thead>

@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { defaultStr } from "../../constants";
 import {
     Preference,
@@ -25,10 +25,7 @@ type Props = {
     termId: string;
 };
 
-export const PreferenceUpdateContainer: React.FC<Props> = ({
-    courseId,
-    termId,
-}) => {
+export const PreferenceUpdateContainer: FC<Props> = ({ courseId, termId }) => {
     const [preference, setPreference] = useState<
         Pick<Preference, "maxContigHours" | "maxWeeklyHours"> & {
             sessionType: "No Preference" | Preference["sessionType"];

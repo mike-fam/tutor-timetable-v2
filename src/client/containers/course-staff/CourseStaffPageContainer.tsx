@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import {
     Box,
     Button,
@@ -40,7 +40,7 @@ import { Loadable } from "../../components/helpers/Loadable";
 
 type Props = {};
 
-export const CourseStaffPageContainer: React.FC<Props> = () => {
+export const CourseStaffPageContainer: FC<Props> = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: termsData } = useQueryWithError(useTermsQuery, {});
     const toast = useToast();

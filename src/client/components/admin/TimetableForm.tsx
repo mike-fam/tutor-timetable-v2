@@ -1,5 +1,5 @@
+import { FC } from "react";
 import { Form, Formik } from "formik";
-import React from "react";
 import { FreezeState, TimetableInput } from "../../generated/graphql";
 import { AdminEditMode } from "../../types/admin";
 import { Button, VStack } from "@chakra-ui/react";
@@ -18,7 +18,7 @@ type Props = {
     termIdToText?: (termId: string) => string;
 };
 
-export const TimetableForm: React.FC<Props> = ({
+export const TimetableForm: FC<Props> = ({
     initialValues,
     submit,
     editMode,

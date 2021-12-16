@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { PopoverSession } from "../timetable/PopoverSession";
 import { Box, BoxProps } from "@chakra-ui/react";
 import { TimetableSessionPopover } from "../timetable/TimetableSessionPopover";
@@ -17,7 +17,7 @@ export type TimetableCustomSessionProps = {
 
 export type Props = ClickableSessionProps<TimetableCustomSessionProps>;
 
-export const SessionSettingsTimetableSession: React.FC<Props> = (props) => {
+export const SessionSettingsTimetableSession: FC<Props> = (props) => {
     const { custom, sessionId, name } = props;
     const { allocation, location, courseCode, numberOfStaff } = useMemo(
         () => custom(sessionId),

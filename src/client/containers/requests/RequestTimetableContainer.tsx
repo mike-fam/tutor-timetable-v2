@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { Timetable } from "../../components/timetable/Timetable";
 import { TimetableSettingsContext } from "../../utils/timetable";
 import { Day } from "../../components/timetable/Day";
@@ -25,7 +25,7 @@ type Props = {
     displayedDays?: IsoDay[];
 };
 
-export const RequestTimetableContainer: React.FC<Props> = ({
+export const RequestTimetableContainer: FC<Props> = ({
     chosenTerm,
     chosenCourses,
     chosenWeek,

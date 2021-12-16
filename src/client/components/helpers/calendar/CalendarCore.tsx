@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import {
     Box,
     Divider,
@@ -14,7 +14,7 @@ import {
     BsChevronDoubleRight,
     BsChevronLeft,
     BsChevronRight,
-} from "react-icons/all";
+} from "react-icons/bs";
 import { CalendarDaysView } from "./CalendarDaysView";
 import { CalendarMonthsView } from "./CalendarMonthsView";
 import { useCalendarTime } from "../../../hooks/useCalendarTime";

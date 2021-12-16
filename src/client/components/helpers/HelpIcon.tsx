@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import {
     Box,
     Icon,
@@ -12,7 +12,7 @@ import { BsFillQuestionCircleFill } from "react-icons/bs";
 
 type Props = {};
 
-export const HelpIcon: React.FC<Props> = ({ children }) => {
+export const HelpIcon: FC<Props> = ({ children }) => {
     return (
         <Popover placement="right-start" trigger="hover">
             <PopoverTrigger>

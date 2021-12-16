@@ -1,4 +1,3 @@
-import React from "react";
 import { Stack } from "@chakra-ui/react";
 import { FormikInput } from "../helpers/formik/FormikInput";
 import { FormikSelect } from "../helpers/formik/FormikSelect";
@@ -9,6 +8,7 @@ import { isoNumberToDay } from "../../../utils/date";
 import { FormikTimeInput } from "../helpers/formik/FormikTimeInput";
 import { FormikBaseStaffRequirement } from "./FormikBaseStaffRequirement";
 import { FormikExtraStaffRequirement } from "./FormikExtraStaffRequirement";
+import { FC } from "react";
 
 type Props = {
     stream: Partial<StreamInput>;
@@ -16,7 +16,7 @@ type Props = {
     numberOfWeeks: number;
 };
 
-export const StreamSettingsDrawerContent: React.FC<Props> = ({
+export const StreamSettingsDrawerContent: FC<Props> = ({
     stream,
     weekNames,
     numberOfWeeks,

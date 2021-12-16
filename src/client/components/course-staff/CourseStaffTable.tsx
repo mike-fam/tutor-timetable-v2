@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { IconButton, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { BsX } from "react-icons/bs";
 import { Icon } from "@chakra-ui/icons";
@@ -16,7 +16,7 @@ type Props = {
     removeCourseStaff: (courseStaffId: string) => void;
 };
 
-export const CourseStaffTable: React.FC<Props> = ({
+export const CourseStaffTable: FC<Props> = ({
     term,
     course,
     removeCourseStaff,

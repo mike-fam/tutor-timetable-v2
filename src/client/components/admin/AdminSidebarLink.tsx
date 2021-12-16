@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { Link, useColorMode } from "@chakra-ui/react";
 
 type Props = {
@@ -7,11 +7,7 @@ type Props = {
     selected: boolean;
 };
 
-export const AdminSidebarLink: React.FC<Props> = ({
-    name,
-    onClick,
-    selected,
-}) => {
+export const AdminSidebarLink: FC<Props> = ({ name, onClick, selected }) => {
     const { colorMode } = useColorMode();
     const bgColour = useMemo(
         () => (colorMode === "light" ? "teal.50" : "teal.900"),

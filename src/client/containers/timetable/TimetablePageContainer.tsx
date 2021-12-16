@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Box, Center, Grid, Heading } from "@chakra-ui/react";
 import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
@@ -20,7 +20,7 @@ import { useDefaultTerm } from "../../hooks/useDefaultTerm";
 
 type Props = {};
 
-export const TimetablePageContainer: React.FC<Props> = () => {
+export const TimetablePageContainer: FC<Props> = () => {
     document.title = "Tutor Timetable";
     const [chosenCourses, setChosenCourses] = useState(() => Set<string>());
     const { dayStartTime, dayEndTime } = useContext(TimetableSettingsContext);

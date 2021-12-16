@@ -1,8 +1,8 @@
+import { createContext } from "react";
 import { firstLineHeight, realGap } from "../constants/timetable";
 import { IsoDay, StackInfo, TimeRange } from "../../types/date";
 import { Props as SessionProps } from "../components/timetable/Session";
 import * as CSS from "csstype";
-import React from "react";
 import { Set } from "immutable";
 import { TimetableSettings, TimetableState } from "../types/timetable";
 import {
@@ -177,7 +177,7 @@ export const getClashedRanges = (
     return result;
 };
 
-export const TimetableContext = React.createContext<TimetableState>({
+export const TimetableContext = createContext<TimetableState>({
     chosenWeek: defaultInt,
     chosenCourses: Set<string>(),
     chosenTermId: defaultStr,
@@ -186,7 +186,7 @@ export const TimetableContext = React.createContext<TimetableState>({
     chooseTerm: () => {},
 });
 
-export const TimetableSettingsContext = React.createContext<TimetableSettings>({
+export const TimetableSettingsContext = createContext<TimetableSettings>({
     displayedDays: [
         IsoDay.MON,
         IsoDay.TUE,

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import { createContext, FC, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import { Grid, GridItem, Heading, UnorderedList } from "@chakra-ui/react";
 import { AdminSidebarLink } from "../../components/admin/AdminSidebarLink";
@@ -20,7 +20,7 @@ export const AdminPageContext = createContext<AdminPageState>({
     currentPage: "Timetable",
 });
 
-export const AdminPageContainer: React.FC<Props> = () => {
+export const AdminPageContainer: FC<Props> = () => {
     const [currentPage, selectPage] = useState<AdminPage>("Timetable");
     return (
         <AdminPageContext.Provider value={{ currentPage }}>

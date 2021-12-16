@@ -1,10 +1,4 @@
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Box,
     HStack,
@@ -36,7 +30,7 @@ export type Props = Omit<InputProps, "value" | "onChange"> & {
     wholeWeeksOnly?: boolean;
 };
 
-export const CalendarInputSingleRange: React.FC<Props> = ({
+export const CalendarInputSingleRange: FC<Props> = ({
     dateFormat = "dd/MM/yyyy",
     value,
     onChange,

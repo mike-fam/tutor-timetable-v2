@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { UserMap } from "../../hooks/useUsersOfCourse";
 import {
     Button,
@@ -28,7 +28,7 @@ type Props = {
     termName: string;
 };
 
-export const AllocatorModal: React.FC<Props> = ({
+export const AllocatorModal: FC<Props> = ({
     isOpen,
     close,
     onSubmit,

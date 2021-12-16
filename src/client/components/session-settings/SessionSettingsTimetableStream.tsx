@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, useMemo } from "react";
+import { FC, MouseEvent, useMemo } from "react";
 import {
     ClickableSession,
     Props as ClickableSessionProps,

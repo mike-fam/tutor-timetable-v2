@@ -6,7 +6,7 @@ import {
     ModalCloseButton,
     ModalHeader,
 } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import { FC, useContext } from "react";
 import { StepModalContext } from "./StepModal";
 
 type Props = ModalBodyProps & {
@@ -14,7 +14,7 @@ type Props = ModalBodyProps & {
     header: string;
 };
 
-export const StepModalStep: React.FC<Props> = ({
+export const StepModalStep: FC<Props> = ({
     step,
     header,
     children,

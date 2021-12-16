@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Checkbox, Stack, Tooltip } from "@chakra-ui/react";
 import { Map, Set } from "immutable";
 

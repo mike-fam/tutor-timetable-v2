@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { Text, useColorModeValue, useTheme, VStack } from "@chakra-ui/react";
 import format from "date-fns/format";
 
@@ -8,11 +8,7 @@ type Props = {
     endDate: Date;
 };
 
-export const WeekPreviewCard: React.FC<Props> = ({
-    name,
-    startDate,
-    endDate,
-}) => {
+export const WeekPreviewCard: FC<Props> = ({ name, startDate, endDate }) => {
     const theme = useTheme();
     const { blue, red } = theme.colors;
     const borderColor = useColorModeValue(blue["500"], blue["500"]);

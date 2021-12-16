@@ -6,7 +6,7 @@ import {
     MenuList,
     MenuOptionGroup,
 } from "@chakra-ui/react";
-import React, { FC, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import sortBy from "lodash/sortBy";
 

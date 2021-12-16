@@ -1,5 +1,5 @@
 import { Button, createStandaloneToast } from "@chakra-ui/react";
-import React, { useContext, useEffect } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { EditUserDetailsModal } from "../../components/navbar/EditUserDetailsModal";
 import { EditUserForm } from "../../components/navbar/EditUserForm";
 import { useUpdateDetailsMutation } from "../../generated/graphql";
@@ -11,14 +11,12 @@ type Props = {
     isOpen: boolean;
 };
 
-export const EditUserDetailsModalContainer: React.FC<Props> = (
-    props: Props
-) => {
+export const EditUserDetailsModalContainer: FC<Props> = (props) => {
     const toast = createStandaloneToast();
     const { user } = useContext(UserContext);
 
-    const [name, setName] = React.useState<string>("");
-    const [email, setEmail] = React.useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
 
     const [submit, { loading, data }] = useUpdateDetailsMutation({
         variables: { details: { name: name, email: email } },

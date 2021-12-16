@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Dropdown } from "../components/helpers/Dropdown";
 import { Role, useMyCoursesQuery } from "../generated/graphql";
 import { Loadable } from "../components/helpers/Loadable";
@@ -14,7 +14,7 @@ type Props = {
     editable?: boolean;
 };
 
-export const CourseSelectContainer: React.FC<Props> = ({
+export const CourseSelectContainer: FC<Props> = ({
     chooseCourse,
     chosenCourse,
     chosenTerm,

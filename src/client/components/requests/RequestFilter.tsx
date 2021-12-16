@@ -1,5 +1,5 @@
 import { Box, Divider, Stack, Text, useColorModeValue } from "@chakra-ui/react";
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { RequestStatus, RequestType } from "../../generated/graphql";
 import { SimpleCheckboxList } from "../helpers/SimpleCheckboxList";
 import { CourseCheckboxListContainer } from "../../containers/timetable/CourseCheckboxListContainer";
@@ -16,7 +16,7 @@ type Props = {
     selectWhoseRequest: (whose: WhoseRequest, selected: boolean) => void;
 };
 
-export const RequestFilter: React.FunctionComponent<Props> = ({
+export const RequestFilter: FC<Props> = ({
     chosenTerm,
     chosenCourses,
     setChosenCourses,

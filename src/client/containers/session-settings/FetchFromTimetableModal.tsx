@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { CourseQuery, SessionType, TermQuery } from "../../generated/graphql";
 import {
     Button,

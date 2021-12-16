@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { Box, Grid, useColorModeValue } from "@chakra-ui/react";
 import { MONTHS } from "../../../constants/date";
 
@@ -11,7 +11,7 @@ type Props = {
     disableAfter?: Date;
 };
 
-export const CalendarMonthsView: React.FC<Props> = ({
+export const CalendarMonthsView: FC<Props> = ({
     setViewedMonth,
     viewedYear,
     firstDate,

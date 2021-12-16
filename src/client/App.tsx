@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { AppRouter } from "./AppRouter";
 import {
     ApolloClient,
@@ -71,7 +71,7 @@ const client = new ApolloClient({
     }),
 });
 
-export const App: React.FunctionComponent<{}> = () => {
+export const App: FC<{}> = () => {
     return (
         <ApolloProvider client={client}>
             <WrapperContainer>

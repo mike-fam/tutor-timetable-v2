@@ -1,5 +1,5 @@
+import { FC } from "react";
 import { Box } from "@chakra-ui/react";
-import React from "react";
 import { TimeSlot } from "./TimeSlot";
 import { TempTimeslot } from "../../types/availability";
 
@@ -9,11 +9,7 @@ type Props = {
     day: number;
 };
 
-export const ClickableTimeslot: React.FC<Props> = ({
-    addNewTimeslot,
-    time,
-    day,
-}) => {
+export const ClickableTimeslot: FC<Props> = ({ addNewTimeslot, time, day }) => {
     return (
         <TimeSlot>
             <Box

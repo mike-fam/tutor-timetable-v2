@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Map } from "immutable";
 import { Button, FormControl, FormLabel, Text } from "@chakra-ui/react";
 import { Dropdown } from "../helpers/Dropdown";
@@ -13,7 +13,7 @@ type Props = {
     selectedValue?: string;
 };
 
-export const AddOrSelect: React.FC<Props> = ({
+export const AddOrSelect: FC<Props> = ({
     elementType,
     onAdd,
     onSelect,

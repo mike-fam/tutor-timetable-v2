@@ -1,4 +1,3 @@
-import React from "react";
 import { Props as SessionProps, Session } from "./Session";
 import {
     Box,
@@ -13,6 +12,7 @@ import {
     UnorderedList,
 } from "@chakra-ui/react";
 import { SessionTheme } from "../../types/session";
+import { FC } from "react";
 
 export type TimetableCustomSessionProps = {
     allocation: string[];
@@ -22,10 +22,7 @@ export type TimetableCustomSessionProps = {
 
 export type Props = SessionProps<TimetableCustomSessionProps>;
 
-export const TimetableSession: React.FC<Props> = ({
-    children: _,
-    ...props
-}) => {
+export const TimetableSession: FC<Props> = ({ children: _, ...props }) => {
     const { name, custom, sessionId } = props;
     const { allocation, location } = custom(sessionId);
     return (

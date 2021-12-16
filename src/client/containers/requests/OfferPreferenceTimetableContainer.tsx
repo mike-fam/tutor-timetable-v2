@@ -1,4 +1,5 @@
-import React, {
+import {
+    FC,
     useCallback,
     useContext,
     useEffect,
@@ -26,7 +27,7 @@ type Props = {
     chooseSession: (sessionId: string) => void;
 };
 
-export const OfferPreferenceTimetableContainer: React.FC<Props> = ({
+export const OfferPreferenceTimetableContainer: FC<Props> = ({
     requestId,
     chosenSessions,
     chooseSession,

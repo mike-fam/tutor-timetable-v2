@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { AddOrSelect } from "../../components/admin/AddOrSelect";
 import { formatTerm } from "../../utils/term";
 import { Button, Divider } from "@chakra-ui/react";
@@ -22,7 +22,7 @@ import omit from "lodash/omit";
 
 type Props = {};
 
-export const AdminTermContainer: React.FC<Props> = () => {
+export const AdminTermContainer: FC<Props> = () => {
     const [chosenTermId, setChosenTermId] = useState<string>();
     const [updated, setUpdated] = useState(false);
     const [createTerm, { data: createdTerm, loading: isCreatingTerm }] =

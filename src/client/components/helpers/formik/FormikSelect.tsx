@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { Field, FieldProps } from "formik";
 import {
     FormControl,
@@ -21,7 +21,7 @@ type Props = {
     sorted?: boolean;
 } & SelectProps;
 
-export const FormikSelect: React.FC<Props> = ({
+export const FormikSelect: FC<Props> = ({
     name,
     label,
     options,

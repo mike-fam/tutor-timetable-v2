@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { InputWithError } from "../helpers/InputWithError";
 import {
     FormControl,
@@ -26,7 +26,7 @@ type Props = Pick<
         editable?: boolean;
     };
 
-export const RequestFormV3: React.FC<Props> = ({
+export const RequestFormV3: FC<Props> = ({
     title,
     description,
     course,

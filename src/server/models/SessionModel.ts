@@ -5,8 +5,8 @@ import isEmpty from "lodash/isEmpty";
 import omit from "lodash/omit";
 import { PERM_ERR } from "../constants";
 import { OfferStatus } from "../types/offer";
-import asyncFilter from "node-filter-async";
 import { DataLoaders } from "../types/dataloaders";
+import { asyncFilter } from "../../utils/array";
 
 export class SessionModel extends BaseModel<Session> {
     public constructor(loaders: DataLoaders) {

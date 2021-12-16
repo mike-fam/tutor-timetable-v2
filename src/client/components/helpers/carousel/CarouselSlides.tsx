@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import { Children, FC, useContext, useEffect, useMemo } from "react";
 import { Box, BoxProps, theme, useColorMode } from "@chakra-ui/react";
 import { CarouselContext } from "./Carousel";
 import { CarouselSlide } from "./CarouselSlide";
@@ -8,10 +8,10 @@ type Props = Omit<
     "w" | "width" | "h" | "height" | "pos" | "position" | "overflow"
 >;
 
-export const CarouselSlides: React.FC<Props> = ({ children, ...boxProps }) => {
+export const CarouselSlides: FC<Props> = ({ children, ...boxProps }) => {
     const { width, height, setTotalSlides } = useContext(CarouselContext);
     useEffect(() => {
-        setTotalSlides(React.Children.count(children));
+        setTotalSlides(Children.count(children));
     }, [setTotalSlides, children]);
     const featherWidth = useMemo(() => width / 6, [width]);
     const featherBlur = useMemo(() => featherWidth / 3, [featherWidth]);
@@ -39,7 +39,7 @@ export const CarouselSlides: React.FC<Props> = ({ children, ...boxProps }) => {
             }}
             {...boxProps}
         >
-            {React.Children.map(children, (child, index) => (
+            {Children.map(children, (child, index) => (
                 <CarouselSlide slideIndex={index}>{child}</CarouselSlide>
             ))}
         </Box>

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { Props as SessionProps, Session } from "./Session";
 import { PopoverSession } from "./PopoverSession";
 import { SessionTheme } from "../../types/session";
@@ -16,7 +16,7 @@ export type StreamCustomSessionProps = {
 
 type Props = SessionProps<StreamCustomSessionProps>;
 
-export const TimetableStreamSession: React.FC<Props> = ({ ...props }) => {
+export const TimetableStreamSession: FC<Props> = ({ ...props }) => {
     const { custom, sessionId, name } = props;
     const {
         customAllocation,

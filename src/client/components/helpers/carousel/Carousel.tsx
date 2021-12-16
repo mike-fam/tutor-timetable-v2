@@ -1,6 +1,7 @@
-import React, {
+import {
     createContext,
     Dispatch,
+    FC,
     SetStateAction,
     useCallback,
     useState,
@@ -105,7 +106,7 @@ const useCarousel = (
     };
 };
 
-export const Carousel: React.FC<Props> = ({
+export const Carousel: FC<Props> = ({
     width,
     height,
     slideWidth,
