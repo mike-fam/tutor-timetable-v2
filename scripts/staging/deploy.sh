@@ -17,7 +17,7 @@ After=network.target
 Type=simple
 User=www-data
 WorkingDirectory=/var/www/nodejs/tutor-timetable-v2
-ExecStart=/usr/bin/node /var/www/nodejs/tutor-timetable-v2/build/server/server.js
+ExecStart=/usr/local/bin/node /var/www/nodejs/tutor-timetable-v2/build/server/server.js
 Restart=on-failure
 
 [Install]
@@ -97,6 +97,9 @@ setUpZone() {
 	webprojctl enable redis
 	createdb tutor_timetable_v2
 	createuser tutor_timetable_v2
+	npm cache clean -f
+  npm install -g n
+  n stable
 	psql -c "alter user tutor_timetable_v2 with password 'tutor_timetable_v2'"
 	psql tutor_timetable_v2 -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 	npm install -g yarn
