@@ -105,6 +105,7 @@ setUpZone() {
 	npm install -g yarn
 	echo "$NODEJS_SERVICE" >/etc/systemd/system/nodejs.service
 	systemctl daemon-reload
+  chown -R "/home/$UQ_USERNAME/.config" "$UQ_USERNAME"
 }
 
 setUpService() {
