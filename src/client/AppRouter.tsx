@@ -7,7 +7,7 @@ import { AvailabilityPageContainer } from "./containers/availabilities/Availabil
 import { PreferencePageContainer } from "./containers/preferences/PreferencePageContainer";
 import { CourseStaffPageContainer } from "./containers/course-staff/CourseStaffPageContainer";
 import { PermissionDenied } from "./PermissionDenied";
-import { SecretRoute } from "./components/helpers/SecretRoute";
+import { RequireAuth } from "./components/helpers/RequireAuth";
 import { Role } from "./generated/graphql";
 import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
 import { AdminPageContainer } from "./containers/admin/AdminPageContainer";
@@ -22,32 +22,46 @@ export const AppRouter: FC = () => {
                     path="/permission-denied"
                     element={<PermissionDenied />}
                 />
-                <SecretRoute
-                    path="/requests"
-                    element={<RequestPageContainer />}
-                />
-                <SecretRoute
+                <Route path="/requests" element={<RequestPageContainer />} />
+                <Route
                     path="/availabilities"
-                    element={<AvailabilityPageContainer />}
+                    element={
+                        <RequireAuth>
+                            <AvailabilityPageContainer />
+                        </RequireAuth>
+                    }
                 />
-                <SecretRoute
+                <Route
                     path="/preferences"
-                    element={<PreferencePageContainer />}
+                    element={
+                        <RequireAuth>
+                            <PreferencePageContainer />
+                        </RequireAuth>
+                    }
                 />
-                <SecretRoute
+                <Route
                     path="/course-staff"
-                    element={<CourseStaffPageContainer />}
-                    allowedRoles={[Role.CourseCoordinator]}
+                    element={
+                        <RequireAuth allowedRoles={[Role.CourseCoordinator]}>
+                            <CourseStaffPageContainer />
+                        </RequireAuth>
+                    }
                 />
-                <SecretRoute
+                <Route
                     path="/session-settings"
-                    element={<SessionSettingsPageContainer />}
-                    allowedRoles={[Role.CourseCoordinator]}
+                    element={
+                        <RequireAuth allowedRoles={[Role.CourseCoordinator]}>
+                            <SessionSettingsPageContainer />
+                        </RequireAuth>
+                    }
                 />
-                <SecretRoute
+                <Route
                     path="/admin"
-                    element={<AdminPageContainer />}
-                    allowedRoles={[]}
+                    element={
+                        <RequireAuth allowedRoles={[]}>
+                            <AdminPageContainer />
+                        </RequireAuth>
+                    }
                 />
             </Routes>
         </BrowserRouter>
