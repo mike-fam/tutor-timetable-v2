@@ -99,7 +99,6 @@ export const AdminTimetableContainer: FC<Props> = () => {
                 termId: defaultStr,
                 permanentRequestLock: FreezeState.Free,
                 temporaryRequestLock: FreezeState.Free,
-                allocationToken: defaultStr,
             };
         }
         const { course, term, permanentRequestLock, temporaryRequestLock } =
