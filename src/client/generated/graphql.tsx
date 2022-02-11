@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -16,27 +18,27 @@ export type Scalars = {
 };
 
 export enum AllocationStatus {
-  Requested = 'REQUESTED',
-  NotReady = 'NOT_READY',
-  NotExist = 'NOT_EXIST',
   Error = 'ERROR',
+  Failed = 'FAILED',
   Generated = 'GENERATED',
-  Failed = 'FAILED'
+  NotExist = 'NOT_EXIST',
+  NotReady = 'NOT_READY',
+  Requested = 'REQUESTED'
 }
 
 export type AllocatorOutput = {
   __typename?: 'AllocatorOutput';
-  type: AllocationStatus;
-  title: Scalars['String'];
-  message: Scalars['String'];
   allocatedStreams: Array<AllocatorStream>;
+  message: Scalars['String'];
+  title: Scalars['String'];
+  type: AllocationStatus;
 };
 
 export type AllocatorStream = {
   __typename?: 'AllocatorStream';
-  streamId: Scalars['String'];
   baseAllocation: BaseGeneratedAllocationPattern;
   extraAllocations: Array<ExtraGeneratedAllocationPattern>;
+  streamId: Scalars['String'];
 };
 
 export type BaseGeneratedAllocationPattern = {
@@ -46,10 +48,10 @@ export type BaseGeneratedAllocationPattern = {
 
 export type Course = {
   __typename?: 'Course';
-  id: Scalars['String'];
   code: Scalars['String'];
-  title: Scalars['String'];
+  id: Scalars['String'];
   timetables: Array<Timetable>;
+  title: Scalars['String'];
 };
 
 export type CourseInput = {
@@ -61,24 +63,24 @@ export type CourseStaff = {
   __typename?: 'CourseStaff';
   id: Scalars['String'];
   isNew: Scalars['Boolean'];
+  preference: Preference;
   role: Role;
   timetable: Timetable;
   user: User;
-  preference: Preference;
 };
 
 export type CourseStaffInput = {
   courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
   isNew: Scalars['Boolean'];
+  role: Role;
+  termId: Scalars['String'];
 };
 
 export type CourseStaffUserInput = {
   courseId: Scalars['String'];
-  termId: Scalars['String'];
-  role: Role;
   isNew: Scalars['Boolean'];
+  role: Role;
+  termId: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -87,20 +89,19 @@ export type CourseTermIdInput = {
   termId: Scalars['String'];
 };
 
-
 export type EditOfferInputType = {
   offerId: Scalars['String'];
   sessionPreferences: Array<Scalars['Int']>;
 };
 
 export type EditRequestFormInputType = {
-  requestId: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  preferences?: Maybe<Array<Scalars['Int']>>;
-  duration?: Maybe<RequestType>;
-  description?: Maybe<Scalars['String']>;
-  sessionId?: Maybe<Scalars['String']>;
   closeRequest: Scalars['Boolean'];
+  description?: InputMaybe<Scalars['String']>;
+  duration?: InputMaybe<RequestType>;
+  preferences?: InputMaybe<Array<Scalars['Int']>>;
+  requestId: Scalars['String'];
+  sessionId?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type ExtraGeneratedAllocationPattern = {
@@ -110,91 +111,80 @@ export type ExtraGeneratedAllocationPattern = {
 };
 
 export enum FreezeState {
+  ApprovalRequired = 'APPROVAL_REQUIRED',
   Free = 'FREE',
-  Lock = 'LOCK',
-  ApprovalRequired = 'APPROVAL_REQUIRED'
+  Lock = 'LOCK'
 }
 
 export type MergedStreamInput = {
-  name: Scalars['String'];
-  type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  location: Scalars['String'];
   baseStaffRequirement: StreamStaffRequirement;
-  extraStaffRequirement: Array<StreamStaffRequirement>;
   courseId: Scalars['String'];
+  day: Scalars['Int'];
+  endTime: Scalars['Float'];
+  extraStaffRequirement: Array<StreamStaffRequirement>;
+  location: Scalars['String'];
+  name: Scalars['String'];
+  startTime: Scalars['Float'];
   termId: Scalars['String'];
+  type: SessionType;
 };
 
 export enum ModificationType {
-  Unchanged = 'UNCHANGED',
   Added = 'ADDED',
   Modified = 'MODIFIED',
   Removed = 'REMOVED',
-  RemovedModified = 'REMOVED_MODIFIED'
+  RemovedModified = 'REMOVED_MODIFIED',
+  Unchanged = 'UNCHANGED'
 }
 
 export type Mutation = {
   __typename?: 'Mutation';
-  requestAllocation: AllocatorOutput;
-  updateDetails: User;
-  createTerm: Term;
-  updateTerm: Term;
-  deleteTerm: Scalars['String'];
-  addCourseStaff: CourseStaff;
-  addUsersToCourse: Array<CourseStaff>;
-  removeCourseStaff: Scalars['String'];
-  addMergedSessionStreams: Array<SessionStream>;
-  addBasedSessionStream: SessionStream;
-  addSessionStream: SessionStream;
-  deleteSessionStreams: Array<Scalars['String']>;
-  updateSessionStreams: Array<SessionStream>;
-  addStreamStaff: SessionStream;
-  createTimetable: Timetable;
-  updateTimetable: Timetable;
-  deleteTimetable: Scalars['String'];
-  updateSessionAllocations: Array<Session>;
-  updateSession: Array<Session>;
-  deleteSessions: Array<Scalars['String']>;
-  updateAvailabilities: Array<Timeslot>;
-  updatePreference: Preference;
-  createRequest: StaffRequest;
-  editExistingRequest: StaffRequest;
-  deleteRequestById: Scalars['String'];
-  createCourse: Course;
-  updateCourse: Course;
-  deleteCourse: Scalars['String'];
-  createOffer: Offer;
-  editExistingOffer: Offer;
-  removeOffer: Offer;
   acceptOffer: Offer;
+  addBasedSessionStream: SessionStream;
+  addCourseStaff: CourseStaff;
+  addMergedSessionStreams: Array<SessionStream>;
+  addSessionStream: SessionStream;
+  addStreamStaff: SessionStream;
+  addUsersToCourse: Array<CourseStaff>;
+  createCourse: Course;
+  createOffer: Offer;
+  createRequest: StaffRequest;
+  createTerm: Term;
+  createTimetable: Timetable;
+  deleteCourse: Scalars['String'];
+  deleteRequestById: Scalars['String'];
+  deleteSessionStreams: Array<Scalars['String']>;
+  deleteSessions: Array<Scalars['String']>;
+  deleteTerm: Scalars['String'];
+  deleteTimetable: Scalars['String'];
+  editExistingOffer: Offer;
+  editExistingRequest: StaffRequest;
+  removeCourseStaff: Scalars['String'];
+  removeOffer: Offer;
+  requestAllocation: AllocatorOutput;
+  updateAvailabilities: Array<Timeslot>;
+  updateCourse: Course;
+  updateDetails: User;
+  updatePreference: Preference;
+  updateSession: Array<Session>;
+  updateSessionAllocations: Array<Session>;
+  updateSessionStreams: Array<SessionStream>;
+  updateTerm: Term;
+  updateTimetable: Timetable;
 };
 
 
-export type MutationRequestAllocationArgs = {
-  requestAllocationInput: RequestAllocationInput;
+export type MutationAcceptOfferArgs = {
+  offerId: Scalars['String'];
+  offerSessionSwapId?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationUpdateDetailsArgs = {
-  details: UpdateDetailsInputType;
-};
-
-
-export type MutationCreateTermArgs = {
-  termInput: TermInput;
-};
-
-
-export type MutationUpdateTermArgs = {
-  termInput: UpdateTermInput;
-};
-
-
-export type MutationDeleteTermArgs = {
-  termId: Scalars['String'];
+export type MutationAddBasedSessionStreamArgs = {
+  name: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  sessionStreamId: Scalars['String'];
+  weeks: Array<Scalars['Int']>;
 };
 
 
@@ -203,57 +193,54 @@ export type MutationAddCourseStaffArgs = {
 };
 
 
-export type MutationAddUsersToCourseArgs = {
-  usernames: Array<Scalars['String']>;
-  courseStaffInput: CourseStaffInput;
-};
-
-
-export type MutationRemoveCourseStaffArgs = {
-  courseStaffId: Scalars['String'];
-};
-
-
 export type MutationAddMergedSessionStreamsArgs = {
   sessionStreams: Array<MergedStreamInput>;
 };
 
 
-export type MutationAddBasedSessionStreamArgs = {
-  numberOfStaff: Scalars['Int'];
-  weeks: Array<Scalars['Int']>;
-  name: Scalars['String'];
-  sessionStreamId: Scalars['String'];
-};
-
-
 export type MutationAddSessionStreamArgs = {
-  numberOfStaff: Scalars['Int'];
-  location: Scalars['String'];
-  weeks: Array<Scalars['Int']>;
-  endTime: Scalars['Float'];
-  startTime: Scalars['Float'];
   day: Scalars['Int'];
-  type: SessionType;
+  endTime: Scalars['Float'];
+  location: Scalars['String'];
   name: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  startTime: Scalars['Float'];
   timetableId: Scalars['String'];
-};
-
-
-export type MutationDeleteSessionStreamsArgs = {
-  streamIds: Array<Scalars['String']>;
-};
-
-
-export type MutationUpdateSessionStreamsArgs = {
-  updateStreamInput: Array<UpdateStreamInput>;
+  type: SessionType;
+  weeks: Array<Scalars['Int']>;
 };
 
 
 export type MutationAddStreamStaffArgs = {
-  updateSessions: Scalars['Boolean'];
   newStaffs: Array<Scalars['String']>;
   streamId: Scalars['String'];
+  updateSessions: Scalars['Boolean'];
+};
+
+
+export type MutationAddUsersToCourseArgs = {
+  courseStaffInput: CourseStaffInput;
+  usernames: Array<Scalars['String']>;
+};
+
+
+export type MutationCreateCourseArgs = {
+  courseInput: CourseInput;
+};
+
+
+export type MutationCreateOfferArgs = {
+  offerDetails: OfferInputType;
+};
+
+
+export type MutationCreateRequestArgs = {
+  requestDetails: RequestFormInputType;
+};
+
+
+export type MutationCreateTermArgs = {
+  termInput: TermInput;
 };
 
 
@@ -262,23 +249,18 @@ export type MutationCreateTimetableArgs = {
 };
 
 
-export type MutationUpdateTimetableArgs = {
-  timetableInput: TimetableInput;
+export type MutationDeleteCourseArgs = {
+  courseId: Scalars['String'];
 };
 
 
-export type MutationDeleteTimetableArgs = {
-  timetableId: Scalars['String'];
+export type MutationDeleteRequestByIdArgs = {
+  requestId: Scalars['String'];
 };
 
 
-export type MutationUpdateSessionAllocationsArgs = {
-  newAllocation: Array<UpdateSessionAllocationInput>;
-};
-
-
-export type MutationUpdateSessionArgs = {
-  updateSessionInput: Array<UpdateSessionInput>;
+export type MutationDeleteSessionStreamsArgs = {
+  streamIds: Array<Scalars['String']>;
 };
 
 
@@ -287,8 +269,53 @@ export type MutationDeleteSessionsArgs = {
 };
 
 
+export type MutationDeleteTermArgs = {
+  termId: Scalars['String'];
+};
+
+
+export type MutationDeleteTimetableArgs = {
+  timetableId: Scalars['String'];
+};
+
+
+export type MutationEditExistingOfferArgs = {
+  editDetails: EditOfferInputType;
+};
+
+
+export type MutationEditExistingRequestArgs = {
+  requestDetails: EditRequestFormInputType;
+};
+
+
+export type MutationRemoveCourseStaffArgs = {
+  courseStaffId: Scalars['String'];
+};
+
+
+export type MutationRemoveOfferArgs = {
+  offerId: Scalars['String'];
+};
+
+
+export type MutationRequestAllocationArgs = {
+  requestAllocationInput: RequestAllocationInput;
+};
+
+
 export type MutationUpdateAvailabilitiesArgs = {
   timeslots: Array<TimeslotInput>;
+};
+
+
+export type MutationUpdateCourseArgs = {
+  courseInput: UpdateCourseInput;
+};
+
+
+export type MutationUpdateDetailsArgs = {
+  details: UpdateDetailsInputType;
 };
 
 
@@ -298,130 +325,105 @@ export type MutationUpdatePreferenceArgs = {
 };
 
 
-export type MutationCreateRequestArgs = {
-  requestDetails: RequestFormInputType;
+export type MutationUpdateSessionArgs = {
+  updateSessionInput: Array<UpdateSessionInput>;
 };
 
 
-export type MutationEditExistingRequestArgs = {
-  requestDetails: EditRequestFormInputType;
+export type MutationUpdateSessionAllocationsArgs = {
+  newAllocation: Array<UpdateSessionAllocationInput>;
 };
 
 
-export type MutationDeleteRequestByIdArgs = {
-  requestId: Scalars['String'];
+export type MutationUpdateSessionStreamsArgs = {
+  updateStreamInput: Array<UpdateStreamInput>;
 };
 
 
-export type MutationCreateCourseArgs = {
-  courseInput: CourseInput;
+export type MutationUpdateTermArgs = {
+  termInput: UpdateTermInput;
 };
 
 
-export type MutationUpdateCourseArgs = {
-  courseInput: UpdateCourseInput;
-};
-
-
-export type MutationDeleteCourseArgs = {
-  courseId: Scalars['String'];
-};
-
-
-export type MutationCreateOfferArgs = {
-  offerDetails: OfferInputType;
-};
-
-
-export type MutationEditExistingOfferArgs = {
-  editDetails: EditOfferInputType;
-};
-
-
-export type MutationRemoveOfferArgs = {
-  offerId: Scalars['String'];
-};
-
-
-export type MutationAcceptOfferArgs = {
-  offerSessionSwapId?: Maybe<Scalars['String']>;
-  offerId: Scalars['String'];
+export type MutationUpdateTimetableArgs = {
+  timetableInput: TimetableInput;
 };
 
 export type Notification = {
   __typename?: 'Notification';
   id: Scalars['String'];
-  title: Scalars['String'];
   message: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type Offer = {
   __typename?: 'Offer';
-  id: Scalars['String'];
-  status: OfferStatus;
-  mustSwap: Scalars['Boolean'];
-  request: StaffRequest;
-  user: User;
-  preferences: Array<Session>;
   acceptedSession?: Maybe<Session>;
+  id: Scalars['String'];
+  mustSwap: Scalars['Boolean'];
+  preferences: Array<Session>;
+  request: StaffRequest;
+  status: OfferStatus;
+  user: User;
 };
 
 export type OfferInputType = {
-  requestId: Scalars['String'];
-  sessionPreferences?: Maybe<Array<Scalars['String']>>;
   mustSwap: Scalars['Boolean'];
+  requestId: Scalars['String'];
+  sessionPreferences?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export enum OfferStatus {
-  Open = 'OPEN',
   Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED',
-  AwaitingApproval = 'AWAITING_APPROVAL'
+  AwaitingApproval = 'AWAITING_APPROVAL',
+  Open = 'OPEN',
+  Rejected = 'REJECTED'
 }
 
 export type Preference = {
   __typename?: 'Preference';
+  courseStaff: CourseStaff;
   id: Scalars['String'];
-  sessionType?: Maybe<SessionType>;
   maxContigHours: Scalars['Float'];
   maxWeeklyHours: Scalars['Float'];
-  courseStaff: CourseStaff;
+  sessionType?: Maybe<SessionType>;
 };
 
 export type PreferenceInput = {
-  sessionType?: Maybe<SessionType>;
   maxContigHours: Scalars['Float'];
   maxWeeklyHours: Scalars['Float'];
+  sessionType?: InputMaybe<SessionType>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  activeTerm: Term;
   checkAllocation: AllocatorOutput;
+  course: Course;
+  courseStaffs: Array<CourseStaff>;
+  courses: Array<Course>;
+  fromPublicTimetable: Array<SessionStream>;
+  getOfferById: Offer;
+  getOffersByRequestId: Array<Offer>;
+  getRequestById: StaffRequest;
+  getRequestsByTermId: Array<StaffRequest>;
+  getRequestsByUserId: Array<StaffRequest>;
   hello: Scalars['String'];
   me: User;
-  terms: Array<Term>;
-  activeTerm: Term;
-  term: Term;
-  courseStaffs: Array<CourseStaff>;
-  sessionStreams: Array<SessionStream>;
-  rootSessionStreams: Array<SessionStream>;
-  fromPublicTimetable: Array<SessionStream>;
-  timetables: Array<Timetable>;
-  timetable: Timetable;
-  timetableById: Timetable;
   mergedSessions: Array<Session>;
-  sessions: Array<Session>;
-  sessionById: Session;
   myAvailability: Array<Timeslot>;
   myPreference?: Maybe<Preference>;
   preferenceByUsername: Preference;
-  getRequestById: StaffRequest;
-  getRequestsByUserId: Array<StaffRequest>;
-  getRequestsByTermId: Array<StaffRequest>;
-  courses: Array<Course>;
-  course: Course;
-  getOfferById: Offer;
-  getOffersByRequestId: Array<Offer>;
+  rootSessionStreams: Array<SessionStream>;
+  sessionById: Session;
+  sessionStreams: Array<SessionStream>;
+  sessions: Array<Session>;
+  term: Term;
+  terms: Array<Term>;
+  timetable: Timetable;
+  timetableById: Timetable;
+  timetables: Array<Timetable>;
+  tutorAvailability: Array<Timeslot>;
 };
 
 
@@ -430,8 +432,8 @@ export type QueryCheckAllocationArgs = {
 };
 
 
-export type QueryTermArgs = {
-  termId: Scalars['String'];
+export type QueryCourseArgs = {
+  courseId: Scalars['String'];
 };
 
 
@@ -440,50 +442,36 @@ export type QueryCourseStaffsArgs = {
 };
 
 
-export type QuerySessionStreamsArgs = {
-  courseIds: Array<Scalars['String']>;
-  termId: Scalars['String'];
-};
-
-
-export type QueryRootSessionStreamsArgs = {
-  courseIds: Array<Scalars['String']>;
-  termId: Scalars['String'];
-};
-
-
 export type QueryFromPublicTimetableArgs = {
-  sessionTypes: Array<SessionType>;
   courseTerm: CourseTermIdInput;
+  sessionTypes: Array<SessionType>;
 };
 
 
-export type QueryTimetableArgs = {
-  courseTermId: CourseTermIdInput;
+export type QueryGetOfferByIdArgs = {
+  offerId: Scalars['String'];
 };
 
 
-export type QueryTimetableByIdArgs = {
-  id: Scalars['String'];
+export type QueryGetOffersByRequestIdArgs = {
+  requestId: Scalars['String'];
+};
+
+
+export type QueryGetRequestByIdArgs = {
+  requestId: Scalars['String'];
+};
+
+
+export type QueryGetRequestsByTermIdArgs = {
+  termId: Scalars['String'];
 };
 
 
 export type QueryMergedSessionsArgs = {
-  week: Scalars['Int'];
   courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
-};
-
-
-export type QuerySessionsArgs = {
   week: Scalars['Int'];
-  courseIds: Array<Scalars['String']>;
-  termId: Scalars['String'];
-};
-
-
-export type QuerySessionByIdArgs = {
-  sessionId: Scalars['String'];
 };
 
 
@@ -498,48 +486,67 @@ export type QueryPreferenceByUsernameArgs = {
 };
 
 
-export type QueryGetRequestByIdArgs = {
-  requestId: Scalars['String'];
-};
-
-
-export type QueryGetRequestsByTermIdArgs = {
+export type QueryRootSessionStreamsArgs = {
+  courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
 };
 
 
-export type QueryCourseArgs = {
-  courseId: Scalars['String'];
+export type QuerySessionByIdArgs = {
+  sessionId: Scalars['String'];
 };
 
 
-export type QueryGetOfferByIdArgs = {
-  offerId: Scalars['String'];
+export type QuerySessionStreamsArgs = {
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
 };
 
 
-export type QueryGetOffersByRequestIdArgs = {
-  requestId: Scalars['String'];
+export type QuerySessionsArgs = {
+  courseIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
+  week: Scalars['Int'];
+};
+
+
+export type QueryTermArgs = {
+  termId: Scalars['String'];
+};
+
+
+export type QueryTimetableArgs = {
+  courseTermId: CourseTermIdInput;
+};
+
+
+export type QueryTimetableByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryTutorAvailabilityArgs = {
+  userId: Scalars['String'];
 };
 
 export type RequestAllocationInput = {
   courseId: Scalars['String'];
-  termId: Scalars['String'];
   staffIds: Array<Scalars['String']>;
+  termId: Scalars['String'];
   timeout: Scalars['Int'];
 };
 
 export type RequestFormInputType = {
-  title: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
   preferences: Array<Scalars['String']>;
-  type: RequestType;
-  description?: Maybe<Scalars['String']>;
   sessionId: Scalars['String'];
+  title: Scalars['String'];
+  type: RequestType;
 };
 
 export enum RequestStatus {
-  Open = 'OPEN',
-  Closed = 'CLOSED'
+  Closed = 'CLOSED',
+  Open = 'OPEN'
 }
 
 export enum RequestType {
@@ -554,77 +561,77 @@ export enum Role {
 
 export type Session = {
   __typename?: 'Session';
+  acceptedOffers: Array<Offer>;
+  allocatedUsers: Array<User>;
+  date: Scalars['DateTime'];
   id: Scalars['String'];
   location: Scalars['String'];
-  week: Scalars['Int'];
-  sessionStream: SessionStream;
-  allocatedUsers: Array<User>;
-  requests: Array<StaffRequest>;
-  preferredSwapRequests: Array<StaffRequest>;
-  preferredSwapOffers: Array<Offer>;
-  acceptedOffers: Array<Offer>;
-  date: Scalars['DateTime'];
   numberOfStaff: Scalars['Int'];
+  preferredSwapOffers: Array<Offer>;
+  preferredSwapRequests: Array<StaffRequest>;
+  requests: Array<StaffRequest>;
+  sessionStream: SessionStream;
+  week: Scalars['Int'];
 };
 
 export type SessionStream = {
   __typename?: 'SessionStream';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  weeks: Array<Scalars['Int']>;
-  location: Scalars['String'];
-  numberOfStaff: Scalars['Int'];
-  timetable: Timetable;
-  sessions: Array<Session>;
-  secondaryStreams: Array<SessionStream>;
-  root?: Maybe<SessionStream>;
   allocatedUsers: Array<User>;
+  day: Scalars['Int'];
+  endTime: Scalars['Float'];
+  id: Scalars['String'];
+  location: Scalars['String'];
+  name: Scalars['String'];
+  numberOfStaff: Scalars['Int'];
+  root?: Maybe<SessionStream>;
+  secondaryStreams: Array<SessionStream>;
+  sessions: Array<Session>;
+  startTime: Scalars['Float'];
+  timetable: Timetable;
+  type: SessionType;
+  weeks: Array<Scalars['Int']>;
 };
 
 export enum SessionType {
   Contact = 'CONTACT',
-  Practical = 'PRACTICAL',
-  Tutorial = 'TUTORIAL',
-  Seminar = 'SEMINAR',
   Lecture = 'LECTURE',
+  Practical = 'PRACTICAL',
+  Seminar = 'SEMINAR',
   Studio = 'STUDIO',
+  Tutorial = 'TUTORIAL',
   Workshop = 'WORKSHOP'
 }
 
 export type StaffRequest = {
   __typename?: 'StaffRequest';
-  id: Scalars['String'];
-  type: RequestType;
-  title: Scalars['String'];
-  description: Scalars['String'];
-  status: RequestStatus;
   allowNonPrefOffers: Scalars['Boolean'];
-  requester: User;
+  description: Scalars['String'];
   finaliser?: Maybe<User>;
-  session: Session;
-  swapPreference: Array<Session>;
+  id: Scalars['String'];
   offers: Array<Offer>;
+  requester: User;
+  session: Session;
+  status: RequestStatus;
+  swapPreference: Array<Session>;
+  title: Scalars['String'];
+  type: RequestType;
 };
 
 export type StreamInput = {
-  name: Scalars['String'];
-  type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  location: Scalars['String'];
   baseStaffRequirement: StreamStaffRequirement;
+  day: Scalars['Int'];
+  endTime: Scalars['Float'];
   extraStaffRequirement: Array<StreamStaffRequirement>;
+  location: Scalars['String'];
+  name: Scalars['String'];
+  startTime: Scalars['Float'];
+  type: SessionType;
 };
 
 export type StreamStaffRequirement = {
-  weeks: Array<Scalars['Int']>;
-  numberOfStaff: Scalars['Int'];
   allocatedUsers: Array<Scalars['String']>;
+  numberOfStaff: Scalars['Int'];
+  weeks: Array<Scalars['Int']>;
 };
 
 export type Subscription = {
@@ -639,24 +646,24 @@ export type SubscriptionNotificationsArgs = {
 
 export type Term = {
   __typename?: 'Term';
-  id: Scalars['String'];
-  type: TermType;
-  year: Scalars['Int'];
-  startDate: Scalars['DateTime'];
   endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
+  id: Scalars['String'];
   isActive: Scalars['Boolean'];
-  timetables: Array<Timetable>;
   numberOfWeeks: Scalars['Int'];
+  startDate: Scalars['DateTime'];
+  timetables: Array<Timetable>;
+  type: TermType;
+  weekNames: Array<Scalars['String']>;
+  year: Scalars['Int'];
 };
 
 export type TermInput = {
-  type: TermType;
-  year: Scalars['Float'];
-  startDate: Scalars['DateTime'];
   endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
   isActive: Scalars['Boolean'];
+  startDate: Scalars['DateTime'];
+  type: TermType;
+  weekNames: Array<Scalars['String']>;
+  year: Scalars['Float'];
 };
 
 export enum TermType {
@@ -670,43 +677,43 @@ export enum TermType {
 
 export type Timeslot = {
   __typename?: 'Timeslot';
+  day: Scalars['Int'];
+  endTime: Scalars['Float'];
   id: Scalars['String'];
   startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  day: Scalars['Int'];
   user: User;
 };
 
 export type TimeslotInput = {
-  id: Scalars['String'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
   day: Scalars['Int'];
+  endTime: Scalars['Float'];
+  id: Scalars['String'];
   modificationType: ModificationType;
+  startTime: Scalars['Float'];
 };
 
 export type Timetable = {
   __typename?: 'Timetable';
+  course: Course;
+  courseStaffs: Array<CourseStaff>;
   id: Scalars['String'];
   permanentRequestLock: FreezeState;
-  temporaryRequestLock: FreezeState;
-  course: Course;
-  term: Term;
-  courseStaffs: Array<CourseStaff>;
   sessionStreams: Array<SessionStream>;
+  temporaryRequestLock: FreezeState;
+  term: Term;
 };
 
 export type TimetableInput = {
   courseId: Scalars['String'];
-  termId: Scalars['String'];
   permanentRequestLock: Scalars['String'];
   temporaryRequestLock: Scalars['String'];
+  termId: Scalars['String'];
 };
 
 export type UpdateCourseInput = {
   code: Scalars['String'];
-  title: Scalars['String'];
   id: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type UpdateDetailsInputType = {
@@ -715,8 +722,8 @@ export type UpdateDetailsInputType = {
 };
 
 export type UpdateSessionAllocationInput = {
-  rootSessionId: Scalars['String'];
   newAllocation: Array<Scalars['String']>;
+  rootSessionId: Scalars['String'];
 };
 
 export type UpdateSessionInput = {
@@ -725,40 +732,40 @@ export type UpdateSessionInput = {
 };
 
 export type UpdateStreamInput = {
-  name: Scalars['String'];
-  type: SessionType;
-  day: Scalars['Int'];
-  startTime: Scalars['Float'];
-  endTime: Scalars['Float'];
-  location: Scalars['String'];
   baseStaffRequirement: StreamStaffRequirement;
+  day: Scalars['Int'];
+  endTime: Scalars['Float'];
   extraStaffRequirement: Array<StreamStaffRequirement>;
+  location: Scalars['String'];
+  name: Scalars['String'];
+  startTime: Scalars['Float'];
   streamId: Scalars['String'];
+  type: SessionType;
 };
 
 export type UpdateTermInput = {
-  type: TermType;
-  year: Scalars['Float'];
-  startDate: Scalars['DateTime'];
   endDate: Scalars['DateTime'];
-  weekNames: Array<Scalars['String']>;
-  isActive: Scalars['Boolean'];
   id: Scalars['String'];
+  isActive: Scalars['Boolean'];
+  startDate: Scalars['DateTime'];
+  type: TermType;
+  weekNames: Array<Scalars['String']>;
+  year: Scalars['Float'];
 };
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['String'];
-  username: Scalars['String'];
-  name: Scalars['String'];
-  isAdmin: Scalars['Boolean'];
-  email: Scalars['String'];
-  notifications: Array<Notification>;
-  courseStaffs: Array<CourseStaff>;
-  requests: Array<StaffRequest>;
   availabilities: Array<Timeslot>;
+  courseStaffs: Array<CourseStaff>;
+  email: Scalars['String'];
+  id: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
+  name: Scalars['String'];
+  notifications: Array<Notification>;
   offers: Array<Offer>;
+  requests: Array<StaffRequest>;
   settings: UserSettings;
+  username: Scalars['String'];
 };
 
 export type UserSettings = {
@@ -773,387 +780,153 @@ export type UpdateDetailsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateDetailsMutation = (
-  { __typename?: 'Mutation' }
-  & { updateDetails: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'email'>
-  ) }
-);
+export type UpdateDetailsMutation = { __typename?: 'Mutation', updateDetails: { __typename?: 'User', id: string, name: string, email: string } };
 
 export type RequestAllocationMutationVariables = Exact<{
   requestAllocationInput: RequestAllocationInput;
 }>;
 
 
-export type RequestAllocationMutation = (
-  { __typename?: 'Mutation' }
-  & { requestAllocation: (
-    { __typename?: 'AllocatorOutput' }
-    & Pick<AllocatorOutput, 'type' | 'title' | 'message'>
-    & { allocatedStreams: Array<(
-      { __typename?: 'AllocatorStream' }
-      & Pick<AllocatorStream, 'streamId'>
-      & { baseAllocation: (
-        { __typename?: 'BaseGeneratedAllocationPattern' }
-        & Pick<BaseGeneratedAllocationPattern, 'allocatedUsers'>
-      ), extraAllocations: Array<(
-        { __typename?: 'ExtraGeneratedAllocationPattern' }
-        & Pick<ExtraGeneratedAllocationPattern, 'allocatedUsers' | 'weeks'>
-      )> }
-    )> }
-  ) }
-);
+export type RequestAllocationMutation = { __typename?: 'Mutation', requestAllocation: { __typename?: 'AllocatorOutput', type: AllocationStatus, title: string, message: string, allocatedStreams: Array<{ __typename?: 'AllocatorStream', streamId: string, baseAllocation: { __typename?: 'BaseGeneratedAllocationPattern', allocatedUsers: Array<string> }, extraAllocations: Array<{ __typename?: 'ExtraGeneratedAllocationPattern', allocatedUsers: Array<string>, weeks: Array<number> }> }> } };
 
 export type CheckAllocationQueryVariables = Exact<{
   timetableInput: CourseTermIdInput;
 }>;
 
 
-export type CheckAllocationQuery = (
-  { __typename?: 'Query' }
-  & { checkAllocation: (
-    { __typename?: 'AllocatorOutput' }
-    & Pick<AllocatorOutput, 'type' | 'title' | 'message'>
-    & { allocatedStreams: Array<(
-      { __typename?: 'AllocatorStream' }
-      & Pick<AllocatorStream, 'streamId'>
-      & { baseAllocation: (
-        { __typename?: 'BaseGeneratedAllocationPattern' }
-        & Pick<BaseGeneratedAllocationPattern, 'allocatedUsers'>
-      ), extraAllocations: Array<(
-        { __typename?: 'ExtraGeneratedAllocationPattern' }
-        & Pick<ExtraGeneratedAllocationPattern, 'allocatedUsers' | 'weeks'>
-      )> }
-    )> }
-  ) }
-);
+export type CheckAllocationQuery = { __typename?: 'Query', checkAllocation: { __typename?: 'AllocatorOutput', type: AllocationStatus, title: string, message: string, allocatedStreams: Array<{ __typename?: 'AllocatorStream', streamId: string, baseAllocation: { __typename?: 'BaseGeneratedAllocationPattern', allocatedUsers: Array<string> }, extraAllocations: Array<{ __typename?: 'ExtraGeneratedAllocationPattern', allocatedUsers: Array<string>, weeks: Array<number> }> }> } };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
-  timeslots: Array<TimeslotInput>;
+  timeslots: Array<TimeslotInput> | TimeslotInput;
 }>;
 
 
-export type AddAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
-  )> }
-);
+export type AddAvailabilitiesMutation = { __typename?: 'Mutation', updateAvailabilities: Array<{ __typename?: 'Timeslot', id: string, day: number, startTime: number, endTime: number }> };
 
 export type MyAvailabilityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyAvailabilityQuery = (
-  { __typename?: 'Query' }
-  & { myAvailability: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'startTime' | 'endTime' | 'day'>
-  )> }
-);
+export type MyAvailabilityQuery = { __typename?: 'Query', myAvailability: Array<{ __typename?: 'Timeslot', id: string, startTime: number, endTime: number, day: number }> };
 
-export type UpdateAvailabilitiesMutationVariables = Exact<{
-  timeslots: Array<TimeslotInput>;
+export type TutorAvailabilityQueryVariables = Exact<{
+  userId: Scalars['String'];
 }>;
 
 
-export type UpdateAvailabilitiesMutation = (
-  { __typename?: 'Mutation' }
-  & { updateAvailabilities: Array<(
-    { __typename?: 'Timeslot' }
-    & Pick<Timeslot, 'id' | 'day' | 'startTime' | 'endTime'>
-  )> }
-);
+export type TutorAvailabilityQuery = { __typename?: 'Query', tutorAvailability: Array<{ __typename?: 'Timeslot', id: string, startTime: number, endTime: number, day: number }> };
+
+export type UpdateAvailabilitiesMutationVariables = Exact<{
+  timeslots: Array<TimeslotInput> | TimeslotInput;
+}>;
+
+
+export type UpdateAvailabilitiesMutation = { __typename?: 'Mutation', updateAvailabilities: Array<{ __typename?: 'Timeslot', id: string, day: number, startTime: number, endTime: number }> };
 
 export type CourseQueryVariables = Exact<{
   courseId: Scalars['String'];
 }>;
 
 
-export type CourseQuery = (
-  { __typename?: 'Query' }
-  & { course: (
-    { __typename?: 'Course' }
-    & Pick<Course, 'code' | 'title'>
-  ) }
-);
+export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', code: string, title: string } };
 
 export type CoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CoursesQuery = (
-  { __typename?: 'Query' }
-  & { courses: Array<(
-    { __typename?: 'Course' }
-    & Pick<Course, 'id' | 'code' | 'title'>
-  )> }
-);
+export type CoursesQuery = { __typename?: 'Query', courses: Array<{ __typename?: 'Course', id: string, code: string, title: string }> };
 
 export type CreateCourseMutationVariables = Exact<{
   courseInput: CourseInput;
 }>;
 
 
-export type CreateCourseMutation = (
-  { __typename?: 'Mutation' }
-  & { createCourse: (
-    { __typename?: 'Course' }
-    & Pick<Course, 'id' | 'code' | 'title'>
-  ) }
-);
+export type CreateCourseMutation = { __typename?: 'Mutation', createCourse: { __typename?: 'Course', id: string, code: string, title: string } };
 
 export type UpdateCourseMutationVariables = Exact<{
   courseInput: UpdateCourseInput;
 }>;
 
 
-export type UpdateCourseMutation = (
-  { __typename?: 'Mutation' }
-  & { updateCourse: (
-    { __typename?: 'Course' }
-    & Pick<Course, 'id' | 'code' | 'title'>
-  ) }
-);
+export type UpdateCourseMutation = { __typename?: 'Mutation', updateCourse: { __typename?: 'Course', id: string, code: string, title: string } };
 
 export type DeleteCourseMutationVariables = Exact<{
   courseId: Scalars['String'];
 }>;
 
 
-export type DeleteCourseMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteCourse'>
-);
+export type DeleteCourseMutation = { __typename?: 'Mutation', deleteCourse: string };
 
 export type CourseStaffsQueryVariables = Exact<{
   courseTermInput: CourseTermIdInput;
 }>;
 
 
-export type CourseStaffsQuery = (
-  { __typename?: 'Query' }
-  & { courseStaffs: Array<(
-    { __typename?: 'CourseStaff' }
-    & Pick<CourseStaff, 'id' | 'role' | 'isNew'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ) }
-  )> }
-);
+export type CourseStaffsQuery = { __typename?: 'Query', courseStaffs: Array<{ __typename?: 'CourseStaff', id: string, role: Role, isNew: boolean, user: { __typename?: 'User', id: string, username: string, name: string } }> };
 
 export type AddCourseStaffMutationVariables = Exact<{
   courseStaffInput: CourseStaffInput;
-  usernames: Array<Scalars['String']>;
+  usernames: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type AddCourseStaffMutation = (
-  { __typename?: 'Mutation' }
-  & { addUsersToCourse: Array<(
-    { __typename?: 'CourseStaff' }
-    & Pick<CourseStaff, 'id' | 'role' | 'isNew'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    ) }
-  )> }
-);
+export type AddCourseStaffMutation = { __typename?: 'Mutation', addUsersToCourse: Array<{ __typename?: 'CourseStaff', id: string, role: Role, isNew: boolean, user: { __typename?: 'User', id: string, name: string, username: string } }> };
 
 export type RemoveCourseStaffMutationVariables = Exact<{
   courseStaffId: Scalars['String'];
 }>;
 
 
-export type RemoveCourseStaffMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'removeCourseStaff'>
-);
+export type RemoveCourseStaffMutation = { __typename?: 'Mutation', removeCourseStaff: string };
 
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HelloQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
-);
+export type HelloQuery = { __typename?: 'Query', hello: string };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = (
-  { __typename?: 'Query' }
-  & { me: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'email' | 'isAdmin'>
-    & { courseStaffs: Array<(
-      { __typename?: 'CourseStaff' }
-      & Pick<CourseStaff, 'role'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ), term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ) }
-      ) }
-    )> }
-  ) }
-);
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, name: string, email: string, isAdmin: boolean, courseStaffs: Array<{ __typename?: 'CourseStaff', role: Role, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string } } }> } };
 
 export type MyCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyCoursesQuery = (
-  { __typename?: 'Query' }
-  & { me: (
-    { __typename?: 'User' }
-    & { courseStaffs: Array<(
-      { __typename?: 'CourseStaff' }
-      & Pick<CourseStaff, 'role'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code' | 'title'>
-        ), term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ) }
-      ) }
-    )> }
-  ) }
-);
+export type MyCoursesQuery = { __typename?: 'Query', me: { __typename?: 'User', courseStaffs: Array<{ __typename?: 'CourseStaff', role: Role, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string, title: string }, term: { __typename?: 'Term', id: string } } }> } };
 
 export type AcceptOfferMutationVariables = Exact<{
   offerId: Scalars['String'];
-  offerSessionSwapId?: Maybe<Scalars['String']>;
+  offerSessionSwapId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type AcceptOfferMutation = (
-  { __typename?: 'Mutation' }
-  & { acceptOffer: (
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { acceptedSession?: Maybe<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id'>
-    )> }
-  ) }
-);
+export type AcceptOfferMutation = { __typename?: 'Mutation', acceptOffer: { __typename?: 'Offer', id: string, acceptedSession?: { __typename?: 'Session', id: string } | null | undefined } };
 
 export type CreateOfferMutationVariables = Exact<{
   offerDetails: OfferInputType;
 }>;
 
 
-export type CreateOfferMutation = (
-  { __typename?: 'Mutation' }
-  & { createOffer: (
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    ), preferences: Array<(
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name'>
-      ) }
-    )> }
-  ) }
-);
+export type CreateOfferMutation = { __typename?: 'Mutation', createOffer: { __typename?: 'Offer', id: string, user: { __typename?: 'User', id: string, username: string }, preferences: Array<{ __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', id: string, name: string } }> } };
 
 export type GetOfferByIdQueryVariables = Exact<{
   offerId: Scalars['String'];
 }>;
 
 
-export type GetOfferByIdQuery = (
-  { __typename?: 'Query' }
-  & { getOfferById: (
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    ), preferences: Array<(
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name'>
-      ) }
-    )>, request: (
-      { __typename?: 'StaffRequest' }
-      & Pick<StaffRequest, 'id' | 'status'>
-      & { requester: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ), swapPreference: Array<(
-        { __typename?: 'Session' }
-        & { sessionStream: (
-          { __typename?: 'SessionStream' }
-          & Pick<SessionStream, 'id' | 'name'>
-        ) }
-      )>, session: (
-        { __typename?: 'Session' }
-        & { sessionStream: (
-          { __typename?: 'SessionStream' }
-          & Pick<SessionStream, 'id' | 'name'>
-        ) }
-      ) }
-    ) }
-  ) }
-);
+export type GetOfferByIdQuery = { __typename?: 'Query', getOfferById: { __typename?: 'Offer', id: string, user: { __typename?: 'User', id: string, username: string }, preferences: Array<{ __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', id: string, name: string } }>, request: { __typename?: 'StaffRequest', id: string, status: RequestStatus, requester: { __typename?: 'User', id: string, username: string }, swapPreference: Array<{ __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', id: string, name: string } }>, session: { __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', id: string, name: string } } } } };
 
 export type GetOffersByRequestIdQueryVariables = Exact<{
   requestId: Scalars['String'];
 }>;
 
 
-export type GetOffersByRequestIdQuery = (
-  { __typename?: 'Query' }
-  & { getOffersByRequestId: Array<(
-    { __typename?: 'Offer' }
-    & Pick<Offer, 'id'>
-    & { preferences: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      ) }
-    )>, user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ) }
-  )> }
-);
+export type GetOffersByRequestIdQuery = { __typename?: 'Query', getOffersByRequestId: Array<{ __typename?: 'Offer', id: string, preferences: Array<{ __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number } }>, user: { __typename?: 'User', id: string, username: string, name: string } }> };
 
 export type MyPreferenceQueryVariables = Exact<{
   preferenceFind: CourseTermIdInput;
 }>;
 
 
-export type MyPreferenceQuery = (
-  { __typename?: 'Query' }
-  & { myPreference?: Maybe<(
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-    & { courseStaff: (
-      { __typename?: 'CourseStaff' }
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
-    ) }
-  )> }
-);
+export type MyPreferenceQuery = { __typename?: 'Query', myPreference?: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } | null | undefined };
 
 export type PreferenceByUsernameQueryVariables = Exact<{
   courseTermId: CourseTermIdInput;
@@ -1161,20 +934,7 @@ export type PreferenceByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type PreferenceByUsernameQuery = (
-  { __typename?: 'Query' }
-  & { preferenceByUsername: (
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-    & { courseStaff: (
-      { __typename?: 'CourseStaff' }
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
-    ) }
-  ) }
-);
+export type PreferenceByUsernameQuery = { __typename?: 'Query', preferenceByUsername: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } };
 
 export type UpdatePreferenceMutationVariables = Exact<{
   preferenceFind: CourseTermIdInput;
@@ -1182,752 +942,206 @@ export type UpdatePreferenceMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePreferenceMutation = (
-  { __typename?: 'Mutation' }
-  & { updatePreference: (
-    { __typename?: 'Preference' }
-    & Pick<Preference, 'maxContigHours' | 'maxWeeklyHours' | 'sessionType'>
-  ) }
-);
+export type UpdatePreferenceMutation = { __typename?: 'Mutation', updatePreference: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined } };
 
 export type CreateRequestMutationVariables = Exact<{
   requestDetails: RequestFormInputType;
 }>;
 
 
-export type CreateRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { createRequest: (
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
-    & { requester: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ), session: (
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ), allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'username' | 'name'>
-      )> }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ) }
-    )> }
-  ) }
-);
+export type CreateRequestMutation = { __typename?: 'Mutation', createRequest: { __typename?: 'StaffRequest', id: string, title: string, status: RequestStatus, type: RequestType, description: string, requester: { __typename?: 'User', id: string, username: string, name: string }, session: { __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } }, allocatedUsers: Array<{ __typename?: 'User', username: string, name: string }> }, swapPreference: Array<{ __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } } }> } };
 
 export type DeleteRequestMutationVariables = Exact<{
   requestId: Scalars['String'];
 }>;
 
 
-export type DeleteRequestMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteRequestById'>
-);
+export type DeleteRequestMutation = { __typename?: 'Mutation', deleteRequestById: string };
 
 export type EditRequestMutationVariables = Exact<{
   requestDetails: EditRequestFormInputType;
 }>;
 
 
-export type EditRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { editExistingRequest: (
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'description' | 'status' | 'type'>
-    & { session: (
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'name'>
-      ) }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'name'>
-      ) }
-    )> }
-  ) }
-);
+export type EditRequestMutation = { __typename?: 'Mutation', editExistingRequest: { __typename?: 'StaffRequest', id: string, title: string, description: string, status: RequestStatus, type: RequestType, session: { __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', name: string } }, swapPreference: Array<{ __typename?: 'Session', sessionStream: { __typename?: 'SessionStream', name: string } }> } };
 
 export type GetRequestByIdQueryVariables = Exact<{
   requestId: Scalars['String'];
 }>;
 
 
-export type GetRequestByIdQuery = (
-  { __typename?: 'Query' }
-  & { getRequestById: (
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
-    & { requester: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ), session: (
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ), allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'username' | 'name'>
-      )> }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ) }
-    )> }
-  ) }
-);
+export type GetRequestByIdQuery = { __typename?: 'Query', getRequestById: { __typename?: 'StaffRequest', id: string, title: string, status: RequestStatus, type: RequestType, description: string, requester: { __typename?: 'User', id: string, username: string, name: string }, session: { __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } }, allocatedUsers: Array<{ __typename?: 'User', username: string, name: string }> }, swapPreference: Array<{ __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } } }> } };
 
 export type GetRequestsByUserIdQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRequestsByUserIdQuery = (
-  { __typename?: 'Query' }
-  & { getRequestsByUserId: Array<(
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
-    & { requester: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ), session: (
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ), allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'username' | 'name'>
-      )> }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ) }
-    )> }
-  )> }
-);
+export type GetRequestsByUserIdQuery = { __typename?: 'Query', getRequestsByUserId: Array<{ __typename?: 'StaffRequest', id: string, title: string, status: RequestStatus, type: RequestType, description: string, requester: { __typename?: 'User', id: string, username: string, name: string }, session: { __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } }, allocatedUsers: Array<{ __typename?: 'User', username: string, name: string }> }, swapPreference: Array<{ __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } } }> }> };
 
 export type GetRequestsByTermIdQueryVariables = Exact<{
   termId: Scalars['String'];
 }>;
 
 
-export type GetRequestsByTermIdQuery = (
-  { __typename?: 'Query' }
-  & { getRequestsByTermId: Array<(
-    { __typename?: 'StaffRequest' }
-    & Pick<StaffRequest, 'id' | 'title' | 'status' | 'type' | 'description'>
-    & { requester: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    ), session: (
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ), allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'username' | 'name'>
-      )> }
-    ), swapPreference: Array<(
-      { __typename?: 'Session' }
-      & Pick<Session, 'id' | 'week'>
-      & { sessionStream: (
-        { __typename?: 'SessionStream' }
-        & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'weeks'>
-        & { timetable: (
-          { __typename?: 'Timetable' }
-          & { course: (
-            { __typename?: 'Course' }
-            & Pick<Course, 'id' | 'code'>
-          ), term: (
-            { __typename?: 'Term' }
-            & Pick<Term, 'id' | 'weekNames' | 'startDate'>
-          ) }
-        ) }
-      ) }
-    )> }
-  )> }
-);
+export type GetRequestsByTermIdQuery = { __typename?: 'Query', getRequestsByTermId: Array<{ __typename?: 'StaffRequest', id: string, title: string, status: RequestStatus, type: RequestType, description: string, requester: { __typename?: 'User', id: string, username: string, name: string }, session: { __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } }, allocatedUsers: Array<{ __typename?: 'User', username: string, name: string }> }, swapPreference: Array<{ __typename?: 'Session', id: string, week: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string>, startDate: Date } } } }> }> };
 
 export type GetSessionStreamsQueryVariables = Exact<{
   termId: Scalars['String'];
-  courseIds: Array<Scalars['String']>;
+  courseIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetSessionStreamsQuery = (
-  { __typename?: 'Query' }
-  & { sessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'name' | 'username'>
-    )> }
-  )> }
-);
+export type GetSessionStreamsQuery = { __typename?: 'Query', sessionStreams: Array<{ __typename?: 'SessionStream', id: string, type: SessionType, name: string, startTime: number, endTime: number, day: number, location: string, numberOfStaff: number, allocatedUsers: Array<{ __typename?: 'User', name: string, username: string }> }> };
 
 export type GetRootSessionStreamsQueryVariables = Exact<{
   termId: Scalars['String'];
-  courseIds: Array<Scalars['String']>;
+  courseIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetRootSessionStreamsQuery = (
-  { __typename?: 'Query' }
-  & { rootSessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    )>, secondaryStreams: Array<(
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
-      & { allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'username'>
-      )> }
-    )>, timetable: (
-      { __typename?: 'Timetable' }
-      & { course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ), term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id' | 'weekNames'>
-      ) }
-    ) }
-  )> }
-);
+export type GetRootSessionStreamsQuery = { __typename?: 'Query', rootSessionStreams: Array<{ __typename?: 'SessionStream', id: string, type: SessionType, name: string, startTime: number, endTime: number, day: number, location: string, numberOfStaff: number, weeks: Array<number>, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }>, secondaryStreams: Array<{ __typename?: 'SessionStream', weeks: Array<number>, numberOfStaff: number, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }> }>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string> } } }> };
 
 export type StreamsFromPublicTimetableQueryVariables = Exact<{
   courseTerm: CourseTermIdInput;
-  sessionTypes: Array<SessionType>;
+  sessionTypes: Array<SessionType> | SessionType;
 }>;
 
 
-export type StreamsFromPublicTimetableQuery = (
-  { __typename?: 'Query' }
-  & { fromPublicTimetable: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    )>, secondaryStreams: Array<(
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
-      & { allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'username'>
-      )> }
-    )>, timetable: (
-      { __typename?: 'Timetable' }
-      & { course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ), term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id' | 'weekNames'>
-      ) }
-    ) }
-  )> }
-);
+export type StreamsFromPublicTimetableQuery = { __typename?: 'Query', fromPublicTimetable: Array<{ __typename?: 'SessionStream', id: string, type: SessionType, name: string, startTime: number, endTime: number, day: number, location: string, numberOfStaff: number, weeks: Array<number>, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }>, secondaryStreams: Array<{ __typename?: 'SessionStream', weeks: Array<number>, numberOfStaff: number, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }> }>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string> } } }> };
 
 export type UpdateSessionStreamsMutationVariables = Exact<{
-  updateStreamInput: Array<UpdateStreamInput>;
+  updateStreamInput: Array<UpdateStreamInput> | UpdateStreamInput;
 }>;
 
 
-export type UpdateSessionStreamsMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    )>, secondaryStreams: Array<(
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
-      & { allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'username'>
-      )> }
-    )>, timetable: (
-      { __typename?: 'Timetable' }
-      & { course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ), term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id' | 'weekNames'>
-      ) }
-    ) }
-  )> }
-);
+export type UpdateSessionStreamsMutation = { __typename?: 'Mutation', updateSessionStreams: Array<{ __typename?: 'SessionStream', id: string, type: SessionType, name: string, startTime: number, endTime: number, day: number, location: string, numberOfStaff: number, weeks: Array<number>, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }>, secondaryStreams: Array<{ __typename?: 'SessionStream', weeks: Array<number>, numberOfStaff: number, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }> }>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string> } } }> };
 
 export type AddMergedSessionStreamsMutationVariables = Exact<{
-  sessionStreams: Array<MergedStreamInput>;
+  sessionStreams: Array<MergedStreamInput> | MergedStreamInput;
 }>;
 
 
-export type AddMergedSessionStreamsMutation = (
-  { __typename?: 'Mutation' }
-  & { addMergedSessionStreams: Array<(
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'type' | 'name' | 'startTime' | 'endTime' | 'day' | 'location' | 'numberOfStaff' | 'weeks'>
-    & { allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'username'>
-    )>, secondaryStreams: Array<(
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'weeks' | 'numberOfStaff'>
-      & { allocatedUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'username'>
-      )> }
-    )>, timetable: (
-      { __typename?: 'Timetable' }
-      & { course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ), term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id' | 'weekNames'>
-      ) }
-    ) }
-  )> }
-);
+export type AddMergedSessionStreamsMutation = { __typename?: 'Mutation', addMergedSessionStreams: Array<{ __typename?: 'SessionStream', id: string, type: SessionType, name: string, startTime: number, endTime: number, day: number, location: string, numberOfStaff: number, weeks: Array<number>, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }>, secondaryStreams: Array<{ __typename?: 'SessionStream', weeks: Array<number>, numberOfStaff: number, allocatedUsers: Array<{ __typename?: 'User', id: string, name: string, username: string }> }>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, weekNames: Array<string> } } }> };
 
 export type DeleteSessionStreamsMutationVariables = Exact<{
-  streamIds: Array<Scalars['String']>;
+  streamIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type DeleteSessionStreamsMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteSessionStreams'>
-);
+export type DeleteSessionStreamsMutation = { __typename?: 'Mutation', deleteSessionStreams: Array<string> };
 
-export type SessionInfoFragment = (
-  { __typename?: 'Session' }
-  & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-  & { sessionStream: (
-    { __typename?: 'SessionStream' }
-    & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-    & { timetable: (
-      { __typename?: 'Timetable' }
-      & { term: (
-        { __typename?: 'Term' }
-        & Pick<Term, 'id'>
-      ), course: (
-        { __typename?: 'Course' }
-        & Pick<Course, 'id' | 'code'>
-      ) }
-    ) }
-  ), allocatedUsers: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name'>
-  )> }
-);
+export type SessionInfoFragment = { __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> };
 
 export type GetSessionsQueryVariables = Exact<{
   termId: Scalars['String'];
   week: Scalars['Int'];
-  courseIds: Array<Scalars['String']>;
+  courseIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetSessionsQuery = (
-  { __typename?: 'Query' }
-  & { sessions: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    )> }
-  )> }
-);
+export type GetSessionsQuery = { __typename?: 'Query', sessions: Array<{ __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> }> };
 
 export type GetMergedSessionsQueryVariables = Exact<{
   termId: Scalars['String'];
   week: Scalars['Int'];
-  courseIds: Array<Scalars['String']>;
+  courseIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type GetMergedSessionsQuery = (
-  { __typename?: 'Query' }
-  & { mergedSessions: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    )> }
-  )> }
-);
+export type GetMergedSessionsQuery = { __typename?: 'Query', mergedSessions: Array<{ __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> }> };
 
 export type GetSessionByIdQueryVariables = Exact<{
   sessionId: Scalars['String'];
 }>;
 
 
-export type GetSessionByIdQuery = (
-  { __typename?: 'Query' }
-  & { sessionById: (
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    )> }
-  ) }
-);
+export type GetSessionByIdQuery = { __typename?: 'Query', sessionById: { __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> } };
 
 export type UpdateSessionAllocationMutationVariables = Exact<{
-  newAllocation: Array<UpdateSessionAllocationInput>;
+  newAllocation: Array<UpdateSessionAllocationInput> | UpdateSessionAllocationInput;
 }>;
 
 
-export type UpdateSessionAllocationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSessionAllocations: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    )> }
-  )> }
-);
+export type UpdateSessionAllocationMutation = { __typename?: 'Mutation', updateSessionAllocations: Array<{ __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> }> };
 
 export type UpdateSessionMutationVariables = Exact<{
-  updateSessionInput: Array<UpdateSessionInput>;
+  updateSessionInput: Array<UpdateSessionInput> | UpdateSessionInput;
 }>;
 
 
-export type UpdateSessionMutation = (
-  { __typename?: 'Mutation' }
-  & { updateSession: Array<(
-    { __typename?: 'Session' }
-    & Pick<Session, 'id' | 'location' | 'week' | 'numberOfStaff'>
-    & { sessionStream: (
-      { __typename?: 'SessionStream' }
-      & Pick<SessionStream, 'id' | 'name' | 'startTime' | 'endTime' | 'day'>
-      & { timetable: (
-        { __typename?: 'Timetable' }
-        & { term: (
-          { __typename?: 'Term' }
-          & Pick<Term, 'id'>
-        ), course: (
-          { __typename?: 'Course' }
-          & Pick<Course, 'id' | 'code'>
-        ) }
-      ) }
-    ), allocatedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'name'>
-    )> }
-  )> }
-);
+export type UpdateSessionMutation = { __typename?: 'Mutation', updateSession: Array<{ __typename?: 'Session', id: string, location: string, week: number, numberOfStaff: number, sessionStream: { __typename?: 'SessionStream', id: string, name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', term: { __typename?: 'Term', id: string }, course: { __typename?: 'Course', id: string, code: string } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> }> };
 
 export type DeleteSessionsMutationVariables = Exact<{
-  sessionIds: Array<Scalars['String']>;
+  sessionIds: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type DeleteSessionsMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteSessions'>
-);
+export type DeleteSessionsMutation = { __typename?: 'Mutation', deleteSessions: Array<string> };
 
 export type NotificationsSubscriptionVariables = Exact<{
   key: Scalars['String'];
 }>;
 
 
-export type NotificationsSubscription = (
-  { __typename?: 'Subscription' }
-  & { notifications: (
-    { __typename?: 'Notification' }
-    & Pick<Notification, 'id' | 'title' | 'message'>
-  ) }
-);
+export type NotificationsSubscription = { __typename?: 'Subscription', notifications: { __typename?: 'Notification', id: string, title: string, message: string } };
 
 export type TermsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TermsQuery = (
-  { __typename?: 'Query' }
-  & { terms: Array<(
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  )> }
-);
+export type TermsQuery = { __typename?: 'Query', terms: Array<{ __typename?: 'Term', id: string, type: TermType, year: number, startDate: Date, endDate: Date, weekNames: Array<string>, isActive: boolean, numberOfWeeks: number }> };
 
 export type TermQueryVariables = Exact<{
   termId: Scalars['String'];
 }>;
 
 
-export type TermQuery = (
-  { __typename?: 'Query' }
-  & { term: (
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  ) }
-);
+export type TermQuery = { __typename?: 'Query', term: { __typename?: 'Term', id: string, type: TermType, year: number, startDate: Date, endDate: Date, weekNames: Array<string>, isActive: boolean, numberOfWeeks: number } };
 
 export type CreateTermMutationVariables = Exact<{
   termInput: TermInput;
 }>;
 
 
-export type CreateTermMutation = (
-  { __typename?: 'Mutation' }
-  & { createTerm: (
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  ) }
-);
+export type CreateTermMutation = { __typename?: 'Mutation', createTerm: { __typename?: 'Term', id: string, type: TermType, year: number, startDate: Date, endDate: Date, weekNames: Array<string>, isActive: boolean, numberOfWeeks: number } };
 
 export type UpdateTermMutationVariables = Exact<{
   termInput: UpdateTermInput;
 }>;
 
 
-export type UpdateTermMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTerm: (
-    { __typename?: 'Term' }
-    & Pick<Term, 'id' | 'type' | 'year' | 'startDate' | 'endDate' | 'weekNames' | 'isActive' | 'numberOfWeeks'>
-  ) }
-);
+export type UpdateTermMutation = { __typename?: 'Mutation', updateTerm: { __typename?: 'Term', id: string, type: TermType, year: number, startDate: Date, endDate: Date, weekNames: Array<string>, isActive: boolean, numberOfWeeks: number } };
 
 export type DeleteTermMutationVariables = Exact<{
   termId: Scalars['String'];
 }>;
 
 
-export type DeleteTermMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteTerm'>
-);
+export type DeleteTermMutation = { __typename?: 'Mutation', deleteTerm: string };
 
 export type TimetablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TimetablesQuery = (
-  { __typename?: 'Query' }
-  & { timetables: Array<(
-    { __typename?: 'Timetable' }
-    & Pick<Timetable, 'id' | 'permanentRequestLock' | 'temporaryRequestLock'>
-    & { course: (
-      { __typename?: 'Course' }
-      & Pick<Course, 'id' | 'code'>
-    ), term: (
-      { __typename?: 'Term' }
-      & Pick<Term, 'id' | 'type' | 'year'>
-    ) }
-  )> }
-);
+export type TimetablesQuery = { __typename?: 'Query', timetables: Array<{ __typename?: 'Timetable', id: string, permanentRequestLock: FreezeState, temporaryRequestLock: FreezeState, course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, type: TermType, year: number } }> };
 
 export type CreateTimetableMutationVariables = Exact<{
   timetableInput: TimetableInput;
 }>;
 
 
-export type CreateTimetableMutation = (
-  { __typename?: 'Mutation' }
-  & { createTimetable: (
-    { __typename?: 'Timetable' }
-    & Pick<Timetable, 'id' | 'permanentRequestLock' | 'temporaryRequestLock'>
-    & { course: (
-      { __typename?: 'Course' }
-      & Pick<Course, 'id' | 'code'>
-    ), term: (
-      { __typename?: 'Term' }
-      & Pick<Term, 'id' | 'type' | 'year'>
-    ) }
-  ) }
-);
+export type CreateTimetableMutation = { __typename?: 'Mutation', createTimetable: { __typename?: 'Timetable', id: string, permanentRequestLock: FreezeState, temporaryRequestLock: FreezeState, course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, type: TermType, year: number } } };
 
 export type UpdateTimetableMutationVariables = Exact<{
   timetableInput: TimetableInput;
 }>;
 
 
-export type UpdateTimetableMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTimetable: (
-    { __typename?: 'Timetable' }
-    & Pick<Timetable, 'id' | 'permanentRequestLock' | 'temporaryRequestLock'>
-    & { course: (
-      { __typename?: 'Course' }
-      & Pick<Course, 'id' | 'code'>
-    ), term: (
-      { __typename?: 'Term' }
-      & Pick<Term, 'id' | 'type' | 'year'>
-    ) }
-  ) }
-);
+export type UpdateTimetableMutation = { __typename?: 'Mutation', updateTimetable: { __typename?: 'Timetable', id: string, permanentRequestLock: FreezeState, temporaryRequestLock: FreezeState, course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', id: string, type: TermType, year: number } } };
 
 export type DeleteTimetableMutationVariables = Exact<{
   timetableId: Scalars['String'];
 }>;
 
 
-export type DeleteTimetableMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteTimetable'>
-);
+export type DeleteTimetableMutation = { __typename?: 'Mutation', deleteTimetable: string };
 
 export const SessionInfoFragmentDoc = gql`
     fragment SessionInfo on Session {
@@ -1987,7 +1201,8 @@ export type UpdateDetailsMutationFn = Apollo.MutationFunction<UpdateDetailsMutat
  * });
  */
 export function useUpdateDetailsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDetailsMutation, UpdateDetailsMutationVariables>) {
-        return Apollo.useMutation<UpdateDetailsMutation, UpdateDetailsMutationVariables>(UpdateDetailsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDetailsMutation, UpdateDetailsMutationVariables>(UpdateDetailsDocument, options);
       }
 export type UpdateDetailsMutationHookResult = ReturnType<typeof useUpdateDetailsMutation>;
 export type UpdateDetailsMutationResult = Apollo.MutationResult<UpdateDetailsMutation>;
@@ -2031,7 +1246,8 @@ export type RequestAllocationMutationFn = Apollo.MutationFunction<RequestAllocat
  * });
  */
 export function useRequestAllocationMutation(baseOptions?: Apollo.MutationHookOptions<RequestAllocationMutation, RequestAllocationMutationVariables>) {
-        return Apollo.useMutation<RequestAllocationMutation, RequestAllocationMutationVariables>(RequestAllocationDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestAllocationMutation, RequestAllocationMutationVariables>(RequestAllocationDocument, options);
       }
 export type RequestAllocationMutationHookResult = ReturnType<typeof useRequestAllocationMutation>;
 export type RequestAllocationMutationResult = Apollo.MutationResult<RequestAllocationMutation>;
@@ -2073,10 +1289,12 @@ export const CheckAllocationDocument = gql`
  * });
  */
 export function useCheckAllocationQuery(baseOptions: Apollo.QueryHookOptions<CheckAllocationQuery, CheckAllocationQueryVariables>) {
-        return Apollo.useQuery<CheckAllocationQuery, CheckAllocationQueryVariables>(CheckAllocationDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckAllocationQuery, CheckAllocationQueryVariables>(CheckAllocationDocument, options);
       }
 export function useCheckAllocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckAllocationQuery, CheckAllocationQueryVariables>) {
-          return Apollo.useLazyQuery<CheckAllocationQuery, CheckAllocationQueryVariables>(CheckAllocationDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckAllocationQuery, CheckAllocationQueryVariables>(CheckAllocationDocument, options);
         }
 export type CheckAllocationQueryHookResult = ReturnType<typeof useCheckAllocationQuery>;
 export type CheckAllocationLazyQueryHookResult = ReturnType<typeof useCheckAllocationLazyQuery>;
@@ -2111,7 +1329,8 @@ export type AddAvailabilitiesMutationFn = Apollo.MutationFunction<AddAvailabilit
  * });
  */
 export function useAddAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>) {
-        return Apollo.useMutation<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>(AddAvailabilitiesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddAvailabilitiesMutation, AddAvailabilitiesMutationVariables>(AddAvailabilitiesDocument, options);
       }
 export type AddAvailabilitiesMutationHookResult = ReturnType<typeof useAddAvailabilitiesMutation>;
 export type AddAvailabilitiesMutationResult = Apollo.MutationResult<AddAvailabilitiesMutation>;
@@ -2143,14 +1362,54 @@ export const MyAvailabilityDocument = gql`
  * });
  */
 export function useMyAvailabilityQuery(baseOptions?: Apollo.QueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
-        return Apollo.useQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, options);
       }
 export function useMyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAvailabilityQuery, MyAvailabilityQueryVariables>) {
-          return Apollo.useLazyQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyAvailabilityQuery, MyAvailabilityQueryVariables>(MyAvailabilityDocument, options);
         }
 export type MyAvailabilityQueryHookResult = ReturnType<typeof useMyAvailabilityQuery>;
 export type MyAvailabilityLazyQueryHookResult = ReturnType<typeof useMyAvailabilityLazyQuery>;
 export type MyAvailabilityQueryResult = Apollo.QueryResult<MyAvailabilityQuery, MyAvailabilityQueryVariables>;
+export const TutorAvailabilityDocument = gql`
+    query TutorAvailability($userId: String!) {
+  tutorAvailability(userId: $userId) {
+    id
+    startTime
+    endTime
+    day
+  }
+}
+    `;
+
+/**
+ * __useTutorAvailabilityQuery__
+ *
+ * To run a query within a React component, call `useTutorAvailabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTutorAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTutorAvailabilityQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useTutorAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>(TutorAvailabilityDocument, options);
+      }
+export function useTutorAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>(TutorAvailabilityDocument, options);
+        }
+export type TutorAvailabilityQueryHookResult = ReturnType<typeof useTutorAvailabilityQuery>;
+export type TutorAvailabilityLazyQueryHookResult = ReturnType<typeof useTutorAvailabilityLazyQuery>;
+export type TutorAvailabilityQueryResult = Apollo.QueryResult<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>;
 export const UpdateAvailabilitiesDocument = gql`
     mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
@@ -2181,7 +1440,8 @@ export type UpdateAvailabilitiesMutationFn = Apollo.MutationFunction<UpdateAvail
  * });
  */
 export function useUpdateAvailabilitiesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>) {
-        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAvailabilitiesMutation, UpdateAvailabilitiesMutationVariables>(UpdateAvailabilitiesDocument, options);
       }
 export type UpdateAvailabilitiesMutationHookResult = ReturnType<typeof useUpdateAvailabilitiesMutation>;
 export type UpdateAvailabilitiesMutationResult = Apollo.MutationResult<UpdateAvailabilitiesMutation>;
@@ -2212,10 +1472,12 @@ export const CourseDocument = gql`
  * });
  */
 export function useCourseQuery(baseOptions: Apollo.QueryHookOptions<CourseQuery, CourseQueryVariables>) {
-        return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, options);
       }
 export function useCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>) {
-          return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, options);
         }
 export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
 export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
@@ -2246,10 +1508,12 @@ export const CoursesDocument = gql`
  * });
  */
 export function useCoursesQuery(baseOptions?: Apollo.QueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
-        return Apollo.useQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, options);
       }
 export function useCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
-          return Apollo.useLazyQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, options);
         }
 export type CoursesQueryHookResult = ReturnType<typeof useCoursesQuery>;
 export type CoursesLazyQueryHookResult = ReturnType<typeof useCoursesLazyQuery>;
@@ -2283,7 +1547,8 @@ export type CreateCourseMutationFn = Apollo.MutationFunction<CreateCourseMutatio
  * });
  */
 export function useCreateCourseMutation(baseOptions?: Apollo.MutationHookOptions<CreateCourseMutation, CreateCourseMutationVariables>) {
-        return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCourseMutation, CreateCourseMutationVariables>(CreateCourseDocument, options);
       }
 export type CreateCourseMutationHookResult = ReturnType<typeof useCreateCourseMutation>;
 export type CreateCourseMutationResult = Apollo.MutationResult<CreateCourseMutation>;
@@ -2317,7 +1582,8 @@ export type UpdateCourseMutationFn = Apollo.MutationFunction<UpdateCourseMutatio
  * });
  */
 export function useUpdateCourseMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCourseMutation, UpdateCourseMutationVariables>) {
-        return Apollo.useMutation<UpdateCourseMutation, UpdateCourseMutationVariables>(UpdateCourseDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCourseMutation, UpdateCourseMutationVariables>(UpdateCourseDocument, options);
       }
 export type UpdateCourseMutationHookResult = ReturnType<typeof useUpdateCourseMutation>;
 export type UpdateCourseMutationResult = Apollo.MutationResult<UpdateCourseMutation>;
@@ -2347,7 +1613,8 @@ export type DeleteCourseMutationFn = Apollo.MutationFunction<DeleteCourseMutatio
  * });
  */
 export function useDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCourseMutation, DeleteCourseMutationVariables>) {
-        return Apollo.useMutation<DeleteCourseMutation, DeleteCourseMutationVariables>(DeleteCourseDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCourseMutation, DeleteCourseMutationVariables>(DeleteCourseDocument, options);
       }
 export type DeleteCourseMutationHookResult = ReturnType<typeof useDeleteCourseMutation>;
 export type DeleteCourseMutationResult = Apollo.MutationResult<DeleteCourseMutation>;
@@ -2384,10 +1651,12 @@ export const CourseStaffsDocument = gql`
  * });
  */
 export function useCourseStaffsQuery(baseOptions: Apollo.QueryHookOptions<CourseStaffsQuery, CourseStaffsQueryVariables>) {
-        return Apollo.useQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, options);
       }
 export function useCourseStaffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseStaffsQuery, CourseStaffsQueryVariables>) {
-          return Apollo.useLazyQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CourseStaffsQuery, CourseStaffsQueryVariables>(CourseStaffsDocument, options);
         }
 export type CourseStaffsQueryHookResult = ReturnType<typeof useCourseStaffsQuery>;
 export type CourseStaffsLazyQueryHookResult = ReturnType<typeof useCourseStaffsLazyQuery>;
@@ -2427,7 +1696,8 @@ export type AddCourseStaffMutationFn = Apollo.MutationFunction<AddCourseStaffMut
  * });
  */
 export function useAddCourseStaffMutation(baseOptions?: Apollo.MutationHookOptions<AddCourseStaffMutation, AddCourseStaffMutationVariables>) {
-        return Apollo.useMutation<AddCourseStaffMutation, AddCourseStaffMutationVariables>(AddCourseStaffDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCourseStaffMutation, AddCourseStaffMutationVariables>(AddCourseStaffDocument, options);
       }
 export type AddCourseStaffMutationHookResult = ReturnType<typeof useAddCourseStaffMutation>;
 export type AddCourseStaffMutationResult = Apollo.MutationResult<AddCourseStaffMutation>;
@@ -2457,7 +1727,8 @@ export type RemoveCourseStaffMutationFn = Apollo.MutationFunction<RemoveCourseSt
  * });
  */
 export function useRemoveCourseStaffMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>) {
-        return Apollo.useMutation<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>(RemoveCourseStaffDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveCourseStaffMutation, RemoveCourseStaffMutationVariables>(RemoveCourseStaffDocument, options);
       }
 export type RemoveCourseStaffMutationHookResult = ReturnType<typeof useRemoveCourseStaffMutation>;
 export type RemoveCourseStaffMutationResult = Apollo.MutationResult<RemoveCourseStaffMutation>;
@@ -2484,10 +1755,12 @@ export const HelloDocument = gql`
  * });
  */
 export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
-        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
       }
 export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
-          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
         }
 export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
@@ -2532,10 +1805,12 @@ export const MeDocument = gql`
  * });
  */
 export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
       }
 export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
         }
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
@@ -2576,10 +1851,12 @@ export const MyCoursesDocument = gql`
  * });
  */
 export function useMyCoursesQuery(baseOptions?: Apollo.QueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
-        return Apollo.useQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, options);
       }
 export function useMyCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyCoursesQuery, MyCoursesQueryVariables>) {
-          return Apollo.useLazyQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyCoursesQuery, MyCoursesQueryVariables>(MyCoursesDocument, options);
         }
 export type MyCoursesQueryHookResult = ReturnType<typeof useMyCoursesQuery>;
 export type MyCoursesLazyQueryHookResult = ReturnType<typeof useMyCoursesLazyQuery>;
@@ -2615,7 +1892,8 @@ export type AcceptOfferMutationFn = Apollo.MutationFunction<AcceptOfferMutation,
  * });
  */
 export function useAcceptOfferMutation(baseOptions?: Apollo.MutationHookOptions<AcceptOfferMutation, AcceptOfferMutationVariables>) {
-        return Apollo.useMutation<AcceptOfferMutation, AcceptOfferMutationVariables>(AcceptOfferDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AcceptOfferMutation, AcceptOfferMutationVariables>(AcceptOfferDocument, options);
       }
 export type AcceptOfferMutationHookResult = ReturnType<typeof useAcceptOfferMutation>;
 export type AcceptOfferMutationResult = Apollo.MutationResult<AcceptOfferMutation>;
@@ -2657,7 +1935,8 @@ export type CreateOfferMutationFn = Apollo.MutationFunction<CreateOfferMutation,
  * });
  */
 export function useCreateOfferMutation(baseOptions?: Apollo.MutationHookOptions<CreateOfferMutation, CreateOfferMutationVariables>) {
-        return Apollo.useMutation<CreateOfferMutation, CreateOfferMutationVariables>(CreateOfferDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOfferMutation, CreateOfferMutationVariables>(CreateOfferDocument, options);
       }
 export type CreateOfferMutationHookResult = ReturnType<typeof useCreateOfferMutation>;
 export type CreateOfferMutationResult = Apollo.MutationResult<CreateOfferMutation>;
@@ -2717,10 +1996,12 @@ export const GetOfferByIdDocument = gql`
  * });
  */
 export function useGetOfferByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
-        return Apollo.useQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, options);
       }
 export function useGetOfferByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOfferByIdQuery, GetOfferByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOfferByIdQuery, GetOfferByIdQueryVariables>(GetOfferByIdDocument, options);
         }
 export type GetOfferByIdQueryHookResult = ReturnType<typeof useGetOfferByIdQuery>;
 export type GetOfferByIdLazyQueryHookResult = ReturnType<typeof useGetOfferByIdLazyQuery>;
@@ -2766,10 +2047,12 @@ export const GetOffersByRequestIdDocument = gql`
  * });
  */
 export function useGetOffersByRequestIdQuery(baseOptions: Apollo.QueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
-        return Apollo.useQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, options);
       }
 export function useGetOffersByRequestIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOffersByRequestIdQuery, GetOffersByRequestIdQueryVariables>(GetOffersByRequestIdDocument, options);
         }
 export type GetOffersByRequestIdQueryHookResult = ReturnType<typeof useGetOffersByRequestIdQuery>;
 export type GetOffersByRequestIdLazyQueryHookResult = ReturnType<typeof useGetOffersByRequestIdLazyQuery>;
@@ -2806,10 +2089,12 @@ export const MyPreferenceDocument = gql`
  * });
  */
 export function useMyPreferenceQuery(baseOptions: Apollo.QueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
-        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, options);
       }
 export function useMyPreferenceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyPreferenceQuery, MyPreferenceQueryVariables>) {
-          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyPreferenceQuery, MyPreferenceQueryVariables>(MyPreferenceDocument, options);
         }
 export type MyPreferenceQueryHookResult = ReturnType<typeof useMyPreferenceQuery>;
 export type MyPreferenceLazyQueryHookResult = ReturnType<typeof useMyPreferenceLazyQuery>;
@@ -2847,10 +2132,12 @@ export const PreferenceByUsernameDocument = gql`
  * });
  */
 export function usePreferenceByUsernameQuery(baseOptions: Apollo.QueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-        return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, options);
       }
 export function usePreferenceByUsernameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>) {
-          return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PreferenceByUsernameQuery, PreferenceByUsernameQueryVariables>(PreferenceByUsernameDocument, options);
         }
 export type PreferenceByUsernameQueryHookResult = ReturnType<typeof usePreferenceByUsernameQuery>;
 export type PreferenceByUsernameLazyQueryHookResult = ReturnType<typeof usePreferenceByUsernameLazyQuery>;
@@ -2885,7 +2172,8 @@ export type UpdatePreferenceMutationFn = Apollo.MutationFunction<UpdatePreferenc
  * });
  */
 export function useUpdatePreferenceMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>) {
-        return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePreferenceMutation, UpdatePreferenceMutationVariables>(UpdatePreferenceDocument, options);
       }
 export type UpdatePreferenceMutationHookResult = ReturnType<typeof useUpdatePreferenceMutation>;
 export type UpdatePreferenceMutationResult = Apollo.MutationResult<UpdatePreferenceMutation>;
@@ -2974,7 +2262,8 @@ export type CreateRequestMutationFn = Apollo.MutationFunction<CreateRequestMutat
  * });
  */
 export function useCreateRequestMutation(baseOptions?: Apollo.MutationHookOptions<CreateRequestMutation, CreateRequestMutationVariables>) {
-        return Apollo.useMutation<CreateRequestMutation, CreateRequestMutationVariables>(CreateRequestDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateRequestMutation, CreateRequestMutationVariables>(CreateRequestDocument, options);
       }
 export type CreateRequestMutationHookResult = ReturnType<typeof useCreateRequestMutation>;
 export type CreateRequestMutationResult = Apollo.MutationResult<CreateRequestMutation>;
@@ -3004,7 +2293,8 @@ export type DeleteRequestMutationFn = Apollo.MutationFunction<DeleteRequestMutat
  * });
  */
 export function useDeleteRequestMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRequestMutation, DeleteRequestMutationVariables>) {
-        return Apollo.useMutation<DeleteRequestMutation, DeleteRequestMutationVariables>(DeleteRequestDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRequestMutation, DeleteRequestMutationVariables>(DeleteRequestDocument, options);
       }
 export type DeleteRequestMutationHookResult = ReturnType<typeof useDeleteRequestMutation>;
 export type DeleteRequestMutationResult = Apollo.MutationResult<DeleteRequestMutation>;
@@ -3050,7 +2340,8 @@ export type EditRequestMutationFn = Apollo.MutationFunction<EditRequestMutation,
  * });
  */
 export function useEditRequestMutation(baseOptions?: Apollo.MutationHookOptions<EditRequestMutation, EditRequestMutationVariables>) {
-        return Apollo.useMutation<EditRequestMutation, EditRequestMutationVariables>(EditRequestDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditRequestMutation, EditRequestMutationVariables>(EditRequestDocument, options);
       }
 export type EditRequestMutationHookResult = ReturnType<typeof useEditRequestMutation>;
 export type EditRequestMutationResult = Apollo.MutationResult<EditRequestMutation>;
@@ -3137,10 +2428,12 @@ export const GetRequestByIdDocument = gql`
  * });
  */
 export function useGetRequestByIdQuery(baseOptions: Apollo.QueryHookOptions<GetRequestByIdQuery, GetRequestByIdQueryVariables>) {
-        return Apollo.useQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, options);
       }
 export function useGetRequestByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestByIdQuery, GetRequestByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRequestByIdQuery, GetRequestByIdQueryVariables>(GetRequestByIdDocument, options);
         }
 export type GetRequestByIdQueryHookResult = ReturnType<typeof useGetRequestByIdQuery>;
 export type GetRequestByIdLazyQueryHookResult = ReturnType<typeof useGetRequestByIdLazyQuery>;
@@ -3226,10 +2519,12 @@ export const GetRequestsByUserIdDocument = gql`
  * });
  */
 export function useGetRequestsByUserIdQuery(baseOptions?: Apollo.QueryHookOptions<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>) {
-        return Apollo.useQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, options);
       }
 export function useGetRequestsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRequestsByUserIdQuery, GetRequestsByUserIdQueryVariables>(GetRequestsByUserIdDocument, options);
         }
 export type GetRequestsByUserIdQueryHookResult = ReturnType<typeof useGetRequestsByUserIdQuery>;
 export type GetRequestsByUserIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByUserIdLazyQuery>;
@@ -3316,10 +2611,12 @@ export const GetRequestsByTermIdDocument = gql`
  * });
  */
 export function useGetRequestsByTermIdQuery(baseOptions: Apollo.QueryHookOptions<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>) {
-        return Apollo.useQuery<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>(GetRequestsByTermIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>(GetRequestsByTermIdDocument, options);
       }
 export function useGetRequestsByTermIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>(GetRequestsByTermIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRequestsByTermIdQuery, GetRequestsByTermIdQueryVariables>(GetRequestsByTermIdDocument, options);
         }
 export type GetRequestsByTermIdQueryHookResult = ReturnType<typeof useGetRequestsByTermIdQuery>;
 export type GetRequestsByTermIdLazyQueryHookResult = ReturnType<typeof useGetRequestsByTermIdLazyQuery>;
@@ -3361,10 +2658,12 @@ export const GetSessionStreamsDocument = gql`
  * });
  */
 export function useGetSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, options);
       }
 export function useGetSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSessionStreamsQuery, GetSessionStreamsQueryVariables>(GetSessionStreamsDocument, options);
         }
 export type GetSessionStreamsQueryHookResult = ReturnType<typeof useGetSessionStreamsQuery>;
 export type GetSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetSessionStreamsLazyQuery>;
@@ -3427,10 +2726,12 @@ export const GetRootSessionStreamsDocument = gql`
  * });
  */
 export function useGetRootSessionStreamsQuery(baseOptions: Apollo.QueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
-        return Apollo.useQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, options);
       }
 export function useGetRootSessionStreamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>) {
-          return Apollo.useLazyQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRootSessionStreamsQuery, GetRootSessionStreamsQueryVariables>(GetRootSessionStreamsDocument, options);
         }
 export type GetRootSessionStreamsQueryHookResult = ReturnType<typeof useGetRootSessionStreamsQuery>;
 export type GetRootSessionStreamsLazyQueryHookResult = ReturnType<typeof useGetRootSessionStreamsLazyQuery>;
@@ -3493,10 +2794,12 @@ export const StreamsFromPublicTimetableDocument = gql`
  * });
  */
 export function useStreamsFromPublicTimetableQuery(baseOptions: Apollo.QueryHookOptions<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>) {
-        return Apollo.useQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, options);
       }
 export function useStreamsFromPublicTimetableLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>) {
-          return Apollo.useLazyQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StreamsFromPublicTimetableQuery, StreamsFromPublicTimetableQueryVariables>(StreamsFromPublicTimetableDocument, options);
         }
 export type StreamsFromPublicTimetableQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableQuery>;
 export type StreamsFromPublicTimetableLazyQueryHookResult = ReturnType<typeof useStreamsFromPublicTimetableLazyQuery>;
@@ -3560,7 +2863,8 @@ export type UpdateSessionStreamsMutationFn = Apollo.MutationFunction<UpdateSessi
  * });
  */
 export function useUpdateSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>) {
-        return Apollo.useMutation<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>(UpdateSessionStreamsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSessionStreamsMutation, UpdateSessionStreamsMutationVariables>(UpdateSessionStreamsDocument, options);
       }
 export type UpdateSessionStreamsMutationHookResult = ReturnType<typeof useUpdateSessionStreamsMutation>;
 export type UpdateSessionStreamsMutationResult = Apollo.MutationResult<UpdateSessionStreamsMutation>;
@@ -3624,7 +2928,8 @@ export type AddMergedSessionStreamsMutationFn = Apollo.MutationFunction<AddMerge
  * });
  */
 export function useAddMergedSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>) {
-        return Apollo.useMutation<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>(AddMergedSessionStreamsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddMergedSessionStreamsMutation, AddMergedSessionStreamsMutationVariables>(AddMergedSessionStreamsDocument, options);
       }
 export type AddMergedSessionStreamsMutationHookResult = ReturnType<typeof useAddMergedSessionStreamsMutation>;
 export type AddMergedSessionStreamsMutationResult = Apollo.MutationResult<AddMergedSessionStreamsMutation>;
@@ -3654,7 +2959,8 @@ export type DeleteSessionStreamsMutationFn = Apollo.MutationFunction<DeleteSessi
  * });
  */
 export function useDeleteSessionStreamsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>) {
-        return Apollo.useMutation<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>(DeleteSessionStreamsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSessionStreamsMutation, DeleteSessionStreamsMutationVariables>(DeleteSessionStreamsDocument, options);
       }
 export type DeleteSessionStreamsMutationHookResult = ReturnType<typeof useDeleteSessionStreamsMutation>;
 export type DeleteSessionStreamsMutationResult = Apollo.MutationResult<DeleteSessionStreamsMutation>;
@@ -3710,10 +3016,12 @@ export const GetSessionsDocument = gql`
  * });
  */
 export function useGetSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, options);
       }
 export function useGetSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionsQuery, GetSessionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSessionsQuery, GetSessionsQueryVariables>(GetSessionsDocument, options);
         }
 export type GetSessionsQueryHookResult = ReturnType<typeof useGetSessionsQuery>;
 export type GetSessionsLazyQueryHookResult = ReturnType<typeof useGetSessionsLazyQuery>;
@@ -3769,10 +3077,12 @@ export const GetMergedSessionsDocument = gql`
  * });
  */
 export function useGetMergedSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>) {
-        return Apollo.useQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, options);
       }
 export function useGetMergedSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMergedSessionsQuery, GetMergedSessionsQueryVariables>(GetMergedSessionsDocument, options);
         }
 export type GetMergedSessionsQueryHookResult = ReturnType<typeof useGetMergedSessionsQuery>;
 export type GetMergedSessionsLazyQueryHookResult = ReturnType<typeof useGetMergedSessionsLazyQuery>;
@@ -3826,10 +3136,12 @@ export const GetSessionByIdDocument = gql`
  * });
  */
 export function useGetSessionByIdQuery(baseOptions: Apollo.QueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
-        return Apollo.useQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, options);
       }
 export function useGetSessionByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSessionByIdQuery, GetSessionByIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSessionByIdQuery, GetSessionByIdQueryVariables>(GetSessionByIdDocument, options);
         }
 export type GetSessionByIdQueryHookResult = ReturnType<typeof useGetSessionByIdQuery>;
 export type GetSessionByIdLazyQueryHookResult = ReturnType<typeof useGetSessionByIdLazyQuery>;
@@ -3885,7 +3197,8 @@ export type UpdateSessionAllocationMutationFn = Apollo.MutationFunction<UpdateSe
  * });
  */
 export function useUpdateSessionAllocationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>) {
-        return Apollo.useMutation<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>(UpdateSessionAllocationDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSessionAllocationMutation, UpdateSessionAllocationMutationVariables>(UpdateSessionAllocationDocument, options);
       }
 export type UpdateSessionAllocationMutationHookResult = ReturnType<typeof useUpdateSessionAllocationMutation>;
 export type UpdateSessionAllocationMutationResult = Apollo.MutationResult<UpdateSessionAllocationMutation>;
@@ -3941,7 +3254,8 @@ export type UpdateSessionMutationFn = Apollo.MutationFunction<UpdateSessionMutat
  * });
  */
 export function useUpdateSessionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSessionMutation, UpdateSessionMutationVariables>) {
-        return Apollo.useMutation<UpdateSessionMutation, UpdateSessionMutationVariables>(UpdateSessionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSessionMutation, UpdateSessionMutationVariables>(UpdateSessionDocument, options);
       }
 export type UpdateSessionMutationHookResult = ReturnType<typeof useUpdateSessionMutation>;
 export type UpdateSessionMutationResult = Apollo.MutationResult<UpdateSessionMutation>;
@@ -3971,7 +3285,8 @@ export type DeleteSessionsMutationFn = Apollo.MutationFunction<DeleteSessionsMut
  * });
  */
 export function useDeleteSessionsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSessionsMutation, DeleteSessionsMutationVariables>) {
-        return Apollo.useMutation<DeleteSessionsMutation, DeleteSessionsMutationVariables>(DeleteSessionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSessionsMutation, DeleteSessionsMutationVariables>(DeleteSessionsDocument, options);
       }
 export type DeleteSessionsMutationHookResult = ReturnType<typeof useDeleteSessionsMutation>;
 export type DeleteSessionsMutationResult = Apollo.MutationResult<DeleteSessionsMutation>;
@@ -4003,7 +3318,8 @@ export const NotificationsDocument = gql`
  * });
  */
 export function useNotificationsSubscription(baseOptions: Apollo.SubscriptionHookOptions<NotificationsSubscription, NotificationsSubscriptionVariables>) {
-        return Apollo.useSubscription<NotificationsSubscription, NotificationsSubscriptionVariables>(NotificationsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NotificationsSubscription, NotificationsSubscriptionVariables>(NotificationsDocument, options);
       }
 export type NotificationsSubscriptionHookResult = ReturnType<typeof useNotificationsSubscription>;
 export type NotificationsSubscriptionResult = Apollo.SubscriptionResult<NotificationsSubscription>;
@@ -4038,10 +3354,12 @@ export const TermsDocument = gql`
  * });
  */
 export function useTermsQuery(baseOptions?: Apollo.QueryHookOptions<TermsQuery, TermsQueryVariables>) {
-        return Apollo.useQuery<TermsQuery, TermsQueryVariables>(TermsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TermsQuery, TermsQueryVariables>(TermsDocument, options);
       }
 export function useTermsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermsQuery, TermsQueryVariables>) {
-          return Apollo.useLazyQuery<TermsQuery, TermsQueryVariables>(TermsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TermsQuery, TermsQueryVariables>(TermsDocument, options);
         }
 export type TermsQueryHookResult = ReturnType<typeof useTermsQuery>;
 export type TermsLazyQueryHookResult = ReturnType<typeof useTermsLazyQuery>;
@@ -4078,10 +3396,12 @@ export const TermDocument = gql`
  * });
  */
 export function useTermQuery(baseOptions: Apollo.QueryHookOptions<TermQuery, TermQueryVariables>) {
-        return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TermQuery, TermQueryVariables>(TermDocument, options);
       }
 export function useTermLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TermQuery, TermQueryVariables>) {
-          return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TermQuery, TermQueryVariables>(TermDocument, options);
         }
 export type TermQueryHookResult = ReturnType<typeof useTermQuery>;
 export type TermLazyQueryHookResult = ReturnType<typeof useTermLazyQuery>;
@@ -4120,7 +3440,8 @@ export type CreateTermMutationFn = Apollo.MutationFunction<CreateTermMutation, C
  * });
  */
 export function useCreateTermMutation(baseOptions?: Apollo.MutationHookOptions<CreateTermMutation, CreateTermMutationVariables>) {
-        return Apollo.useMutation<CreateTermMutation, CreateTermMutationVariables>(CreateTermDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTermMutation, CreateTermMutationVariables>(CreateTermDocument, options);
       }
 export type CreateTermMutationHookResult = ReturnType<typeof useCreateTermMutation>;
 export type CreateTermMutationResult = Apollo.MutationResult<CreateTermMutation>;
@@ -4159,7 +3480,8 @@ export type UpdateTermMutationFn = Apollo.MutationFunction<UpdateTermMutation, U
  * });
  */
 export function useUpdateTermMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTermMutation, UpdateTermMutationVariables>) {
-        return Apollo.useMutation<UpdateTermMutation, UpdateTermMutationVariables>(UpdateTermDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTermMutation, UpdateTermMutationVariables>(UpdateTermDocument, options);
       }
 export type UpdateTermMutationHookResult = ReturnType<typeof useUpdateTermMutation>;
 export type UpdateTermMutationResult = Apollo.MutationResult<UpdateTermMutation>;
@@ -4189,7 +3511,8 @@ export type DeleteTermMutationFn = Apollo.MutationFunction<DeleteTermMutation, D
  * });
  */
 export function useDeleteTermMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTermMutation, DeleteTermMutationVariables>) {
-        return Apollo.useMutation<DeleteTermMutation, DeleteTermMutationVariables>(DeleteTermDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTermMutation, DeleteTermMutationVariables>(DeleteTermDocument, options);
       }
 export type DeleteTermMutationHookResult = ReturnType<typeof useDeleteTermMutation>;
 export type DeleteTermMutationResult = Apollo.MutationResult<DeleteTermMutation>;
@@ -4229,10 +3552,12 @@ export const TimetablesDocument = gql`
  * });
  */
 export function useTimetablesQuery(baseOptions?: Apollo.QueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
-        return Apollo.useQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, options);
       }
 export function useTimetablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TimetablesQuery, TimetablesQueryVariables>) {
-          return Apollo.useLazyQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TimetablesQuery, TimetablesQueryVariables>(TimetablesDocument, options);
         }
 export type TimetablesQueryHookResult = ReturnType<typeof useTimetablesQuery>;
 export type TimetablesLazyQueryHookResult = ReturnType<typeof useTimetablesLazyQuery>;
@@ -4275,7 +3600,8 @@ export type CreateTimetableMutationFn = Apollo.MutationFunction<CreateTimetableM
  * });
  */
 export function useCreateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<CreateTimetableMutation, CreateTimetableMutationVariables>) {
-        return Apollo.useMutation<CreateTimetableMutation, CreateTimetableMutationVariables>(CreateTimetableDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTimetableMutation, CreateTimetableMutationVariables>(CreateTimetableDocument, options);
       }
 export type CreateTimetableMutationHookResult = ReturnType<typeof useCreateTimetableMutation>;
 export type CreateTimetableMutationResult = Apollo.MutationResult<CreateTimetableMutation>;
@@ -4318,7 +3644,8 @@ export type UpdateTimetableMutationFn = Apollo.MutationFunction<UpdateTimetableM
  * });
  */
 export function useUpdateTimetableMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTimetableMutation, UpdateTimetableMutationVariables>) {
-        return Apollo.useMutation<UpdateTimetableMutation, UpdateTimetableMutationVariables>(UpdateTimetableDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTimetableMutation, UpdateTimetableMutationVariables>(UpdateTimetableDocument, options);
       }
 export type UpdateTimetableMutationHookResult = ReturnType<typeof useUpdateTimetableMutation>;
 export type UpdateTimetableMutationResult = Apollo.MutationResult<UpdateTimetableMutation>;
@@ -4348,7 +3675,8 @@ export type DeleteTimetableMutationFn = Apollo.MutationFunction<DeleteTimetableM
  * });
  */
 export function useDeleteTimetableMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTimetableMutation, DeleteTimetableMutationVariables>) {
-        return Apollo.useMutation<DeleteTimetableMutation, DeleteTimetableMutationVariables>(DeleteTimetableDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTimetableMutation, DeleteTimetableMutationVariables>(DeleteTimetableDocument, options);
       }
 export type DeleteTimetableMutationHookResult = ReturnType<typeof useDeleteTimetableMutation>;
 export type DeleteTimetableMutationResult = Apollo.MutationResult<DeleteTimetableMutation>;

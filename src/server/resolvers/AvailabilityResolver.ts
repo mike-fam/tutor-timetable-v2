@@ -44,6 +44,15 @@ export class AvailabilityResolver {
         return await models.timeslot.getMany({ userId: user.id }, user);
     }
 
+    @Query(() => [Timeslot])
+    async tutorAvailability(
+        @Arg("userId", () => String) userId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timeslot[]> {
+        const user = req.user;
+        return await models.timeslot.getMany({ userId: userId }, user);
+    }
+
     @Mutation(() => [Timeslot])
     async updateAvailabilities(
         @Arg("timeslots", () => [TimeslotInput])

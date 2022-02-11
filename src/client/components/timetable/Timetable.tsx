@@ -7,7 +7,7 @@ import { IsoDay } from "../../../types/date";
 import { TimetableSessionType } from "../../types/timetable";
 
 export type Props<T> = {
-    displayedDays: Array<IsoDay>;
+    displayedDays?: Array<IsoDay>;
     renderDay: (
         dayProps: Omit<
             DayProps<T>,
@@ -22,7 +22,7 @@ export type Props<T> = {
 };
 
 export const Timetable = <T,>({
-    displayedDays,
+    displayedDays = [1, 2, 3, 4, 5, 6, 7],
     startTime = 7,
     endTime = 20,
     renderDay,
