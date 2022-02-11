@@ -7,14 +7,17 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { CourseStaffsQuery } from "../../generated/graphql";
+import {
+    CourseStaffsQuery,
+    StaffEnteredAvailability,
+} from "../../generated/graphql";
 import { defaultStr } from "../../constants";
 import sortBy from "lodash/sortBy";
 
 type Props = {
     term: string;
     course: string;
-    courseStaffs: CourseStaffsQuery["courseStaffs"];
+    courseStaffs: StaffEnteredAvailability[];
     currentTutor: string;
     chooseTutor: Dispatch<SetStateAction<string>>;
 };
@@ -34,13 +37,17 @@ export const CourseStaffGrid: FC<Props> = ({
     return (
         <SimpleGrid minChildWidth="120px" spacing="20px">
             {sortBy(courseStaffs, (courseStaff) => {
-                return [courseStaff.role, courseStaff.user.name];
+                return [courseStaff.name];
             }).map((courseStaff, key) => (
                 <Box
-                    key={courseStaff.user.id}
-                    onClick={(e) => chooseTutor(courseStaff.user.id)}
+                    key={key}
+                    onClick={(e) => chooseTutor(courseStaff.id)}
                     bg={
-                        currentTutor === courseStaff.user.id ? bgColor : "white"
+                        currentTutor === courseStaff.id
+                            ? bgColor
+                            : courseStaff.entered
+                            ? "green.100"
+                            : "white"
                     }
                     borderRadius="md"
                     borderWidth="1px"
@@ -48,7 +55,7 @@ export const CourseStaffGrid: FC<Props> = ({
                 >
                     <Flex>
                         <Center w="100px">
-                            <Text>{courseStaff.user.name}</Text>
+                            <Text>{courseStaff.name}</Text>
                         </Center>
                     </Flex>
                 </Box>

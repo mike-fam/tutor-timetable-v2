@@ -16,6 +16,8 @@ import {
     useQueryWithError,
 } from "../../hooks/useApolloHooksWithError";
 import {
+    StaffEnteredAvailability,
+    useAvailabilityMonitorLazyQuery,
     useCourseStaffsLazyQuery,
     useTermsQuery,
     useTutorAvailabilityLazyQuery,
@@ -26,7 +28,6 @@ import { CourseSelectContainer } from "../CourseSelectContainer";
 import { defaultStr } from "../../constants";
 import { Loadable } from "../../components/helpers/Loadable";
 import { CourseStaffGrid } from "./CourseStaffGrid";
-import { CourseStaffResponseType } from "../../types/courseStaff";
 
 import { Map } from "immutable";
 import { Timetable } from "../../components/timetable/Timetable";
@@ -53,7 +54,7 @@ export const AvailabilityMonitorContainer: FC<Props> = () => {
     }, [termsData, changeTerm]);
 
     const [getCourseStaff, { data: getCourseStaffData }] =
-        useLazyQueryWithError(useCourseStaffsLazyQuery, {});
+        useLazyQueryWithError(useAvailabilityMonitorLazyQuery, {});
     useEffect(() => {
         if (termId === defaultStr || courseId === defaultStr) {
             return;
@@ -69,13 +70,13 @@ export const AvailabilityMonitorContainer: FC<Props> = () => {
     }, [termId, courseId, getCourseStaff]);
 
     const [courseStaff, setCourseStaff] = useState<
-        Map<string, CourseStaffResponseType>
-    >(Map<string, CourseStaffResponseType>());
+        Map<string, StaffEnteredAvailability>
+    >(Map<string, StaffEnteredAvailability>());
     useEffect(() => {
         if (!getCourseStaffData) {
             return;
         }
-        getCourseStaffData.courseStaffs.forEach((courseStaff) => {
+        getCourseStaffData.staffWithAvailabilities.forEach((courseStaff) => {
             setCourseStaff((prev) => prev.set(courseStaff.id, courseStaff));
         });
     }, [getCourseStaffData]);

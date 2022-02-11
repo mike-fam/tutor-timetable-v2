@@ -418,6 +418,7 @@ export type Query = {
   sessionById: Session;
   sessionStreams: Array<SessionStream>;
   sessions: Array<Session>;
+  staffWithAvailabilities: Array<StaffEnteredAvailability>;
   term: Term;
   terms: Array<Term>;
   timetable: Timetable;
@@ -507,6 +508,11 @@ export type QuerySessionsArgs = {
   courseIds: Array<Scalars['String']>;
   termId: Scalars['String'];
   week: Scalars['Int'];
+};
+
+
+export type QueryStaffWithAvailabilitiesArgs = {
+  courseTermInput: CourseTermIdInput;
 };
 
 
@@ -601,6 +607,13 @@ export enum SessionType {
   Tutorial = 'TUTORIAL',
   Workshop = 'WORKSHOP'
 }
+
+export type StaffEnteredAvailability = {
+  __typename?: 'StaffEnteredAvailability';
+  entered: Scalars['Boolean'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
 
 export type StaffRequest = {
   __typename?: 'StaffRequest';
@@ -814,6 +827,13 @@ export type TutorAvailabilityQueryVariables = Exact<{
 
 
 export type TutorAvailabilityQuery = { __typename?: 'Query', tutorAvailability: Array<{ __typename?: 'Timeslot', id: string, startTime: number, endTime: number, day: number }> };
+
+export type AvailabilityMonitorQueryVariables = Exact<{
+  courseTermInput: CourseTermIdInput;
+}>;
+
+
+export type AvailabilityMonitorQuery = { __typename?: 'Query', staffWithAvailabilities: Array<{ __typename?: 'StaffEnteredAvailability', id: string, name: string, entered: boolean }> };
 
 export type UpdateAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput> | TimeslotInput;
@@ -1410,6 +1430,43 @@ export function useTutorAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type TutorAvailabilityQueryHookResult = ReturnType<typeof useTutorAvailabilityQuery>;
 export type TutorAvailabilityLazyQueryHookResult = ReturnType<typeof useTutorAvailabilityLazyQuery>;
 export type TutorAvailabilityQueryResult = Apollo.QueryResult<TutorAvailabilityQuery, TutorAvailabilityQueryVariables>;
+export const AvailabilityMonitorDocument = gql`
+    query AvailabilityMonitor($courseTermInput: CourseTermIdInput!) {
+  staffWithAvailabilities(courseTermInput: $courseTermInput) {
+    id
+    name
+    entered
+  }
+}
+    `;
+
+/**
+ * __useAvailabilityMonitorQuery__
+ *
+ * To run a query within a React component, call `useAvailabilityMonitorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAvailabilityMonitorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAvailabilityMonitorQuery({
+ *   variables: {
+ *      courseTermInput: // value for 'courseTermInput'
+ *   },
+ * });
+ */
+export function useAvailabilityMonitorQuery(baseOptions: Apollo.QueryHookOptions<AvailabilityMonitorQuery, AvailabilityMonitorQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AvailabilityMonitorQuery, AvailabilityMonitorQueryVariables>(AvailabilityMonitorDocument, options);
+      }
+export function useAvailabilityMonitorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AvailabilityMonitorQuery, AvailabilityMonitorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AvailabilityMonitorQuery, AvailabilityMonitorQueryVariables>(AvailabilityMonitorDocument, options);
+        }
+export type AvailabilityMonitorQueryHookResult = ReturnType<typeof useAvailabilityMonitorQuery>;
+export type AvailabilityMonitorLazyQueryHookResult = ReturnType<typeof useAvailabilityMonitorLazyQuery>;
+export type AvailabilityMonitorQueryResult = Apollo.QueryResult<AvailabilityMonitorQuery, AvailabilityMonitorQueryVariables>;
 export const UpdateAvailabilitiesDocument = gql`
     mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
