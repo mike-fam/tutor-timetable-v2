@@ -7,9 +7,7 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import {
-    StaffEnteredAvailability,
-} from "../../generated/graphql";
+import { StaffEnteredAvailability } from "../../generated/graphql";
 import { defaultStr } from "../../constants";
 import sortBy from "lodash/sortBy";
 
