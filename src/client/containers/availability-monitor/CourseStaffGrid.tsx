@@ -8,7 +8,6 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import {
-    CourseStaffsQuery,
     StaffEnteredAvailability,
 } from "../../generated/graphql";
 import { defaultStr } from "../../constants";

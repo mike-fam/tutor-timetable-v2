@@ -18,7 +18,6 @@ import {
 import {
     StaffEnteredAvailability,
     useAvailabilityMonitorLazyQuery,
-    useCourseStaffsLazyQuery,
     useTermsQuery,
     useTutorAvailabilityLazyQuery,
 } from "../../generated/graphql";
