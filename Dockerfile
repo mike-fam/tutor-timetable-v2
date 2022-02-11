@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:latest as base
+FROM node:16 as base
 
 WORKDIR /app
 
