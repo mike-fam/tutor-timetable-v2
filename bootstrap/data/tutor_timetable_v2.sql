@@ -1831,7 +1831,7 @@ INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") V
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqmhowe', 'Mark Howell', 'mark.howell@example.com', 'fd506f28-69f7-4132-94f3-266e9870df33', false, NULL);
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqdvarg', 'Danielle Vargas', 'danielle.vargas@example.com', '2dbda7f0-0ca2-46b7-ba8f-8f356ac3782e', false, NULL);
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqafiel', 'Alfredo Fields', 'alfredo.fields@example.com', 'adcfba2f-b728-47d9-b7f3-a33dae7ca6e9', false, NULL);
-INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqphaye', 'Paul Hayes', 'paul.hayes@example.com', '53ac4ab7-7c72-4129-a558-2e9d702a25cb', false, NULL);
+INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqphaye', 'Paul Hayes', 'paul.hayes@example.com', '53ac4ab7-7c72-4129-a558-2e9d702a25cb', true, NULL);
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqjbowm', 'Jo Bowman', 'jo.bowman@example.com', 'b97e746c-6cce-42d8-b851-33c71ca8e563', false, NULL);
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqsdixo', 'Sophia Dixon', 'sophia.dixon@example.com', 'abbf094f-758c-4d84-b685-6b3ddab80cf1', false, NULL);
 INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") VALUES ('uqtolso', 'Terrance Olson', 'terrance.olson@example.com', '9be82e08-7a5a-4f67-9264-d96d6338f984', false, NULL);

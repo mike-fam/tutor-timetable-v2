@@ -16,6 +16,23 @@ query MyAvailability {
     }
 }
 
+query TutorAvailability($userId: String!) {
+    tutorAvailability(userId: $userId) {
+        id
+        startTime
+        endTime
+        day
+    }
+}
+
+query AvailabilityMonitor($courseTermInput: CourseTermIdInput!) {
+    staffWithAvailabilities(courseTermInput: $courseTermInput) {
+        id
+        name
+        entered
+    }
+}
+
 mutation UpdateAvailabilities($timeslots: [TimeslotInput!]!) {
     updateAvailabilities(timeslots: $timeslots) {
         id
