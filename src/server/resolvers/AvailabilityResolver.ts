@@ -6,6 +6,7 @@ import {
     InputType,
     Int,
     Mutation,
+    ObjectType,
     Query,
     Resolver,
     Root,
@@ -15,6 +16,7 @@ import { MyContext } from "../types/context";
 import { IsoDay } from "../../types/date";
 import { In } from "typeorm";
 import { ModificationType } from "../inputs/ModificationType";
+import { CourseTermIdInput } from "./CourseTermId";
 
 @InputType()
 class TimeslotInput {
@@ -34,6 +36,18 @@ class TimeslotInput {
     modificationType: ModificationType;
 }
 
+@ObjectType()
+class StaffEnteredAvailability {
+    @Field()
+    id: string;
+
+    @Field()
+    name: string;
+
+    @Field()
+    entered: boolean;
+}
+
 @Resolver(() => Timeslot)
 export class AvailabilityResolver {
     @Query(() => [Timeslot])
@@ -42,6 +56,48 @@ export class AvailabilityResolver {
     ): Promise<Timeslot[]> {
         const user = req.user;
         return await models.timeslot.getMany({ userId: user.id }, user);
+    }
+
+    @Query(() => [Timeslot])
+    async tutorAvailability(
+        @Arg("userId", () => String) userId: string,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Timeslot[]> {
+        const user = req.user;
+        return await models.timeslot.getMany({ userId: userId }, user);
+    }
+
+    @Query(() => [StaffEnteredAvailability])
+    async staffWithAvailabilities(
+        @Arg("courseTermInput", () => CourseTermIdInput)
+        { courseId, termId }: CourseTermIdInput,
+        @Ctx() { req, models }: MyContext
+    ): Promise<StaffEnteredAvailability[]> {
+        const user = req.user;
+        const timetable = await models.timetable.get(
+            { courseId, termId },
+            user
+        );
+        const staff = await models.courseStaff.getMany(
+            { timetableId: timetable.id },
+            user
+        );
+        const result = [];
+        for (const staffMember of staff) {
+            console.log(staffMember);
+            const timeslots = await models.timeslot.getMany(
+                { userId: staffMember.userId },
+                user
+            );
+            console.log(timeslots);
+            const staff = await staffMember.user;
+            result.push({
+                id: staffMember.userId,
+                name: staff.name,
+                entered: timeslots.length > 0,
+            });
+        }
+        return result;
     }
 
     @Mutation(() => [Timeslot])

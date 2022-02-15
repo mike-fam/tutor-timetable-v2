@@ -10,6 +10,7 @@ import { PermissionDenied } from "./PermissionDenied";
 import { RequireAuth } from "./components/helpers/RequireAuth";
 import { Role } from "./generated/graphql";
 import { SessionSettingsPageContainer } from "./containers/session-settings/SessionSettingsPageContainer";
+import { AvailabilityMonitorContainer } from "./containers/availability-monitor/AvailabilityMonitorContainer";
 import { AdminPageContainer } from "./containers/admin/AdminPageContainer";
 
 export const AppRouter: FC = () => {
@@ -52,6 +53,14 @@ export const AppRouter: FC = () => {
                     element={
                         <RequireAuth allowedRoles={[Role.CourseCoordinator]}>
                             <SessionSettingsPageContainer />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/availability-monitor"
+                    element={
+                        <RequireAuth allowedRoles={[Role.CourseCoordinator]}>
+                            <AvailabilityMonitorContainer />
                         </RequireAuth>
                     }
                 />

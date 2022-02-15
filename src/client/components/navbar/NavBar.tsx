@@ -88,6 +88,15 @@ export const NavBar: FC<Props> = () => {
                                         Session Settings
                                     </RouterLink>
                                 </MenuItem>
+                                <MenuItem>
+                                    <RouterLink
+                                        to="/availability-monitor"
+                                        fullHeight
+                                        fullWidth
+                                    >
+                                        Availability Monitor
+                                    </RouterLink>
+                                </MenuItem>
                                 {user.isAdmin && (
                                     <MenuItem>
                                         <RouterLink
