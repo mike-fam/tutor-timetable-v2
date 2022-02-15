@@ -106,6 +106,7 @@ type SessionStreamInput = {
     location: string;
     day: IsoDay;
     weeks: Array<WeekId>;
+    is_root: boolean;
 };
 
 type AvailabilityInput = { [key in IsoDay]?: Array<[number, number]> };
@@ -267,6 +268,7 @@ export class AllocatorResolver {
                 day: sessionStream.day,
                 weeks: sessionStream.weeks,
                 location: sessionStream.location,
+                is_root: !sessionStream.rootId,
             })
         );
         const staffInput: StaffInput[] = (
