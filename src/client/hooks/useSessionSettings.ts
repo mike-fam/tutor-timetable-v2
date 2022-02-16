@@ -14,6 +14,7 @@ import {
     useUpdateSessionAllocationMutation,
     useUpdateSessionMutation,
     useUpdateSessionStreamsMutation,
+    useExportAllocationDataLazyQuery,
 } from "../generated/graphql";
 import {
     useLazyQueryWithError,
@@ -684,6 +685,58 @@ export const useSessionSettings = () => {
         );
     }, [allocationResult]);
 
+    const [
+        exportCSV,
+        { data: exportAllocationData, loading: exportAllocationLoading },
+    ] = useLazyQueryWithError(useExportAllocationDataLazyQuery, {
+        variables: {
+            courseId,
+            termId,
+        },
+    });
+
+    const [csvData, setCSV] = useState<String[][]>([]);
+
+    useEffect(() => {
+        if (!exportAllocationData) {
+            return;
+        }
+
+        const rows = [];
+
+        for (const {
+            timetable,
+            type,
+            root,
+            name,
+            day,
+            startTime,
+            endTime,
+            location,
+            weeks,
+            allocatedUsers
+        } of exportAllocationData.sessionStreams) {
+            const course = timetable.course.code;
+            const base = root?.name;
+
+            const row = [
+                course,
+                type,
+                base ? base : name,
+                name,
+                day.toString(),
+                startTime.toString(),
+                ((endTime - startTime)*60).toString(),
+                location,
+                weeks.join(','),
+            ].concat(allocatedUsers.map((user) => user.name));
+
+            rows.push(row);
+        }
+
+        setCSV(rows);
+    }, [exportAllocationData]);
+
     // TODO: Implement week cache
     return {
         selection: {
@@ -726,6 +779,7 @@ export const useSessionSettings = () => {
             submitChanges,
             requestAllocation,
             checkAllocation,
+            exportCSV,
         },
         base: {
             courseId,
@@ -736,6 +790,7 @@ export const useSessionSettings = () => {
             chooseWeek,
             course,
             term,
+            csvData,
         },
         loading:
             streamsLoading ||
@@ -746,6 +801,7 @@ export const useSessionSettings = () => {
             publicTimetableLoading ||
             updatedSessionsLoading ||
             updatedSessionsAllocationLoading ||
-            deletedSessionsLoading,
+            deletedSessionsLoading ||
+            exportAllocationLoading,
     };
 };
