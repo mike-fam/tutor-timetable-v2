@@ -72,7 +72,7 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
 
     const toast = useToast();
     useEffect(() => {
-        if (csvData.length == 0) {
+        if (csvData.length === 0) {
             return;
         }
 
@@ -80,7 +80,7 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
             filename={`${course?.code}-${term?.year}.csv`}
             headers={["Course", "Type", "Session", "Stream", "Day", "Start", "Duration", "Location", "Weeks"]}
             data={csvData}
-        >Click here to download CSV</CSVLink>
+        >Click here to download CSV</CSVLink>;
 
         toast({
             title: "Export Successful",
@@ -90,7 +90,7 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
             isClosable: true,
             duration: 9000,
         });
-    }, [csvData, toast]);
+    }, [csvData, toast, course, term]);
 
     return (
         <Wrapper>
