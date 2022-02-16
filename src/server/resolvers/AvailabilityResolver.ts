@@ -84,12 +84,10 @@ export class AvailabilityResolver {
         );
         const result = [];
         for (const staffMember of staff) {
-            console.log(staffMember);
             const timeslots = await models.timeslot.getMany(
                 { userId: staffMember.userId },
                 user
             );
-            console.log(timeslots);
             const staff = await staffMember.user;
             result.push({
                 id: staffMember.userId,

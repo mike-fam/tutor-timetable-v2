@@ -809,6 +809,14 @@ export type CheckAllocationQueryVariables = Exact<{
 
 export type CheckAllocationQuery = { __typename?: 'Query', checkAllocation: { __typename?: 'AllocatorOutput', type: AllocationStatus, title: string, message: string, allocatedStreams: Array<{ __typename?: 'AllocatorStream', streamId: string, baseAllocation: { __typename?: 'BaseGeneratedAllocationPattern', allocatedUsers: Array<string> }, extraAllocations: Array<{ __typename?: 'ExtraGeneratedAllocationPattern', allocatedUsers: Array<string>, weeks: Array<number> }> }> } };
 
+export type ExportAllocationDataQueryVariables = Exact<{
+  courseId: Scalars['String'];
+  termId: Scalars['String'];
+}>;
+
+
+export type ExportAllocationDataQuery = { __typename?: 'Query', sessionStreams: Array<{ __typename?: 'SessionStream', type: SessionType, name: string, day: number, startTime: number, endTime: number, location: string, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', code: string } }, root?: { __typename?: 'SessionStream', name: string } | null | undefined, allocatedUsers: Array<{ __typename?: 'User', name: string }> }> };
+
 export type AddAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput> | TimeslotInput;
 }>;
@@ -1319,6 +1327,59 @@ export function useCheckAllocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type CheckAllocationQueryHookResult = ReturnType<typeof useCheckAllocationQuery>;
 export type CheckAllocationLazyQueryHookResult = ReturnType<typeof useCheckAllocationLazyQuery>;
 export type CheckAllocationQueryResult = Apollo.QueryResult<CheckAllocationQuery, CheckAllocationQueryVariables>;
+export const ExportAllocationDataDocument = gql`
+    query exportAllocationData($courseId: String!, $termId: String!) {
+  sessionStreams(courseIds: [$courseId], termId: $termId) {
+    timetable {
+      course {
+        code
+      }
+    }
+    type
+    root {
+      name
+    }
+    name
+    day
+    startTime
+    endTime
+    location
+    weeks
+    allocatedUsers {
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useExportAllocationDataQuery__
+ *
+ * To run a query within a React component, call `useExportAllocationDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExportAllocationDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExportAllocationDataQuery({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *      termId: // value for 'termId'
+ *   },
+ * });
+ */
+export function useExportAllocationDataQuery(baseOptions: Apollo.QueryHookOptions<ExportAllocationDataQuery, ExportAllocationDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExportAllocationDataQuery, ExportAllocationDataQueryVariables>(ExportAllocationDataDocument, options);
+      }
+export function useExportAllocationDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExportAllocationDataQuery, ExportAllocationDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExportAllocationDataQuery, ExportAllocationDataQueryVariables>(ExportAllocationDataDocument, options);
+        }
+export type ExportAllocationDataQueryHookResult = ReturnType<typeof useExportAllocationDataQuery>;
+export type ExportAllocationDataLazyQueryHookResult = ReturnType<typeof useExportAllocationDataLazyQuery>;
+export type ExportAllocationDataQueryResult = Apollo.QueryResult<ExportAllocationDataQuery, ExportAllocationDataQueryVariables>;
 export const AddAvailabilitiesDocument = gql`
     mutation addAvailabilities($timeslots: [TimeslotInput!]!) {
   updateAvailabilities(timeslots: $timeslots) {
