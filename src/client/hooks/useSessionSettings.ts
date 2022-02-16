@@ -695,7 +695,7 @@ export const useSessionSettings = () => {
         },
     });
 
-    const [csvData, setCSV] = useState<String[][]>([]);
+    const [csvData, setCSV] = useState<string[][]>([]);
 
     useEffect(() => {
         if (!exportAllocationData) {
