@@ -35,26 +35,26 @@ query CheckAllocation($timetableInput: CourseTermIdInput!) {
 }
 
 query exportAllocationData($courseId: String!, $termId: String!) {
-  sessionStreams(courseIds: [$courseId], termId: $termId) {
-    timetable {
-      course {
-        code
-      }
-    }
+    sessionStreams(courseIds: [$courseId], termId: $termId) {
+        timetable {
+            course {
+                code
+            }
+        }
 
-    type
-    root {
-      name
-    }
-    name
-    day
-    startTime
-    endTime
-    location
-    weeks
+        type
+        root {
+            name
+        }
+        name
+        day
+        startTime
+        endTime
+        location
+        weeks
 
-    allocatedUsers {
-      name
+        allocatedUsers {
+            name
+        }
     }
-  }
 }

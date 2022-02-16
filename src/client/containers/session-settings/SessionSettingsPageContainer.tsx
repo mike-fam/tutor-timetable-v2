@@ -52,7 +52,8 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
     } = selection;
     const { streamActions } = timetableState;
     const { deleteSelectedStreams, editMultipleStreamSettings } = streamActions;
-    const { submitChanges, requestAllocation, checkAllocation, exportCSV } = actions;
+    const { submitChanges, requestAllocation, checkAllocation, exportCSV } =
+        actions;
     const {
         isOpen: isFetchModalOpen,
         onClose: closeFetchModal,
@@ -76,11 +77,25 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
             return;
         }
 
-        const link = <CSVLink
-            filename={`${course?.code}-${term?.year}.csv`}
-            headers={["Course", "Type", "Session", "Stream", "Day", "Start", "Duration", "Location", "Weeks"]}
-            data={csvData}
-        >Click here to download CSV</CSVLink>;
+        const link = (
+            <CSVLink
+                filename={`${course?.code}-${term?.year}.csv`}
+                headers={[
+                    "Course",
+                    "Type",
+                    "Session",
+                    "Stream",
+                    "Day",
+                    "Start",
+                    "Duration",
+                    "Location",
+                    "Weeks",
+                ]}
+                data={csvData}
+            >
+                Click here to download CSV
+            </CSVLink>
+        );
 
         toast({
             title: "Export Successful",
@@ -181,7 +196,9 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
                                             onClick={() => {
                                                 exportCSV();
                                             }}
-                                        >Export to CSV</MenuItem>
+                                        >
+                                            Export to CSV
+                                        </MenuItem>
                                         {/* <MenuItem>Export Budget</MenuItem> */}
                                     </MenuGroup>
                                 </MenuList>

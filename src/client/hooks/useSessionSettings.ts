@@ -714,7 +714,7 @@ export const useSessionSettings = () => {
             endTime,
             location,
             weeks,
-            allocatedUsers
+            allocatedUsers,
         } of exportAllocationData.sessionStreams) {
             const course = timetable.course.code;
             const base = root?.name;
@@ -726,9 +726,9 @@ export const useSessionSettings = () => {
                 name,
                 day.toString(),
                 startTime.toString(),
-                ((endTime - startTime)*60).toString(),
+                ((endTime - startTime) * 60).toString(),
                 location,
-                weeks.join(','),
+                weeks.join(","),
             ].concat(allocatedUsers.map((user) => user.name));
 
             rows.push(row);
