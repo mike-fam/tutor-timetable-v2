@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.3 (Ubuntu 13.3-1.pgdg20.04+1)
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg20.04+1)
+-- Dumped from database version 14.0
+-- Dumped by pg_dump version 14.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,103 +16,43 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "FK_f8d9da2b83b977dcc23b6c2fc60";
-ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "FK_e8100751be1076656606ae045e3";
-ALTER TABLE IF EXISTS ONLY public.session_stream_allocated_users_user DROP CONSTRAINT IF EXISTS "FK_e62630c379f91fe30d920b34626";
-ALTER TABLE IF EXISTS ONLY public.session_stream DROP CONSTRAINT IF EXISTS "FK_e5d1bede2546c0a492f77ae71ec";
-ALTER TABLE IF EXISTS ONLY public.session DROP CONSTRAINT IF EXISTS "FK_e18308596f3076e9de1d80c6f51";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "FK_d3dfdd3bab57eedfcf1e45bc72d";
-ALTER TABLE IF EXISTS ONLY public.staff_request_swap_preference_session DROP CONSTRAINT IF EXISTS "FK_c13a3a9d35ffb7497f0a93cb570";
-ALTER TABLE IF EXISTS ONLY public.stream_allocation DROP CONSTRAINT IF EXISTS "FK_bc7afec02062c5cedc6d14bd6af";
-ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "FK_b5bd4b6466627203e4bc13b5fe0";
-ALTER TABLE IF EXISTS ONLY public.stream_allocation DROP CONSTRAINT IF EXISTS "FK_b3d5528826d766b691e1132107f";
-ALTER TABLE IF EXISTS ONLY public.timetable DROP CONSTRAINT IF EXISTS "FK_9cc6b2c53c23571cad8390666f4";
-ALTER TABLE IF EXISTS ONLY public.offer_preferences_session DROP CONSTRAINT IF EXISTS "FK_971f3356e937e94d7c26d27d15a";
-ALTER TABLE IF EXISTS ONLY public.staff_request_swap_preference_session DROP CONSTRAINT IF EXISTS "FK_9159aa0df8131c1cd0f242c84dc";
-ALTER TABLE IF EXISTS ONLY public.session_stream_allocated_users_user DROP CONSTRAINT IF EXISTS "FK_76fe690bd48a4cd9aa58bfcb455";
-ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "FK_726c425ec6ac8e07a84332e6fbb";
-ALTER TABLE IF EXISTS ONLY public.session_stream DROP CONSTRAINT IF EXISTS "FK_66028ae4744099f055d7763a503";
-ALTER TABLE IF EXISTS ONLY public.timetable DROP CONSTRAINT IF EXISTS "FK_531f53d06003b9e25ed9f2f0cd3";
-ALTER TABLE IF EXISTS ONLY public.session_allocation DROP CONSTRAINT IF EXISTS "FK_4ad45c42f963d66b7d38b6e9fe8";
-ALTER TABLE IF EXISTS ONLY public.timeslot DROP CONSTRAINT IF EXISTS "FK_47d06adf246fcfea1d318423ee3";
-ALTER TABLE IF EXISTS ONLY public.session_allocation DROP CONSTRAINT IF EXISTS "FK_4229fc0a3545c3afd0bfb0bb7e4";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_streams_session_stream DROP CONSTRAINT IF EXISTS "FK_3e1a73101620f738bc61dffa195";
-ALTER TABLE IF EXISTS ONLY public.offer_preferences_session DROP CONSTRAINT IF EXISTS "FK_3a098cb4f1707a4d217954cfab9";
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS "FK_390395c3d8592e3e8d8422ce853";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_sessions_session DROP CONSTRAINT IF EXISTS "FK_37f7a2c9293d636e7b3c1b0482e";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "FK_2f8044368c327e2ad804dc1fe56";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "FK_2e099fcbb0ffe5108a4df4b31c8";
-ALTER TABLE IF EXISTS ONLY public.notification DROP CONSTRAINT IF EXISTS "FK_1ced25315eb974b73391fb1c81b";
-ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "FK_0f5d437fc98264cfb98dafdf080";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_streams_session_stream DROP CONSTRAINT IF EXISTS "FK_0c7b4b679e253d31c11e6d99341";
-ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "FK_0a9f568475b4a5401669c61333f";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_sessions_session DROP CONSTRAINT IF EXISTS "FK_0285bd5e90495ffd4540a213be3";
-DROP INDEX IF EXISTS public."IDX_e62630c379f91fe30d920b3462";
-DROP INDEX IF EXISTS public."IDX_c13a3a9d35ffb7497f0a93cb57";
-DROP INDEX IF EXISTS public."IDX_971f3356e937e94d7c26d27d15";
-DROP INDEX IF EXISTS public."IDX_9159aa0df8131c1cd0f242c84d";
-DROP INDEX IF EXISTS public."IDX_76fe690bd48a4cd9aa58bfcb45";
-DROP INDEX IF EXISTS public."IDX_3e1a73101620f738bc61dffa19";
-DROP INDEX IF EXISTS public."IDX_3a098cb4f1707a4d217954cfab";
-DROP INDEX IF EXISTS public."IDX_37f7a2c9293d636e7b3c1b0482";
-DROP INDEX IF EXISTS public."IDX_0c7b4b679e253d31c11e6d9934";
-DROP INDEX IF EXISTS public."IDX_0285bd5e90495ffd4540a213be";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "UQ_f33c09ecdf4a0ee5a8a27ac971d";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "UQ_d3dfdd3bab57eedfcf1e45bc72d";
-ALTER TABLE IF EXISTS ONLY public.term DROP CONSTRAINT IF EXISTS "UQ_97a51c8bbbe5d3db497ccffe035";
-ALTER TABLE IF EXISTS ONLY public.stream_allocation DROP CONSTRAINT IF EXISTS "UQ_8b449413d5d44c30ffff74aa0f0";
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS "UQ_78a916df40e02a9deb1c4b75edb";
-ALTER TABLE IF EXISTS ONLY public.course DROP CONSTRAINT IF EXISTS "UQ_5cf4963ae12285cda6432d5a3a4";
-ALTER TABLE IF EXISTS ONLY public.session_allocation DROP CONSTRAINT IF EXISTS "UQ_48fa99dd8231087c41a285f606f";
-ALTER TABLE IF EXISTS ONLY public.session DROP CONSTRAINT IF EXISTS "UQ_3d57e44540eb64af0e24d4a02ab";
-ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "UQ_3aa706a41308e3fd7107bf5d078";
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS "UQ_390395c3d8592e3e8d8422ce853";
-ALTER TABLE IF EXISTS ONLY public.timetable DROP CONSTRAINT IF EXISTS "UQ_091ca503e51c3de094972d48cb2";
-ALTER TABLE IF EXISTS ONLY public.session DROP CONSTRAINT IF EXISTS "PK_f55da76ac1c3ac420f444d2ff11";
-ALTER TABLE IF EXISTS ONLY public.timeslot DROP CONSTRAINT IF EXISTS "PK_cd8bca557ee1eb5b090b9e63009";
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS "PK_cace4a159ff9f2512dd42373760";
-ALTER TABLE IF EXISTS ONLY public.course DROP CONSTRAINT IF EXISTS "PK_bf95180dd756fd204fb01ce4916";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_sessions_session DROP CONSTRAINT IF EXISTS "PK_b4c4846f1e9b406a1097621fec1";
-ALTER TABLE IF EXISTS ONLY public.user_allocated_streams_session_stream DROP CONSTRAINT IF EXISTS "PK_acffe4d5864c18820399bde4116";
-ALTER TABLE IF EXISTS ONLY public.stream_allocation DROP CONSTRAINT IF EXISTS "PK_8ec85fd9f1f15f195b27a532dd9";
-ALTER TABLE IF EXISTS ONLY public.staff_request_swap_preference_session DROP CONSTRAINT IF EXISTS "PK_8d7af521a17327e34412a71a699";
-ALTER TABLE IF EXISTS ONLY public.migrations DROP CONSTRAINT IF EXISTS "PK_8c82d7f526340ab734260ea46be";
-ALTER TABLE IF EXISTS ONLY public.notification DROP CONSTRAINT IF EXISTS "PK_705b6c7cdf9b2c2ff7ac7872cb7";
-ALTER TABLE IF EXISTS ONLY public.course_staff DROP CONSTRAINT IF EXISTS "PK_6bc9388e2bf79cf6de4678dc81b";
-ALTER TABLE IF EXISTS ONLY public.preference DROP CONSTRAINT IF EXISTS "PK_5c4cbf49a1e97dcbc695bf462a6";
-ALTER TABLE IF EXISTS ONLY public.offer DROP CONSTRAINT IF EXISTS "PK_57c6ae1abe49201919ef68de900";
-ALTER TABLE IF EXISTS ONLY public.term DROP CONSTRAINT IF EXISTS "PK_55b0479f0743f2e5d5ec414821e";
-ALTER TABLE IF EXISTS ONLY public.session_allocation DROP CONSTRAINT IF EXISTS "PK_52c1e1b8d5dfae4448fb5c0d122";
-ALTER TABLE IF EXISTS ONLY public.session_stream DROP CONSTRAINT IF EXISTS "PK_4c05a74aa4bcb6232e597f6be83";
-ALTER TABLE IF EXISTS ONLY public.session_stream_allocated_users_user DROP CONSTRAINT IF EXISTS "PK_4ac2d5c51b2a40fab3d090c5d4d";
-ALTER TABLE IF EXISTS ONLY public.staff_request DROP CONSTRAINT IF EXISTS "PK_41bbafca9644c0f2bc09534df6d";
-ALTER TABLE IF EXISTS ONLY public.offer_preferences_session DROP CONSTRAINT IF EXISTS "PK_192129d1763740f5519d150d033";
-ALTER TABLE IF EXISTS ONLY public.timetable DROP CONSTRAINT IF EXISTS "PK_06001d91b3fe346fb1387ad1a15";
-ALTER TABLE IF EXISTS ONLY public.user_settings DROP CONSTRAINT IF EXISTS "PK_00f004f5922a0744d174530d639";
-ALTER TABLE IF EXISTS public.migrations ALTER COLUMN id DROP DEFAULT;
-DROP TABLE IF EXISTS public.user_settings;
-DROP TABLE IF EXISTS public.user_allocated_streams_session_stream;
-DROP TABLE IF EXISTS public.user_allocated_sessions_session;
-DROP TABLE IF EXISTS public."user";
-DROP TABLE IF EXISTS public.timetable;
-DROP TABLE IF EXISTS public.timeslot;
-DROP TABLE IF EXISTS public.term;
-DROP TABLE IF EXISTS public.stream_allocation;
-DROP TABLE IF EXISTS public.staff_request_swap_preference_session;
-DROP TABLE IF EXISTS public.staff_request;
-DROP TABLE IF EXISTS public.session_stream_allocated_users_user;
-DROP TABLE IF EXISTS public.session_stream;
-DROP TABLE IF EXISTS public.session_allocation;
-DROP TABLE IF EXISTS public.session;
-DROP TABLE IF EXISTS public.preference;
-DROP TABLE IF EXISTS public.offer_preferences_session;
-DROP TABLE IF EXISTS public.offer;
-DROP TABLE IF EXISTS public.notification;
-DROP SEQUENCE IF EXISTS public.migrations_id_seq;
-DROP TABLE IF EXISTS public.migrations;
-DROP TABLE IF EXISTS public.course_staff;
-DROP TABLE IF EXISTS public.course;
-DROP EXTENSION IF EXISTS "uuid-ossp";
+DROP DATABASE IF EXISTS tutor_timetable_dump;
+--
+-- Name: tutor_timetable_dump; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE tutor_timetable_dump WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'C';
+
+
+ALTER DATABASE tutor_timetable_dump OWNER TO postgres;
+
+\connect tutor_timetable_dump
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 --
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
@@ -154,7 +94,6 @@ CREATE TABLE public.course_staff (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     "userId" uuid NOT NULL,
     "timetableId" uuid NOT NULL,
-    "preferenceId" uuid,
     CONSTRAINT "CHK_7134fed2fd5c843787e17ccd39" CHECK ((((role)::text = 'Course Coordinator'::text) OR ((role)::text = 'Staff'::text)))
 );
 
@@ -249,8 +188,8 @@ CREATE TABLE public.preference (
     "maxContigHours" integer NOT NULL,
     "maxWeeklyHours" integer NOT NULL,
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    "courseStaffId" character varying NOT NULL,
-    CONSTRAINT "CHK_048b5ceb22fa1888c5c49d0139" CHECK (((("sessionType")::text = 'Practical'::text) OR (("sessionType")::text = 'Tutorial'::text) OR (("sessionType")::text = 'Seminar'::text) OR (("sessionType")::text = 'Lecture'::text) OR (("sessionType")::text = 'Studio'::text)))
+    "courseStaffId" uuid NOT NULL,
+    CONSTRAINT "CHK_80d4e63c0cab8968f42de54aa9" CHECK (((("sessionType")::text = 'Contact'::text) OR (("sessionType")::text = 'Practical'::text) OR (("sessionType")::text = 'Tutorial'::text) OR (("sessionType")::text = 'Seminar'::text) OR (("sessionType")::text = 'Lecture'::text) OR (("sessionType")::text = 'Studio'::text) OR (("sessionType")::text = 'Workshop'::text)))
 );
 
 
@@ -271,19 +210,6 @@ CREATE TABLE public.session (
 ALTER TABLE public.session OWNER TO postgres;
 
 --
--- Name: session_allocation; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.session_allocation (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    "sessionId" uuid NOT NULL,
-    "userId" uuid NOT NULL
-);
-
-
-ALTER TABLE public.session_allocation OWNER TO postgres;
-
---
 -- Name: session_stream; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -298,25 +224,13 @@ CREATE TABLE public.session_stream (
     "numberOfStaff" integer NOT NULL,
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     "timetableId" uuid NOT NULL,
-    "basedId" uuid,
+    "rootId" uuid,
     CONSTRAINT "CHK_41bbf7adf43d7d31af71faabf7" CHECK (((day = 1) OR (day = 2) OR (day = 3) OR (day = 4) OR (day = 5) OR (day = 6) OR (day = 7))),
-    CONSTRAINT "CHK_547b21ea1dbf8d0c351c1177c4" CHECK ((((type)::text = 'Practical'::text) OR ((type)::text = 'Tutorial'::text) OR ((type)::text = 'Seminar'::text) OR ((type)::text = 'Lecture'::text) OR ((type)::text = 'Studio'::text)))
+    CONSTRAINT "CHK_99acefc65b5e400789a89ceabe" CHECK ((((type)::text = 'Contact'::text) OR ((type)::text = 'Practical'::text) OR ((type)::text = 'Tutorial'::text) OR ((type)::text = 'Seminar'::text) OR ((type)::text = 'Lecture'::text) OR ((type)::text = 'Studio'::text) OR ((type)::text = 'Workshop'::text)))
 );
 
 
 ALTER TABLE public.session_stream OWNER TO postgres;
-
---
--- Name: session_stream_allocated_users_user; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.session_stream_allocated_users_user (
-    "sessionStreamId" uuid NOT NULL,
-    "userId" uuid NOT NULL
-);
-
-
-ALTER TABLE public.session_stream_allocated_users_user OWNER TO postgres;
 
 --
 -- Name: staff_request; Type: TABLE; Schema: public; Owner: postgres
@@ -350,19 +264,6 @@ CREATE TABLE public.staff_request_swap_preference_session (
 
 
 ALTER TABLE public.staff_request_swap_preference_session OWNER TO postgres;
-
---
--- Name: stream_allocation; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.stream_allocation (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    "sessionStreamId" uuid NOT NULL,
-    "userId" uuid NOT NULL
-);
-
-
-ALTER TABLE public.stream_allocation OWNER TO postgres;
 
 --
 -- Name: term; Type: TABLE; Schema: public; Owner: postgres
@@ -408,7 +309,6 @@ CREATE TABLE public.timetable (
     "termId" uuid NOT NULL,
     "permanentRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
     "temporaryRequestLock" character varying DEFAULT 'FREE'::character varying NOT NULL,
-    "allocationToken" uuid,
     CONSTRAINT "CHK_46d36f57d28eb598ab672c72cd" CHECK (((("permanentRequestLock")::text = 'FREE'::text) OR (("permanentRequestLock")::text = 'LOCK'::text) OR (("permanentRequestLock")::text = 'APPROVAL_REQUIRED'::text))),
     CONSTRAINT "CHK_60e32c35047968ba6f310887bf" CHECK (((("temporaryRequestLock")::text = 'FREE'::text) OR (("temporaryRequestLock")::text = 'LOCK'::text) OR (("temporaryRequestLock")::text = 'APPROVAL_REQUIRED'::text)))
 );
@@ -487,34 +387,34 @@ INSERT INTO public.course (code, title, id) VALUES ('CSSE2002', 'Programming in 
 -- Data for Name: course_staff; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Course Coordinator', false, 'a19c9c07-ee46-459b-b9bb-208821052882', '52cbc02c-c5ac-401f-80ab-25eb8ff15f45', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Course Coordinator', false, '607a6b63-fcab-4440-83b8-9608fb99868f', '548c11f0-731d-4b94-bb1a-da788bb4d968', '86b6d4b0-a8c5-4c42-8278-e649144f92b3', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'cc163400-f20d-4ef0-87ca-5f4f4f68f243', '2c695967-3ea7-4c0b-bfb7-59620c8cc889', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '6dc22fde-ff34-4b6e-b4e2-da170f5cbc9c', '7cf88095-d09a-4be3-8ec3-5be454f4f477', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '0865628d-7746-498a-bc6c-1fdad938fe2a', '03886e63-79bd-41ad-a142-685e538dacb4', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'b16ef5c5-0a78-40b8-b96a-c74325351653', '6e4cbf72-d67e-4259-bf65-630a6eb1d477', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'b683e924-7c41-4c65-8ab7-8d42f5ec257a', 'c9ab8094-34ab-4223-ab61-77e6dad79c1d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '17073eb9-4580-4abc-9307-0cfd3c34fa2e', '14d13548-ef30-4c14-b3b6-46cd8ae1aabd', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '101e4077-afc0-4f1a-9b83-3d72fd687e8c', '242cbad3-d5b6-4f43-9b99-4b799c980ebd', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '01f5305e-770d-487e-a86e-7909e1205f91', '6cb0f404-349b-4f3c-b54e-0e16ba0f2c43', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'a84962e3-1c60-4dc2-bff2-2a9c9f383218', 'fd506f28-69f7-4132-94f3-266e9870df33', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'a920549f-f05b-4099-a548-39705b845589', '2dbda7f0-0ca2-46b7-ba8f-8f356ac3782e', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '795c91cc-eaec-42d9-a228-52f66a7653bb', 'adcfba2f-b728-47d9-b7f3-a33dae7ca6e9', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'ab1b8203-26b1-49ae-8b89-de401f66b99f', '53ac4ab7-7c72-4129-a558-2e9d702a25cb', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '45bdea1a-8b53-4076-8d49-d24f95b3aeb3', 'b97e746c-6cce-42d8-b851-33c71ca8e563', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '8a101a1d-b85b-4105-ae26-54668ab1b840', 'abbf094f-758c-4d84-b685-6b3ddab80cf1', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '797e93c2-fdf4-4a13-94ec-9ab4f2568451', '9be82e08-7a5a-4f67-9264-d96d6338f984', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'decf5375-9c6c-4e38-8eba-395c487678c1', 'db75c78e-bdd7-40fe-8bbc-a05f810a7f47', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '550e8e08-1a03-478b-ac56-b526cdb7651e', 'c0869562-3864-459a-8465-ac0eac89003c', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '29f86f57-e1b1-4ebd-bfb6-316e05482a90', '4a8a9c39-24f7-4fab-9da6-8ce9fd745d62', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'f832d241-fe41-4ada-a557-71306ad47ec3', 'c631f530-80aa-4684-ba5a-ce461d71084d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '6599aedf-073d-4aaf-91b1-d2cd3c38f7f8', '54f7915a-607d-497d-8801-01b7b961270a', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '18f5ae3a-2a88-44f1-beea-7f2193f31b5c', '4cf129ab-e7e0-4e92-b0b0-e1f1a80ec350', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'c4c1c6d8-e7f5-4184-8910-36fe41ba222e', '8a303a17-a00e-406b-81fe-fc1ffe8521be', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, '2d9238eb-a1d1-4f01-be57-8d671409da03', '3aa605c7-4d2c-4522-b455-00dd21f1d8fe', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'a573ea16-5f40-4c6e-91ab-7a91c3840952', '82ebad48-e354-459f-8031-d6d482d5fa86', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'd879892d-7baa-419e-b250-7025f3d2915c', '441364b8-ab97-4b65-97e6-cbd60a9780b2', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId", "preferenceId") VALUES ('Staff', false, 'c48c2cd2-73dd-4f56-9027-d0d86e3a2c9f', '321c7d45-48c8-4e34-a316-be93e2c51bee', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Course Coordinator', false, 'a19c9c07-ee46-459b-b9bb-208821052882', '52cbc02c-c5ac-401f-80ab-25eb8ff15f45', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Course Coordinator', false, '607a6b63-fcab-4440-83b8-9608fb99868f', '548c11f0-731d-4b94-bb1a-da788bb4d968', '86b6d4b0-a8c5-4c42-8278-e649144f92b3');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'cc163400-f20d-4ef0-87ca-5f4f4f68f243', '2c695967-3ea7-4c0b-bfb7-59620c8cc889', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '6dc22fde-ff34-4b6e-b4e2-da170f5cbc9c', '7cf88095-d09a-4be3-8ec3-5be454f4f477', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '0865628d-7746-498a-bc6c-1fdad938fe2a', '03886e63-79bd-41ad-a142-685e538dacb4', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'b16ef5c5-0a78-40b8-b96a-c74325351653', '6e4cbf72-d67e-4259-bf65-630a6eb1d477', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'b683e924-7c41-4c65-8ab7-8d42f5ec257a', 'c9ab8094-34ab-4223-ab61-77e6dad79c1d', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '17073eb9-4580-4abc-9307-0cfd3c34fa2e', '14d13548-ef30-4c14-b3b6-46cd8ae1aabd', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '101e4077-afc0-4f1a-9b83-3d72fd687e8c', '242cbad3-d5b6-4f43-9b99-4b799c980ebd', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '01f5305e-770d-487e-a86e-7909e1205f91', '6cb0f404-349b-4f3c-b54e-0e16ba0f2c43', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'a84962e3-1c60-4dc2-bff2-2a9c9f383218', 'fd506f28-69f7-4132-94f3-266e9870df33', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'a920549f-f05b-4099-a548-39705b845589', '2dbda7f0-0ca2-46b7-ba8f-8f356ac3782e', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '795c91cc-eaec-42d9-a228-52f66a7653bb', 'adcfba2f-b728-47d9-b7f3-a33dae7ca6e9', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'ab1b8203-26b1-49ae-8b89-de401f66b99f', '53ac4ab7-7c72-4129-a558-2e9d702a25cb', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '45bdea1a-8b53-4076-8d49-d24f95b3aeb3', 'b97e746c-6cce-42d8-b851-33c71ca8e563', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '8a101a1d-b85b-4105-ae26-54668ab1b840', 'abbf094f-758c-4d84-b685-6b3ddab80cf1', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '797e93c2-fdf4-4a13-94ec-9ab4f2568451', '9be82e08-7a5a-4f67-9264-d96d6338f984', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'decf5375-9c6c-4e38-8eba-395c487678c1', 'db75c78e-bdd7-40fe-8bbc-a05f810a7f47', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '550e8e08-1a03-478b-ac56-b526cdb7651e', 'c0869562-3864-459a-8465-ac0eac89003c', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '29f86f57-e1b1-4ebd-bfb6-316e05482a90', '4a8a9c39-24f7-4fab-9da6-8ce9fd745d62', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'f832d241-fe41-4ada-a557-71306ad47ec3', 'c631f530-80aa-4684-ba5a-ce461d71084d', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '6599aedf-073d-4aaf-91b1-d2cd3c38f7f8', '54f7915a-607d-497d-8801-01b7b961270a', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '18f5ae3a-2a88-44f1-beea-7f2193f31b5c', '4cf129ab-e7e0-4e92-b0b0-e1f1a80ec350', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'c4c1c6d8-e7f5-4184-8910-36fe41ba222e', '8a303a17-a00e-406b-81fe-fc1ffe8521be', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, '2d9238eb-a1d1-4f01-be57-8d671409da03', '3aa605c7-4d2c-4522-b455-00dd21f1d8fe', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'a573ea16-5f40-4c6e-91ab-7a91c3840952', '82ebad48-e354-459f-8031-d6d482d5fa86', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'd879892d-7baa-419e-b250-7025f3d2915c', '441364b8-ab97-4b65-97e6-cbd60a9780b2', '8046ee18-243f-4b89-93f2-ad56a63f133f');
+INSERT INTO public.course_staff (role, "isNew", id, "userId", "timetableId") VALUES ('Staff', false, 'c48c2cd2-73dd-4f56-9027-d0d86e3a2c9f', '321c7d45-48c8-4e34-a316-be93e2c51bee', '8046ee18-243f-4b89-93f2-ad56a63f133f');
 
 
 --
@@ -573,8 +473,16 @@ INSERT INTO public.migrations (id, "timestamp", name) VALUES (49, 1623063118210,
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (50, 1623066711344, 'Migration1623066711344');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (51, 1623806080691, 'Migration1623806080691');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (52, 1623806888791, 'Migration1623806888791');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (53, 1625156685025, 'Migration1625156685025');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (54, 1625878058947, 'Migration1625878058947');
 INSERT INTO public.migrations (id, "timestamp", name) VALUES (55, 1625879947241, 'Migration1625879947241');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (56, 1625879947251, 'Migration1625879947251');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (57, 1625879947261, 'Migration1625879947261');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (58, 1626225233362, 'Migration1626225233362');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (59, 1626805399973, 'Migration1626805399973');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (60, 1626868713251, 'Migration1626868713251');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (61, 1637470550732, 'Migration1637470550732');
+INSERT INTO public.migrations (id, "timestamp", name) VALUES (62, 1638492446840, 'Migration1638492446840');
 
 
 --
@@ -1478,153 +1386,141 @@ INSERT INTO public.session (location, week, id, "sessionStreamId") VALUES ('Onli
 
 
 --
--- Data for Name: session_allocation; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
 -- Data for Name: session_stream; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 Flexible', 'Practical', 1, 17, 19, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 1, '7a9e2c22-496a-4dff-b2ff-3361101f96c0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 Flexible extra 1', 'Practical', 1, 17, 19, '{4,7,13}', '78-122', 1, 'ae7942ce-ed30-40cf-b8f0-1192f5e3fe09', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7a9e2c22-496a-4dff-b2ff-3361101f96c0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 Flexible extra 2', 'Practical', 1, 17, 19, '{5,8,14}', '78-122', 2, '264d9e1d-470d-4aaf-9307-e641da63324c', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7a9e2c22-496a-4dff-b2ff-3361101f96c0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 Flexible', 'Practical', 2, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 1, '1e51cf4e-a5e9-4527-b977-a526d155e165', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 Flexible extra 1', 'Practical', 2, 8, 10, '{4,7,13}', '78-122', 1, '7c2ff7c1-04d8-42d3-ad78-573e455fe981', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1e51cf4e-a5e9-4527-b977-a526d155e165');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 Flexible extra 2', 'Practical', 2, 8, 10, '{5,8,14}', '78-122', 2, '6567833d-8024-4472-8010-41f6e4fc3198', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1e51cf4e-a5e9-4527-b977-a526d155e165');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 Flexible', 'Practical', 2, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '05403575-d340-4b78-9dd4-9ac782e419dd', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 Flexible extra 1', 'Practical', 2, 10, 12, '{4,7,13}', '09-218', 1, 'aab277c1-d8fe-4c37-8626-d344f4dc3627', '8046ee18-243f-4b89-93f2-ad56a63f133f', '05403575-d340-4b78-9dd4-9ac782e419dd');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 Flexible extra 2', 'Practical', 2, 10, 12, '{5,8,14}', '09-218', 2, 'a282fb64-a055-43fd-a1a4-6f681d05400f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '05403575-d340-4b78-9dd4-9ac782e419dd');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P08 Flexible', 'Practical', 2, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '39b812ea-f4b0-479f-ae89-e0f742946d59', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P08 Flexible extra 1', 'Practical', 2, 16, 18, '{4,7,13}', '09-218', 1, 'a5302ce6-cbdf-4fcc-8458-f79eadc4d14e', '8046ee18-243f-4b89-93f2-ad56a63f133f', '39b812ea-f4b0-479f-ae89-e0f742946d59');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P08 Flexible extra 2', 'Practical', 2, 16, 18, '{5,8,14}', '09-218', 2, '375160cd-77eb-493f-835e-a496bc138c94', '8046ee18-243f-4b89-93f2-ad56a63f133f', '39b812ea-f4b0-479f-ae89-e0f742946d59');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P09 Flexible', 'Practical', 3, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '06ac174c-834c-44b7-8ae4-3955692964a0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P09 Flexible extra 1', 'Practical', 3, 8, 10, '{4,7,13}', '09-218', 1, 'c656b904-4fbb-41f2-9687-2c1f86c987ce', '8046ee18-243f-4b89-93f2-ad56a63f133f', '06ac174c-834c-44b7-8ae4-3955692964a0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P09 Flexible extra 2', 'Practical', 3, 8, 10, '{5,8,14}', '09-218', 2, '3f3336c8-8d56-437a-a3e9-943e90374bdf', '8046ee18-243f-4b89-93f2-ad56a63f133f', '06ac174c-834c-44b7-8ae4-3955692964a0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P10 Flexible extra 2', 'Practical', 3, 10, 12, '{5,8,14}', '85-C512', 2, '052277cf-1871-4dc6-8f24-2273629fd3fa', '8046ee18-243f-4b89-93f2-ad56a63f133f', '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P10 Flexible', 'Practical', 3, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P10 Flexible extra 1', 'Practical', 3, 10, 12, '{4,7,13}', '85-C512', 1, 'd4f613f6-6937-4567-b446-0b7bbab05923', '8046ee18-243f-4b89-93f2-ad56a63f133f', '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P12 Flexible', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '751145ef-8fde-412f-a1a9-8311517f9065', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P12 Flexible extra 2', 'Practical', 3, 14, 16, '{5,8,14}', '85-C512', 2, '2ea76a99-c5f2-4d29-889e-7ee0aa084f1b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '751145ef-8fde-412f-a1a9-8311517f9065');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P12 Flexible extra 1', 'Practical', 3, 14, 16, '{4,7,13}', '85-C512', 1, '27883ef1-f2c6-4ef4-b0e3-93ce036ae69f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '751145ef-8fde-412f-a1a9-8311517f9065');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P13 Flexible', 'Practical', 3, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '41c2db0c-52ea-4ef0-88a2-9729e3608e11', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P13 Flexible extra 1', 'Practical', 3, 16, 18, '{4,7,13}', '85-C512', 1, 'e3a367ec-9dbc-4fc1-8fbc-c017958a2985', '8046ee18-243f-4b89-93f2-ad56a63f133f', '41c2db0c-52ea-4ef0-88a2-9729e3608e11');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P13 Flexible extra 2', 'Practical', 3, 16, 18, '{5,8,14}', '85-C512', 2, '04847075-8b57-4d49-8cd7-504de2a808fc', '8046ee18-243f-4b89-93f2-ad56a63f133f', '41c2db0c-52ea-4ef0-88a2-9729e3608e11');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P14 Flexible', 'Practical', 4, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-214', 1, '669f6d10-db7c-49f4-93aa-668a9c281821', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P14 Flexible extra 1', 'Practical', 4, 8, 10, '{4,7,13}', '35-214', 1, '7901e269-9bc4-4b2f-a882-855be9251b7a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '669f6d10-db7c-49f4-93aa-668a9c281821');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P14 Flexible extra 2', 'Practical', 4, 8, 10, '{5,8,14}', '35-214', 2, '86803e3c-abbd-40bb-a095-3c653386da01', '8046ee18-243f-4b89-93f2-ad56a63f133f', '669f6d10-db7c-49f4-93aa-668a9c281821');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P16 Flexible', 'Practical', 4, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '83-C412', 1, '97e76f93-6668-4498-bf95-84d368322b1e', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P16 Flexible extra 1', 'Practical', 4, 10, 12, '{4,7,13}', '83-C412', 1, 'bef69475-6042-462b-8773-26125cfcd6fb', '8046ee18-243f-4b89-93f2-ad56a63f133f', '97e76f93-6668-4498-bf95-84d368322b1e');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P16 Flexible extra 2', 'Practical', 4, 10, 12, '{5,8,14}', '83-C412', 2, 'cb8b8b33-e298-4a92-9528-27381f4c0417', '8046ee18-243f-4b89-93f2-ad56a63f133f', '97e76f93-6668-4498-bf95-84d368322b1e');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P18 Flexible', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, '9752990f-0301-4509-a768-fccfc54d5afe', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P18 Flexible extra 1', 'Practical', 4, 12, 14, '{4,7,13}', '35-210', 1, '6c60bf05-cd90-4606-ba85-2b739d757e2a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9752990f-0301-4509-a768-fccfc54d5afe');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P18 Flexible extra 2', 'Practical', 4, 12, 14, '{5,8,14}', '35-210', 2, '5f47f8e7-3bb8-46c9-af9c-18b6287b7f2f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9752990f-0301-4509-a768-fccfc54d5afe');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P20 Flexible', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P20 Flexible extra 1', 'Practical', 4, 14, 16, '{4,7,13}', '35-210', 1, '41a3b733-e953-4f20-af4b-1ff30d62f135', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P20 Flexible extra 2', 'Practical', 4, 14, 16, '{5,8,14}', '35-210', 2, '2d44aa78-80f1-47d4-99f1-6166b6a4f7eb', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P22 Flexible', 'Practical', 4, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '07-326', 1, '9a96cfa2-cb1d-464e-aae5-037f0a920a04', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P22 Flexible extra 1', 'Practical', 4, 16, 18, '{4,7,13}', '07-326', 1, '98b6c910-8f66-46e8-b39a-44052aaee307', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9a96cfa2-cb1d-464e-aae5-037f0a920a04');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P22 Flexible extra 2', 'Practical', 4, 16, 18, '{5,8,14}', '07-326', 2, 'b9c185c6-4429-47f2-b30d-14e83e5c7c3b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9a96cfa2-cb1d-464e-aae5-037f0a920a04');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P23 Flexible', 'Practical', 5, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-233', 1, 'b26aa7a8-3a08-4369-9225-87488803e9c7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P23 Flexible extra 1', 'Practical', 5, 8, 10, '{4,7,13}', '78-233', 1, '8a93a444-6c06-431f-9f75-7d8beaf3cb78', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'b26aa7a8-3a08-4369-9225-87488803e9c7');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P23 Flexible extra 2', 'Practical', 5, 8, 10, '{5,8,14}', '78-233', 2, '8341a561-2ce6-4b52-bf5b-8d55e95ee7d3', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'b26aa7a8-3a08-4369-9225-87488803e9c7');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P25 Flexible', 'Practical', 5, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, '220795a4-87a0-4df2-9045-4ceed261353d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P25 Flexible extra 1', 'Practical', 5, 12, 14, '{4,7,13}', '35-210', 1, '6bb06aa2-60dd-41f3-95e4-78f1f0a93a57', '8046ee18-243f-4b89-93f2-ad56a63f133f', '220795a4-87a0-4df2-9045-4ceed261353d');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P25 Flexible extra 2', 'Practical', 5, 12, 14, '{5,8,14}', '35-210', 2, 'b7cfd9e6-7367-4e63-a7f8-62ce574a70f8', '8046ee18-243f-4b89-93f2-ad56a63f133f', '220795a4-87a0-4df2-9045-4ceed261353d');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P27 Flexible', 'Practical', 5, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P27 Flexible extra 1', 'Practical', 5, 16, 18, '{4,7,13}', '35-210', 1, '67d4d682-08bf-4a40-84ec-6f5c1a7d7302', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P27 Flexible extra 2', 'Practical', 5, 16, 18, '{5,8,14}', '35-210', 2, '9660f5dd-eb80-4f17-b091-95889af3560b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 Flexible', 'Practical', 1, 15, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'da4bf765-680a-4149-847d-1176ae272f17', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 Flexible extra 1', 'Practical', 1, 15, 17, '{4,7}', '78-122', 1, '5f2d2933-0747-403c-adfb-2d4085c4548f', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'da4bf765-680a-4149-847d-1176ae272f17');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 Flexible extra 2', 'Practical', 1, 15, 17, '{5,8,13,14}', '78-122', 4, '77da971a-a15e-4061-8006-fa4163a0ebad', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'da4bf765-680a-4149-847d-1176ae272f17');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 Flexible', 'Practical', 2, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '80c81481-2775-4df6-a2e8-379426a1dd66', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 Flexible extra 1', 'Practical', 2, 10, 12, '{4,7}', '78-122', 1, 'bf43a87e-390c-4e38-a060-9bdd4ad9332b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '80c81481-2775-4df6-a2e8-379426a1dd66');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 Flexible extra 2', 'Practical', 2, 10, 12, '{5,8,13,14}', '78-122', 4, '119bd994-7763-4933-92a9-9d4b4286d7b8', '8046ee18-243f-4b89-93f2-ad56a63f133f', '80c81481-2775-4df6-a2e8-379426a1dd66');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 Flexible', 'Practical', 2, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'c869fa69-c358-4d02-9749-dabf247e3994', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 Flexible extra 1', 'Practical', 2, 12, 14, '{4,7}', '78-122', 1, '124d75b2-3f29-4064-a4a0-c9b3e8e949ee', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c869fa69-c358-4d02-9749-dabf247e3994');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 Flexible extra 2', 'Practical', 2, 12, 14, '{5,8,13,14}', '78-122', 4, 'a9d23af4-90ae-4397-a26a-d51bda5c9ea8', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c869fa69-c358-4d02-9749-dabf247e3994');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P07 Flexible', 'Practical', 2, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '0181d0a6-066d-4e35-a90b-03058500dc62', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P07 Flexible extra 1', 'Practical', 2, 14, 16, '{4,7}', '78-122', 1, '5232ccd7-f5ad-47f3-9102-58bdf363aba2', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0181d0a6-066d-4e35-a90b-03058500dc62');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P07 Flexible extra 2', 'Practical', 2, 14, 16, '{5,8,13,14}', '78-122', 4, '158fa46f-1964-4203-8c13-23f0db79a22f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0181d0a6-066d-4e35-a90b-03058500dc62');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P11 Flexible', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '491783f1-c2a5-4b18-bbd1-e94985167a37', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P11 Flexible extra 1', 'Practical', 3, 14, 16, '{4,7}', '78-122', 1, 'e9431cb5-ecf9-4cd7-b2a8-e40ff1313eb6', '8046ee18-243f-4b89-93f2-ad56a63f133f', '491783f1-c2a5-4b18-bbd1-e94985167a37');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P11 Flexible extra 2', 'Practical', 3, 14, 16, '{5,8,13,14}', '78-122', 4, '5a79029a-7635-4de9-b8ec-703ab5e36c0b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '491783f1-c2a5-4b18-bbd1-e94985167a37');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P15 Flexible', 'Practical', 4, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P15 Flexible extra 1', 'Practical', 4, 10, 12, '{4,7}', '78-122', 1, '46b26cf0-20a0-48fa-a2a2-7a50eab4e375', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P15 Flexible extra 2', 'Practical', 4, 10, 12, '{5,8,13,14}', '78-122', 4, 'cb8b6aaf-f89a-434a-9cff-ea8f839f45af', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P17 Flexible', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '42d00386-8206-4378-a2d4-01cf4b990bb3', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P17 Flexible extra 1', 'Practical', 4, 12, 14, '{4,7}', '78-122', 1, '7269f14e-6541-4871-9041-b68b53534530', '8046ee18-243f-4b89-93f2-ad56a63f133f', '42d00386-8206-4378-a2d4-01cf4b990bb3');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P17 Flexible extra 2', 'Practical', 4, 12, 14, '{5,8,13,14}', '78-122', 4, 'c2d496fc-a02e-4fa4-a23d-a1418d8e863f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '42d00386-8206-4378-a2d4-01cf4b990bb3');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P19 Flexible', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '074271d9-a99a-4dfd-b029-521a97c40000', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P19 Flexible extra 1', 'Practical', 4, 14, 16, '{4,7}', '78-122', 1, '4ae81b54-2fd4-4aa8-bd66-a8d2ee42e8e1', '8046ee18-243f-4b89-93f2-ad56a63f133f', '074271d9-a99a-4dfd-b029-521a97c40000');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P19 Flexible extra 2', 'Practical', 4, 14, 16, '{5,8,13,14}', '78-122', 4, 'a486eb38-2b3f-44eb-8f71-3199134731a4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '074271d9-a99a-4dfd-b029-521a97c40000');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P24 Flexible', 'Practical', 5, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '0ee627e1-2612-4f67-ae76-afd089a0c597', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P24 Flexible extra 1', 'Practical', 5, 10, 12, '{4,7}', '78-122', 1, '46fc7e34-dfd7-4d13-9059-36a92027162f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0ee627e1-2612-4f67-ae76-afd089a0c597');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P24 Flexible extra 2', 'Practical', 5, 10, 12, '{5,8,13,14}', '78-122', 4, '3760a9f7-2477-4cb5-a6fc-2d6128e090f6', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0ee627e1-2612-4f67-ae76-afd089a0c597');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P26 Flexible', 'Practical', 5, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P26 Flexible extra 1', 'Practical', 5, 14, 16, '{4,7}', '78-122', 1, '5404afe5-1e1b-4a08-b8c7-8091d7efb05b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P26 Flexible extra 2', 'Practical', 5, 14, 16, '{5,8,13,14}', '78-122', 4, 'd837511f-2894-4475-a032-462b54c5791f', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 External', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '3be31a9e-9f95-4f29-a676-a0817b25f6a7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 External extra 1', 'Practical', 3, 14, 16, '{4,7}', 'Online', 1, '4cded3d7-06c1-4572-b71e-a47a27abc8d0', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3be31a9e-9f95-4f29-a676-a0817b25f6a7');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P01 External extra 2', 'Practical', 3, 14, 16, '{5,8,13,14}', 'Online', 4, '9811833c-513a-4a79-9c44-8250ec936f8b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3be31a9e-9f95-4f29-a676-a0817b25f6a7');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 External', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '7f20f512-a460-4f75-864a-8b1bc43e7cdf', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 External extra 1', 'Practical', 4, 12, 14, '{4,7}', 'Online', 1, '1339af4b-31f7-45a9-89be-bf08a00093f9', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7f20f512-a460-4f75-864a-8b1bc43e7cdf');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P02 External extra 2', 'Practical', 4, 12, 14, '{5,8,13,14}', 'Online', 4, '53323eab-d5e3-46e3-b1cc-3cd6661e1b76', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7f20f512-a460-4f75-864a-8b1bc43e7cdf');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 External', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '711807ae-b5ab-4169-9e0e-03a474fa5312', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 External extra 1', 'Practical', 4, 14, 16, '{4,7}', 'Online', 1, 'f8e6d7d9-1fbe-48bd-b06b-d64f73e66545', '8046ee18-243f-4b89-93f2-ad56a63f133f', '711807ae-b5ab-4169-9e0e-03a474fa5312');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P03 External extra 2', 'Practical', 4, 14, 16, '{5,8,13,14}', 'Online', 4, '070ec944-23e7-4887-b58a-ee4e9d47e4af', '8046ee18-243f-4b89-93f2-ad56a63f133f', '711807ae-b5ab-4169-9e0e-03a474fa5312');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 External extra 2', 'Practical', 5, 10, 12, '{5,8,13,14}', 'Online', 4, '2790871e-d43c-4159-b450-99d632b32a5b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1149c343-d503-43d1-b435-18e345497d5d');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 External', 'Practical', 5, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '1149c343-d503-43d1-b435-18e345497d5d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P04 External extra 1', 'Practical', 5, 10, 12, '{4,7}', 'Online', 1, 'a8a41553-2301-4bf7-80a7-9f57d3c46c1c', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1149c343-d503-43d1-b435-18e345497d5d');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 External', 'Practical', 5, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 External extra 1', 'Practical', 5, 12, 14, '{4,7}', 'Online', 1, '776ff411-f505-4e7f-b158-053a9ba8df1b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P05 External extra 2', 'Practical', 5, 12, 14, '{5,8,13,14}', 'Online', 4, '7c10e0a7-e005-4807-a8b7-ed9783995600', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 External', 'Practical', 5, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'c2c5fe9e-acda-494e-a60e-1822c7c17451', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 External extra 1', 'Practical', 5, 14, 16, '{4,7}', 'Online', 1, '5954be10-17a6-4964-b40e-823a4fed0515', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c2c5fe9e-acda-494e-a60e-1822c7c17451');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('P06 External extra 2', 'Practical', 5, 14, 16, '{5,8,13,14}', 'Online', 4, 'b284e6fc-4a8b-4cfa-942a-225422dcdcfa', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c2c5fe9e-acda-494e-a60e-1822c7c17451');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T05 Flexible', 'Tutorial', 3, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, 'f0e9626c-3930-434f-8d2a-d6b9774c8dd5', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T05 Flexible extra 1', 'Tutorial', 3, 12, 13, '{2,3,4}', '09-836', 1, '35628c2f-33b4-4262-b334-87b7c7c76a6e', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f0e9626c-3930-434f-8d2a-d6b9774c8dd5');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T08 Flexible extra 1', 'Tutorial', 4, 10, 11, '{2,3,4}', '09-836', 1, '518e26e8-173b-49d0-aef0-51081a489b75', '8046ee18-243f-4b89-93f2-ad56a63f133f', '33c83d7b-b2e5-49be-8968-d632c8b3ddab');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T08 Flexible', 'Tutorial', 4, 10, 11, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '33c83d7b-b2e5-49be-8968-d632c8b3ddab', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T11 Flexible', 'Tutorial', 4, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '3367745a-227a-4a2f-98b1-b5d61b1e15d5', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T11 Flexible extra 1', 'Tutorial', 4, 12, 13, '{2,3,4}', '09-836', 1, '6ae3757a-86ee-41c1-9f08-4743fb84bd5d', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3367745a-227a-4a2f-98b1-b5d61b1e15d5');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T14 Flexible', 'Tutorial', 5, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '6c5a68a6-4e77-4b59-b4ce-f46ad8c34f8f', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T14 Flexible extra 1', 'Tutorial', 5, 12, 13, '{2,3,4}', '09-836', 1, '76d81abb-05fc-4ff6-acc8-46544df3bc3a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '6c5a68a6-4e77-4b59-b4ce-f46ad8c34f8f');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T01 Flexible', 'Tutorial', 1, 15, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '5189496e-4ed8-4784-8b7a-47cdad69e458', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T01 Flexible extra 1', 'Tutorial', 1, 15, 16, '{2,3,4}', '49-316', 2, 'ce40eb05-fee5-493b-9a96-4cbaf0a4b6c3', '8046ee18-243f-4b89-93f2-ad56a63f133f', '5189496e-4ed8-4784-8b7a-47cdad69e458');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T02 Flexible', 'Tutorial', 1, 16, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'c52d4c52-ef3e-47c0-b462-d2905ba6c664', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T02 Flexible extra 1', 'Tutorial', 1, 16, 17, '{2,3,4}', '49-316', 2, '55bdea23-1eeb-451f-ab66-0808833fe371', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c52d4c52-ef3e-47c0-b462-d2905ba6c664');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T03 Flexible', 'Tutorial', 2, 8, 9, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '8713fe61-886d-4273-97e9-eb2653c4aadc', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T03 Flexible extra 1', 'Tutorial', 2, 8, 9, '{2,3,4}', '49-316', 2, 'b71d32dd-0a06-4a63-8c9a-6883287fc313', '8046ee18-243f-4b89-93f2-ad56a63f133f', '8713fe61-886d-4273-97e9-eb2653c4aadc');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T04 Flexible', 'Tutorial', 3, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '223540d8-80d2-4f7c-af30-8878d1f33ebf', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T04 Flexible extra 1', 'Tutorial', 3, 11, 12, '{2,3,4}', '49-316', 2, '96e46f76-3005-4127-897c-3f29a32c8fb4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '223540d8-80d2-4f7c-af30-8878d1f33ebf');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T06 Flexible', 'Tutorial', 4, 9, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '9971d3c3-0f3a-4db9-ad49-b46c30c3f78e', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T06 Flexible extra 1', 'Tutorial', 4, 9, 10, '{2,3,4}', '49-316', 2, '00e04873-99fd-4c81-bcc6-aca2afec13a4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9971d3c3-0f3a-4db9-ad49-b46c30c3f78e');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T07 Flexible', 'Tutorial', 4, 10, 11, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'faa81413-01cb-4278-abb0-9a5d21fd787c', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T07 Flexible extra 1', 'Tutorial', 4, 10, 11, '{2,3,4}', '49-316', 2, 'dd8c95b9-37e8-429f-85de-d98a250b5786', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'faa81413-01cb-4278-abb0-9a5d21fd787c');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T09 Flexible', 'Tutorial', 4, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'eab84561-b65f-45a1-aa8a-12049f805ef8', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T09 Flexible extra 1', 'Tutorial', 4, 11, 12, '{2,3,4}', '49-316', 2, 'f27cd5b4-e1b8-402a-b783-c01218d5a37e', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'eab84561-b65f-45a1-aa8a-12049f805ef8');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T10 Flexible', 'Tutorial', 4, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'a7e61620-32f3-4e3b-9a1c-ed2bbb054867', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T10 Flexible extra 1', 'Tutorial', 4, 12, 13, '{2,3,4}', '49-316', 2, 'ce98fbbc-1fac-4a01-83c8-b2860ebcd9e8', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'a7e61620-32f3-4e3b-9a1c-ed2bbb054867');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T12 Flexible', 'Tutorial', 4, 13, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '50782cea-d08c-40c0-9e6d-a4456e60fdb7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T12 Flexible extra 1', 'Tutorial', 4, 13, 14, '{2,3,4}', '49-316', 2, 'b092efee-3af3-42e7-b4d5-2abab8c67e00', '8046ee18-243f-4b89-93f2-ad56a63f133f', '50782cea-d08c-40c0-9e6d-a4456e60fdb7');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T13 Flexible', 'Tutorial', 4, 17, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '9d274fa3-53e4-49ed-a3c0-19026c3163af', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T13 Flexible extra 1', 'Tutorial', 4, 17, 18, '{2,3,4}', '49-316', 2, 'c42dcbd3-e629-46dc-ab96-5f08b705c0b3', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9d274fa3-53e4-49ed-a3c0-19026c3163af');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T01 External', 'Tutorial', 1, 16, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '84f748b3-f559-4862-afce-da754895aed0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T01 External extra 1', 'Tutorial', 1, 16, 17, '{2,3,4}', 'Online', 2, '0ebcf551-5499-4b4a-8a52-17e563bfc706', '8046ee18-243f-4b89-93f2-ad56a63f133f', '84f748b3-f559-4862-afce-da754895aed0');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T02 External', 'Tutorial', 3, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'e54f0287-ddf0-48ed-beff-7552193bb314', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T02 External extra 1', 'Tutorial', 3, 11, 12, '{2,3,4}', 'Online', 2, '1d05bf71-64a1-4372-995f-d1c8628c360a', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e54f0287-ddf0-48ed-beff-7552193bb314');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T04 External', 'Tutorial', 4, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '1464c2aa-b832-4308-a792-03e09d68fe88', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T04 External extra 1', 'Tutorial', 4, 11, 12, '{2,3,4}', 'Online', 2, 'eb3a343f-b6fc-4f65-ab53-40401196c127', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1464c2aa-b832-4308-a792-03e09d68fe88');
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T03 External', 'Tutorial', 4, 9, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'a4509284-499a-4420-80f7-afffa0bd6de6', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
-INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "basedId") VALUES ('T03 External extra 1', 'Tutorial', 4, 9, 10, '{2,3,4}', 'Online', 2, '872d100e-16e5-4def-9692-5e3685946a61', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'a4509284-499a-4420-80f7-afffa0bd6de6');
-
-
---
--- Data for Name: session_stream_allocated_users_user; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 Flexible', 'Practical', 1, 17, 19, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 1, '7a9e2c22-496a-4dff-b2ff-3361101f96c0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 Flexible extra 1', 'Practical', 1, 17, 19, '{4,7,13}', '78-122', 1, 'ae7942ce-ed30-40cf-b8f0-1192f5e3fe09', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7a9e2c22-496a-4dff-b2ff-3361101f96c0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 Flexible extra 2', 'Practical', 1, 17, 19, '{5,8,14}', '78-122', 2, '264d9e1d-470d-4aaf-9307-e641da63324c', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7a9e2c22-496a-4dff-b2ff-3361101f96c0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 Flexible', 'Practical', 2, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 1, '1e51cf4e-a5e9-4527-b977-a526d155e165', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 Flexible extra 1', 'Practical', 2, 8, 10, '{4,7,13}', '78-122', 1, '7c2ff7c1-04d8-42d3-ad78-573e455fe981', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1e51cf4e-a5e9-4527-b977-a526d155e165');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 Flexible extra 2', 'Practical', 2, 8, 10, '{5,8,14}', '78-122', 2, '6567833d-8024-4472-8010-41f6e4fc3198', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1e51cf4e-a5e9-4527-b977-a526d155e165');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 Flexible', 'Practical', 2, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '05403575-d340-4b78-9dd4-9ac782e419dd', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 Flexible extra 1', 'Practical', 2, 10, 12, '{4,7,13}', '09-218', 1, 'aab277c1-d8fe-4c37-8626-d344f4dc3627', '8046ee18-243f-4b89-93f2-ad56a63f133f', '05403575-d340-4b78-9dd4-9ac782e419dd');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 Flexible extra 2', 'Practical', 2, 10, 12, '{5,8,14}', '09-218', 2, 'a282fb64-a055-43fd-a1a4-6f681d05400f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '05403575-d340-4b78-9dd4-9ac782e419dd');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P08 Flexible', 'Practical', 2, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '39b812ea-f4b0-479f-ae89-e0f742946d59', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P08 Flexible extra 1', 'Practical', 2, 16, 18, '{4,7,13}', '09-218', 1, 'a5302ce6-cbdf-4fcc-8458-f79eadc4d14e', '8046ee18-243f-4b89-93f2-ad56a63f133f', '39b812ea-f4b0-479f-ae89-e0f742946d59');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P08 Flexible extra 2', 'Practical', 2, 16, 18, '{5,8,14}', '09-218', 2, '375160cd-77eb-493f-835e-a496bc138c94', '8046ee18-243f-4b89-93f2-ad56a63f133f', '39b812ea-f4b0-479f-ae89-e0f742946d59');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P09 Flexible', 'Practical', 3, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-218', 1, '06ac174c-834c-44b7-8ae4-3955692964a0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P09 Flexible extra 1', 'Practical', 3, 8, 10, '{4,7,13}', '09-218', 1, 'c656b904-4fbb-41f2-9687-2c1f86c987ce', '8046ee18-243f-4b89-93f2-ad56a63f133f', '06ac174c-834c-44b7-8ae4-3955692964a0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P09 Flexible extra 2', 'Practical', 3, 8, 10, '{5,8,14}', '09-218', 2, '3f3336c8-8d56-437a-a3e9-943e90374bdf', '8046ee18-243f-4b89-93f2-ad56a63f133f', '06ac174c-834c-44b7-8ae4-3955692964a0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P10 Flexible', 'Practical', 3, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P10 Flexible extra 2', 'Practical', 3, 10, 12, '{5,8,14}', '85-C512', 2, '052277cf-1871-4dc6-8f24-2273629fd3fa', '8046ee18-243f-4b89-93f2-ad56a63f133f', '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P10 Flexible extra 1', 'Practical', 3, 10, 12, '{4,7,13}', '85-C512', 1, 'd4f613f6-6937-4567-b446-0b7bbab05923', '8046ee18-243f-4b89-93f2-ad56a63f133f', '86f9de4c-a5f1-4a48-9ea2-4e25389e78c0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P12 Flexible', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '751145ef-8fde-412f-a1a9-8311517f9065', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P12 Flexible extra 2', 'Practical', 3, 14, 16, '{5,8,14}', '85-C512', 2, '2ea76a99-c5f2-4d29-889e-7ee0aa084f1b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '751145ef-8fde-412f-a1a9-8311517f9065');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P12 Flexible extra 1', 'Practical', 3, 14, 16, '{4,7,13}', '85-C512', 1, '27883ef1-f2c6-4ef4-b0e3-93ce036ae69f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '751145ef-8fde-412f-a1a9-8311517f9065');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P13 Flexible', 'Practical', 3, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '85-C512', 1, '41c2db0c-52ea-4ef0-88a2-9729e3608e11', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P13 Flexible extra 1', 'Practical', 3, 16, 18, '{4,7,13}', '85-C512', 1, 'e3a367ec-9dbc-4fc1-8fbc-c017958a2985', '8046ee18-243f-4b89-93f2-ad56a63f133f', '41c2db0c-52ea-4ef0-88a2-9729e3608e11');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P13 Flexible extra 2', 'Practical', 3, 16, 18, '{5,8,14}', '85-C512', 2, '04847075-8b57-4d49-8cd7-504de2a808fc', '8046ee18-243f-4b89-93f2-ad56a63f133f', '41c2db0c-52ea-4ef0-88a2-9729e3608e11');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P14 Flexible', 'Practical', 4, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-214', 1, '669f6d10-db7c-49f4-93aa-668a9c281821', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P14 Flexible extra 1', 'Practical', 4, 8, 10, '{4,7,13}', '35-214', 1, '7901e269-9bc4-4b2f-a882-855be9251b7a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '669f6d10-db7c-49f4-93aa-668a9c281821');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P14 Flexible extra 2', 'Practical', 4, 8, 10, '{5,8,14}', '35-214', 2, '86803e3c-abbd-40bb-a095-3c653386da01', '8046ee18-243f-4b89-93f2-ad56a63f133f', '669f6d10-db7c-49f4-93aa-668a9c281821');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P16 Flexible', 'Practical', 4, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '83-C412', 1, '97e76f93-6668-4498-bf95-84d368322b1e', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P16 Flexible extra 1', 'Practical', 4, 10, 12, '{4,7,13}', '83-C412', 1, 'bef69475-6042-462b-8773-26125cfcd6fb', '8046ee18-243f-4b89-93f2-ad56a63f133f', '97e76f93-6668-4498-bf95-84d368322b1e');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P16 Flexible extra 2', 'Practical', 4, 10, 12, '{5,8,14}', '83-C412', 2, 'cb8b8b33-e298-4a92-9528-27381f4c0417', '8046ee18-243f-4b89-93f2-ad56a63f133f', '97e76f93-6668-4498-bf95-84d368322b1e');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P18 Flexible', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, '9752990f-0301-4509-a768-fccfc54d5afe', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P18 Flexible extra 1', 'Practical', 4, 12, 14, '{4,7,13}', '35-210', 1, '6c60bf05-cd90-4606-ba85-2b739d757e2a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9752990f-0301-4509-a768-fccfc54d5afe');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P18 Flexible extra 2', 'Practical', 4, 12, 14, '{5,8,14}', '35-210', 2, '5f47f8e7-3bb8-46c9-af9c-18b6287b7f2f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9752990f-0301-4509-a768-fccfc54d5afe');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P20 Flexible', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P20 Flexible extra 1', 'Practical', 4, 14, 16, '{4,7,13}', '35-210', 1, '41a3b733-e953-4f20-af4b-1ff30d62f135', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P20 Flexible extra 2', 'Practical', 4, 14, 16, '{5,8,14}', '35-210', 2, '2d44aa78-80f1-47d4-99f1-6166b6a4f7eb', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'd133be1d-cc1c-4d8b-9fa3-5edf7596cc81');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P22 Flexible', 'Practical', 4, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '07-326', 1, '9a96cfa2-cb1d-464e-aae5-037f0a920a04', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P22 Flexible extra 1', 'Practical', 4, 16, 18, '{4,7,13}', '07-326', 1, '98b6c910-8f66-46e8-b39a-44052aaee307', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9a96cfa2-cb1d-464e-aae5-037f0a920a04');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P22 Flexible extra 2', 'Practical', 4, 16, 18, '{5,8,14}', '07-326', 2, 'b9c185c6-4429-47f2-b30d-14e83e5c7c3b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9a96cfa2-cb1d-464e-aae5-037f0a920a04');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P23 Flexible', 'Practical', 5, 8, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-233', 1, 'b26aa7a8-3a08-4369-9225-87488803e9c7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P23 Flexible extra 1', 'Practical', 5, 8, 10, '{4,7,13}', '78-233', 1, '8a93a444-6c06-431f-9f75-7d8beaf3cb78', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'b26aa7a8-3a08-4369-9225-87488803e9c7');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P23 Flexible extra 2', 'Practical', 5, 8, 10, '{5,8,14}', '78-233', 2, '8341a561-2ce6-4b52-bf5b-8d55e95ee7d3', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'b26aa7a8-3a08-4369-9225-87488803e9c7');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P25 Flexible', 'Practical', 5, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, '220795a4-87a0-4df2-9045-4ceed261353d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P25 Flexible extra 1', 'Practical', 5, 12, 14, '{4,7,13}', '35-210', 1, '6bb06aa2-60dd-41f3-95e4-78f1f0a93a57', '8046ee18-243f-4b89-93f2-ad56a63f133f', '220795a4-87a0-4df2-9045-4ceed261353d');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P25 Flexible extra 2', 'Practical', 5, 12, 14, '{5,8,14}', '35-210', 2, 'b7cfd9e6-7367-4e63-a7f8-62ce574a70f8', '8046ee18-243f-4b89-93f2-ad56a63f133f', '220795a4-87a0-4df2-9045-4ceed261353d');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P27 Flexible', 'Practical', 5, 16, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '35-210', 1, 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P27 Flexible extra 1', 'Practical', 5, 16, 18, '{4,7,13}', '35-210', 1, '67d4d682-08bf-4a40-84ec-6f5c1a7d7302', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P27 Flexible extra 2', 'Practical', 5, 16, 18, '{5,8,14}', '35-210', 2, '9660f5dd-eb80-4f17-b091-95889af3560b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ce4c321f-9b91-4db9-8ff9-6fc6a7627b08');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 Flexible', 'Practical', 1, 15, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'da4bf765-680a-4149-847d-1176ae272f17', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 Flexible extra 1', 'Practical', 1, 15, 17, '{4,7}', '78-122', 1, '5f2d2933-0747-403c-adfb-2d4085c4548f', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'da4bf765-680a-4149-847d-1176ae272f17');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 Flexible extra 2', 'Practical', 1, 15, 17, '{5,8,13,14}', '78-122', 4, '77da971a-a15e-4061-8006-fa4163a0ebad', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'da4bf765-680a-4149-847d-1176ae272f17');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 Flexible', 'Practical', 2, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '80c81481-2775-4df6-a2e8-379426a1dd66', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 Flexible extra 1', 'Practical', 2, 10, 12, '{4,7}', '78-122', 1, 'bf43a87e-390c-4e38-a060-9bdd4ad9332b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '80c81481-2775-4df6-a2e8-379426a1dd66');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 Flexible extra 2', 'Practical', 2, 10, 12, '{5,8,13,14}', '78-122', 4, '119bd994-7763-4933-92a9-9d4b4286d7b8', '8046ee18-243f-4b89-93f2-ad56a63f133f', '80c81481-2775-4df6-a2e8-379426a1dd66');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 Flexible', 'Practical', 2, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'c869fa69-c358-4d02-9749-dabf247e3994', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 Flexible extra 1', 'Practical', 2, 12, 14, '{4,7}', '78-122', 1, '124d75b2-3f29-4064-a4a0-c9b3e8e949ee', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c869fa69-c358-4d02-9749-dabf247e3994');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 Flexible extra 2', 'Practical', 2, 12, 14, '{5,8,13,14}', '78-122', 4, 'a9d23af4-90ae-4397-a26a-d51bda5c9ea8', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c869fa69-c358-4d02-9749-dabf247e3994');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P07 Flexible', 'Practical', 2, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '0181d0a6-066d-4e35-a90b-03058500dc62', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P07 Flexible extra 1', 'Practical', 2, 14, 16, '{4,7}', '78-122', 1, '5232ccd7-f5ad-47f3-9102-58bdf363aba2', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0181d0a6-066d-4e35-a90b-03058500dc62');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P07 Flexible extra 2', 'Practical', 2, 14, 16, '{5,8,13,14}', '78-122', 4, '158fa46f-1964-4203-8c13-23f0db79a22f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0181d0a6-066d-4e35-a90b-03058500dc62');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P11 Flexible', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '491783f1-c2a5-4b18-bbd1-e94985167a37', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P11 Flexible extra 1', 'Practical', 3, 14, 16, '{4,7}', '78-122', 1, 'e9431cb5-ecf9-4cd7-b2a8-e40ff1313eb6', '8046ee18-243f-4b89-93f2-ad56a63f133f', '491783f1-c2a5-4b18-bbd1-e94985167a37');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P11 Flexible extra 2', 'Practical', 3, 14, 16, '{5,8,13,14}', '78-122', 4, '5a79029a-7635-4de9-b8ec-703ab5e36c0b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '491783f1-c2a5-4b18-bbd1-e94985167a37');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P15 Flexible', 'Practical', 4, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P15 Flexible extra 1', 'Practical', 4, 10, 12, '{4,7}', '78-122', 1, '46b26cf0-20a0-48fa-a2a2-7a50eab4e375', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P15 Flexible extra 2', 'Practical', 4, 10, 12, '{5,8,13,14}', '78-122', 4, 'cb8b6aaf-f89a-434a-9cff-ea8f839f45af', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'ea0eeabe-b8cc-4a00-be93-9916aca8c1a9');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P17 Flexible', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '42d00386-8206-4378-a2d4-01cf4b990bb3', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P17 Flexible extra 1', 'Practical', 4, 12, 14, '{4,7}', '78-122', 1, '7269f14e-6541-4871-9041-b68b53534530', '8046ee18-243f-4b89-93f2-ad56a63f133f', '42d00386-8206-4378-a2d4-01cf4b990bb3');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P17 Flexible extra 2', 'Practical', 4, 12, 14, '{5,8,13,14}', '78-122', 4, 'c2d496fc-a02e-4fa4-a23d-a1418d8e863f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '42d00386-8206-4378-a2d4-01cf4b990bb3');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P19 Flexible', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '074271d9-a99a-4dfd-b029-521a97c40000', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P19 Flexible extra 1', 'Practical', 4, 14, 16, '{4,7}', '78-122', 1, '4ae81b54-2fd4-4aa8-bd66-a8d2ee42e8e1', '8046ee18-243f-4b89-93f2-ad56a63f133f', '074271d9-a99a-4dfd-b029-521a97c40000');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P19 Flexible extra 2', 'Practical', 4, 14, 16, '{5,8,13,14}', '78-122', 4, 'a486eb38-2b3f-44eb-8f71-3199134731a4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '074271d9-a99a-4dfd-b029-521a97c40000');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P24 Flexible', 'Practical', 5, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, '0ee627e1-2612-4f67-ae76-afd089a0c597', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P24 Flexible extra 1', 'Practical', 5, 10, 12, '{4,7}', '78-122', 1, '46fc7e34-dfd7-4d13-9059-36a92027162f', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0ee627e1-2612-4f67-ae76-afd089a0c597');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P24 Flexible extra 2', 'Practical', 5, 10, 12, '{5,8,13,14}', '78-122', 4, '3760a9f7-2477-4cb5-a6fc-2d6128e090f6', '8046ee18-243f-4b89-93f2-ad56a63f133f', '0ee627e1-2612-4f67-ae76-afd089a0c597');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P26 Flexible', 'Practical', 5, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '78-122', 2, 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P26 Flexible extra 1', 'Practical', 5, 14, 16, '{4,7}', '78-122', 1, '5404afe5-1e1b-4a08-b8c7-8091d7efb05b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P26 Flexible extra 2', 'Practical', 5, 14, 16, '{5,8,13,14}', '78-122', 4, 'd837511f-2894-4475-a032-462b54c5791f', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e7f918e0-1059-4bdb-962d-fbe1ddeb7c38');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 External', 'Practical', 3, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '3be31a9e-9f95-4f29-a676-a0817b25f6a7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 External extra 1', 'Practical', 3, 14, 16, '{4,7}', 'Online', 1, '4cded3d7-06c1-4572-b71e-a47a27abc8d0', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3be31a9e-9f95-4f29-a676-a0817b25f6a7');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P01 External extra 2', 'Practical', 3, 14, 16, '{5,8,13,14}', 'Online', 4, '9811833c-513a-4a79-9c44-8250ec936f8b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3be31a9e-9f95-4f29-a676-a0817b25f6a7');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 External', 'Practical', 4, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '7f20f512-a460-4f75-864a-8b1bc43e7cdf', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 External extra 1', 'Practical', 4, 12, 14, '{4,7}', 'Online', 1, '1339af4b-31f7-45a9-89be-bf08a00093f9', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7f20f512-a460-4f75-864a-8b1bc43e7cdf');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P02 External extra 2', 'Practical', 4, 12, 14, '{5,8,13,14}', 'Online', 4, '53323eab-d5e3-46e3-b1cc-3cd6661e1b76', '8046ee18-243f-4b89-93f2-ad56a63f133f', '7f20f512-a460-4f75-864a-8b1bc43e7cdf');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 External', 'Practical', 4, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '711807ae-b5ab-4169-9e0e-03a474fa5312', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 External extra 1', 'Practical', 4, 14, 16, '{4,7}', 'Online', 1, 'f8e6d7d9-1fbe-48bd-b06b-d64f73e66545', '8046ee18-243f-4b89-93f2-ad56a63f133f', '711807ae-b5ab-4169-9e0e-03a474fa5312');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P03 External extra 2', 'Practical', 4, 14, 16, '{5,8,13,14}', 'Online', 4, '070ec944-23e7-4887-b58a-ee4e9d47e4af', '8046ee18-243f-4b89-93f2-ad56a63f133f', '711807ae-b5ab-4169-9e0e-03a474fa5312');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 External', 'Practical', 5, 10, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '1149c343-d503-43d1-b435-18e345497d5d', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 External extra 2', 'Practical', 5, 10, 12, '{5,8,13,14}', 'Online', 4, '2790871e-d43c-4159-b450-99d632b32a5b', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1149c343-d503-43d1-b435-18e345497d5d');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P04 External extra 1', 'Practical', 5, 10, 12, '{4,7}', 'Online', 1, 'a8a41553-2301-4bf7-80a7-9f57d3c46c1c', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1149c343-d503-43d1-b435-18e345497d5d');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 External', 'Practical', 5, 12, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 External extra 1', 'Practical', 5, 12, 14, '{4,7}', 'Online', 1, '776ff411-f505-4e7f-b158-053a9ba8df1b', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P05 External extra 2', 'Practical', 5, 12, 14, '{5,8,13,14}', 'Online', 4, '7c10e0a7-e005-4807-a8b7-ed9783995600', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f42c97bd-981f-4e51-9615-ae03b6f3d1fa');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 External', 'Practical', 5, 14, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'c2c5fe9e-acda-494e-a60e-1822c7c17451', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 External extra 1', 'Practical', 5, 14, 16, '{4,7}', 'Online', 1, '5954be10-17a6-4964-b40e-823a4fed0515', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c2c5fe9e-acda-494e-a60e-1822c7c17451');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('P06 External extra 2', 'Practical', 5, 14, 16, '{5,8,13,14}', 'Online', 4, 'b284e6fc-4a8b-4cfa-942a-225422dcdcfa', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c2c5fe9e-acda-494e-a60e-1822c7c17451');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T05 Flexible', 'Tutorial', 3, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, 'f0e9626c-3930-434f-8d2a-d6b9774c8dd5', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T05 Flexible extra 1', 'Tutorial', 3, 12, 13, '{2,3,4}', '09-836', 1, '35628c2f-33b4-4262-b334-87b7c7c76a6e', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'f0e9626c-3930-434f-8d2a-d6b9774c8dd5');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T08 Flexible', 'Tutorial', 4, 10, 11, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '33c83d7b-b2e5-49be-8968-d632c8b3ddab', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T08 Flexible extra 1', 'Tutorial', 4, 10, 11, '{2,3,4}', '09-836', 1, '518e26e8-173b-49d0-aef0-51081a489b75', '8046ee18-243f-4b89-93f2-ad56a63f133f', '33c83d7b-b2e5-49be-8968-d632c8b3ddab');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T11 Flexible', 'Tutorial', 4, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '3367745a-227a-4a2f-98b1-b5d61b1e15d5', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T11 Flexible extra 1', 'Tutorial', 4, 12, 13, '{2,3,4}', '09-836', 1, '6ae3757a-86ee-41c1-9f08-4743fb84bd5d', '8046ee18-243f-4b89-93f2-ad56a63f133f', '3367745a-227a-4a2f-98b1-b5d61b1e15d5');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T14 Flexible', 'Tutorial', 5, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '09-836', 1, '6c5a68a6-4e77-4b59-b4ce-f46ad8c34f8f', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T14 Flexible extra 1', 'Tutorial', 5, 12, 13, '{2,3,4}', '09-836', 1, '76d81abb-05fc-4ff6-acc8-46544df3bc3a', '8046ee18-243f-4b89-93f2-ad56a63f133f', '6c5a68a6-4e77-4b59-b4ce-f46ad8c34f8f');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T01 Flexible', 'Tutorial', 1, 15, 16, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '5189496e-4ed8-4784-8b7a-47cdad69e458', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T01 Flexible extra 1', 'Tutorial', 1, 15, 16, '{2,3,4}', '49-316', 2, 'ce40eb05-fee5-493b-9a96-4cbaf0a4b6c3', '8046ee18-243f-4b89-93f2-ad56a63f133f', '5189496e-4ed8-4784-8b7a-47cdad69e458');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T02 Flexible', 'Tutorial', 1, 16, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'c52d4c52-ef3e-47c0-b462-d2905ba6c664', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T02 Flexible extra 1', 'Tutorial', 1, 16, 17, '{2,3,4}', '49-316', 2, '55bdea23-1eeb-451f-ab66-0808833fe371', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'c52d4c52-ef3e-47c0-b462-d2905ba6c664');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T03 Flexible', 'Tutorial', 2, 8, 9, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '8713fe61-886d-4273-97e9-eb2653c4aadc', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T03 Flexible extra 1', 'Tutorial', 2, 8, 9, '{2,3,4}', '49-316', 2, 'b71d32dd-0a06-4a63-8c9a-6883287fc313', '8046ee18-243f-4b89-93f2-ad56a63f133f', '8713fe61-886d-4273-97e9-eb2653c4aadc');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T04 Flexible', 'Tutorial', 3, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '223540d8-80d2-4f7c-af30-8878d1f33ebf', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T04 Flexible extra 1', 'Tutorial', 3, 11, 12, '{2,3,4}', '49-316', 2, '96e46f76-3005-4127-897c-3f29a32c8fb4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '223540d8-80d2-4f7c-af30-8878d1f33ebf');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T06 Flexible', 'Tutorial', 4, 9, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '9971d3c3-0f3a-4db9-ad49-b46c30c3f78e', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T06 Flexible extra 1', 'Tutorial', 4, 9, 10, '{2,3,4}', '49-316', 2, '00e04873-99fd-4c81-bcc6-aca2afec13a4', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9971d3c3-0f3a-4db9-ad49-b46c30c3f78e');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T07 Flexible', 'Tutorial', 4, 10, 11, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'faa81413-01cb-4278-abb0-9a5d21fd787c', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T07 Flexible extra 1', 'Tutorial', 4, 10, 11, '{2,3,4}', '49-316', 2, 'dd8c95b9-37e8-429f-85de-d98a250b5786', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'faa81413-01cb-4278-abb0-9a5d21fd787c');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T09 Flexible', 'Tutorial', 4, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'eab84561-b65f-45a1-aa8a-12049f805ef8', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T09 Flexible extra 1', 'Tutorial', 4, 11, 12, '{2,3,4}', '49-316', 2, 'f27cd5b4-e1b8-402a-b783-c01218d5a37e', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'eab84561-b65f-45a1-aa8a-12049f805ef8');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T10 Flexible', 'Tutorial', 4, 12, 13, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, 'a7e61620-32f3-4e3b-9a1c-ed2bbb054867', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T10 Flexible extra 1', 'Tutorial', 4, 12, 13, '{2,3,4}', '49-316', 2, 'ce98fbbc-1fac-4a01-83c8-b2860ebcd9e8', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'a7e61620-32f3-4e3b-9a1c-ed2bbb054867');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T12 Flexible', 'Tutorial', 4, 13, 14, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '50782cea-d08c-40c0-9e6d-a4456e60fdb7', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T12 Flexible extra 1', 'Tutorial', 4, 13, 14, '{2,3,4}', '49-316', 2, 'b092efee-3af3-42e7-b4d5-2abab8c67e00', '8046ee18-243f-4b89-93f2-ad56a63f133f', '50782cea-d08c-40c0-9e6d-a4456e60fdb7');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T13 Flexible', 'Tutorial', 4, 17, 18, '{2,3,4,5,6,7,8,10,11,12,13,14}', '49-316', 2, '9d274fa3-53e4-49ed-a3c0-19026c3163af', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T13 Flexible extra 1', 'Tutorial', 4, 17, 18, '{2,3,4}', '49-316', 2, 'c42dcbd3-e629-46dc-ab96-5f08b705c0b3', '8046ee18-243f-4b89-93f2-ad56a63f133f', '9d274fa3-53e4-49ed-a3c0-19026c3163af');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T01 External', 'Tutorial', 1, 16, 17, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '84f748b3-f559-4862-afce-da754895aed0', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T01 External extra 1', 'Tutorial', 1, 16, 17, '{2,3,4}', 'Online', 2, '0ebcf551-5499-4b4a-8a52-17e563bfc706', '8046ee18-243f-4b89-93f2-ad56a63f133f', '84f748b3-f559-4862-afce-da754895aed0');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T02 External', 'Tutorial', 3, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'e54f0287-ddf0-48ed-beff-7552193bb314', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T02 External extra 1', 'Tutorial', 3, 11, 12, '{2,3,4}', 'Online', 2, '1d05bf71-64a1-4372-995f-d1c8628c360a', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'e54f0287-ddf0-48ed-beff-7552193bb314');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T04 External', 'Tutorial', 4, 11, 12, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, '1464c2aa-b832-4308-a792-03e09d68fe88', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T04 External extra 1', 'Tutorial', 4, 11, 12, '{2,3,4}', 'Online', 2, 'eb3a343f-b6fc-4f65-ab53-40401196c127', '8046ee18-243f-4b89-93f2-ad56a63f133f', '1464c2aa-b832-4308-a792-03e09d68fe88');
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T03 External', 'Tutorial', 4, 9, 10, '{2,3,4,5,6,7,8,10,11,12,13,14}', 'Online', 2, 'a4509284-499a-4420-80f7-afffa0bd6de6', '8046ee18-243f-4b89-93f2-ad56a63f133f', NULL);
+INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", weeks, location, "numberOfStaff", id, "timetableId", "rootId") VALUES ('T03 External extra 1', 'Tutorial', 4, 9, 10, '{2,3,4}', 'Online', 2, '872d100e-16e5-4def-9692-5e3685946a61', '8046ee18-243f-4b89-93f2-ad56a63f133f', 'a4509284-499a-4420-80f7-afffa0bd6de6');
 
 
 --
@@ -1635,12 +1531,6 @@ INSERT INTO public.session_stream (name, type, day, "startTime", "endTime", week
 
 --
 -- Data for Name: staff_request_swap_preference_session; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
--- Data for Name: stream_allocation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
@@ -1810,8 +1700,8 @@ INSERT INTO public.timeslot (day, "startTime", "endTime", id, "userId") VALUES (
 -- Data for Name: timetable; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock", "allocationToken") VALUES ('86b6d4b0-a8c5-4c42-8278-e649144f92b3', '4de5ca8e-0698-4a7d-9241-2cb9fc37b376', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE', NULL);
-INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock", "allocationToken") VALUES ('8046ee18-243f-4b89-93f2-ad56a63f133f', '0a2e6669-f8aa-45e9-8aeb-7a92ed495871', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE', 'cc37b0b1-9f7d-498a-a8e0-0fd496e96f60');
+INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock") VALUES ('86b6d4b0-a8c5-4c42-8278-e649144f92b3', '4de5ca8e-0698-4a7d-9241-2cb9fc37b376', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE');
+INSERT INTO public.timetable (id, "courseId", "termId", "permanentRequestLock", "temporaryRequestLock") VALUES ('8046ee18-243f-4b89-93f2-ad56a63f133f', '0a2e6669-f8aa-45e9-8aeb-7a92ed495871', '6a27f0f9-2c6c-478e-8088-ec7eb221a60d', 'FREE', 'FREE');
 
 
 --
@@ -1893,7 +1783,7 @@ INSERT INTO public."user" (username, name, email, id, "isAdmin", "settingsId") V
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 55, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 62, true);
 
 
 --
@@ -1929,27 +1819,11 @@ ALTER TABLE ONLY public.staff_request
 
 
 --
--- Name: session_stream_allocated_users_user PK_4ac2d5c51b2a40fab3d090c5d4d; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_stream_allocated_users_user
-    ADD CONSTRAINT "PK_4ac2d5c51b2a40fab3d090c5d4d" PRIMARY KEY ("sessionStreamId", "userId");
-
-
---
 -- Name: session_stream PK_4c05a74aa4bcb6232e597f6be83; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.session_stream
     ADD CONSTRAINT "PK_4c05a74aa4bcb6232e597f6be83" PRIMARY KEY (id);
-
-
---
--- Name: session_allocation PK_52c1e1b8d5dfae4448fb5c0d122; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_allocation
-    ADD CONSTRAINT "PK_52c1e1b8d5dfae4448fb5c0d122" PRIMARY KEY (id);
 
 
 --
@@ -2006,14 +1880,6 @@ ALTER TABLE ONLY public.migrations
 
 ALTER TABLE ONLY public.staff_request_swap_preference_session
     ADD CONSTRAINT "PK_8d7af521a17327e34412a71a699" PRIMARY KEY ("staffRequestId", "sessionId");
-
-
---
--- Name: stream_allocation PK_8ec85fd9f1f15f195b27a532dd9; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.stream_allocation
-    ADD CONSTRAINT "PK_8ec85fd9f1f15f195b27a532dd9" PRIMARY KEY (id);
 
 
 --
@@ -2097,14 +1963,6 @@ ALTER TABLE ONLY public.session
 
 
 --
--- Name: session_allocation UQ_48fa99dd8231087c41a285f606f; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_allocation
-    ADD CONSTRAINT "UQ_48fa99dd8231087c41a285f606f" UNIQUE ("sessionId", "userId");
-
-
---
 -- Name: course UQ_5cf4963ae12285cda6432d5a3a4; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2121,14 +1979,6 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- Name: stream_allocation UQ_8b449413d5d44c30ffff74aa0f0; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.stream_allocation
-    ADD CONSTRAINT "UQ_8b449413d5d44c30ffff74aa0f0" UNIQUE ("sessionStreamId", "userId");
-
-
---
 -- Name: term UQ_97a51c8bbbe5d3db497ccffe035; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2137,11 +1987,11 @@ ALTER TABLE ONLY public.term
 
 
 --
--- Name: course_staff UQ_d3dfdd3bab57eedfcf1e45bc72d; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: preference UQ_bb2583a46037ff9e3acba0c545b; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.course_staff
-    ADD CONSTRAINT "UQ_d3dfdd3bab57eedfcf1e45bc72d" UNIQUE ("preferenceId");
+ALTER TABLE ONLY public.preference
+    ADD CONSTRAINT "UQ_bb2583a46037ff9e3acba0c545b" UNIQUE ("courseStaffId");
 
 
 --
@@ -2188,13 +2038,6 @@ CREATE INDEX "IDX_3e1a73101620f738bc61dffa19" ON public.user_allocated_streams_s
 
 
 --
--- Name: IDX_76fe690bd48a4cd9aa58bfcb45; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX "IDX_76fe690bd48a4cd9aa58bfcb45" ON public.session_stream_allocated_users_user USING btree ("userId");
-
-
---
 -- Name: IDX_9159aa0df8131c1cd0f242c84d; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -2216,10 +2059,11 @@ CREATE INDEX "IDX_c13a3a9d35ffb7497f0a93cb57" ON public.staff_request_swap_prefe
 
 
 --
--- Name: IDX_e62630c379f91fe30d920b3462; Type: INDEX; Schema: public; Owner: postgres
+-- Name: session_stream FK_01ed4ecc41e93348d2edfa8f0a7; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-CREATE INDEX "IDX_e62630c379f91fe30d920b3462" ON public.session_stream_allocated_users_user USING btree ("sessionStreamId");
+ALTER TABLE ONLY public.session_stream
+    ADD CONSTRAINT "FK_01ed4ecc41e93348d2edfa8f0a7" FOREIGN KEY ("rootId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
 
 
 --
@@ -2227,7 +2071,7 @@ CREATE INDEX "IDX_e62630c379f91fe30d920b3462" ON public.session_stream_allocated
 --
 
 ALTER TABLE ONLY public.user_allocated_sessions_session
-    ADD CONSTRAINT "FK_0285bd5e90495ffd4540a213be3" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
+    ADD CONSTRAINT "FK_0285bd5e90495ffd4540a213be3" FOREIGN KEY ("sessionId") REFERENCES public.session(id) ON DELETE CASCADE;
 
 
 --
@@ -2243,7 +2087,7 @@ ALTER TABLE ONLY public.offer
 --
 
 ALTER TABLE ONLY public.user_allocated_streams_session_stream
-    ADD CONSTRAINT "FK_0c7b4b679e253d31c11e6d99341" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id);
+    ADD CONSTRAINT "FK_0c7b4b679e253d31c11e6d99341" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
 
 
 --
@@ -2311,27 +2155,11 @@ ALTER TABLE ONLY public.user_allocated_streams_session_stream
 
 
 --
--- Name: session_allocation FK_4229fc0a3545c3afd0bfb0bb7e4; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_allocation
-    ADD CONSTRAINT "FK_4229fc0a3545c3afd0bfb0bb7e4" FOREIGN KEY ("sessionId") REFERENCES public.session(id);
-
-
---
 -- Name: timeslot FK_47d06adf246fcfea1d318423ee3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.timeslot
     ADD CONSTRAINT "FK_47d06adf246fcfea1d318423ee3" FOREIGN KEY ("userId") REFERENCES public."user"(id);
-
-
---
--- Name: session_allocation FK_4ad45c42f963d66b7d38b6e9fe8; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_allocation
-    ADD CONSTRAINT "FK_4ad45c42f963d66b7d38b6e9fe8" FOREIGN KEY ("userId") REFERENCES public."user"(id);
 
 
 --
@@ -2359,14 +2187,6 @@ ALTER TABLE ONLY public.staff_request
 
 
 --
--- Name: session_stream_allocated_users_user FK_76fe690bd48a4cd9aa58bfcb455; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_stream_allocated_users_user
-    ADD CONSTRAINT "FK_76fe690bd48a4cd9aa58bfcb455" FOREIGN KEY ("userId") REFERENCES public."user"(id);
-
-
---
 -- Name: staff_request_swap_preference_session FK_9159aa0df8131c1cd0f242c84dc; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2391,14 +2211,6 @@ ALTER TABLE ONLY public.timetable
 
 
 --
--- Name: stream_allocation FK_b3d5528826d766b691e1132107f; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.stream_allocation
-    ADD CONSTRAINT "FK_b3d5528826d766b691e1132107f" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id);
-
-
---
 -- Name: offer FK_b5bd4b6466627203e4bc13b5fe0; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2407,11 +2219,11 @@ ALTER TABLE ONLY public.offer
 
 
 --
--- Name: stream_allocation FK_bc7afec02062c5cedc6d14bd6af; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: preference FK_bb2583a46037ff9e3acba0c545b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.stream_allocation
-    ADD CONSTRAINT "FK_bc7afec02062c5cedc6d14bd6af" FOREIGN KEY ("userId") REFERENCES public."user"(id);
+ALTER TABLE ONLY public.preference
+    ADD CONSTRAINT "FK_bb2583a46037ff9e3acba0c545b" FOREIGN KEY ("courseStaffId") REFERENCES public.course_staff(id);
 
 
 --
@@ -2423,35 +2235,11 @@ ALTER TABLE ONLY public.staff_request_swap_preference_session
 
 
 --
--- Name: course_staff FK_d3dfdd3bab57eedfcf1e45bc72d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.course_staff
-    ADD CONSTRAINT "FK_d3dfdd3bab57eedfcf1e45bc72d" FOREIGN KEY ("preferenceId") REFERENCES public.preference(id);
-
-
---
 -- Name: session FK_e18308596f3076e9de1d80c6f51; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.session
     ADD CONSTRAINT "FK_e18308596f3076e9de1d80c6f51" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
-
-
---
--- Name: session_stream FK_e5d1bede2546c0a492f77ae71ec; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_stream
-    ADD CONSTRAINT "FK_e5d1bede2546c0a492f77ae71ec" FOREIGN KEY ("basedId") REFERENCES public.session_stream(id) ON DELETE CASCADE;
-
-
---
--- Name: session_stream_allocated_users_user FK_e62630c379f91fe30d920b34626; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.session_stream_allocated_users_user
-    ADD CONSTRAINT "FK_e62630c379f91fe30d920b34626" FOREIGN KEY ("sessionStreamId") REFERENCES public.session_stream(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2468,6 +2256,13 @@ ALTER TABLE ONLY public.offer
 
 ALTER TABLE ONLY public.staff_request
     ADD CONSTRAINT "FK_f8d9da2b83b977dcc23b6c2fc60" FOREIGN KEY ("requesterId") REFERENCES public."user"(id);
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
