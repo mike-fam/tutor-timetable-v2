@@ -41,7 +41,7 @@ export class Preference
 
     @OneToOne(() => CourseStaff, (courseStaff) => courseStaff.preference, {
         lazy: true,
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
     })
     @JoinColumn()
     courseStaff: Lazy<CourseStaff>;
