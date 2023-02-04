@@ -92,6 +92,7 @@ export const CourseStaffPageContainer: FC<Props> = () => {
         if (!getCourseStaffData) {
             return;
         }
+        setCourseStaff((prev) => prev.clear());
         getCourseStaffData.courseStaffs.forEach((courseStaff) => {
             setCourseStaff((prev) => prev.set(courseStaff.id, courseStaff));
         });
