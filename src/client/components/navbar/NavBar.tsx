@@ -1,12 +1,12 @@
-import { ChevronDownIcon, Icon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
     Box,
     Divider,
     Flex,
     Heading,
+    IconButton,
     Menu,
     MenuButton,
-    MenuDivider,
     MenuItem,
     MenuList,
     Spacer,
@@ -14,15 +14,17 @@ import {
     useColorMode,
     useColorModeValue,
     useDisclosure,
+    useMediaQuery,
 } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { UserContext } from "../../utils/user";
 import { NavBarMenuButton } from "./NavBarMenuButton";
-import { BsPersonFill } from "react-icons/bs";
 import { EditUserDetailsModalContainer } from "../../containers/navbar/EditUserDetailsModalContainer";
 import { TimetableSettingsModal } from "../../containers/TimetableSettingsModal";
 import { Role } from "../../generated/graphql";
 import { RouterLink } from "../helpers/RouterLink";
+import { AdminMenu } from "./AdminMenu";
+import { UserMenu } from "./UserMenu";
 
 type Props = {};
 
@@ -30,7 +32,12 @@ export const NavBar: FC<Props> = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const bgColor = useColorModeValue("gray.100", "gray.900");
     const { user } = useContext(UserContext);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isEditPersonalDetailsModalOpen,
+        onOpen: openEditPersonalDetailsModal,
+        onClose: closeEditPersonalDetailsModal,
+    } = useDisclosure();
+    const [isSmallerThan960] = useMediaQuery("(max-width: 960px)");
 
     const {
         isOpen: isTimetableSettingsModalOpen,
@@ -40,124 +47,106 @@ export const NavBar: FC<Props> = () => {
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
-                <Flex w="80%" mx="auto" h={14} alignItems="center">
+                <Flex w="90%" mx="auto" h={14} alignItems="center">
                     <Heading size="md" fontWeight="normal">
                         Tutor TimeTable
                     </Heading>
                     <Spacer />
-                    <RouterLink to="/" fullHeight>
-                        <NavBarMenuButton>Home</NavBarMenuButton>
-                    </RouterLink>
-                    <RouterLink to="/requests" fullHeight>
-                        <NavBarMenuButton>Requests</NavBarMenuButton>
-                    </RouterLink>
-                    <RouterLink to="/availabilities" fullHeight>
-                        <NavBarMenuButton>Availability</NavBarMenuButton>
-                    </RouterLink>
-                    <RouterLink to="/preferences" fullHeight>
-                        <NavBarMenuButton>Preferences</NavBarMenuButton>
-                    </RouterLink>
-                    {user.courseStaffs.some(
-                        (courseStaff) =>
-                            courseStaff.role === Role.CourseCoordinator
-                    ) && (
+                    {isSmallerThan960 ? (
                         <Menu>
                             <MenuButton
-                                as={NavBarMenuButton}
-                                rightIcon={<ChevronDownIcon />}
-                                style={{ cursor: "pointer" }}
-                            >
-                                Admin
-                            </MenuButton>
-                            <MenuList style={{ margin: 0 }}>
+                                as={IconButton}
+                                icon={<HamburgerIcon />}
+                            />
+                            <MenuList>
                                 <MenuItem>
-                                    <RouterLink
-                                        to="/course-staff"
-                                        fullHeight
-                                        fullWidth
-                                    >
-                                        Course Staff
+                                    <RouterLink to="/" fullHeight fullWidth>
+                                        Home
                                     </RouterLink>
                                 </MenuItem>
                                 <MenuItem>
                                     <RouterLink
-                                        to="/session-settings"
+                                        to="/requests"
                                         fullHeight
                                         fullWidth
                                     >
-                                        Session Settings
+                                        Requests
                                     </RouterLink>
                                 </MenuItem>
                                 <MenuItem>
                                     <RouterLink
-                                        to="/availability-monitor"
+                                        to="/availabilities"
                                         fullHeight
                                         fullWidth
                                     >
-                                        Availability Monitor
+                                        Availability
                                     </RouterLink>
                                 </MenuItem>
-                                {user.isAdmin && (
-                                    <MenuItem>
-                                        <RouterLink
-                                            to="/admin"
-                                            fullHeight
-                                            fullWidth
-                                        >
-                                            Top-level Admin
-                                        </RouterLink>
-                                    </MenuItem>
-                                )}
+                                <MenuItem>
+                                    <RouterLink
+                                        to="/preferences"
+                                        fullHeight
+                                        fullWidth
+                                    >
+                                        Preferences
+                                    </RouterLink>
+                                </MenuItem>
                             </MenuList>
                         </Menu>
-                    )}
-                    <Menu>
-                        <MenuButton
-                            as={NavBarMenuButton}
-                            leftIcon={<Icon as={BsPersonFill} mr={1} />}
-                            rightIcon={<ChevronDownIcon ml={1} />}
-                            style={{ cursor: "pointer" }}
-                        >
-                            {user.username}
-                        </MenuButton>
-                        <MenuList>
-                            <MenuItem onClick={onOpen}>
-                                Edit Personal Details
-                            </MenuItem>
-                            <MenuItem onClick={openTimetableSettingsModal}>
-                                Timetable Settings
-                            </MenuItem>
-                            <MenuDivider />
-                            <MenuItem
-                                as="a"
-                                href="https://api.uqcloud.net/logout/"
+                    ) : (
+                        <>
+                            <RouterLink to="/" fullHeight>
+                                <NavBarMenuButton>Home</NavBarMenuButton>
+                            </RouterLink>
+                            <RouterLink to="/requests" fullHeight>
+                                <NavBarMenuButton>Requests</NavBarMenuButton>
+                            </RouterLink>
+                            <RouterLink to="/availabilities" fullHeight>
+                                <NavBarMenuButton>
+                                    Availability
+                                </NavBarMenuButton>
+                            </RouterLink>
+                            <RouterLink to="/preferences" fullHeight>
+                                <NavBarMenuButton>Preferences</NavBarMenuButton>
+                            </RouterLink>
+                            {user.courseStaffs.some(
+                                (courseStaff) =>
+                                    courseStaff.role === Role.CourseCoordinator
+                            ) && <AdminMenu showAdmin={user.isAdmin} />}
+                            <UserMenu
+                                username={user.username}
+                                onEditPersonalDetails={
+                                    openEditPersonalDetailsModal
+                                }
+                            />
+                            <Tooltip
+                                label={
+                                    colorMode === "light"
+                                        ? "Toggle Dark Mode"
+                                        : "Toggle Light Mode"
+                                }
                             >
-                                Log out
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
-                    <Tooltip
-                        label={
-                            colorMode === "light"
-                                ? "Toggle Dark Mode"
-                                : "Toggle Light Mode"
-                        }
-                    >
-                        <NavBarMenuButton
-                            onClick={toggleColorMode}
-                            style={{ cursor: "pointer" }}
-                        >
-                            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                        </NavBarMenuButton>
-                    </Tooltip>
+                                <NavBarMenuButton
+                                    onClick={toggleColorMode}
+                                    style={{ cursor: "pointer" }}
+                                >
+                                    {colorMode === "light" ? (
+                                        <MoonIcon />
+                                    ) : (
+                                        <SunIcon />
+                                    )}
+                                </NavBarMenuButton>
+                            </Tooltip>
+                        </>
+                    )}
                 </Flex>
+                <Divider />
             </Box>
             <EditUserDetailsModalContainer
-                isOpen={isOpen}
-                openModal={onOpen}
-                closeModal={onClose}
+                isOpen={isEditPersonalDetailsModalOpen}
+                openModal={openEditPersonalDetailsModal}
+                closeModal={closeEditPersonalDetailsModal}
             />
-            <Divider />
             <TimetableSettingsModal
                 isOpen={isTimetableSettingsModalOpen}
                 onClose={closeTimetableSettingsModal}

@@ -5,7 +5,7 @@ type Props = {};
 
 export const Wrapper: FC<Props> = ({ children }) => {
     return (
-        <Box maxW="80%" mx="auto" mt={10}>
+        <Box maxW="90%" mx="auto" mt={10}>
             {children}
         </Box>
     );

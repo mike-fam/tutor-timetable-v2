@@ -50,8 +50,11 @@ export const TimetablePageContainer: FC<Props> = () => {
                     }}
                 >
                     <Grid
-                        templateColumns="1fr 4fr"
+                        templateColumns="1fr 6fr"
                         templateRows="repeat(3, auto)"
+                        width="100%"
+                        maxWidth="1400px"
+                        mx="auto"
                     >
                         <Box gridRow="3 / -1">
                             <CourseCheckboxListContainer
