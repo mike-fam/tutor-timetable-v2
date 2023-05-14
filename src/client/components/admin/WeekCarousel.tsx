@@ -26,7 +26,7 @@ export const WeekCarousel: FC<Props> = ({ startDate, endDate, weekNames }) => {
     const weekNum = differenceInWeeks(endDate, startDate) + 1;
     return (
         <Carousel
-            d="flex"
+            display="flex"
             cycle
             initialSlide={3}
             slideWidth={180}

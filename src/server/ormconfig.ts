@@ -1,4 +1,4 @@
-import { ConnectionOptions } from "typeorm";
+import { DataSource } from "typeorm";
 import { __prod__ } from "../constants";
 import {
     Course,
@@ -16,7 +16,7 @@ import {
     UserSettings,
 } from "./entities";
 
-export default {
+export const dataSource = new DataSource({
     type: "postgres",
     database: process.env.DB_NAME,
     username: process.env.DB_USER,
@@ -46,9 +46,5 @@ export default {
     // Uncomment query if you want to see the queries run by TypeORM
     // Warning: your might be overwhelmed by the output
     logging: !__prod__ && ["error", "schema", "warn"], //, "query"],
-    cli: {
-        migrationsDir: __prod__
-            ? "build/server/migrations/*.js"
-            : "src/server/migrations",
-    },
-} as ConnectionOptions;
+    // migrationsRun: true,
+});

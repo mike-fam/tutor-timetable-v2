@@ -145,7 +145,7 @@ export class AllocatorResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
         const { user } = req;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             {
                 courseId,
                 termId,
@@ -184,7 +184,7 @@ export class AllocatorResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<AllocatorOutput> {
         const { user } = req;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             {
                 courseId,
                 termId,
@@ -278,7 +278,7 @@ export class AllocatorResolver {
                     user
                 );
                 const preference = await models.preference.getIfExists(
-                    { id: courseStaff.preferenceId },
+                    { where: { id: courseStaff.preferenceId } },
                     user
                 );
                 const availabilities = await models.timeslot.getByIds(

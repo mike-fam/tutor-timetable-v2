@@ -279,7 +279,7 @@ export const useSessionSettings = () => {
     }, []);
 
     // Handle delete stream
-    const deleteStream = useCallback((streamId) => {
+    const deleteStream = useCallback((streamId: string) => {
         setStreams((prev) => {
             if (!prev.has(streamId)) {
                 return prev;
@@ -314,7 +314,7 @@ export const useSessionSettings = () => {
     }, [selectedStreams, deleteStream]);
 
     // Handle restore stream
-    const restoreStream = useCallback((streamId) => {
+    const restoreStream = useCallback((streamId: string) => {
         setStreams((prev) => {
             if (!prev.has(streamId)) {
                 return prev;
@@ -695,14 +695,24 @@ export const useSessionSettings = () => {
         },
     });
 
-    const [csvData, setCSV] = useState<string[][]>([]);
-
     useEffect(() => {
         if (!exportAllocationData) {
             return;
         }
 
-        const rows = [];
+        const rows = [
+            [
+                "Course",
+                "Type",
+                "Session",
+                "Stream",
+                "Day",
+                "Start",
+                "Duration",
+                "Location",
+                "Weeks",
+            ],
+        ];
 
         for (const {
             timetable,
@@ -728,13 +738,18 @@ export const useSessionSettings = () => {
                 startTime.toString(),
                 ((endTime - startTime) * 60).toString(),
                 location,
-                weeks.join(","),
+                `"${weeks.join(",")}"`,
             ].concat(allocatedUsers.map((user) => user.name));
 
             rows.push(row);
         }
-
-        setCSV(rows);
+        const csvContent = rows.map((row) => row.join(",")).join("\r\n");
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "allocations.csv");
+        link.click();
     }, [exportAllocationData]);
 
     // TODO: Implement week cache
@@ -790,7 +805,6 @@ export const useSessionSettings = () => {
             chooseWeek,
             course,
             term,
-            csvData,
         },
         loading:
             streamsLoading ||

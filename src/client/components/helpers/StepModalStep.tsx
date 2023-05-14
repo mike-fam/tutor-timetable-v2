@@ -22,7 +22,7 @@ export const StepModalStep: FC<Props> = ({
 }) => {
     const { currentStep } = useContext(StepModalContext);
     return (
-        <Box d={currentStep === step ? "block" : "none"}>
+        <Box display={currentStep === step ? "block" : "none"}>
             <ModalHeader>{header}</ModalHeader>
             <ModalCloseButton />
             <Divider />

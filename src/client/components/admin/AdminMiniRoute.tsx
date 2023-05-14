@@ -1,10 +1,10 @@
-import { ReactElement, FC, useContext, Component, ReactNode } from "react";
+import { FC, useContext, ElementType } from "react";
 import { AdminPage } from "../../types/admin";
 import { AdminPageContext } from "../../containers/admin/AdminPageContainer";
 
 type Props = {
     page: AdminPage;
-    component: ReactNode;
+    component: ElementType;
 };
 
 export const AdminMiniRoute: FC<Props> = ({ component, page }) => {

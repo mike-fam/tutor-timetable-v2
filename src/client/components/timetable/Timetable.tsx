@@ -1,9 +1,8 @@
-import { Box, Grid, HStack, IconButton, Stack } from "@chakra-ui/react";
+import { Grid, HStack, IconButton, Stack } from "@chakra-ui/react";
 import {
     PropsWithChildren,
     ReactElement,
     useEffect,
-    useLayoutEffect,
     useRef,
     useState,
 } from "react";

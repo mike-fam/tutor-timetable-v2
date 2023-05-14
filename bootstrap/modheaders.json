@@ -8,7 +8,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -40,7 +40,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -72,7 +72,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -104,7 +104,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -136,7 +136,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -168,7 +168,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -200,7 +200,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -232,7 +232,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -264,7 +264,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -296,7 +296,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -328,7 +328,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -360,7 +360,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -392,7 +392,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -424,7 +424,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -456,7 +456,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -488,7 +488,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -520,7 +520,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -552,7 +552,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -584,7 +584,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -616,7 +616,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -648,7 +648,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -680,7 +680,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -712,7 +712,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -744,7 +744,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -776,7 +776,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -808,7 +808,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -840,7 +840,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -872,7 +872,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -904,7 +904,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -936,7 +936,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -968,7 +968,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1000,7 +1000,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1032,7 +1032,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1064,7 +1064,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1096,7 +1096,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1128,7 +1128,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1160,7 +1160,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1192,7 +1192,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1224,7 +1224,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1256,7 +1256,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1288,7 +1288,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1320,7 +1320,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1352,7 +1352,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1384,7 +1384,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1416,7 +1416,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1448,7 +1448,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1480,7 +1480,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1512,7 +1512,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1544,7 +1544,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [
@@ -1576,7 +1576,7 @@
         "enabled": true,
         "resourceType": [],
         "type": "urls",
-        "urlRegex": "http://localhost:[35]000/.*"
+        "urlRegex": ".*://localhost:[35]000/.*"
       }
     ],
     "headers": [

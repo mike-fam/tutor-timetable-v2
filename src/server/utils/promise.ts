@@ -1,6 +1,6 @@
 export const promiseHandler = async <T>(
     promise: Promise<T>
-): Promise<[T?, Error?]> => {
+): Promise<[T?, unknown?]> => {
     try {
         return [await promise, undefined];
     } catch (e) {

@@ -24,7 +24,7 @@ export const OfferRequestModalContainer: FC<Props> = ({
     const toast = useToast();
     const [chosenSessions, setChosenSessions] = useState<Array<string>>([]);
     const chooseSession = useCallback(
-        (sessionId) => {
+        (sessionId: string) => {
             if (chosenSessions.includes(sessionId)) {
                 setChosenSessions((prev) =>
                     prev.filter((id) => id !== sessionId)

@@ -55,7 +55,7 @@ export class AvailabilityResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
         const user = req.user;
-        return await models.timeslot.getMany({ userId: user.id }, user);
+        return await models.timeslot.getManyBy({ userId: user.id }, user);
     }
 
     @Query(() => [Timeslot])
@@ -64,7 +64,7 @@ export class AvailabilityResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<Timeslot[]> {
         const user = req.user;
-        return await models.timeslot.getMany({ userId: userId }, user);
+        return await models.timeslot.getManyBy({ userId: userId }, user);
     }
 
     @Query(() => [StaffEnteredAvailability])
@@ -74,17 +74,17 @@ export class AvailabilityResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<StaffEnteredAvailability[]> {
         const user = req.user;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { courseId, termId },
             user
         );
-        const staff = await models.courseStaff.getMany(
+        const staff = await models.courseStaff.getManyBy(
             { timetableId: timetable.id },
             user
         );
         const result = [];
         for (const staffMember of staff) {
-            const timeslots = await models.timeslot.getMany(
+            const timeslots = await models.timeslot.getManyBy(
                 { userId: staffMember.userId },
                 user
             );
@@ -135,14 +135,14 @@ export class AvailabilityResolver {
                         ModificationType.REMOVED_MODIFIED
             )
             .map((timeslot) => timeslot.id!);
-        await models.timeslot.deleteMany(
+        await models.timeslot.deleteManyBy(
             {
                 id: In(removedTimeslotIds),
             },
             user
         );
         await models.timeslot.save([...newSessions, ...updatedTimeslots], user);
-        return await models.timeslot.getMany({ userId: user.id }, user);
+        return await models.timeslot.getManyBy({ userId: user.id }, user);
     }
 
     @FieldResolver(() => User)

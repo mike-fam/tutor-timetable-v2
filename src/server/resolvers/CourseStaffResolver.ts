@@ -39,18 +39,18 @@ export class CourseStaffResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff> {
         const user = req.user;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { courseId, termId },
             user
         );
-        let newStaff = await models.user.getIfExists({ username }, user);
+        let newStaff = await models.user.getIfExistsBy({ username }, user);
         if (!newStaff) {
             newStaff = await models.user.create(
                 { name: redacted, email: redacted, username },
                 user
             );
         }
-        const newCourseStaff = await models.courseStaff.create(
+        return await models.courseStaff.create(
             {
                 role,
                 isNew,
@@ -59,7 +59,6 @@ export class CourseStaffResolver {
             },
             user
         );
-        return newCourseStaff;
     }
 
     @Query(() => [CourseStaff])
@@ -69,11 +68,11 @@ export class CourseStaffResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
         const user = req.user;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { courseId, termId },
             user
         );
-        return await models.courseStaff.getMany(
+        return await models.courseStaff.getManyBy(
             { timetableId: timetable.id },
             user
         );
@@ -87,7 +86,7 @@ export class CourseStaffResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<CourseStaff[]> {
         const user = req.user;
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { courseId, termId },
             user
         );

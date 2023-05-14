@@ -85,7 +85,7 @@ export class OfferResolver {
         @Arg("requestId") requestId: string,
         @Ctx() { req, models }: MyContext
     ): Promise<Offer[]> {
-        return await models.offer.getMany({ requestId }, req.user);
+        return await models.offer.getManyBy({ requestId }, req.user);
     }
 
     @Mutation(() => Offer)
@@ -225,7 +225,7 @@ export class OfferResolver {
             );
             for (const otherOffer of otherOffers) {
                 await models.offer.update(
-                    otherOffer,
+                    { id: otherOffer.id },
                     { status: OfferStatus.REJECTED },
                     user
                 );

@@ -148,7 +148,7 @@ export class SessionStreamResolver {
         await asyncForEach(
             streamInputs,
             async ({ courseId, termId, ...streamInput }) => {
-                const timetable = await models.timetable.get(
+                const timetable = await models.timetable.getBy(
                     { courseId, termId },
                     user
                 );
@@ -264,7 +264,7 @@ export class SessionStreamResolver {
         @Arg("streamIds", () => [String]) streamIds: string[],
         @Ctx() { req, models }: MyContext
     ): Promise<string[]> {
-        await models.sessionStream.deleteMany(
+        await models.sessionStream.deleteManyBy(
             {
                 id: In(streamIds),
             },
@@ -350,7 +350,7 @@ export class SessionStreamResolver {
             throw new Error(PERM_ERR);
         }
         const generatedStreams: SessionStream[] = [];
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { courseId, termId },
             user
         );

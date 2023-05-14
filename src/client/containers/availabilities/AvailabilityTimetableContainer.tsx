@@ -118,9 +118,9 @@ export const AvailabilityTimetableContainer: FC<Props> = () => {
     );
 
     const removeSession = useCallback(
-        (timeslotId) => {
+        (timeslotId: string) => {
             // Added timeslot
-            if (timeslotId < 0) {
+            if (isNumeric(timeslotId)) {
                 setTimeslots((prev) => prev.remove(timeslotId));
             } else {
                 const timeslot = timeslots.get(timeslotId);
@@ -143,7 +143,7 @@ export const AvailabilityTimetableContainer: FC<Props> = () => {
     );
 
     const restoreSession = useCallback(
-        (timeslotId) => {
+        (timeslotId: string) => {
             const timeslot = timeslots.get(timeslotId);
             if (!timeslot) {
                 return;
@@ -162,7 +162,7 @@ export const AvailabilityTimetableContainer: FC<Props> = () => {
     );
 
     const editSession = useCallback(
-        (timeslotId) => {
+        (timeslotId: string) => {
             setEditedSessionId(timeslotId);
             openModal();
         },

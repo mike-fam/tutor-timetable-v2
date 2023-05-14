@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { useSessionSettings } from "../../hooks/useSessionSettings";
 import { TermSelectContainer } from "../TermSelectContainer";
 import { CourseSelectContainer } from "../CourseSelectContainer";
@@ -15,7 +15,6 @@ import {
     MenuList,
     Stack,
     useDisclosure,
-    useToast,
 } from "@chakra-ui/react";
 import { SessionSettingsTimetableContainer } from "./SessionSettingsTimetableContainer";
 import { defaultInt, defaultStr } from "../../constants";
@@ -26,7 +25,6 @@ import { useUsersOfCourse } from "../../hooks/useUsersOfCourse";
 import { AllocatorModal } from "./AllocatorModal";
 import { formatTerm } from "../../utils/term";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { CSVLink } from "react-csv";
 
 type Props = {};
 
@@ -42,7 +40,6 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
         week,
         course,
         term,
-        csvData,
     } = base;
     const {
         selectedStreams,
@@ -71,41 +68,41 @@ export const SessionSettingsPageContainer: FC<Props> = () => {
     } = useDisclosure();
     const users = useUsersOfCourse(courseId, termId);
 
-    const toast = useToast();
-    useEffect(() => {
-        if (csvData.length === 0) {
-            return;
-        }
+    // const toast = useToast();
+    // useEffect(() => {
+    //     if (csvData.length === 0) {
+    //         return;
+    //     }
 
-        const link = (
-            <CSVLink
-                filename={`${course?.code}-${term?.year}.csv`}
-                headers={[
-                    "Course",
-                    "Type",
-                    "Session",
-                    "Stream",
-                    "Day",
-                    "Start",
-                    "Duration",
-                    "Location",
-                    "Weeks",
-                ]}
-                data={csvData}
-            >
-                Click here to download CSV
-            </CSVLink>
-        );
+    // const link = (
+    //     <CSVLink
+    //         filename={`${course?.code}-${term?.year}.csv`}
+    //         headers={[
+    //             "Course",
+    //             "Type",
+    //             "Session",
+    //             "Stream",
+    //             "Day",
+    //             "Start",
+    //             "Duration",
+    //             "Location",
+    //             "Weeks",
+    //         ]}
+    //         data={csvData}
+    //     >
+    //         Click here to download CSV
+    //     </CSVLink>
+    // );
 
-        toast({
-            title: "Export Successful",
-            description: link,
-            position: "bottom",
-            status: "success",
-            isClosable: true,
-            duration: 9000,
-        });
-    }, [csvData, toast, course, term]);
+    // toast({
+    //     title: "Export Successful",
+    //     description: link,
+    //     position: "bottom",
+    //     status: "success",
+    //     isClosable: true,
+    //     duration: 9000,
+    // });
+    // }, [csvData, toast, course, term]);
 
     return (
         <Wrapper>

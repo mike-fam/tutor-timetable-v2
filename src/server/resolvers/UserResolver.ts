@@ -22,6 +22,7 @@ import { MyContext } from "../types/context";
 import { CourseTermIdInput } from "./CourseTermId";
 import { v4 as uuid } from "uuid";
 import { Role } from "../types/user";
+import { DeepPartial } from "typeorm";
 
 @InputType()
 export class UpdateDetailsInputType {
@@ -49,7 +50,11 @@ export class UserResolver {
         @Ctx() { req, models }: MyContext,
         @Arg("details") { name, email }: UpdateDetailsInputType
     ): Promise<User> {
-        return await models.user.update(req.user, { name, email }, req.user);
+        return await models.user.update(
+            { id: req.user.id },
+            { name, email },
+            req.user
+        );
     }
 
     @FieldResolver(() => [CourseStaff])
@@ -63,15 +68,17 @@ export class UserResolver {
                 req.user
             );
         }
-        const adminCourseStaffs = CourseStaff.create(
-            (await models.timetable.getMany({}, root)).map((timetable) => ({
-                id: uuid(),
-                timetableId: timetable.id,
-                role: Role.COURSE_COORDINATOR,
-                userId: root.id,
-            }))
+        return CourseStaff.create(
+            (await models.timetable.getManyBy({}, root)).map(
+                (timetable) =>
+                    ({
+                        id: uuid(),
+                        timetableId: timetable.id,
+                        role: Role.COURSE_COORDINATOR,
+                        userId: root.id,
+                    } as DeepPartial<CourseStaff>)
+            )
         );
-        return adminCourseStaffs;
     }
 
     @FieldResolver(() => [StaffRequest])

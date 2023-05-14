@@ -116,7 +116,10 @@ export class StaffRequestResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         const user = req.user;
-        return await models.staffRequest.getMany({ requester: user }, user);
+        return await models.staffRequest.getManyBy(
+            { requester: { id: user.id } },
+            user
+        );
     }
 
     // Get all requests related to user given term
@@ -126,7 +129,7 @@ export class StaffRequestResolver {
         @Ctx() { req, models }: MyContext
     ): Promise<StaffRequest[]> {
         // TODO: check
-        return await models.staffRequest.getMany(
+        return await models.staffRequest.getManyBy(
             {
                 session: {
                     sessionStream: {
@@ -178,7 +181,7 @@ export class StaffRequestResolver {
 
         if (closeRequest) {
             return await models.staffRequest.update(
-                request,
+                { id: request.id },
                 {
                     status: RequestStatus.CLOSED,
                 },
@@ -187,7 +190,7 @@ export class StaffRequestResolver {
         }
 
         return await models.staffRequest.update(
-            request,
+            { id: request.id },
             {
                 sessionId: sessionId || request.sessionId,
                 swapPreferenceSessionIds:

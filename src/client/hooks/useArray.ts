@@ -21,11 +21,12 @@ export type UseArray<T = any> = [T[], UseArrayActions<T>];
 
 export const useArray = <T = any>(initial: T[]): UseArray<T> => {
     const [value, setValue] = useState(initial);
-    const push = useCallback((a) => {
+    const push = useCallback((a: T | T[]) => {
         setValue((v) => [...v, ...(Array.isArray(a) ? a : [a])]);
     }, []);
     const unshift = useCallback(
-        (a) => setValue((v) => [...(Array.isArray(a) ? a : [a]), ...v]),
+        (a: T | T[]) =>
+            setValue((v) => [...(Array.isArray(a) ? a : [a]), ...v]),
         []
     );
     const pop = useCallback(() => setValue((v) => v.slice(0, -1)), []);
@@ -50,7 +51,7 @@ export const useArray = <T = any>(initial: T[]): UseArray<T> => {
         []
     );
     const removeIndex = useCallback(
-        (index) =>
+        (index: number) =>
             setValue((v) => {
                 const copy = v.slice();
                 copy.splice(index, 1);

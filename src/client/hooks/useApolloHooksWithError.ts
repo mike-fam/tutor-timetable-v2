@@ -10,8 +10,12 @@ import {
 } from "@apollo/client";
 import { useContext, useEffect, useMemo } from "react";
 import { FeedbackContext } from "../utils/errors";
+import { OperationVariables } from "@apollo/client/core";
 
-export const useQueryWithError = <T, S>(
+export const useQueryWithError = <
+    T,
+    S extends OperationVariables = OperationVariables
+>(
     useApolloQuery: (baseOptions?: QueryHookOptions<T, S>) => QueryResult<T, S>,
     baseOptions?: QueryHookOptions<T, S>
 ) => {
@@ -27,7 +31,10 @@ export const useQueryWithError = <T, S>(
     return queryResult;
 };
 
-export const useMutationWithError = <T, S>(
+export const useMutationWithError = <
+    T,
+    S extends OperationVariables = OperationVariables
+>(
     useApolloMutation: (
         baseOptions?: MutationHookOptions<T, S>
     ) => MutationTuple<T, S>,
@@ -45,7 +52,10 @@ export const useMutationWithError = <T, S>(
     return mutationResult;
 };
 
-export const useMutationWithStatus = <T, S>(
+export const useMutationWithStatus = <
+    T,
+    S extends OperationVariables = OperationVariables
+>(
     useApolloMutation: (
         baseOptions?: MutationHookOptions<T, S>
     ) => MutationTuple<T, S>,
@@ -64,7 +74,10 @@ export const useMutationWithStatus = <T, S>(
     return mutationResult;
 };
 
-export const useLazyQueryWithError = <T, S>(
+export const useLazyQueryWithError = <
+    T,
+    S extends OperationVariables = OperationVariables
+>(
     useApolloLazyQuery: (
         baseOptions?: Apollo.LazyQueryHookOptions<T, S>
     ) => QueryTuple<T, S>,
@@ -82,11 +95,14 @@ export const useLazyQueryWithError = <T, S>(
     return queryResult;
 };
 
-export const useSubscriptionWithError = <T, S>(
+export const useSubscriptionWithError = <
+    T,
+    S extends OperationVariables = OperationVariables
+>(
     useApolloSubscription: (
         baseOptions: Apollo.SubscriptionHookOptions<T, S>
     ) => {
-        variables: S | undefined;
+        variables?: S;
         loading: boolean;
         data?: T | undefined;
         error?: ApolloError | undefined;

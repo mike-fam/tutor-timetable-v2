@@ -25,7 +25,7 @@ export const AdminSidebarLink: FC<Props> = ({ name, onClick, selected }) => {
             }}
             h="100%"
             w="100%"
-            d="block"
+            display="block"
             borderRadius="5px"
             fontWeight={selected ? "600" : "500"}
             bgColor={selected ? bgColour : "none"}

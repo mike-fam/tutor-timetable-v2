@@ -31,7 +31,7 @@ export class UpdateCourseInput extends CourseInput {
 export class CourseResolver {
     @Query(() => [Course])
     async courses(@Ctx() { req, models }: MyContext): Promise<Course[]> {
-        return models.course.getMany({}, req.user);
+        return models.course.getManyBy({}, req.user);
     }
 
     @Query(() => Course)

@@ -41,7 +41,6 @@ export const NavBar: FC<Props> = () => {
 
     const {
         isOpen: isTimetableSettingsModalOpen,
-        onOpen: openTimetableSettingsModal,
         onClose: closeTimetableSettingsModal,
     } = useDisclosure();
     return (

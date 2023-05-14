@@ -47,7 +47,7 @@ class UpdateTermInput extends TermInput {
 export class TermResolver {
     @Query(() => [Term])
     async terms(@Ctx() { req, models }: MyContext): Promise<Term[]> {
-        return await models.term.getMany({}, req.user);
+        return await models.term.getManyBy({}, req.user);
     }
 
     @Query(() => Term)
