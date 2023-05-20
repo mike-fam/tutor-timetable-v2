@@ -1,6 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { Offer, Session, StaffRequest, Timetable, User } from "../entities";
-import { DeepPartial, FindOptionsWhere } from "typeorm";
+import { FindOptionsWhere } from "typeorm";
 import { PermissionState } from "../types/permission";
 import {
     PERMANENT_LOCK_MESSAGE,

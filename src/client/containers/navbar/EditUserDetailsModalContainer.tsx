@@ -89,6 +89,7 @@ export const EditUserDetailsModalContainer: FC<Props> = (props) => {
                     isLoading={loading}
                     loadingText="Submitting..."
                     colorScheme="blue"
+                    mx={2}
                 >
                     Submit
                 </Button>

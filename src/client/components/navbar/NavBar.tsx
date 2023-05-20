@@ -38,11 +38,6 @@ export const NavBar: FC<Props> = () => {
         onClose: closeEditPersonalDetailsModal,
     } = useDisclosure();
     const [isSmallerThan960] = useMediaQuery("(max-width: 960px)");
-
-    const {
-        isOpen: isTimetableSettingsModalOpen,
-        onClose: closeTimetableSettingsModal,
-    } = useDisclosure();
     return (
         <>
             <Box w="100%" bgColor={bgColor}>
@@ -145,10 +140,6 @@ export const NavBar: FC<Props> = () => {
                 isOpen={isEditPersonalDetailsModalOpen}
                 openModal={openEditPersonalDetailsModal}
                 closeModal={closeEditPersonalDetailsModal}
-            />
-            <TimetableSettingsModal
-                isOpen={isTimetableSettingsModalOpen}
-                onClose={closeTimetableSettingsModal}
             />
         </>
     );
