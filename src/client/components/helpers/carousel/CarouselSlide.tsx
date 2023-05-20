@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from "react";
+import { FC, PropsWithChildren, useContext, useMemo } from "react";
 import { CarouselContext } from "./Carousel";
 import { Box } from "@chakra-ui/react";
 
@@ -6,7 +6,10 @@ type Props = {
     slideIndex: number;
 };
 
-export const CarouselSlide: FC<Props> = ({ slideIndex, children }) => {
+export const CarouselSlide: FC<PropsWithChildren<Props>> = ({
+    slideIndex,
+    children,
+}) => {
     const {
         slideWidth,
         slideHeight,

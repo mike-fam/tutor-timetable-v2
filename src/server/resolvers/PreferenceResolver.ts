@@ -36,15 +36,15 @@ export class PreferenceResolver {
         models: Models,
         user: User
     ) {
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             { termId, courseId },
             user
         );
-        const courseStaff = await models.courseStaff.get(
+        const courseStaff = await models.courseStaff.getBy(
             { timetableId: timetable.id, userId: owner.id },
             user
         );
-        return await models.preference.getIfExists(
+        return await models.preference.getIfExistsBy(
             {
                 courseStaffId: courseStaff.id,
             },
@@ -74,7 +74,7 @@ export class PreferenceResolver {
         { courseId, termId }: CourseTermIdInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Preference | null> {
-        const user = await models.user.get({ username }, req.user);
+        const user = await models.user.getBy({ username }, req.user);
         return await PreferenceResolver.getPreference(
             user,
             courseId,
@@ -100,7 +100,7 @@ export class PreferenceResolver {
             models,
             user
         );
-        const timetable = await models.timetable.get(
+        const timetable = await models.timetable.getBy(
             {
                 courseId,
                 termId,
@@ -108,7 +108,7 @@ export class PreferenceResolver {
             user
         );
         if (!preference) {
-            const courseStaff = await models.courseStaff.get(
+            const courseStaff = await models.courseStaff.getBy(
                 {
                     timetableId: timetable.id,
                     userId: user.id,
@@ -126,7 +126,7 @@ export class PreferenceResolver {
             );
         } else {
             return await models.preference.update(
-                preference,
+                { id: preference.id },
                 { sessionType, maxContigHours, maxWeeklyHours },
                 user
             );

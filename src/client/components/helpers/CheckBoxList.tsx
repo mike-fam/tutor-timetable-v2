@@ -34,7 +34,7 @@ export const CheckboxList = <T extends string>({
             >
                 {selectAllLabel ? selectAllLabel : "Select All"}
             </Checkbox>
-            <Stack pl={6} mt={1} spacing={1}>
+            <Stack pl={6} mt={1} spacing={1} align="baseline">
                 {elements
                     .map((element, id) => (
                         <Checkbox

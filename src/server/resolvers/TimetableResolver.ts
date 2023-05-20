@@ -34,7 +34,7 @@ export class TimetableInput extends CourseTermIdInput {
 export class TimetableResolver {
     @Query(() => [Timetable])
     async timetables(@Ctx() { req, models }: MyContext): Promise<Timetable[]> {
-        return await models.timetable.getMany({}, req.user);
+        return await models.timetable.getManyBy({}, req.user);
     }
 
     @Query(() => Timetable)
@@ -42,7 +42,7 @@ export class TimetableResolver {
         @Arg("courseTermId") { courseId, termId }: CourseTermIdInput,
         @Ctx() { req, models }: MyContext
     ): Promise<Timetable> {
-        return await models.timetable.get({ courseId, termId }, req.user);
+        return await models.timetable.getBy({ courseId, termId }, req.user);
     }
 
     @Mutation(() => Timetable)

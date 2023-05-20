@@ -1,6 +1,6 @@
 import { BaseModel } from "./BaseModel";
 import { Offer, Session, StaffRequest, Timetable, User } from "../entities";
-import { DeepPartial } from "typeorm";
+import { FindOptionsWhere } from "typeorm";
 import { PermissionState } from "../types/permission";
 import {
     PERMANENT_LOCK_MESSAGE,
@@ -26,11 +26,11 @@ export class OfferModel extends BaseModel<Offer> {
     }
 
     public async update(
-        toUpdateFind: DeepPartial<Offer>,
+        toUpdateFind: FindOptionsWhere<Offer>,
         updatedFields: Partial<Offer>,
         user: User
     ): Promise<Offer> {
-        const offer = await Offer.findOne(toUpdateFind);
+        const offer = await Offer.findOneBy(toUpdateFind);
         if (
             offer &&
             offer.status !== OfferStatus.ACCEPTED &&

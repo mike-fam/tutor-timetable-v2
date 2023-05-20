@@ -1,22 +1,26 @@
 import { User } from "../entities";
 import { CANT_FIND, PERM_ERR } from "../constants";
 import { BaseEntity } from "../entities/BaseEntity";
-import { DeepPartial, FindConditions, ObjectType } from "typeorm";
+import {
+    DeepPartial,
+    FindManyOptions,
+    FindOneOptions,
+    FindOptionsWhere,
+} from "typeorm";
 import { PermissionState } from "../types/permission";
 import DataLoader from "dataloader";
 import has from "lodash/has";
 import { DataLoaders } from "../types/dataloaders";
-import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
-import { asyncFilter } from "../../utils/array";
+import { asyncFilter, asyncMap } from "../../utils/array";
 
-type PartialWithId<T extends BaseEntity> = Partial<T> & { id: string };
+type PartialWithId<T extends BaseEntity> = DeepPartial<T> & { id: string };
 
 /**
  * @template T entity type of model
  */
 export abstract class BaseModel<T extends BaseEntity> {
     protected loader: DataLoader<string, T>;
-    protected entityCls: ObjectType<T>;
+    protected entityCls: { new (): T } & typeof BaseEntity;
 
     protected constructor(protected loaders: DataLoaders) {}
 
@@ -29,7 +33,7 @@ export abstract class BaseModel<T extends BaseEntity> {
 
     public async permUpdate(
         toUpdate: T,
-        updatedFields: Partial<T>,
+        updatedFields: DeepPartial<T>,
         user: User
     ): Promise<PermissionState> {
         if (user.isAdmin) {
@@ -52,16 +56,23 @@ export abstract class BaseModel<T extends BaseEntity> {
         return await this.canCreate(toCreate, user);
     }
 
-    get(options: FindManyOptions<T>, user: User): Promise<T>;
-    get(options: DeepPartial<T>, user: User): Promise<T>;
+    public async get(entityLike: FindOneOptions<T>, user: User): Promise<T> {
+        const result = await this.entityCls.findOne<T>(entityLike);
+        if (!result) {
+            throw new Error(CANT_FIND + this.entityCls.name);
+        }
+        const { hasPerm, errMsg } = await this.permRead(result, user);
+        if (hasPerm) {
+            return result;
+        }
+        throw new Error(errMsg || PERM_ERR);
+    }
 
-    public async get(
-        entityLike: DeepPartial<T> | FindManyOptions<T>,
+    public async getBy(
+        entityLike: FindOptionsWhere<T>,
         user: User
     ): Promise<T> {
-        const result: T | undefined = await (this.entityCls as any).findOne(
-            entityLike
-        );
+        const result = await this.entityCls.findOneBy<T>(entityLike);
         if (!result) {
             throw new Error(CANT_FIND + this.entityCls.name);
         }
@@ -73,12 +84,10 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async getIfExists(
-        entityLike: DeepPartial<T>,
+        entityLike: FindOneOptions<T>,
         user: User
     ): Promise<T | null> {
-        const result: T | undefined = await (this.entityCls as any).findOne(
-            entityLike
-        );
+        const result = await this.entityCls.findOne<T>(entityLike);
         if (!result) {
             return null;
         }
@@ -89,14 +98,37 @@ export abstract class BaseModel<T extends BaseEntity> {
         throw new Error(errMsg || PERM_ERR);
     }
 
-    getMany(options: FindManyOptions<T>, user: User): Promise<T[]>;
-    getMany(options: DeepPartial<T>, user: User): Promise<T[]>;
+    public async getIfExistsBy(
+        entityLike: FindOptionsWhere<T>,
+        user: User
+    ): Promise<T | null> {
+        const result = await this.entityCls.findOneBy<T>(entityLike);
+        if (!result) {
+            return null;
+        }
+        const { hasPerm, errMsg } = await this.permRead(result, user);
+        if (hasPerm) {
+            return result;
+        }
+        throw new Error(errMsg || PERM_ERR);
+    }
 
     public async getMany(
-        entityLike: DeepPartial<T> | FindManyOptions<T>,
+        findOptions: FindManyOptions<T>,
         user: User
     ): Promise<T[]> {
-        const results = await (this.entityCls as any).find(entityLike);
+        const results = await this.entityCls.find<T>(findOptions);
+        return await asyncFilter(results, async (result) => {
+            const { hasPerm } = await this.permRead(result, user);
+            return hasPerm;
+        });
+    }
+
+    public async getManyBy(
+        entityLike: FindOptionsWhere<T>,
+        user: User
+    ): Promise<T[]> {
+        const results = await this.entityCls.findBy<T>(entityLike);
         return await asyncFilter(results, async (result) => {
             const { hasPerm } = await this.permRead(result, user);
             return hasPerm;
@@ -128,8 +160,8 @@ export abstract class BaseModel<T extends BaseEntity> {
         })) as T[];
     }
 
-    public async create(entityLike: Partial<T>, user: User): Promise<T> {
-        const toCreate: T = (this.entityCls as any).create(entityLike);
+    public async create(entityLike: DeepPartial<T>, user: User): Promise<T> {
+        const toCreate = this.entityCls.create<T>(entityLike);
         const { hasPerm, errMsg } = await this.permCreate(toCreate, user);
         if (hasPerm) {
             return await toCreate.save();
@@ -138,54 +170,53 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async createMany(
-        entityLike: Partial<T>[],
+        entityLike: DeepPartial<T>[],
         user: User
     ): Promise<T[]> {
-        const toCreate: T[] = (this.entityCls as any).create(entityLike);
+        const toCreate = this.entityCls.create<T>(entityLike);
         for (const obj of toCreate) {
             const { hasPerm, errMsg } = await this.permCreate(obj, user);
             if (!hasPerm) {
                 throw new Error(errMsg || PERM_ERR);
             }
         }
-        return await (this.entityCls as any).save(toCreate);
+        return await this.entityCls.save<T>(toCreate);
     }
 
     public async updateMany(
-        toUpdateFind: FindConditions<T> | T,
-        updatedFields: Partial<T>,
+        toUpdateFind: FindOptionsWhere<T>,
+        updatedFields: DeepPartial<T>,
         user: User
     ): Promise<T[]> {
-        const updated: T[] = [];
-        const toUpdate: T[] = await (this.entityCls as any).find(toUpdateFind);
-        for (let updateCandidate of toUpdate) {
-            const { hasPerm, errMsg } = await this.permUpdate(
-                updateCandidate,
-                updatedFields,
-                user
-            );
-            if (!hasPerm) {
-                throw new Error(errMsg || PERM_ERR);
-            }
-            updateCandidate = {
-                ...updateCandidate,
-                ...updatedFields,
-            };
-            updated.push(await (this.entityCls as any).save(toUpdate));
-        }
-        return updated;
+        const toUpdate = await this.entityCls.findBy<T>(toUpdateFind);
+        return await this.entityCls.save<T>(
+            await asyncMap(toUpdate, async (updateCandidate) => {
+                const { hasPerm, errMsg } = await this.permUpdate(
+                    updateCandidate,
+                    updatedFields,
+                    user
+                );
+                if (!hasPerm) {
+                    throw new Error(errMsg || PERM_ERR);
+                }
+                return {
+                    ...updateCandidate,
+                    ...updatedFields,
+                };
+            })
+        );
     }
 
     public async update(
-        toUpdateFind: FindConditions<T> | T,
-        updatedFields: Partial<T>,
+        toUpdateFind: FindOptionsWhere<T>,
+        updatedFields: DeepPartial<T>,
         user: User
     ): Promise<T> {
         let toUpdate: T;
         if (toUpdateFind instanceof this.entityCls) {
             toUpdate = toUpdateFind as T;
         } else {
-            const updateCandidates: T[] = await (this.entityCls as any).find(
+            const updateCandidates = await this.entityCls.findBy<T>(
                 toUpdateFind
             );
             if (updateCandidates.length === 0) {
@@ -208,28 +239,26 @@ export abstract class BaseModel<T extends BaseEntity> {
                 ...toUpdate,
                 ...updatedFields,
             };
-            return await (this.entityCls as any).save(toUpdate);
+            return await this.entityCls.save<T>(toUpdate);
         }
         throw new Error(errMsg || PERM_ERR);
     }
 
-    save(toSave: Partial<T>[], user: User): Promise<T[]>;
-    save(toSave: Partial<T>, user: User): Promise<T>;
+    save(toSave: DeepPartial<T>[], user: User): Promise<T[]>;
+    save(toSave: DeepPartial<T>, user: User): Promise<T>;
 
     public async save(
-        toSave: Partial<T> | Partial<T>[],
+        toSave: DeepPartial<T> | DeepPartial<T>[],
         user: User
     ): Promise<T[] | T> {
-        let entityArr: Partial<T>[];
+        let entityArr: DeepPartial<T>[];
         let ret: T[] = [];
-        if (toSave instanceof Array) {
+        if (Array.isArray(toSave)) {
             entityArr = toSave;
         } else {
             entityArr = [toSave];
         }
-        const toCreate: Partial<T>[] = entityArr.filter(
-            (entity) => !has(entity, "id")
-        );
+        const toCreate = entityArr.filter((entity) => !has(entity, "id"));
         const updatedFields = entityArr.filter((entity) =>
             has(entity, "id")
         ) as PartialWithId<T>[];
@@ -245,17 +274,15 @@ export abstract class BaseModel<T extends BaseEntity> {
                 throw new Error(errMsg || PERM_ERR);
             }
         }
-        ret.push(...(await (this.entityCls as any).save(updatedFields)));
+        ret.push(...(await this.entityCls.save<T>(updatedFields)));
         return ret;
     }
 
     public async delete(
-        deleteCriteria: FindConditions<T> | FindManyOptions<T>,
+        deleteCriteria: FindOptionsWhere<T>,
         user: User
     ): Promise<T> {
-        const deleteCandidates: T[] = await (this.entityCls as any).find(
-            deleteCriteria
-        );
+        const deleteCandidates = await this.entityCls.findBy<T>(deleteCriteria);
         if (deleteCandidates.length === 0) {
             throw new Error(CANT_FIND + this.entityCls.name);
         }
@@ -276,23 +303,35 @@ export abstract class BaseModel<T extends BaseEntity> {
     }
 
     public async deleteMany(
-        deleteCriteria: FindConditions<T> | FindManyOptions<T>,
+        deleteCriteria: FindManyOptions<T>,
         user: User
     ): Promise<T[]> {
-        const deleteCandidates: T[] = await (this.entityCls as any).find(
-            deleteCriteria
-        );
+        const deleteCandidates = await this.entityCls.find<T>(deleteCriteria);
         for (const toDelete of deleteCandidates) {
             const { hasPerm, errMsg } = await this.permDelete(toDelete, user);
             if (!hasPerm) {
                 throw new Error(errMsg || PERM_ERR);
             }
         }
-        return await (this.entityCls as any).remove(deleteCandidates);
+        return await this.entityCls.remove<T>(deleteCandidates);
+    }
+
+    public async deleteManyBy(
+        deleteCriteria: FindOptionsWhere<T>,
+        user: User
+    ): Promise<T[]> {
+        const deleteCandidates = await this.entityCls.findBy<T>(deleteCriteria);
+        for (const toDelete of deleteCandidates) {
+            const { hasPerm, errMsg } = await this.permDelete(toDelete, user);
+            if (!hasPerm) {
+                throw new Error(errMsg || PERM_ERR);
+            }
+        }
+        return await this.entityCls.remove<T>(deleteCandidates);
     }
 
     /**
-     * Determines if a user an read an object
+     * Determines if a user can read an object
      *
      * @param {T} _ Object to be read
      * @param {User} user user performing this action: User performing the reading
@@ -314,7 +353,7 @@ export abstract class BaseModel<T extends BaseEntity> {
      */
     protected async canUpdate(
         _: T,
-        __: Partial<T>,
+        __: DeepPartial<T>,
         user: User
     ): Promise<PermissionState> {
         return { hasPerm: user.isAdmin };

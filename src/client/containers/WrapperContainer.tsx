@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { Box, Center, useToast } from "@chakra-ui/react";
 import { ApolloError } from "@apollo/client";
 import { IsoDay } from "../../types/date";
@@ -23,7 +23,9 @@ import { LoadingSpinner } from "../components/helpers/LoadingSpinner";
 
 type Props = {};
 
-export const WrapperContainer: FC<Props> = ({ children }) => {
+export const WrapperContainer: FC<PropsWithChildren<Props>> = ({
+    children,
+}) => {
     const toast = useToast({});
     const addError = useCallback(
         (error: ApolloError) => {

@@ -74,6 +74,9 @@ export const TimetableContainer: FC<Props> = () => {
             }
             return sessionStreamsData.rootSessionStreams
                 .filter((stream) => {
+                    if (!chosenCourses.contains(stream.timetable.course.id)) {
+                        return false;
+                    }
                     if (!displayMySessionsOnly) {
                         return true;
                     }
@@ -101,13 +104,21 @@ export const TimetableContainer: FC<Props> = () => {
                 return [];
             }
             return sessionsData.mergedSessions
-                .filter(
-                    (session) =>
+                .filter((session) => {
+                    if (
+                        !chosenCourses.contains(
+                            session.sessionStream.timetable.course.id
+                        )
+                    ) {
+                        return false;
+                    }
+                    return (
                         session.allocatedUsers.some(
                             (allocatedUser) =>
                                 allocatedUser.username === user.username
                         ) || !displayMySessionsOnly
-                )
+                    );
+                })
                 .map((session) => ({
                     id: session.id,
                     name: session.sessionStream.name,
@@ -118,6 +129,7 @@ export const TimetableContainer: FC<Props> = () => {
         }
     }, [
         chosenWeek,
+        chosenCourses,
         sessionsData,
         sessionStreamsData,
         sessionStreamsLoading,

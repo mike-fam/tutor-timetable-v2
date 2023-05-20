@@ -88,7 +88,7 @@ export const RequestPageContainer: FC = () => {
         <RequestContext.Provider value={requestUtils}>
             <Wrapper>
                 <Grid templateColumns="1fr 5fr" templateRows="auto" gap={6}>
-                    <Box spacing={8} gridRow="4 / 6" gridColumn={1}>
+                    <Box gridRow="4 / 6" gridColumn={1}>
                         <RequestFilter
                             chosenCourses={chosenCourses}
                             setChosenCourses={setChosenCourses}

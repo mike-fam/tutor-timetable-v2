@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, PropsWithChildren } from "react";
 import {
     Box,
     Icon,
@@ -12,11 +12,11 @@ import { BsFillQuestionCircleFill } from "react-icons/bs";
 
 type Props = {};
 
-export const HelpIcon: FC<Props> = ({ children }) => {
+export const HelpIcon: FC<PropsWithChildren<Props>> = ({ children }) => {
     return (
         <Popover placement="right-start" trigger="hover">
             <PopoverTrigger>
-                <Box d="inline-block" ml={2}>
+                <Box display="inline-block" ml={2}>
                     <Icon as={BsFillQuestionCircleFill} />
                 </Box>
             </PopoverTrigger>

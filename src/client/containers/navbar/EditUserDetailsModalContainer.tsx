@@ -1,4 +1,4 @@
-import { Button, createStandaloneToast } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import { FC, useContext, useEffect, useState } from "react";
 import { EditUserDetailsModal } from "../../components/navbar/EditUserDetailsModal";
 import { EditUserForm } from "../../components/navbar/EditUserForm";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const EditUserDetailsModalContainer: FC<Props> = (props) => {
-    const toast = createStandaloneToast();
+    const toast = useToast();
     const { user } = useContext(UserContext);
 
     const [name, setName] = useState<string>("");
@@ -89,6 +89,7 @@ export const EditUserDetailsModalContainer: FC<Props> = (props) => {
                     isLoading={loading}
                     loadingText="Submitting..."
                     colorScheme="blue"
+                    mx={2}
                 >
                     Submit
                 </Button>

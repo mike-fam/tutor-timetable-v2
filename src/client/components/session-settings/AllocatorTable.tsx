@@ -71,7 +71,7 @@ export const AllocatorTable: FC<Props> = ({
     }, [staffPreferenceData]);
 
     return (
-        <Table w="80%" alignSelf="center" variant="striped">
+        <Table w="80%" alignSelf="center" variant="striped" size="lg">
             <Thead>
                 <Tr>
                     <Th>Staff</Th>
@@ -86,7 +86,7 @@ export const AllocatorTable: FC<Props> = ({
                         [username, { totalHours, sessionsAssigned, name }],
                         index
                     ) => (
-                        <Tr size="lg">
+                        <Tr>
                             <Td>{name}</Td>
                             <Td isNumeric>{totalHours}</Td>
                             <Td>{sessionsAssigned.join(", ")}</Td>

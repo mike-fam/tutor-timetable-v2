@@ -8,6 +8,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    VStack,
 } from "@chakra-ui/react";
 import { TimetableSettingsContext } from "../utils/timetable";
 import { Form, Formik, FormikErrors } from "formik";
@@ -80,44 +81,46 @@ export const TimetableSettingsModal: FC<Props> = ({ isOpen, onClose }) => {
                         <ModalHeader>Change Timetable Settings</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <FormikNumberInput
-                                name="dayStartTime"
-                                max={24}
-                                min={0}
-                            />
-                            <FormikNumberInput
-                                name="dayEndTime"
-                                max={24}
-                                min={0}
-                            />
-                            <FormikCheckboxGroup
-                                values={[
-                                    IsoDay.MON,
-                                    IsoDay.TUE,
-                                    IsoDay.WED,
-                                    IsoDay.THU,
-                                    IsoDay.FRI,
-                                    IsoDay.SAT,
-                                    IsoDay.SUN,
-                                ]}
-                                name="displayedDays"
-                                transformValue={(value) =>
-                                    isoNumberToDay(value)
-                                }
-                            />
-                            <FormikRadioGroup
-                                name="sessionView"
-                                values={[
-                                    TimetableDisplayMode.ME,
-                                    TimetableDisplayMode.ALL,
-                                ]}
-                                transformValue={(value) =>
-                                    value === TimetableDisplayMode.ME
-                                        ? "View sessions allocated to me only"
-                                        : "View all sessions"
-                                }
-                                stackDirection="column"
-                            />
+                            <VStack spacing={4}>
+                                <FormikNumberInput
+                                    name="dayStartTime"
+                                    max={24}
+                                    min={0}
+                                />
+                                <FormikNumberInput
+                                    name="dayEndTime"
+                                    max={24}
+                                    min={0}
+                                />
+                                <FormikCheckboxGroup
+                                    values={[
+                                        IsoDay.MON,
+                                        IsoDay.TUE,
+                                        IsoDay.WED,
+                                        IsoDay.THU,
+                                        IsoDay.FRI,
+                                        IsoDay.SAT,
+                                        IsoDay.SUN,
+                                    ]}
+                                    name="displayedDays"
+                                    transformValue={(value) =>
+                                        isoNumberToDay(value)
+                                    }
+                                />
+                                <FormikRadioGroup
+                                    name="sessionView"
+                                    values={[
+                                        TimetableDisplayMode.ME,
+                                        TimetableDisplayMode.ALL,
+                                    ]}
+                                    transformValue={(value) =>
+                                        value === TimetableDisplayMode.ME
+                                            ? "View sessions allocated to me only"
+                                            : "View all sessions"
+                                    }
+                                    stackDirection="column"
+                                />
+                            </VStack>
                         </ModalBody>
                         <ModalFooter>
                             <Button variant="ghost" onClick={onClose}>

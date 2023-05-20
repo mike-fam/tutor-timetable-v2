@@ -4,12 +4,11 @@ import express, { Express, Response } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { createServer } from "http";
 import { buildSchema } from "type-graphql";
-import { createConnection } from "typeorm";
-import Redis from "ioredis";
+import Redis, { RedisOptions } from "ioredis";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
-import ormconfig from "./ormconfig";
+import { dataSource } from "./ormconfig";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import asyncHandler from "express-async-handler";
 import { uqAuthMiddleware } from "./auth/uqAuthMiddleware";
@@ -69,7 +68,7 @@ import {
 } from "apollo-server-core";
 
 const main = async () => {
-    await createConnection(ormconfig);
+    await dataSource.initialize();
     const app: Express = express();
     const httpServer = createServer(app);
     const port = process.env.PORT || 5000;
@@ -86,7 +85,7 @@ const main = async () => {
 
     app.use(asyncHandler(uqAuthMiddleware));
 
-    const options: Redis.RedisOptions = {
+    const options: RedisOptions = {
         host: process.env.REDIS_HOST || "localhost",
         port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
         retryStrategy: (times) => Math.max(times * 100, 3000),

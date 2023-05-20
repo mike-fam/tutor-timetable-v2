@@ -6,7 +6,7 @@ import { useLazyQueryWithError } from "./useApolloHooksWithError";
 export const useTermCourse = () => {
     const [termId, setChosenTermId] = useState(defaultStr);
     const [courseId, changeCourse] = useState(defaultStr);
-    const changeTerm = useCallback((termId) => {
+    const changeTerm = useCallback((termId: string) => {
         setChosenTermId(termId);
         changeCourse(defaultStr);
     }, []);

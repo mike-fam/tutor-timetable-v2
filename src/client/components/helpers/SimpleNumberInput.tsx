@@ -36,7 +36,7 @@ export const SimpleNumberInput: FC<Props> = ({
             min={min}
             errorBorderColor="red.500"
             w={inline ? "7ch" : undefined}
-            d={inline ? "inline-block" : undefined}
+            display={inline ? "inline-block" : undefined}
         >
             <NumberInputField />
             <NumberInputStepper>
