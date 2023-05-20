@@ -92,7 +92,7 @@ export const TimetablePageContainer: FC<Props> = () => {
                                 onClick={openTimetableSettingsModal}
                             />
                         </Flex>
-                        <Box gridColumn="1 / -1" my={5}>
+                        <Box gridColumn="1 / -1" my={2}>
                             <TimetableContainer />
                         </Box>
                         <Box gridColumn="1 / -1" mb={2}>

@@ -2,6 +2,7 @@ import { Grid, HStack, IconButton, Stack } from "@chakra-ui/react";
 import {
     PropsWithChildren,
     ReactElement,
+    useCallback,
     useEffect,
     useRef,
     useState,
@@ -11,6 +12,7 @@ import { gap, timetableTimeslotHeight } from "../../constants/timetable";
 import { HourColumn } from "./HourColumn";
 import { IsoDay } from "../../../types/date";
 import { TimetableSessionType } from "../../types/timetable";
+import getISODay from "date-fns/getISODay";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 export type Props<T> = {
@@ -36,58 +38,93 @@ export const Timetable = <T,>({
     sessions,
     timeslotHeight = timetableTimeslotHeight,
 }: PropsWithChildren<Props<T>>) => {
-    const [firstDisplayedDayIndex, setFirstDisplayedDayIndex] = useState(0);
-    const gridRef = useRef<HTMLDivElement>(null);
     const [columnCount, setColumnCount] = useState(0);
-    useEffect(() => {
-        if (gridRef.current) {
+    const [displayedDaysTrimmed, setDisplayedDaysTrimmed] =
+        useState(displayedDays);
+    const [columnOffset, setColumnOffset] = useState(0);
+    const resizeObserverRef = useRef<ResizeObserver | null>(null);
+    const updateColumnCount = useCallback(
+        (node: HTMLDivElement) => {
             setColumnCount(
                 Math.min(
-                    Math.floor(gridRef.current.clientWidth / 150),
+                    Math.floor(node.clientWidth / 150),
                     displayedDays.length
                 )
             );
-        }
-        window.onresize = () => {
-            if (gridRef.current) {
-                setColumnCount(
+            setColumnOffset(0);
+        },
+        [displayedDays.length]
+    );
+
+    const columnCountRef = useCallback(
+        (node: HTMLDivElement) => {
+            if (node !== null) {
+                // Initialise column count
+                updateColumnCount(node);
+
+                // Initialise offset
+                const todaysDay = getISODay(new Date());
+                setColumnOffset(
                     Math.min(
-                        Math.floor(gridRef.current.clientWidth / 150),
-                        displayedDays.length
+                        Math.max(
+                            displayedDays.findIndex(
+                                (value) => value >= todaysDay
+                            ),
+                            0
+                        ),
+                        displayedDays.length -
+                            Math.min(
+                                Math.floor(node.clientWidth / 150),
+                                displayedDays.length
+                            )
                     )
                 );
+
+                // Create a new ResizeObserver
+                resizeObserverRef.current = new ResizeObserver(() => {
+                    updateColumnCount(node);
+                });
+
+                // Observe size changes of the div
+                resizeObserverRef.current.observe(node);
+            } else if (resizeObserverRef.current) {
+                resizeObserverRef.current.disconnect();
             }
-        };
-    }, [displayedDays.length]);
+        },
+        [updateColumnCount, displayedDays]
+    );
+    useEffect(() => {
+        setDisplayedDaysTrimmed(
+            displayedDays.slice(columnOffset, columnOffset + columnCount)
+        );
+    }, [displayedDays, columnCount, columnOffset]);
     return (
         <Stack>
             {columnCount < displayedDays.length && (
                 <HStack justify="space-between">
                     <IconButton
                         variant="ghost"
-                        disabled={firstDisplayedDayIndex === 0}
+                        isRound
+                        isDisabled={columnOffset === 0}
                         icon={<ChevronLeftIcon />}
                         aria-label="previous-day"
-                        onClick={() =>
-                            setFirstDisplayedDayIndex((prev) => prev - 1)
-                        }
+                        onClick={() => setColumnOffset((prev) => prev - 1)}
                     />
                     <IconButton
                         variant="ghost"
-                        disabled={
-                            firstDisplayedDayIndex === displayedDays.length - 1
+                        isRound
+                        isDisabled={
+                            columnOffset === displayedDays.length - columnCount
                         }
                         icon={<ChevronRightIcon />}
                         aria-label="next-day"
-                        onClick={() =>
-                            setFirstDisplayedDayIndex((prev) => prev + 1)
-                        }
+                        onClick={() => setColumnOffset((prev) => prev + 1)}
                     />
                 </HStack>
             )}
             <Grid
-                ref={gridRef}
-                templateColumns={`2ch repeat(${columnCount}, 1fr)`}
+                ref={columnCountRef}
+                templateColumns={`2ch repeat(${displayedDaysTrimmed.length}, 1fr)`}
                 templateRows="1fr"
                 overflowY="hidden"
                 autoRows="0px"
@@ -98,7 +135,7 @@ export const Timetable = <T,>({
                     endTime={endTime}
                     timeslotHeight={timeslotHeight}
                 />
-                {displayedDays.map((day, key) =>
+                {displayedDaysTrimmed.map((day, key) =>
                     renderDay(
                         {
                             startTime,

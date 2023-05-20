@@ -20,7 +20,6 @@ import { FC, useContext } from "react";
 import { UserContext } from "../../utils/user";
 import { NavBarMenuButton } from "./NavBarMenuButton";
 import { EditUserDetailsModalContainer } from "../../containers/navbar/EditUserDetailsModalContainer";
-import { TimetableSettingsModal } from "../../containers/TimetableSettingsModal";
 import { Role } from "../../generated/graphql";
 import { RouterLink } from "../helpers/RouterLink";
 import { AdminMenu } from "./AdminMenu";

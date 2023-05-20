@@ -85,7 +85,6 @@ export class SessionResolver {
             },
             user
         );
-        console.log(sessions);
         const rootSessions = sessions.filter((session) =>
             rootStreams
                 .map((stream) => stream.id)
