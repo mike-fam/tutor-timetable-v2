@@ -30,7 +30,6 @@ cloneAndDeploy() {
 	echo "$ENV_FILE" > .env
 	yarn
 	yarn build
-	yarn migration-run
 	echo "$UQ_PW" | sudo -S systemctl restart nodejs
 	history -c
 }

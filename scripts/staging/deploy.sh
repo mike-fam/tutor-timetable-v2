@@ -125,7 +125,6 @@ setUpService() {
 	yarn
 	echo "$ENV_FILE" >.env
 	yarn build
-	yarn migration-run
 	echo "$UQ_PW" | sudo -S bash -c "
 		$(declare -p WEB_ADMINS)
 		$(declare -f setUpDb)

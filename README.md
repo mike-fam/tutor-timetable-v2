@@ -142,7 +142,7 @@ After setting up the database, we can then run the app.
 from docker, as mentioned above.**
 
 ```shell
-yarn migration-run && yarn server-dev
+yarn server-dev
 ```
 to run the development server, and then run
 ```shell
