@@ -55,7 +55,7 @@ export const TimetablePageContainer: FC<Props> = () => {
                     }}
                 >
                     <Grid
-                        templateColumns="repeat(2, 1fr)"
+                        templateColumns="repeat(2, minmax(0, 1fr))"
                         templateRows="repeat(3, auto)"
                         width="100%"
                         maxWidth="1400px"

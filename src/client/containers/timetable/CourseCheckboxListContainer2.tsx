@@ -51,6 +51,8 @@ export const CourseCheckboxListContainer2: FC<Props> = ({
                     fontWeight="normal"
                     w="100%"
                     justifyContent="space-between"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
                 >
                     {Array.from(
                         chosenCourses.map((courseId) => courses.get(courseId))
