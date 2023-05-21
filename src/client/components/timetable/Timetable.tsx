@@ -43,24 +43,20 @@ export const Timetable = <T,>({
         useState(displayedDays);
     const [columnOffset, setColumnOffset] = useState(0);
     const resizeObserverRef = useRef<ResizeObserver | null>(null);
-    const updateColumnCount = useCallback(
-        (node: HTMLDivElement) => {
-            setColumnCount(
-                Math.min(
-                    Math.floor(node.clientWidth / 150),
-                    displayedDays.length
-                )
+    const calculateColumnCount = useCallback(
+        (timetableWidth: number) => {
+            return Math.min(
+                Math.floor(timetableWidth / 150),
+                displayedDays.length
             );
-            setColumnOffset(0);
         },
         [displayedDays.length]
     );
-
     const columnCountRef = useCallback(
         (node: HTMLDivElement) => {
             if (node !== null) {
-                // Initialise column count
-                updateColumnCount(node);
+                const columnCount = calculateColumnCount(node.clientWidth);
+                setColumnCount(columnCount);
 
                 // Initialise offset
                 const todaysDay = getISODay(new Date());
@@ -72,17 +68,19 @@ export const Timetable = <T,>({
                             ),
                             0
                         ),
-                        displayedDays.length -
-                            Math.min(
-                                Math.floor(node.clientWidth / 150),
-                                displayedDays.length
-                            )
+                        displayedDays.length - columnCount
                     )
                 );
 
                 // Create a new ResizeObserver
                 resizeObserverRef.current = new ResizeObserver(() => {
-                    updateColumnCount(node);
+                    const columnCount = calculateColumnCount(node.clientWidth);
+                    setColumnCount(columnCount);
+                    setColumnOffset((prev) =>
+                        prev + columnCount > displayedDays.length
+                            ? displayedDays.length - columnCount
+                            : prev
+                    );
                 });
 
                 // Observe size changes of the div
@@ -91,7 +89,7 @@ export const Timetable = <T,>({
                 resizeObserverRef.current.disconnect();
             }
         },
-        [updateColumnCount, displayedDays]
+        [calculateColumnCount, displayedDays]
     );
     useEffect(() => {
         setDisplayedDaysTrimmed(
