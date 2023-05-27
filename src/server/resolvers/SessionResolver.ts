@@ -10,11 +10,10 @@ import {
     Resolver,
     Root,
 } from "type-graphql";
-import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
 import { asyncForEach, asyncMap } from "../../utils/array";
-import { ArrayContains, In, IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 import { updateSessionAllocation } from "../utils/session";
 
 @InputType()
