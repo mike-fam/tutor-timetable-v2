@@ -11,7 +11,6 @@ import {
     MenuList,
     Spacer,
     Tooltip,
-    useColorMode,
     useColorModeValue,
     useDisclosure,
     useMediaQuery,
@@ -24,6 +23,7 @@ import { Role } from "../../generated/graphql";
 import { RouterLink } from "../helpers/RouterLink";
 import { AdminMenu } from "./AdminMenu";
 import { UserMenu } from "./UserMenu";
+import { useColorMode } from "@chakra-ui/system";
 
 type Props = {};
 

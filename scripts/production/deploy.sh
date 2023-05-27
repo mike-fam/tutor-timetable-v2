@@ -25,6 +25,7 @@ NODE_ENV=production
 cloneAndDeploy() {
 	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+	set -ex
 	cd /var/www/nodejs/
 	rm -rf tutor-timetable-v2
 	git clone "$BITBUCKET_GIT_SSH_ORIGIN" tutor-timetable-v2
@@ -42,7 +43,6 @@ ssh-add /opt/atlassian/pipelines/agent/ssh/id_rsa
 
 # shellcheck disable=SC2029
 ssh "$UQ_USERNAME@$PRODUCTION_ZONE" "
-	set -ex
 	$(declare -f cloneAndDeploy)
 	$(declare -p UQ_PW BITBUCKET_GIT_SSH_ORIGIN ENV_FILE)
 	cloneAndDeploy

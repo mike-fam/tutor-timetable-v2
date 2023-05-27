@@ -109,9 +109,9 @@ setUpZone() {
 }
 
 setUpService() {
-	set -ex
 	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+	set -ex
 	export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 	rm -rf /var/www/nodejs/*
 	cd /var/www/nodejs
