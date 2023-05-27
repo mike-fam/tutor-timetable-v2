@@ -23,6 +23,7 @@ NODE_ENV=production
 "
 
 cloneAndDeploy() {
+	source ~/.bashrc
 	cd /var/www/nodejs/
 	rm -rf tutor-timetable-v2
 	git clone "$BITBUCKET_GIT_SSH_ORIGIN" tutor-timetable-v2

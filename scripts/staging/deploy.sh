@@ -98,8 +98,8 @@ setUpZone() {
 	createdb tutor_timetable_v2
 	createuser tutor_timetable_v2
 	npm cache clean -f
-  npm install -g n
-  n stable
+	npm install -g n
+	n stable
 	psql -c "alter user tutor_timetable_v2 with password 'tutor_timetable_v2'"
 	psql tutor_timetable_v2 -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 	npm install -g yarn
@@ -110,6 +110,7 @@ setUpZone() {
 
 setUpService() {
 	set -ex
+	source ~/.bashrc
 	export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 	rm -rf /var/www/nodejs/*
 	cd /var/www/nodejs
