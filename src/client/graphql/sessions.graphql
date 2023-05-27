@@ -182,8 +182,16 @@ mutation DeleteSessions($sessionIds: [String!]!) {
     deleteSessions(sessionIds: $sessionIds)
 }
 
-query GetAllSessions($courseIds: [String!]!, $termId: String!, $mineOnly: Boolean!) {
-    allMergedSessions(courseIds: $courseIds, termId: $termId, mineOnly: $mineOnly) {
+query GetAllSessions(
+    $courseIds: [String!]!
+    $termId: String!
+    $mineOnly: Boolean!
+) {
+    allMergedSessions(
+        courseIds: $courseIds
+        termId: $termId
+        mineOnly: $mineOnly
+    ) {
         id
         sessionStream {
             name
