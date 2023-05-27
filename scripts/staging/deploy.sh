@@ -110,7 +110,8 @@ setUpZone() {
 
 setUpService() {
 	set -ex
-	source ~/.bashrc
+	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 	export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 	rm -rf /var/www/nodejs/*
 	cd /var/www/nodejs
@@ -120,8 +121,8 @@ setUpService() {
 	git config user.name "$BITBUCKET_BRANCH"
 	git checkout "$BITBUCKET_BRANCH"
 	if [ -n "$BITBUCKET_PR_DESTINATION_BRANCH" ]; then
-    git checkout "$BITBUCKET_PR_DESTINATION_BRANCH"
-    git merge "$BITBUCKET_BRANCH"
+		git checkout "$BITBUCKET_PR_DESTINATION_BRANCH"
+		git merge "$BITBUCKET_BRANCH"
 	fi
 	yarn
 	echo "$ENV_FILE" >.env
