@@ -36,7 +36,7 @@
         "react/prop-types": 0,
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
-            "warn"
+            "error"
         ],
         "no-unused-expressions": "warn",
         "react-hooks/rules-of-hooks": "error",

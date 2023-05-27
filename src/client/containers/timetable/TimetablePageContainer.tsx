@@ -1,9 +1,8 @@
-import { Component, FC, ReactNode, useState } from "react";
+import { FC, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import {
     Box,
     Center,
-    Flex,
     Grid,
     Heading,
     IconButton,
@@ -23,17 +22,6 @@ import { TimetableSettingsModal } from "../TimetableSettingsModal";
 import { TimetableExportModalContainer } from "./TimetableExportModalContainer";
 
 type Props = {};
-
-class HStack extends Component<{
-    mt: number;
-    gridColumn: string;
-    direction: string;
-    children: ReactNode;
-}> {
-    render() {
-        return null;
-    }
-}
 
 export const TimetablePageContainer: FC<Props> = () => {
     document.title = "Tutor Timetable";
