@@ -1,6 +1,7 @@
 {
   "**/*.{ts,tsx}": [
     "prettier --write",
-    "eslint --fix"
+    "eslint --fix",
+    "git add"
   ]
 }
