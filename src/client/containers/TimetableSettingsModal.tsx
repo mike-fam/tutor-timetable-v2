@@ -128,7 +128,7 @@ export const TimetableSettingsModal: FC<Props> = ({ isOpen, onClose }) => {
                             </Button>
                             <Button
                                 colorScheme="blue"
-                                mr={3}
+                                ml={3}
                                 onClick={onClose}
                                 type="submit"
                             >

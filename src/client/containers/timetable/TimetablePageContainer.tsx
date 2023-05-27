@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { Component, FC, ReactNode, useState } from "react";
 import { Wrapper } from "../../components/helpers/Wrapper";
 import {
     Box,
@@ -7,6 +7,7 @@ import {
     Grid,
     Heading,
     IconButton,
+    Stack,
     useDisclosure,
 } from "@chakra-ui/react";
 import { LoadingSpinner } from "../../components/helpers/LoadingSpinner";
@@ -17,10 +18,22 @@ import { TimetableContext } from "../../utils/timetable";
 import { Set } from "immutable";
 import { useDefaultTerm } from "../../hooks/useDefaultTerm";
 import { CourseCheckboxListContainer2 } from "./CourseCheckboxListContainer2";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoSettingsSharp, IoDownloadOutline } from "react-icons/io5";
 import { TimetableSettingsModal } from "../TimetableSettingsModal";
+import { TimetableExportModalContainer } from "./TimetableExportModalContainer";
 
 type Props = {};
+
+class HStack extends Component<{
+    mt: number;
+    gridColumn: string;
+    direction: string;
+    children: ReactNode;
+}> {
+    render() {
+        return null;
+    }
+}
 
 export const TimetablePageContainer: FC<Props> = () => {
     document.title = "Tutor Timetable";
@@ -36,6 +49,11 @@ export const TimetablePageContainer: FC<Props> = () => {
         isOpen: isTimetableSettingsModalOpen,
         onClose: closeTimetableSettingsModal,
         onOpen: openTimetableSettingsModal,
+    } = useDisclosure();
+    const {
+        isOpen: isTimetableExportModalOpen,
+        onClose: closeTimetableExportModal,
+        onOpen: openTimetableExportModal,
     } = useDisclosure();
     return (
         <Wrapper>
@@ -78,20 +96,29 @@ export const TimetablePageContainer: FC<Props> = () => {
                                 chosenTermId={chosenTermId}
                             />
                         </Box>
-                        <Flex
+                        <Stack
                             gridColumn="1 / -1"
                             direction="row-reverse"
                             mt={2}
+                            spacing={2}
                         >
                             <IconButton
-                                variant="ghost"
+                                variant="outline"
                                 aria-label="Timetable Settings"
                                 fontSize="20px"
                                 icon={<IoSettingsSharp />}
                                 isRound
                                 onClick={openTimetableSettingsModal}
                             />
-                        </Flex>
+                            <IconButton
+                                variant="outline"
+                                aria-label="Timetable Export"
+                                fontSize="20px"
+                                icon={<IoDownloadOutline />}
+                                isRound
+                                onClick={openTimetableExportModal}
+                            />
+                        </Stack>
                         <Box gridColumn="1 / -1" my={2}>
                             <TimetableContainer />
                         </Box>
@@ -104,6 +131,11 @@ export const TimetablePageContainer: FC<Props> = () => {
             <TimetableSettingsModal
                 isOpen={isTimetableSettingsModalOpen}
                 onClose={closeTimetableSettingsModal}
+            />
+            <TimetableExportModalContainer
+                isOpen={isTimetableExportModalOpen}
+                onClose={closeTimetableExportModal}
+                chosenTermId={chosenTermId}
             />
         </Wrapper>
     );

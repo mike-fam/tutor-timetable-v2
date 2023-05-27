@@ -181,3 +181,31 @@ mutation UpdateSession($updateSessionInput: [UpdateSessionInput!]!) {
 mutation DeleteSessions($sessionIds: [String!]!) {
     deleteSessions(sessionIds: $sessionIds)
 }
+
+query GetAllSessions($courseIds: [String!]!, $termId: String!, $mineOnly: Boolean!) {
+    allMergedSessions(courseIds: $courseIds, termId: $termId, mineOnly: $mineOnly) {
+        id
+        sessionStream {
+            name
+            startTime
+            endTime
+            day
+            timetable {
+                course {
+                    id
+                    code
+                }
+                term {
+                    startDate
+                }
+            }
+        }
+        week
+        location
+        allocatedUsers {
+            id
+            username
+            name
+        }
+    }
+}
