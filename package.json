@@ -122,10 +122,12 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-testing-library": "^3.10.2",
     "eslint-webpack-plugin": "^3.1.1",
+    "husky": "^8.0.3",
     "jest": "^27.0.6",
     "jest-circus": "^26.6.3",
     "jest-resolve": "^26.6.2",
     "jest-watch-typeahead": "^0.6.4",
+    "lint-staged": "^13.2.2",
     "postcss": "^8.4.23",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^3.0.0",
@@ -162,7 +164,8 @@
     "migration-generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -d src/server/ormconfig.ts",
     "migration-revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -f src/server/ormconfig.ts",
     "docker-dev": "docker-compose -p tutor-timetable-dev -f docker-compose.dev.yml up",
-    "docker-test": "docker-compose -p tutor-timetable-test -f docker-compose.test.yml up --force-recreate --build --abort-on-container-exit --exit-code-from test"
+    "docker-test": "docker-compose -p tutor-timetable-test -f docker-compose.test.yml up --force-recreate --build --abort-on-container-exit --exit-code-from test",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
