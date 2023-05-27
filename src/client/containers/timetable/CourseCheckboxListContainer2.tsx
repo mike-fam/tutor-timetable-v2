@@ -43,7 +43,7 @@ export const CourseCheckboxListContainer2: FC<Props> = ({
     }, [data, chosenTermId, setChosenCourses]);
 
     return (
-        <Menu matchWidth={true} gutter={0}>
+        <Menu matchWidth={true} gutter={0} closeOnSelect={false}>
             <MenuButton as={Box} w="100%">
                 <Button
                     rightIcon={<ChevronDownIcon />}

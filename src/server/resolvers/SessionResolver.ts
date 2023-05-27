@@ -14,7 +14,7 @@ import keyBy from "lodash/keyBy";
 import { Offer, Session, SessionStream, StaffRequest, User } from "../entities";
 import { MyContext } from "../types/context";
 import { asyncForEach, asyncMap } from "../../utils/array";
-import { In } from "typeorm";
+import { ArrayContains, In, IsNull } from "typeorm";
 import { updateSessionAllocation } from "../utils/session";
 
 @InputType()
@@ -44,132 +44,26 @@ export class SessionResolver {
         @Arg("week", () => Int) week: number,
         @Ctx() { req, models }: MyContext
     ): Promise<Session[]> {
-        const results = [];
         const user = req.user;
-        if (courseIds.length === 0) {
-            return [];
-        }
-        const timetables = await models.timetable.getMany(
-            {
-                where: courseIds.map((courseId) => ({
-                    termId,
-                    courseId,
-                })),
-            },
-            user
-        );
-        if (timetables.length === 0) {
-            return [];
-        }
-        const streams = await models.sessionStream.getMany(
-            {
-                where: timetables.map((timetable) => ({
-                    timetableId: timetable.id,
-                })),
-            },
-            user
-        );
-        if (streams.length === 0) {
-            return [];
-        }
-        // get all root streams
-        const rootStreams = streams.filter((stream) => stream.rootId === null);
-        const streamMap = keyBy(streams, (stream) => stream.id);
-        // get all root sessions of specified weeks
         const sessions = await models.session.getMany(
             {
-                where: streams.map((stream) => ({
-                    sessionStreamId: stream.id,
+                where: {
+                    sessionStream: {
+                        timetable: {
+                            term: {
+                                id: termId,
+                            },
+                            course: {
+                                id: In(courseIds),
+                            },
+                        },
+                    },
                     week,
-                })),
+                },
             },
             user
         );
-        const rootSessions = sessions.filter((session) =>
-            rootStreams
-                .map((stream) => stream.id)
-                .includes(session.sessionStreamId)
-        );
-        // get related sessions (same week, same stream based id)
-        for (const rootSession of rootSessions) {
-            const rootStream = streamMap[rootSession.sessionStreamId];
-            const streamIdsToCheck = [...rootStream.secondaryStreamIds];
-            const visitedStreamIds: string[] = [];
-            while (streamIdsToCheck.length !== 0) {
-                const currentStreamId = streamIdsToCheck.pop()!;
-                const currentStream = streamMap[currentStreamId];
-                visitedStreamIds.push(currentStreamId);
-                streamIdsToCheck.push(...currentStream.secondaryStreamIds);
-            }
-            const relatedSessions = sessions.filter((session) =>
-                visitedStreamIds.includes(session.sessionStreamId)
-            );
-            const relatedAllocatedUserIds = relatedSessions.reduce<string[]>(
-                (allocatedUserIds, session) => [
-                    ...allocatedUserIds,
-                    ...session.allocatedUserIds,
-                ],
-                []
-            );
-            const relatedRequestIds = relatedSessions.reduce<string[]>(
-                (requestIds, session) => [...requestIds, ...session.requestIds],
-                []
-            );
-            const relatedPreferredSwapRequestIds = relatedSessions.reduce<
-                string[]
-            >(
-                (preferredSwapRequestIds, session) => [
-                    ...preferredSwapRequestIds,
-                    ...session.preferredSwapRequestIds,
-                ],
-                []
-            );
-            const relatedPreferredSwapOfferIds = relatedSessions.reduce<
-                string[]
-            >(
-                (preferredSwapOfferIds, session) => [
-                    ...preferredSwapOfferIds,
-                    ...session.preferredSwapOfferIds,
-                ],
-                []
-            );
-            const relatedAcceptedOfferIds = relatedSessions.reduce<string[]>(
-                (preferredSwapOfferIds, session) => [
-                    ...preferredSwapOfferIds,
-                    ...session.preferredSwapOfferIds,
-                ],
-                []
-            );
-            // add new merged session to results
-            const newSession = Session.create({
-                id: rootSession.id,
-                sessionStreamId: rootSession.sessionStreamId,
-                location: rootSession.location,
-                week: rootSession.week,
-            });
-            newSession.requestIds = [
-                ...rootSession.requestIds,
-                ...relatedRequestIds,
-            ];
-            newSession.preferredSwapRequestIds = [
-                ...rootSession.preferredSwapRequestIds,
-                ...relatedPreferredSwapRequestIds,
-            ];
-            newSession.preferredSwapOfferIds = [
-                ...rootSession.preferredSwapOfferIds,
-                ...relatedPreferredSwapOfferIds,
-            ];
-            newSession.acceptedOfferIds = [
-                ...rootSession.acceptedOfferIds,
-                ...relatedAcceptedOfferIds,
-            ];
-            newSession.allocatedUserIds = [
-                ...rootSession.allocatedUserIds,
-                ...relatedAllocatedUserIds,
-            ];
-            results.push(newSession);
-        }
-        return results;
+        return this.generateMergedSessions(sessions);
     }
 
     @Query(() => [Session])
@@ -290,6 +184,36 @@ export class SessionResolver {
         return await models.session.getById(sessionId, req.user);
     }
 
+    @Query(() => [Session])
+    async allMergedSessions(
+        @Arg("courseIds", () => [String]) courseIds: string[],
+        @Arg("termId") termId: string,
+        @Arg("mineOnly") mineOnly: boolean,
+        @Ctx() { req, models }: MyContext
+    ): Promise<Session[]> {
+        const { user } = req;
+        const sessions = await models.session.getMany(
+            {
+                where: {
+                    sessionStream: {
+                        timetable: {
+                            term: {
+                                id: termId,
+                            },
+                            course: {
+                                id: In(courseIds),
+                            },
+                        },
+                    },
+                },
+            },
+            user
+        );
+        return (await this.generateMergedSessions(sessions)).filter(
+            (session) => !mineOnly || session.allocatedUserIds.includes(user.id)
+        );
+    }
+
     @FieldResolver(() => SessionStream)
     async sessionStream(
         @Root() root: Session,
@@ -376,5 +300,108 @@ export class SessionResolver {
                 0
             )
         );
+    }
+
+    private async generateMergedSessions(
+        sessions: Session[]
+    ): Promise<Session[]> {
+        const results: Session[] = [];
+        const rootStreams = await SessionStream.find({
+            where: {
+                id: In(sessions.map((session) => session.sessionStreamId)),
+                root: IsNull(),
+            },
+        });
+        const rootSessions = sessions.filter((session) =>
+            rootStreams
+                .map((stream) => stream.id)
+                .includes(session.sessionStreamId)
+        );
+        // get related sessions (same week, same stream based id)
+        for (const rootSession of rootSessions) {
+            const rootStream = await SessionStream.findOneByOrFail({
+                id: rootSession.sessionStreamId,
+            });
+            const streamIdsToCheck = [...rootStream.secondaryStreamIds];
+            const visitedStreamIds: string[] = [];
+            while (streamIdsToCheck.length !== 0) {
+                const currentStreamId = streamIdsToCheck.pop()!;
+                const currentStream = await SessionStream.findOneByOrFail({
+                    id: currentStreamId,
+                });
+                visitedStreamIds.push(currentStreamId);
+                streamIdsToCheck.push(...currentStream.secondaryStreamIds);
+            }
+            const relatedSessions = sessions.filter(
+                (session) =>
+                    visitedStreamIds.includes(session.sessionStreamId) &&
+                    session.week === rootSession.week
+            );
+            const relatedAllocatedUserIds = relatedSessions.reduce<string[]>(
+                (allocatedUserIds, session) => [
+                    ...allocatedUserIds,
+                    ...session.allocatedUserIds,
+                ],
+                []
+            );
+            const relatedRequestIds = relatedSessions.reduce<string[]>(
+                (requestIds, session) => [...requestIds, ...session.requestIds],
+                []
+            );
+            const relatedPreferredSwapRequestIds = relatedSessions.reduce<
+                string[]
+            >(
+                (preferredSwapRequestIds, session) => [
+                    ...preferredSwapRequestIds,
+                    ...session.preferredSwapRequestIds,
+                ],
+                []
+            );
+            const relatedPreferredSwapOfferIds = relatedSessions.reduce<
+                string[]
+            >(
+                (preferredSwapOfferIds, session) => [
+                    ...preferredSwapOfferIds,
+                    ...session.preferredSwapOfferIds,
+                ],
+                []
+            );
+            const relatedAcceptedOfferIds = relatedSessions.reduce<string[]>(
+                (preferredSwapOfferIds, session) => [
+                    ...preferredSwapOfferIds,
+                    ...session.preferredSwapOfferIds,
+                ],
+                []
+            );
+            // add new merged session to results
+            const newSession = Session.create({
+                id: rootSession.id,
+                sessionStreamId: rootSession.sessionStreamId,
+                location: rootSession.location,
+                week: rootSession.week,
+            });
+            newSession.requestIds = [
+                ...rootSession.requestIds,
+                ...relatedRequestIds,
+            ];
+            newSession.preferredSwapRequestIds = [
+                ...rootSession.preferredSwapRequestIds,
+                ...relatedPreferredSwapRequestIds,
+            ];
+            newSession.preferredSwapOfferIds = [
+                ...rootSession.preferredSwapOfferIds,
+                ...relatedPreferredSwapOfferIds,
+            ];
+            newSession.acceptedOfferIds = [
+                ...rootSession.acceptedOfferIds,
+                ...relatedAcceptedOfferIds,
+            ];
+            newSession.allocatedUserIds = [
+                ...rootSession.allocatedUserIds,
+                ...relatedAllocatedUserIds,
+            ];
+            results.push(newSession);
+        }
+        return results;
     }
 }

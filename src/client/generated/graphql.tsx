@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: Date;
 };
 
@@ -398,6 +397,7 @@ export type PreferenceInput = {
 export type Query = {
   __typename?: 'Query';
   activeTerm: Term;
+  allMergedSessions: Array<Session>;
   checkAllocation: AllocatorOutput;
   course: Course;
   courseStaffs: Array<CourseStaff>;
@@ -425,6 +425,13 @@ export type Query = {
   timetableById: Timetable;
   timetables: Array<Timetable>;
   tutorAvailability: Array<Timeslot>;
+};
+
+
+export type QueryAllMergedSessionsArgs = {
+  courseIds: Array<Scalars['String']>;
+  mineOnly: Scalars['Boolean'];
+  termId: Scalars['String'];
 };
 
 
@@ -815,7 +822,7 @@ export type ExportAllocationDataQueryVariables = Exact<{
 }>;
 
 
-export type ExportAllocationDataQuery = { __typename?: 'Query', sessionStreams: Array<{ __typename?: 'SessionStream', type: SessionType, name: string, day: number, startTime: number, endTime: number, location: string, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', code: string } }, root?: { __typename?: 'SessionStream', name: string } | null | undefined, allocatedUsers: Array<{ __typename?: 'User', name: string }> }> };
+export type ExportAllocationDataQuery = { __typename?: 'Query', sessionStreams: Array<{ __typename?: 'SessionStream', type: SessionType, name: string, day: number, startTime: number, endTime: number, location: string, weeks: Array<number>, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', code: string } }, root?: { __typename?: 'SessionStream', name: string } | null, allocatedUsers: Array<{ __typename?: 'User', name: string }> }> };
 
 export type AddAvailabilitiesMutationVariables = Exact<{
   timeslots: Array<TimeslotInput> | TimeslotInput;
@@ -926,7 +933,7 @@ export type AcceptOfferMutationVariables = Exact<{
 }>;
 
 
-export type AcceptOfferMutation = { __typename?: 'Mutation', acceptOffer: { __typename?: 'Offer', id: string, acceptedSession?: { __typename?: 'Session', id: string } | null | undefined } };
+export type AcceptOfferMutation = { __typename?: 'Mutation', acceptOffer: { __typename?: 'Offer', id: string, acceptedSession?: { __typename?: 'Session', id: string } | null } };
 
 export type CreateOfferMutationVariables = Exact<{
   offerDetails: OfferInputType;
@@ -954,7 +961,7 @@ export type MyPreferenceQueryVariables = Exact<{
 }>;
 
 
-export type MyPreferenceQuery = { __typename?: 'Query', myPreference?: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } | null | undefined };
+export type MyPreferenceQuery = { __typename?: 'Query', myPreference?: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } | null };
 
 export type PreferenceByUsernameQueryVariables = Exact<{
   courseTermId: CourseTermIdInput;
@@ -962,7 +969,7 @@ export type PreferenceByUsernameQueryVariables = Exact<{
 }>;
 
 
-export type PreferenceByUsernameQuery = { __typename?: 'Query', preferenceByUsername: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } };
+export type PreferenceByUsernameQuery = { __typename?: 'Query', preferenceByUsername: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null, courseStaff: { __typename?: 'CourseStaff', user: { __typename?: 'User', username: string } } } };
 
 export type UpdatePreferenceMutationVariables = Exact<{
   preferenceFind: CourseTermIdInput;
@@ -970,7 +977,7 @@ export type UpdatePreferenceMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePreferenceMutation = { __typename?: 'Mutation', updatePreference: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null | undefined } };
+export type UpdatePreferenceMutation = { __typename?: 'Mutation', updatePreference: { __typename?: 'Preference', maxContigHours: number, maxWeeklyHours: number, sessionType?: SessionType | null } };
 
 export type CreateRequestMutationVariables = Exact<{
   requestDetails: RequestFormInputType;
@@ -1104,6 +1111,15 @@ export type DeleteSessionsMutationVariables = Exact<{
 
 
 export type DeleteSessionsMutation = { __typename?: 'Mutation', deleteSessions: Array<string> };
+
+export type GetAllSessionsQueryVariables = Exact<{
+  courseIds: Array<Scalars['String']> | Scalars['String'];
+  termId: Scalars['String'];
+  mineOnly: Scalars['Boolean'];
+}>;
+
+
+export type GetAllSessionsQuery = { __typename?: 'Query', allMergedSessions: Array<{ __typename?: 'Session', id: string, week: number, location: string, sessionStream: { __typename?: 'SessionStream', name: string, startTime: number, endTime: number, day: number, timetable: { __typename?: 'Timetable', course: { __typename?: 'Course', id: string, code: string }, term: { __typename?: 'Term', startDate: Date } } }, allocatedUsers: Array<{ __typename?: 'User', id: string, username: string, name: string }> }> };
 
 export type NotificationsSubscriptionVariables = Exact<{
   key: Scalars['String'];
@@ -3409,6 +3425,65 @@ export function useDeleteSessionsMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteSessionsMutationHookResult = ReturnType<typeof useDeleteSessionsMutation>;
 export type DeleteSessionsMutationResult = Apollo.MutationResult<DeleteSessionsMutation>;
 export type DeleteSessionsMutationOptions = Apollo.BaseMutationOptions<DeleteSessionsMutation, DeleteSessionsMutationVariables>;
+export const GetAllSessionsDocument = gql`
+    query GetAllSessions($courseIds: [String!]!, $termId: String!, $mineOnly: Boolean!) {
+  allMergedSessions(courseIds: $courseIds, termId: $termId, mineOnly: $mineOnly) {
+    id
+    sessionStream {
+      name
+      startTime
+      endTime
+      day
+      timetable {
+        course {
+          id
+          code
+        }
+        term {
+          startDate
+        }
+      }
+    }
+    week
+    location
+    allocatedUsers {
+      id
+      username
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllSessionsQuery__
+ *
+ * To run a query within a React component, call `useGetAllSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllSessionsQuery({
+ *   variables: {
+ *      courseIds: // value for 'courseIds'
+ *      termId: // value for 'termId'
+ *      mineOnly: // value for 'mineOnly'
+ *   },
+ * });
+ */
+export function useGetAllSessionsQuery(baseOptions: Apollo.QueryHookOptions<GetAllSessionsQuery, GetAllSessionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllSessionsQuery, GetAllSessionsQueryVariables>(GetAllSessionsDocument, options);
+      }
+export function useGetAllSessionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllSessionsQuery, GetAllSessionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllSessionsQuery, GetAllSessionsQueryVariables>(GetAllSessionsDocument, options);
+        }
+export type GetAllSessionsQueryHookResult = ReturnType<typeof useGetAllSessionsQuery>;
+export type GetAllSessionsLazyQueryHookResult = ReturnType<typeof useGetAllSessionsLazyQuery>;
+export type GetAllSessionsQueryResult = Apollo.QueryResult<GetAllSessionsQuery, GetAllSessionsQueryVariables>;
 export const NotificationsDocument = gql`
     subscription Notifications($key: String!) {
   notifications(key: $key) {
