@@ -69,20 +69,18 @@ export const sessionStyleFromProps = <T>({
         sessionDuration * timeslotHeight +
         Math.max(Math.ceil(sessionDuration - 1), 0) * realGap;
     const display = sessionDuration ? "block" : "none";
-    const width = `calc((100% - ${(stackSize - 1) * realGap}px) * ${
+    const width = `(100% - ${(stackSize - 1) * realGap}px) * ${
         elemStackWidth / stackSize
-    } + ${((stackSize - longestBranchSize) * realGap) / splitBranchSize}px)`;
-    // const left = `calc(((100% - ${
-    //     (longestBranchSize - 1) * realGap
-    // }px) / ${stackSize} + ${realGap}px) * ${elemStackIndex})`;
-    const left = `calc(${elemStackIndex * realGap}px + (100% - ${
-        (stackSize - 1) * realGap
-    }px) * ${elemStackStart / stackSize})`;
+    } + ${((stackSize - longestBranchSize) * realGap) / splitBranchSize}px`;
+    const unitWidth = `(100% - ${(stackSize - 1) * realGap}px) / ${stackSize}`;
+    const left = `calc(${elemStackIndex * realGap}px + (${unitWidth}) * ${
+        longestBranchSize - splitBranchSize
+    } + (${width}) * ${elemStackIndex - longestBranchSize + splitBranchSize})`;
     return {
         topPx: `${top}px`,
         heightPx: height,
         display,
-        width,
+        width: `calc(${width})`,
         left,
         top,
         height,
