@@ -91,7 +91,7 @@ export const CalendarInputSingleRange: FC<Props> = ({
             setEnd(void 0);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [end, onChange, onClose]);
+    }, [start, end]);
 
     useEffect(() => {
         if (start && !end && !isOpen) {
