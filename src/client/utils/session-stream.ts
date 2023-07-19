@@ -5,7 +5,7 @@ export const weeksPatternRepr = (weekNames: string[], weeks: number[]) => {
     let lastWeek: number | undefined = undefined;
     let firstConsecutiveWeek: number | undefined = undefined;
     for (const week of sortedWeeks) {
-        if (!lastWeek || !firstConsecutiveWeek) {
+        if (lastWeek === void 0 || firstConsecutiveWeek === void 0) {
             lastWeek = firstConsecutiveWeek = week;
             continue;
         }
